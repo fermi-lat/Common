@@ -1,4 +1,5 @@
 import os
+import sys
 from xml.dom import minidom
 
 from pXmlList  import pXmlList

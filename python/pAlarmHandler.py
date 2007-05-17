@@ -30,7 +30,7 @@ class pAlarmHandler:
         #  is a list of pAlarm instances set on the plot itself.
         
         self.__EnabledAlarmsDict = {}
-        self.__XmlParser = pXmlAlarmParser("/home/users/bregeon/glast/isoc/dataMonitoring/Common/xml/config.xml")
+        self.__XmlParser = pXmlAlarmParser("../xml/config.xml")
 	self.rootFileName = 'test.root'
 	self.RootFile = ROOT.TFile(self.rootFileName)
 	
