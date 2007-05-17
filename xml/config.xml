@@ -9,7 +9,7 @@
 
        <alarmSet name="tkr_tower_strip_count_tower_*" enabled="True">
          <alarm function="x_average" enabled="True">
-            <parameter name="poi" value="1.3"/>
+            <parameter name="min" value="1.3"/>
             <parameter name="max" value="12.0"/>
             <warning_limits min="21" max="30"/>
             <error_limits min="5.0" max="40.0"/>
