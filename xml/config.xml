@@ -6,7 +6,6 @@
     TKR group.
     -->
     <alarmList group="TKR" name="TKR base" enabled="True">
-
        <alarmSet name="tkr_tower_strip_count_tower_*" enabled="True">
          <alarm function="x_average" enabled="True">
             <parameter name="min" value="1.3"/>
@@ -21,7 +20,6 @@
             <error_limits min="5.0" max="7.0"/>
 	 </alarm> 
        </alarmSet>
-       
        <alarmSet name="tkr_strip_count" enabled="True">
          <alarm function="x_average" enabled="True">
             <parameter name="min" value="1.3"/>
@@ -30,7 +28,6 @@
             <error_limits min="5.0" max="7.0"/>
 	 </alarm> 
        </alarmSet>       
-
     </alarmList>
 
 </alarms>
