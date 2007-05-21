@@ -1,20 +1,23 @@
 import logging
 
-def parametersOk(validList, actualList):
-    for name in actualList:
-        if name not in validList:
-	    logging.error('Invalid parameter %s' % name)
-	    return False
-    return True
 
-def x_average(plot, parameters={}):
-    if not parametersOk(['min', 'max'], parameters.keys()):
+def invalidParameters(parametersDict, validParams, functionName):
+    for paramName in parametersDict.keys():
+        if paramName not in validParams:
+            logging.error('Invalid parameter (%s) in function %s found.' %\
+                          (paramName, functionName))
+	    return True
+    return False
+
+def x_average(plot, paramsDict={}):
+    if invalidParameters(paramsDict, ['min', 'max'], 'x_average'):
         return None
-    return plot.GetMean()
+    outputValue = plot.GetMean()
+    return outputValue
 
 
-def x_rms(plot, parameters={}):
-    if not parametersOk(['min', 'max'], parameters.keys()):
+def x_rms(plot, paramsDict={}):
+    if invalidParameters(paramsDict, ['min', 'max'], 'x_average'):
         return None
-    return plot.GetRMS()
-
+    outputValue = plot.GetRMS()
+    return outputValue
