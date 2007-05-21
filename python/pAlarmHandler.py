@@ -7,80 +7,97 @@ import time
 
 import ROOT
 
-from pXmlElement import pXmlElement
+from pXmlElement      import pXmlElement
 from pXmlAlarmParser  import pXmlAlarmParser
-from pAlarm      import pAlarm
+from pAlarm           import pAlarm
 
 
-## @brief Base class handling all the alarms.
+## @brief Base class handling the alarms.
 
 class pAlarmHandler:
 
     ## @brief Constructor
     ## @param self
     #  The class instance.
+    ## @param rootFilePath
+    #  Path to the input ROOT file containing the plots.
+    ## @param xmlConfigFilePath
+    #  Path to the xml configuration file containing the alarms definition.
 
-    def __init__(self):
+    def __init__(self, rootFilePath = 'test.root',\
+                 xmlConfigFilePath = '../xml/config.xml'):
 
-        ## @var __EnabledAlarmsDict
-        ## @brief Base dictionary containing all the alarms.
-        #
-        #  The alarms are store as (name, alarms) pairs, where
-        #  name is the name of the plot the alarms refer to and alarms
-        #  is a list of pAlarm instances set on the plot itself.
+        ## @var __XmlParser
+        ## @brief The base xml parser.
+
+        ## @var __RootFile
+        ## @brief The input ROOT.TFile object.
+
+        ## @var __RootObjectsDict
+        ## @brief Dictionary containing all the objects in the input
+        #  ROOT file, indexed by object name.
         
-        self.__EnabledAlarmsDict = {}
-        self.__XmlParser = pXmlAlarmParser("../xml/config.xml")
-	self.rootFileName = 'test.root'
-	self.RootFile = ROOT.TFile(self.rootFileName)
-	
-	self.RootObjectsDict = {}
-        for i in range(self.RootFile.GetListOfKeys().LastIndex()):
-	    plotKey = self.RootFile.GetListOfKeys().At(i)
-	    plotObject = self.RootFile.FindObjectAny(plotKey.GetName())
-            self.RootObjectsDict[plotKey.GetName()] = plotObject
-	
-	for alarmSet in self.__XmlParser.getEnabledAlarmSets():
-    	    plotlists = []
-	    for (key, value) in self.RootObjectsDict.items():
-	        if key.replace(alarmSet.getName().replace('*', ''), '').isdigit():
-		    plotlists.append(value)
-	    alarmSet.setPlotsList(plotlists)
+        self.__XmlParser = pXmlAlarmParser(xmlConfigFilePath)
+	self.__RootFile = ROOT.TFile(rootFilePath)
+        self.__RootObjectsDict = {}
+	self.__populateRootObjectsDict()
+        self.__setAlarmSetsPlotLists()
+
+    ## @brief Populate the dictionary of ROOT objects.
+    #
+    #  This function loops over the list of keys into the ROOT file
+    #  and adds the corresponding objects to the dictionary.
+    ## @param self
+    #  The class instance.
+
+    def __populateRootObjectsDict(self):
+        for i in range(self.__RootFile.GetListOfKeys().LastIndex()):
+	    key    = self.__RootFile.GetListOfKeys().At(i)
+            name   = key.GetName()
+	    object = self.__RootFile.FindObjectAny(name)
+            self.__RootObjectsDict[name] = object
+
+    ## @brief Go through all the alarms set and identify in the ROOT
+    #  file the corresponding ROOT objects (i.e. plots).
+    #
+    #  At this moment the actual pAlarm objects are also created
+    #  (one for each plot).
+    ## @param self
+    #  The class instance.
+
+    def __setAlarmSetsPlotLists(self):
+        for alarmSet in self.__XmlParser.getEnabledAlarmSets():
+	    alarmSet.setPlotsList(self.__findRootObjects(alarmSet.getName()))
+
+    ## @brief Return all the ROOT objects whose name matches a specified
+    #  pattern into the __RootObjectsDict variable.
+    #
+    #  This allow to use wildcards in the xml file defining the alarms
+    #  (i.e. if an identical alarm is specified on multiple plots, differing
+    #  in the tower ID, for instance, it doesn't need to be specified
+    #  each signgle time). At the moment the wildcards stand for numbers only.
+    ## @param self
+    #  The class instance.
+    ## @param pattern
+    #  The pattern (possibly including wildcards) identifying the object name.
+
+    def __findRootObjects(self, pattern):
+        objectsList = []
+        for (key, value) in self.__RootObjectsDict.items():
+            if key.replace(pattern.replace('*', ''), '').isdigit():
+                objectsList.append(value)
+        return objectsList
+
+    ## @brief Activate all the alarms (i.e. dive into the ROOT file and
+    #  look at the plots).
+    ## @param self
+    #  The class instance.
+    
+    def activateAlarms(self):
+        for alarmSet in self.__XmlParser.getEnabledAlarmSets():
 	    for alarm in alarmSet.getEnabledAlarmsList():
 	        alarm.activate()
 	        print alarm.getFormattedStatus()
-
-    ## @brief Add an alarm for the specified plot.
-    ## @param self
-    #  The class instance.
-    ## @param alarm
-    #  The alarm to be added to the dictionary.
-    ## @param plotName
-    #  The name of the plot the alarm refers to.
-        
-    def addAlarm(self, alarm, plotName):
-        if not alarm.isEnabled():
-            return
-        if plotName not in self.__EnabledAlarmsDict.keys():
-            self.__EnabledAlarmsDict[plotName] = [alarm]
-        else:
-            self.__EnabledAlarmsDict[plotName].append(alarm)
-
-    ## @brief Activate all the alarms set on a specified plot.
-    #
-    #  This actually verifies that the plot parameters lie in the desired
-    #  ranges.
-    ## @param self
-    #  The class instance.
-    ## @param plot
-    #  The plot (a ROOT object),
-
-    def activateAlarms(self, plot):
-        try:
-            for alarm in self.__EnabledAlarmsDict[plot.GetName()]:
-                alarm.activate(plot)
-        except KeyError:
-            pass
 
     ## @brief Return true if all the activated alarms are clean.
     ## @param self
@@ -213,5 +230,5 @@ class pAlarmHandler:
 
 
 if __name__ == '__main__':
-    ah = pAlarmHandler()
-
+    alarmHandler = pAlarmHandler()
+    alarmHandler.activateAlarms()

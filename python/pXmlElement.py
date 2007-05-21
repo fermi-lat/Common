@@ -20,18 +20,18 @@ class pXmlElement(pXmlBaseElement):
     ## @brief Constructor
     ## @param self
     #  The class instance.
-    ## @param element
+    ## @param domElement
     #  A xml element, as returned by the getElementsByTagName()
     #  function of the xml.dom.minidom module.
 
     def __init__(self, domElement):
 
-        ## @var Name
+        ## @var __Name
         ## @brief The value of the "name" attribute.
         #
         #  By default is an empty string.
 
-        ## @var Enabled
+        ## @var __Enabled
         ## @brief The value of the "enabled" attribute.
         #
         #  By default is True.

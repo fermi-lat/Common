@@ -11,7 +11,8 @@ from pXmlElement import pXmlElement
 ## @brief Class describing a  xml list.
 #
 #  It is essentially a pXmlElement object with the additional Group
-#  member. Subclassed in pXmlInputList and pXmlOutputList.
+#  member. Subclassed in pXmlInputList, pXmlOutputList and
+#  pXmlAlarmList.
 
 class pXmlList(pXmlElement):
 

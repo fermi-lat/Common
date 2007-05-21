@@ -9,9 +9,11 @@ import sys
 ## @brief Class describing a minimal xml element.
 #
 #  At the lowest level, the class describe a piece of xml looking like:
+#  @code
 #  <node_name attribute1="..." ... attributeN="...">
 #  ...
 #  </node_name>
+#  @endcode
 #  and provides convenience functions for accessing sub-elements, attributes
 #  and convert them to non-string objects.
 
@@ -26,14 +28,28 @@ class pXmlBaseElement:
 
     def __init__(self, domElement):
 
-        ## @var DomElement
+        ## @var __DomElement
         #  @brief The underlying xml.dom.minidom element.
 
-        ## @var NodeName
+        ## @var __NodeName
         #  The node name of the element.
 
-        self.DomElement = domElement
-        self.NodeName   = self.DomElement.nodeName
+        self.__DomElement = domElement
+        self.__NodeName   = self.__DomElement.nodeName
+
+    ## @brief Return the underlying dom element.
+    ## @param self
+    #  The class instance.
+    
+    def getDomElement(self):
+        return self.__DomElement
+
+    ## @brief Return the node name.
+    ## @param self
+    #  The class instance.
+
+    def getNodeName(self):
+        return self.__NodeName
 
     ## @brief Return the attribute corresponing to a given attribute name.
     #
@@ -49,10 +65,10 @@ class pXmlBaseElement:
     #  The default value (returned if the attribute does not exist).
 
     def getAttribute(self, attributeName, default=None):
-        attribute = str(self.DomElement.getAttribute(attributeName))
+        attribute = str(self.__DomElement.getAttribute(attributeName))
         if attribute == '':
             logging.debug('Unknown attribute (%s) for node %s. ' %\
-                          (attributeName, self.NodeName)         +\
+                          (attributeName, self.__NodeName)       +\
                           'Returning %s...' % default)
             attribute = default
         return attribute
@@ -91,7 +107,7 @@ class pXmlBaseElement:
     #  The tag name
     
     def getElementsByTagName(self, tagName):
-        return self.DomElement.getElementsByTagName(tagName)
+        return self.__DomElement.getElementsByTagName(tagName)
 
     ## @brief Return a single dom element corresponding to a given tag name.
     #
