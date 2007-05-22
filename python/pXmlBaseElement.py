@@ -67,9 +67,9 @@ class pXmlBaseElement:
     def getAttribute(self, attributeName, default=None):
         attribute = str(self.__DomElement.getAttribute(attributeName))
         if attribute == '':
-            logging.debug('Unknown attribute (%s) for node %s. ' %\
-                          (attributeName, self.__NodeName)       +\
-                          'Returning %s...' % default)
+            logging.debug('Could not find attribute "%s" for node "%s". ' %\
+                          (attributeName, self.__NodeName)                +\
+                          'Returning "%s"...' % default)
             attribute = default
         return attribute
 
@@ -189,8 +189,6 @@ if __name__ == '__main__':
     for domElement in doc.getElementsByTagName('alarmList'):
         xmlElement = pXmlBaseElement(domElement)
         print xmlElement
-        print xmlElement.getAttribute('name')
-        print xmlElement.getAttribute('names')
         print xmlElement.evalAttribute('enabled')
         print xmlElement.evalAttribute('enableds', True)
         print xmlElement.getElementsByTagName('parameter')

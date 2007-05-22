@@ -14,6 +14,11 @@ UNDEFINED_STATUS = 'UNDEFINED'
 CLEAN_STATUS     = 'CLEAN'
 WARNING_STATUS   = 'WARNING'
 ERROR_STATUS     = 'ERROR'
+LEVELS_DICT      = {UNDEFINED_STATUS: 0,
+                    CLEAN_STATUS    : 1,
+                    WARNING_STATUS  : 2,
+                    ERROR_STATUS    : 3
+                    }
 ALARM_HEADER     = 'Function      Status  Parameter Limits'
 
 ## @brief Class describing an alarm to be activated on a plot.
@@ -132,6 +137,9 @@ class pAlarm(pXmlBaseElement):
     def isClean(self):
         return (self.__Status == CLEAN_STATUS)
 
+    def getLevel(self):
+        return LEVELS_DICT[self.__Status]
+
     ## @brief Activate the alarm (i.e. actually verify the plot).
     ## @param self
     #  The class instance.
@@ -187,11 +195,11 @@ class pAlarm(pXmlBaseElement):
     #  The class instance.
 
     def getTxtFormattedSummary(self):
-        return '%s | %s | %s | %s | %s' % (self.getTxtFormattedPlotName(),
-                                           self.getTxtFormattedFunction(),
-                                           self.getTxtFormattedStatus(),
-                                           self.getTxtFormattedOutputValue(),
-                                           self.getTxtFormattedLimits())
+        return '%s | %s | %s | %s | %s\n' % (self.getTxtFormattedPlotName(),
+                                             self.getTxtFormattedFunction(),
+                                             self.getTxtFormattedStatus(),
+                                             self.getTxtFormattedOutputValue(),
+                                             self.getTxtFormattedLimits())
     
     def getXmlFormattedSummary(self):
         summary = '<plot name="%s">\n' % self.getPlotName() +\
@@ -205,7 +213,7 @@ class pAlarm(pXmlBaseElement):
                    '        <output>%s</output>\n' % self.__OutputValue +\
                    '        <status>%s</status>\n' % self.__Status.lower() +\
                    '    </alarm>\n' +\
-                   '</plot>'
+                   '</plot>\n'
         return summary
     
     ## @brief Return all the relevant information on the alarm status,
