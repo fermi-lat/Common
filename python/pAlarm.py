@@ -14,7 +14,7 @@ UNDEFINED_STATUS = 'UNDEFINED'
 CLEAN_STATUS     = 'CLEAN'
 WARNING_STATUS   = 'WARNING'
 ERROR_STATUS     = 'ERROR'
-LEVELS_DICT      = {UNDEFINED_STATUS: 0,
+LEVELS_DICT      = {UNDEFINED_STATUS: 4,
                     CLEAN_STATUS    : 1,
                     WARNING_STATUS  : 2,
                     ERROR_STATUS    : 3
@@ -127,7 +127,7 @@ class pAlarm(pXmlBaseElement):
         for domElement in self.getElementsByTagName('parameter'):
             xmlElement = pXmlBaseElement(domElement)
             parametersDict[xmlElement.getAttribute('name')] =\
-                           xmlElement.getAttribute('value')
+                           xmlElement.evalAttribute('value')
         return parametersDict
 
     ## @brief Return True if the alarm Status is CLEAN_STATUS.
@@ -177,10 +177,10 @@ class pAlarm(pXmlBaseElement):
         return pUtils.expandString(self.getPlotName(), 27)
 
     def getTxtFormattedFunction(self):
-        return pUtils.expandString(self.__Function, 9)
+        return pUtils.expandString(self.__Function, 10)
 
     def getTxtFormattedStatus(self):
-        return pUtils.expandString(self.__Status, 7)
+        return pUtils.expandString(self.__Status, 9)
 
     def getTxtFormattedOutputValue(self):
         return pUtils.expandNumber(self.__OutputValue, 5)
