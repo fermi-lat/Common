@@ -162,24 +162,52 @@ class pAlarm(pXmlBaseElement):
         else:
             self.__Status = WARNING_STATUS
 
-    ## @brief Return the Min, Max pair formatted to be printed on the screen.
-    ## @param self
-    #  The class instance.
+    def getPlotName(self):
+        return self.__Plot.GetName()
 
-    def getFormattedLimits(self):
-        return '[%s, %s]' % (self.__WarningMin, self.__WarningMax)
+    def getTxtFormattedPlotName(self):
+        return pUtils.expandString(self.getPlotName(), 27)
+
+    def getTxtFormattedFunction(self):
+        return pUtils.expandString(self.__Function, 9)
+
+    def getTxtFormattedStatus(self):
+        return pUtils.expandString(self.__Status, 7)
+
+    def getTxtFormattedOutputValue(self):
+        return pUtils.expandNumber(self.__OutputValue, 5)
+
+    def getTxtFormattedLimits(self):
+        limits = '[%s, %s]' % (self.__WarningMin, self.__WarningMax)
+        return pUtils.expandString(limits, 12)
 
     ## @brief Return all the relevant information on the alarm status,
     #  nicely formatted.
     ## @param self
     #  The class instance.
 
-    def getFormattedStatus(self):
-        return '%s%s%s%s' % (pUtils.expandString(self.__Function)      ,\
-                             pUtils.expandString(self.__Status, 10)    ,\
-                             pUtils.expandNumber(self.__OutputValue)   ,\
-                             pUtils.expandString(self.getFormattedLimits(),15))
-
+    def getTxtFormattedSummary(self):
+        return '%s | %s | %s | %s | %s' % (self.getTxtFormattedPlotName(),
+                                           self.getTxtFormattedFunction(),
+                                           self.getTxtFormattedStatus(),
+                                           self.getTxtFormattedOutputValue(),
+                                           self.getTxtFormattedLimits())
+    
+    def getXmlFormattedSummary(self):
+        summary = '<plot name="%s">\n' % self.getPlotName() +\
+                  '    <alarm function="%s">\n' % self.__Function
+        for item in self.__ParamsDict.items():
+            summary += '        <parameter name="%s" value="%s"/>\n' % item
+        summary += '        <warning_limits min="%s" max="%s"/>\n' %\
+                   (self.__WarningMin, self.__WarningMax) +\
+                   '        <error_limits min="%s" max="%s"/>\n' %\
+                   (self.__ErrorMin, self.__ErrorMax) +\
+                   '        <output>%s</output>\n' % self.__OutputValue +\
+                   '        <status>%s</status>\n' % self.__Status.lower() +\
+                   '    </alarm>\n' +\
+                   '</plot>'
+        return summary
+    
     ## @brief Return all the relevant information on the alarm status,
     #  formatted for the html report.
     ## @param self
@@ -200,3 +228,6 @@ class pAlarm(pXmlBaseElement):
         return '%s & %s & %s & %s \\\\\n' % (self.__Function, self.__Status,\
                                              self.__OutputValue            ,\
                                              self.getFormattedLimits())
+
+    def __str__(self):
+        return self.getTxtFormattedSummary()

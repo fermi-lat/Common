@@ -3,25 +3,26 @@
 
 import logging
 
-## @brief Expand a specified string to a given length added spaces on the
-#  right.
+## @brief Expand a specified string to a given length.
 #
-#  If the string is longer than the specified length, it is truncated on the
-#  right, instead. Useful for printing on the screen formatted text.
 ## @param string
 #  The string to be formatted.
 ## @param length
 #  The goal string length.
 
-def expandString(string, length=10):
-    try:
-        if len(string) > length:
-            return string[:length]
-        numSpaces = length - len(string)
-        return '%s%s' % (string, ' '*numSpaces)
-    except:
-        return string
-
+def expandString(string, targetLength, margin = 0):
+    string         = str(string)
+    originalLength = len(string)
+    requiredSpaces = targetLength - originalLength
+    if requiredSpaces >= margin:
+        return '%s%s' % (string, ' '*requiredSpaces)
+    else:
+        leftMargin  = margin/2
+        rightMargin = margin - leftMargin
+        leftSplit   = (targetLength - 3)/2 + 1 - leftMargin
+        rightSplit  = targetLength - 3 - leftSplit - 1 - rightMargin
+        return '%s...%s%s' % (string[:leftSplit], string[-rightSplit:],
+                              ' '*margin)
 
 ## @brief Format a number with a given number of decimal places, then expand
 #  it as a string of given length.
@@ -32,13 +33,14 @@ def expandString(string, length=10):
 ## @param length
 #  The goal string length.
 
-def expandNumber(number, numDecPlaces=3, length=10):
-    try:
-        formatSpec = '%s.%df' % ('%', numDecPlaces)
-        string = formatSpec % number
-        return expandString(string, length)
-    except:
-        return expandString(number, length)
+def expandNumber(number, targetLength, margin = 0):
+    string = '%s' % number
+    originalLength = len(string)
+    requiredSpaces = targetLength - originalLength
+    if requiredSpaces >= margin:
+        return '%s%s' % (string, ' '*requiredSpaces)
+    else:
+        return '%s%s' % (string[:targetLength - margin + 1], ' '*margin)
 
 ## @brief Format a string to be put in the LaTeX version of the report.
 #

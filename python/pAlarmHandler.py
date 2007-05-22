@@ -1,3 +1,5 @@
+#!/bin/env python
+
 ## @package pAlarmHandler
 ## @brief Module managing the data automated alarm system.
 
@@ -97,7 +99,7 @@ class pAlarmHandler:
         for alarmSet in self.__XmlParser.getEnabledAlarmSets():
 	    for alarm in alarmSet.getEnabledAlarmsList():
 	        alarm.activate()
-	        print alarm.getFormattedStatus()
+	        print alarm
 
     ## @brief Return true if all the activated alarms are clean.
     ## @param self
