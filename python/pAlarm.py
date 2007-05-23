@@ -10,16 +10,22 @@ import pAlarmAlgorithms
 
 from pXmlBaseElement import pXmlBaseElement
 
-UNDEFINED_STATUS = 'UNDEFINED'
-CLEAN_STATUS     = 'CLEAN'
-WARNING_STATUS   = 'WARNING'
-ERROR_STATUS     = 'ERROR'
-LEVELS_DICT      = {UNDEFINED_STATUS: 4,
-                    CLEAN_STATUS    : 1,
-                    WARNING_STATUS  : 2,
-                    ERROR_STATUS    : 3
-                    }
-ALARM_HEADER     = 'Function      Status  Parameter Limits'
+UNDEFINED_STATUS     = 'UNDEFINED'
+CLEAN_STATUS         = 'CLEAN'
+WARNING_STATUS       = 'WARNING'
+ERROR_STATUS         = 'ERROR'
+LEVELS_DICT          = {UNDEFINED_STATUS: 4,
+                        CLEAN_STATUS    : 1,
+                        WARNING_STATUS  : 2,
+                        ERROR_STATUS    : 3
+                        }
+SUMMARY_COLUMNS_DICT = {'Plot name': 25,
+                        'Function' : 10,
+                        'Status'   : 7 ,
+                        'Output'   : 6 ,
+                        'Limits'   : 20
+                        }
+
 
 ## @brief Class describing an alarm to be activated on a plot.
 #
@@ -32,12 +38,12 @@ class pAlarm(pXmlBaseElement):
     ## @brief Constructor
     ## @param self
     #  The class instance.
-    ## @param element
+    ## @param domElement
     #  The xml element from which the alarm is constructed.
     ## @param plot
     #  The ROOT object the alarm is set on.
     
-    def __init__(self, element, plot):
+    def __init__(self, domElement, plot):
 
         ## @var __Plot
         ## @brief The ROOT object the alarm is set on.
@@ -71,7 +77,7 @@ class pAlarm(pXmlBaseElement):
         ## @brief Dictionary of optional parameters to be passed to the
         #  algorithm implementing the alarm.
  
-        pXmlBaseElement.__init__(self, element)
+        pXmlBaseElement.__init__(self, domElement)
 	self.__Plot        = plot
         self.__Function    = self.getAttribute('function')
      	(self.__WarningMin, self.__WarningMax) = self.__getLimits('warning')
@@ -137,6 +143,12 @@ class pAlarm(pXmlBaseElement):
     def isClean(self):
         return (self.__Status == CLEAN_STATUS)
 
+    ## @brief Return the alarm level correspnding to its status.
+    #
+    #  Used while printing on the terinal.
+    ## @param self
+    #  The class instance.
+
     def getLevel(self):
         return LEVELS_DICT[self.__Status]
 
@@ -170,24 +182,57 @@ class pAlarm(pXmlBaseElement):
         else:
             self.__Status = WARNING_STATUS
 
+    ## @brief Return the name of the plot the alarm is set on.
+    ## @param self
+    #  The class instance.            
+
     def getPlotName(self):
         return self.__Plot.GetName()
 
+    ## @brief Return the plot name, formatted to be printed on the terminal.
+    ## @param self
+    #  The class instance.      
+
     def getTxtFormattedPlotName(self):
-        return pUtils.expandString(self.getPlotName(), 27)
+        return pUtils.expandString(self.getPlotName(),\
+                                   SUMMARY_COLUMNS_DICT['Plot name'])
+
+    ## @brief Return the alarm function, formatted to be printed on the
+    #  terminal.
+    ## @param self
+    #  The class instance.
 
     def getTxtFormattedFunction(self):
-        return pUtils.expandString(self.__Function, 10)
+        return pUtils.expandString(self.__Function,\
+                                   SUMMARY_COLUMNS_DICT['Function'])
+
+    ## @brief Return the alarm status, formatted to be printed on the
+    #  terminal.
+    ## @param self
+    #  The class instance.
 
     def getTxtFormattedStatus(self):
-        return pUtils.expandString(self.__Status, 7)
+        return pUtils.expandString(self.__Status,\
+                                   SUMMARY_COLUMNS_DICT['Status'])
+
+    ## @brief Return the output value of the alarm, formatted to be printed
+    #  on the terminal.
+    ## @param self
+    #  The class instance.
 
     def getTxtFormattedOutputValue(self):
-        return pUtils.expandNumber(self.__OutputValue, 6)
+        return pUtils.expandNumber(self.__OutputValue,\
+                                   SUMMARY_COLUMNS_DICT['Output'])
+
+    ## @brief Return the alarm limits, formatted to be printed on the terminal.
+    ## @param self
+    #  The class instance.
 
     def getTxtFormattedLimits(self):
-        limits = '[%s, %s]' % (self.__WarningMin, self.__WarningMax)
-        return pUtils.expandString(limits, 12)
+        limits = '[%s/%s, %s/%s]' % (self.__ErrorMin, self.__WarningMin,\
+                                     self.__WarningMax, self.__ErrorMax)
+        return pUtils.expandString(limits,\
+                                   SUMMARY_COLUMNS_DICT['Limits'])
 
     ## @brief Return all the relevant information on the alarm status,
     #  nicely formatted.
@@ -200,6 +245,11 @@ class pAlarm(pXmlBaseElement):
                                              self.getTxtFormattedStatus(),
                                              self.getTxtFormattedOutputValue(),
                                              self.getTxtFormattedLimits())
+
+    ## @brief Return all the relevant information on the alarm status,
+    #  formatted for the xml output summary.
+    ## @param self
+    #  The class instance.
     
     def getXmlFormattedSummary(self):
         summary = '<plot name="%s">\n' % self.getPlotName() +\

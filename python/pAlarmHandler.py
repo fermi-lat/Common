@@ -29,6 +29,11 @@ class pAlarmHandler:
     #  Path to the input ROOT file containing the plots.
     ## @param xmlConfigFilePath
     #  Path to the xml configuration file containing the alarms definition.
+    ## @param xmlSummaryFilePath
+    #  Path to the output xml file containing the alarm handler complete
+    #  status.
+    #
+    #  Used by the web tools for visualization.
 
     def __init__(self, rootFilePath = 'test.root',\
                  xmlConfigFilePath  = '../xml/config.xml',
@@ -36,6 +41,9 @@ class pAlarmHandler:
 
         ## @var __XmlParser
         ## @brief The base xml parser.
+
+        ## @var __XmlSummaryFilePath
+        #  Path to the output summary xml file.
 
         ## @var __RootFile
         ## @brief The input ROOT.TFile object.
@@ -107,6 +115,11 @@ class pAlarmHandler:
         print self
         self.writeXmlSummaryFile()
 
+    ## @brief Write the alarm handler summary to an xml file which
+    #  can be parsed by the web tool for later display.
+    ## @param self
+    #  The class instance.
+
     def writeXmlSummaryFile(self):
         logging.info('Writing summary to %s...' %\
                      os.path.abspath(self.__XmlSummaryFilePath))
@@ -118,6 +131,16 @@ class pAlarmHandler:
         xmlSummaryFile.close()
         logging.info('Done.')
 
+    ## @brief Return a summary of the alarm handler status, formatted
+    #  for the terminal output.
+    ## @param self
+    #  The class instance.
+    ## @param level
+    #  The screen level for the summary output.
+    #
+    #  It allows to screen the CLEAN alarms, for instance, when printing
+    #  the summary on the terminal.
+
     def getTxtFormattedSummary(self, level=1):
         summary = ''
         for alarm in self.__XmlParser.getEnabledAlarms():
@@ -125,60 +148,13 @@ class pAlarmHandler:
                 summary += alarm.getTxtFormattedSummary()
         return summary
 
+    ## @brief Class representation.
+    ## @param self
+    #  The class instance.
+
     def __str__(self):
         return self.getTxtFormattedSummary()
                 
-
-##     ## @brief Return true if all the activated alarms are clean.
-##     ## @param self
-##     #  The class instance.        
-
-##     def allAlarmsClean(self):
-##         for (plotName, alarmsList) in self.__EnabledAlarmsDict.items():
-##             for alarm in alarmsList:
-##                 if not alarm.isClean():
-##                     return False
-##         return True
-
-##     ## @brief Return the alarm handler summary, nicely formatted to be
-##     #  printed on the screen.
-##     ## @param self
-##     #  The class instance.
-##     ## @param verbose
-##     #  If the flag is set, the status is printed out for all the alarms,
-##     #  otherwise only for those which are set (i.e. for the plots which do
-##     #  not satisfy the required conditions).
-
-##     def getFormattedSummary(self, verbose=False):
-##         summary = '** Alarm handler summary **\n'
-##         if self.allAlarmsClean():
-##             summary += 'All alarms clean.\n'
-##         else:
-##             summary += 'Plot name                        %s\n' % ALARM_HEADER
-##             for (plotName, alarmsList) in self.__EnabledAlarmsDict.items():
-##                 for alarm in alarmsList:
-##                     if not alarm.isClean():
-##                         summary += '%s %s\n' %\
-##                                    (pUtils.expandString(plotName, 32),\
-##                                     alarm.getFormattedStatus())
-##                     else:
-##                         if verbose:
-##                             summary += '%s %s\n' %\
-##                                        (pUtils.expandString(plotName, 32),\
-##                                         alarm.getFormattedStatus())
-##         return summary
-
-##     ## @brief Return the alarm handler summary, in a doxygen-like fashion,
-##     #  to be included in the report.
-##     ## @todo Probably some more work is needed here, cause when the
-##     #  alarms table gets very long, the LaTeX part may screw up.
-##     #  We may think oh having more tables (one per list of per plot?).
-##     ## @param self
-##     #  The class instance.
-##     ## @param verbose
-##     #  If the flag is set, the status is printed out for all the alarms,
-##     #  otherwise only for those which are set (i.e. for the plots which do
-##     #  not satisfy the required conditions).
     
 ##     def getDoxygenFormattedSummary(self, verbose=False):   
 ##         caption = 'Summary table'
@@ -249,14 +225,6 @@ class pAlarmHandler:
 ##         startTime = time.time()
 ##         file(filePath, 'w').writelines(self.getDoxygenFormattedSummary())
 ##         logging.info('Done in %s s.\n' % (time.time() - startTime))
-
-##     ## @brief Class representation.
-##     ## @param self
-##     #  The class instance.
-
-##     def __str__(self):
-##         return self.getFormattedSummary()
-
 
 
 if __name__ == '__main__':

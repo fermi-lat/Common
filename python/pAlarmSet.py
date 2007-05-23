@@ -1,31 +1,78 @@
 
+## @package pAlarmSet
+## @brief Description of an alarm set.
+
 import logging
 import pUtils
 
 from pXmlElement import pXmlElement
 from pAlarm      import pAlarm
 
+
+## @brief Class describing an alarm set.
+#
+#  An alarm set is a set of alarms set on a particular plot
+#  (or a particular set of plots which can be specified using
+#  wildcards).
+
 class pAlarmSet(pXmlElement):
+
+    ## @brief Basic constructor.
+    ## @param self
+    #  The class instance.
+    ## @param domElement
+    #  The xml element from which the alarm is constructed.
     
-    def __init__(self, element):      
-        pXmlElement.__init__(self, element)
+    def __init__(self, domElement):
+        
+        ## @var __PlotsList
+        ## @brief The list of plots the alarm is set on.
+
+        ## @var __EnabledAlarmsList
+        ## @brief The list of enabled alarms within the set.
+        
+        pXmlElement.__init__(self, domElement)
 	self.__PlotsList         = []
 	self.__EnabledAlarmsList = []
+
+    ## @brief Set the plot list for the alarm set.
+    #
+    #  This is done by the alarm handler, which is responsible for
+    #  diving into the ROOT file and finding all the objects matching the
+    #  name defined into the xml configuration file.
+    ## @param self
+    #  The class instance.
+    ## @param plotsList
+    #  The list of plots.
 	
-	
-    def setPlotsList(self, plotslist):
-        self.__PlotsList = plotslist
-	self.__populateAlarmsList()
+    def setPlotsList(self, plotsList):
+        self.__PlotsList = plotsList
+	self.__populateEnabledAlarmsList()
+
+    ## @brief Return the plot list.
+    ## @param self
+    #  The class instance.
 
     def getPlotsList(self):
         return self.__PlotsList
+
+    ## @brief Populate the list of enabled alarms.
+    #
+    #  This is actually done when the alarm handler sets the plots list
+    #  for the specific alarm.
+    ## @param self
+    #  The class instance.
 	
-    def __populateAlarmsList(self):
+    def __populateEnabledAlarmsList(self):
         for element in self.getElementsByTagName('alarm'):
 	    xmlElement = pXmlElement(element)
 	    if xmlElement.isEnabled():
 	        for plot in self.__PlotsList:
 	            self.__EnabledAlarmsList.append(pAlarm(element, plot))
+
+    ## @brief Return the list of enabled alarms.
+    ## @param self
+    #  The class instance.
 		
     def getEnabledAlarmsList(self):
         return self.__EnabledAlarmsList
