@@ -36,9 +36,10 @@ class pAlarmHandler:
     #
     #  Used by the web tools for visualization.
 
-    def __init__(self, rootFilePath = 'test.root',\
-                 xmlConfigFilePath  = '../xml/config.xml',
-                 xmlSummaryFilePath = './output.xml'):
+    def __init__(self, rootFilePath,\
+                 xmlConfigFilePath,
+                 xmlSummaryFilePath = None,\
+                 printLevel = None):
 
         ## @var __XmlParser
         ## @brief The base xml parser.
@@ -54,11 +55,14 @@ class pAlarmHandler:
         #  ROOT file, indexed by object name.
         
         self.__XmlParser = pXmlAlarmParser(xmlConfigFilePath)
+        if xmlSummaryFilePath == None:
+            xmlSummaryFilePath = os.path.abspath(rootFilePath).replace('.root', '.xml')
         self.__XmlSummaryFilePath = xmlSummaryFilePath
 	self.__RootFile = ROOT.TFile(rootFilePath)
         self.__RootObjectsDict = {}
 	self.__populateRootObjectsDict()
         self.__setAlarmSetsPlotLists()
+        self.__printLevel = printLevel
 
     ## @brief Populate the dictionary of ROOT objects.
     #
@@ -113,7 +117,8 @@ class pAlarmHandler:
     def activateAlarms(self):
         for alarm in self.__XmlParser.getEnabledAlarms():
             alarm.activate()
-        print self
+        if self.__printLevel != None:
+            print self
         self.writeXmlSummaryFile()
 
     ## @brief Write the alarm handler summary to an xml file which
@@ -180,7 +185,7 @@ class pAlarmHandler:
     #  The class instance.
 
     def __str__(self):
-        return self.getTxtFormattedSummary()
+        return self.getTxtFormattedSummary(self.__printLevel)
                 
     
 ##     def getDoxygenFormattedSummary(self, verbose=False):   
@@ -255,5 +260,32 @@ class pAlarmHandler:
 
 
 if __name__ == '__main__':
-    alarmHandler = pAlarmHandler()
+    from optparse import OptionParser
+    parser = OptionParser(usage='usage: %prog [options] data_file')
+    parser.add_option('-c', '--config-file', dest='config_file',
+                      default='../xml/config.xml', type=str,
+                      help='path to the input xml configuration file')
+    parser.add_option('-o', '--output-file', dest='output_file',
+                      default=None, type=str,
+                      help='path to the output xml file')
+    parser.add_option('-l', '--screen-level', dest='screen_level',
+                      default=None, type=int,
+                      help='level of the on-screen output, No level by default')
+    (options, args) = parser.parse_args()
+    if len(args) != 1:
+        parser.print_help()
+        parser.error('incorrect number of arguments')
+        sys.exit()
+    if not os.path.isfile(args[0]):
+        parser.error('first argument is not an existing file')
+        sys.exit()
+    if not os.path.isfile(options.config_file):
+        parser.error('input configuration file (%s) not found'%\
+                     (options.config_file))
+        sys.exit()
+           
+    alarmHandler = pAlarmHandler(args[0],\
+                                 options.config_file,\
+                                 options.output_file,\
+                                 options.screen_level )
     alarmHandler.activateAlarms()
