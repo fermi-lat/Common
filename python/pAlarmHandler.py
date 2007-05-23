@@ -14,6 +14,7 @@ import ROOT
 from pXmlElement      import pXmlElement
 from pXmlAlarmParser  import pXmlAlarmParser
 from pAlarm           import pAlarm
+from pAlarm           import SUMMARY_COLUMNS_DICT, SUMMARY_COLUMNS_LIST
 
 logging.basicConfig(level=logging.INFO)
 
@@ -43,7 +44,7 @@ class pAlarmHandler:
         ## @brief The base xml parser.
 
         ## @var __XmlSummaryFilePath
-        #  Path to the output summary xml file.
+        #  @brief Path to the output summary xml file.
 
         ## @var __RootFile
         ## @brief The input ROOT.TFile object.
@@ -131,6 +132,31 @@ class pAlarmHandler:
         xmlSummaryFile.close()
         logging.info('Done.')
 
+    ## @brief Return a horizontal text line of the right length for
+    #  the summary.
+    ## @param self
+    #  The class instance.
+
+    def __getHorizontalLine(self):
+        return '-'*(sum(SUMMARY_COLUMNS_DICT.values()) +\
+                    3*(len(SUMMARY_COLUMNS_LIST) - 1)) + '\n'
+
+    ## @brief Return the header for the alarm handler summary.
+    ## @param self
+    #  The class instance.
+
+    def __getTxtFormattedSummaryHeader(self):
+        header = '** Alarm handler summary **\n\n'
+        header += self.__getHorizontalLine()
+        for label in SUMMARY_COLUMNS_LIST[:-1]:
+            length = SUMMARY_COLUMNS_DICT[label]
+            header += '%s | ' % pUtils.expandString(label, length)
+        label  = SUMMARY_COLUMNS_LIST[-1]
+        length = SUMMARY_COLUMNS_DICT[label]
+        header += '%s\n' % pUtils.expandString(label, length)
+        header += self.__getHorizontalLine()
+        return header
+
     ## @brief Return a summary of the alarm handler status, formatted
     #  for the terminal output.
     ## @param self
@@ -142,10 +168,11 @@ class pAlarmHandler:
     #  the summary on the terminal.
 
     def getTxtFormattedSummary(self, level=1):
-        summary = ''
+        summary = self.__getTxtFormattedSummaryHeader()
         for alarm in self.__XmlParser.getEnabledAlarms():
             if alarm.getLevel() > level:
                 summary += alarm.getTxtFormattedSummary()
+        summary += self.__getHorizontalLine()
         return summary
 
     ## @brief Class representation.

@@ -19,11 +19,17 @@ LEVELS_DICT          = {UNDEFINED_STATUS: 4,
                         WARNING_STATUS  : 2,
                         ERROR_STATUS    : 3
                         }
+SUMMARY_COLUMNS_LIST = ['Plot name',
+                        'Function' ,
+                        'Status'   ,
+                        'Output'   ,
+                        'Limits'
+                        ]
 SUMMARY_COLUMNS_DICT = {'Plot name': 25,
                         'Function' : 10,
                         'Status'   : 7 ,
                         'Output'   : 6 ,
-                        'Limits'   : 20
+                        'Limits'   : 19
                         }
 
 
