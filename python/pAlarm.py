@@ -180,10 +180,10 @@ class pAlarm(pXmlBaseElement):
         return pUtils.expandString(self.__Function, 10)
 
     def getTxtFormattedStatus(self):
-        return pUtils.expandString(self.__Status, 9)
+        return pUtils.expandString(self.__Status, 7)
 
     def getTxtFormattedOutputValue(self):
-        return pUtils.expandNumber(self.__OutputValue, 5)
+        return pUtils.expandNumber(self.__OutputValue, 6)
 
     def getTxtFormattedLimits(self):
         limits = '[%s, %s]' % (self.__WarningMin, self.__WarningMax)

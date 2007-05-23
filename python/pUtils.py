@@ -7,40 +7,35 @@ import logging
 #
 ## @param string
 #  The string to be formatted.
-## @param length
+## @param targetLength
 #  The goal string length.
 
-def expandString(string, targetLength, margin = 0):
+def expandString(string, targetLength):
     string         = str(string)
     originalLength = len(string)
     requiredSpaces = targetLength - originalLength
-    if requiredSpaces >= margin:
+    if requiredSpaces >= 0:
         return '%s%s' % (string, ' '*requiredSpaces)
     else:
-        leftMargin  = margin/2
-        rightMargin = margin - leftMargin
-        leftSplit   = (targetLength - 3)/2 + 1 - leftMargin
-        rightSplit  = targetLength - 3 - leftSplit - 1 - rightMargin
-        return '%s...%s%s' % (string[:leftSplit], string[-rightSplit:],
-                              ' '*margin)
+        leftSplit   = (targetLength - 3)/2
+        rightSplit  = (targetLength - 3)/2
+        return '%s...%s' % (string[:leftSplit], string[-rightSplit:])
 
 ## @brief Format a number with a given number of decimal places, then expand
 #  it as a string of given length.
 ## @param number
 #  The real number to be formatted.
-## @param numDecPlaces
-#  The number of decimal places required.
-## @param length
+## @param targetLength
 #  The goal string length.
 
-def expandNumber(number, targetLength, margin = 0):
+def expandNumber(number, targetLength):
     string = '%s' % number
     originalLength = len(string)
     requiredSpaces = targetLength - originalLength
-    if requiredSpaces >= margin:
+    if requiredSpaces >= 0:
         return '%s%s' % (string, ' '*requiredSpaces)
     else:
-        return '%s%s' % (string[:targetLength - margin + 1], ' '*margin)
+        return '%s' % string[:targetLength]
 
 ## @brief Format a string to be put in the LaTeX version of the report.
 #
