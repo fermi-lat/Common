@@ -34,7 +34,7 @@ def invalidParameters(parametersDict, validParams, functionName):
 #  The plot name.
 
 def exitOnError(functionName, plotName):
-    logging.error('Could not apply %s on %. Returning None...' %\
+    logging.error('Could not apply %s on %s. Returning None...' %\
                   (functionName, plotName))
     return None
 
@@ -164,6 +164,91 @@ def x_max_bin(plot, paramsDict={}):
                 return plot.GetBinCenter(bin)
     except:
         return exitOnError(functionName, plot.GetName())
+## @brief Return position of the center of the last populated bin of
+#  the histogram on the x axis minus the center of the first populated bin of
+#  the histogram on the x .
+#
+#  Valid parameters: None.
+#
+## @param plot
+#  The ROOT object.
+## @param paramsDict
+#  The (optional) dictionary of parameters.
+
+def x_max_minus_min_bin(plot, paramsDict={}):
+    functionName = 'x_max_minus_min_bin'
+    if invalidParameters(paramsDict, [], functionName):
+        return None
+    try:
+        lastbin=-1
+        firstbin=-1
+        for bin in range(plot.GetXaxis().GetLast(),\
+                         plot.GetXaxis().GetFirst(), -1):
+            if plot.GetBinContent(bin) > 0:
+                lastbin=bin
+                break
+        for bin in range(plot.GetXaxis().GetFirst(),\
+                         plot.GetXaxis().GetLast()):
+            if plot.GetBinContent(bin) > 0:
+                firstbin=bin
+                break
+        if(lastbin==-1 or firstbin==-1):
+            return exitOnError(functionName, plot.GetName())
+        return plot.GetBinCenter(lastbin)-plot.GetBinCenter(firstbin) 
+    except:
+        return exitOnError(functionName, plot.GetName())
+
+## @brief Return the number of entries in the histogram
+#
+#  Valid parameters: None.
+#
+## @param plot
+#  The ROOT object.
+## @param paramsDict
+#  The (optional) dictionary of parameters.
+def entries(plot, paramsDict={}):
+    functionName = 'entries'
+    if invalidParameters(paramsDict, [], functionName):
+        return None
+    try:
+        return plot.GetEntries()
+    except:
+        return exitOnError(functionName, plot.GetName())
+  
+## @brief Return the number of entries in the underflow bin
+#
+#  Valid parameters: None.
+#
+## @param plot
+#  The ROOT object.
+## @param paramsDict
+#  The (optional) dictionary of parameters.
+def x_underflow(plot, paramsDict={}):
+    functionName = 'x_underflow'
+    if invalidParameters(paramsDict, [], functionName):
+        return None
+    try:
+        return plot.GetBinContent(0)
+    except:
+        return exitOnError(functionName, plot.GetName())
+  
+## @brief Return the number of entries in the overflow bin
+#
+#  Valid parameters: None.
+#
+## @param plot
+#  The ROOT object.
+## @param paramsDict
+#  The (optional) dictionary of parameters.
+def x_overflow(plot, paramsDict={}):
+    functionName = 'x_overflow'
+    if invalidParameters(paramsDict, [], functionName):
+        return None
+    try:
+        return plot.GetBinContent(plot.GetNbinsX()+1)
+    except:
+        return exitOnError(functionName, plot.GetName())
+  
 
 ## @brief Return the mean of a gaussian fit to the plot.
 #
