@@ -4,6 +4,7 @@
 
 import sys
 import logging
+import re
 
 import pUtils
 import pAlarmAlgorithms
@@ -127,8 +128,22 @@ class pAlarm(pXmlBaseElement):
 
     def __getLimits(self, type):
         limits = pXmlBaseElement(self.getElementByTagName('%s_limits' % type))
-        return (limits.evalAttribute('min'), limits.evalAttribute('max'))
-
+        (low,high)= (limits.getAttribute('min'), limits.getAttribute('max'))
+        mean= str(self.__Plot.GetMean())
+        rms= str(self.__Plot.GetRMS())
+        entries= str(self.__Plot.GetEntries())
+        low=low.upper().replace('RMS',rms)
+        high=high.upper().replace('RMS',rms)
+        low=low.upper().replace('MEAN',mean)
+        high=high.upper().replace('MEAN',mean)
+        low=low.upper().replace('ENTRIES',entries)
+        high=high.upper().replace('ENTRIES',entries)
+        try:
+            return(eval(low),eval(high))
+        except:
+            logging.error('Could not eval limits. ' +\
+                          'Returning None...' )
+            return None
     ## @brief Retrieve the function parameters from the xml
     #  element.
     ## @param self
