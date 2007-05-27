@@ -105,7 +105,7 @@ class pAlarmHandler:
     def __findRootObjects(self, pattern):
         objectsList = []
         for (key, value) in self.__RootObjectsDict.items():
-            if key.replace(pattern.replace('*', ''), '').isdigit():
+            if key==pattern or key.replace(pattern.replace('*', ''), '').isdigit():
                 objectsList.append(value)
         return objectsList
 
