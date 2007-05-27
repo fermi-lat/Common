@@ -137,7 +137,7 @@ def x_min_bin(plot, paramsDict={}):
         return None
     try:
         for bin in range(plot.GetXaxis().GetFirst(),\
-                         plot.GetXaxis().GetLast()):
+                         plot.GetXaxis().GetLast()+1):
             if plot.GetBinContent(bin) > 0:
                 return plot.GetBinCenter(bin)
     except:
@@ -159,7 +159,7 @@ def x_max_bin(plot, paramsDict={}):
         return None
     try:
         for bin in range(plot.GetXaxis().GetLast(),\
-                         plot.GetXaxis().GetFirst(), -1):
+                         plot.GetXaxis().GetFirst()-1, -1):
             if plot.GetBinContent(bin) > 0:
                 return plot.GetBinCenter(bin)
     except:
@@ -183,12 +183,12 @@ def x_max_minus_min_bin(plot, paramsDict={}):
         lastbin=-1
         firstbin=-1
         for bin in range(plot.GetXaxis().GetLast(),\
-                         plot.GetXaxis().GetFirst(), -1):
+                         plot.GetXaxis().GetFirst()-1, -1):
             if plot.GetBinContent(bin) > 0:
                 lastbin=bin
                 break
         for bin in range(plot.GetXaxis().GetFirst(),\
-                         plot.GetXaxis().GetLast()):
+                         plot.GetXaxis().GetLast()+1):
             if plot.GetBinContent(bin) > 0:
                 firstbin=bin
                 break
