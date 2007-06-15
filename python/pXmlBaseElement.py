@@ -161,8 +161,7 @@ class pXmlBaseElement:
             return default
 
     def getTextSummary(self):
-        return '** pXmlBaseElement Summary **\n' +\
-               'Node name: %s' % self.NodeName 
+        return 'Node name: %s' % self.NodeName 
 
     ## @brief Class representation.
     ## @param self
@@ -178,9 +177,16 @@ if __name__ == '__main__':
     doc = minidom.parse(file('../xml/config.xml'))
     for domElement in doc.getElementsByTagName('alarmList'):
         xmlElement = pXmlBaseElement(domElement)
+        print 'Printing pXmlBaseElement object...'
         print xmlElement
+        print
+        print 'Printing "enabled" attribute...'
         print xmlElement.evalAttribute('enabled')
-        print xmlElement.evalAttribute('enableds', None)
+        print 
+        print 'Printing "enableds" attribute (with default False)...'
+        print xmlElement.evalAttribute('enableds', False)
+        print
+        print 'Printing miscellanea...'
         print xmlElement.getElementsByTagName('parameter')
         print xmlElement.getElementsByTagName('parameters')
         print xmlElement.getElementByTagName('warning_limits')

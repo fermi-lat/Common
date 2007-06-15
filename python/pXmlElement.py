@@ -37,34 +37,20 @@ class pXmlElement(pXmlBaseElement):
         #  By default is True.
         
         pXmlBaseElement.__init__(self, domElement)
-        self.__Name    = self.getAttribute('name', '')
-        self.__Enabled = self.evalAttribute('enabled', True)
-
-    ## @brief Retrieve the "name" attribute of the element.
-    ## @param self
-    #  The class instance.
-
-    def getName(self):
-        return self.__Name
-
-    ## @brief Return the 'enabled' attribute of the element.
-    #
-    #  Note that the 'enabled' attribute sohould be defined for each
-    #  element.
-    ## @param self
-    #  The class instance.
-
-    def isEnabled(self):
-        return self.__Enabled
+        self.Name    = self.getAttribute('name', '')
+        self.Enabled = self.evalAttribute('enabled', True)
 
     ## @brief Class representation.
     ## @param self
-    #  The class instance. 
+    #  The class instance.
+
+    def getTextSummary(self):
+        return '%s\n' % pXmlBaseElement.getTextSummary(self) +\
+               'Name     : %s\n' % self.Name                 +\
+               'Enabled  : %s\n' % self.Enabled
 
     def __str__(self):
-        return '%s\n' % pXmlBaseElement.__str__(self) +\
-               'Name    : %s\n' % self.__Name         +\
-               'Enabled : %s\n' % self.__Enabled
+        return self.getTextSummary()
 
 
 if __name__ == '__main__':
@@ -72,4 +58,5 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     doc = minidom.parse(file('../xml/config.xml'))
     for element in doc.getElementsByTagName('alarmList'):
+        print 'Printing pXmlElement object...'
         print pXmlElement(element)
