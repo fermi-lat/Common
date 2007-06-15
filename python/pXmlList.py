@@ -42,7 +42,10 @@ class pXmlList(pXmlElement):
 	    xmlElement = pXmlElement(domElement)
 	    if xmlElement.Enabled:
 	      outputDict[xmlElement.Name] = domElement
-        return outputDict 
+        return outputDict
+
+    def getEnabledItems(self, elementName):
+        return self.getEnabledElementsDict(elementName).items()
 
     def getTextSummary(self):
         return pXmlElement.getTextSummary(self) +\
