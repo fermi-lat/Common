@@ -53,10 +53,14 @@ class pAlarmHandler:
         ## @var __RootObjectsDict
         ## @brief Dictionary containing all the objects in the input
         #  ROOT file, indexed by object name.
-        
+
+        logging.info('Instantiating the xml parser...')
         self.__XmlParser = pXmlAlarmParser(xmlConfigFilePath)
+        print self.__XmlParser
+        logging.info('Done.\n')
         if xmlSummaryFilePath == None:
-            xmlSummaryFilePath = os.path.abspath(rootFilePath).replace('.root', '.xml')
+            xmlSummaryFilePath = os.path.abspath(rootFilePath)
+            xmlSummaryFilePath = xmlSummaryFilePath.replace('.root', '.xml')
         self.__XmlSummaryFilePath = xmlSummaryFilePath
 	self.__RootFile = ROOT.TFile(rootFilePath)
         self.__RootObjectsDict = {}
@@ -72,13 +76,16 @@ class pAlarmHandler:
     #  The class instance.
 
     def __populateRootObjectsDict(self):
+        logging.info('Populating the dictionary of ROOT objects...')
         for i in range(self.__RootFile.GetListOfKeys().LastIndex()):
 	    key    = self.__RootFile.GetListOfKeys().At(i)
             name   = key.GetName()
 	    object = self.__RootFile.FindObjectAny(name)
             self.__RootObjectsDict[name] = object
+        logging.info('Done. %d objects found in the ROOT file.\n' %\
+                     len(self.__RootObjectsDict))
 
-    ## @brief Go through all the alarms set and identify in the ROOT
+    ## @brief Go through all the alarms sets and identify in the ROOT
     #  file the corresponding ROOT objects (i.e. plots).
     #
     #  At this moment the actual pAlarm objects are also created
@@ -87,8 +94,11 @@ class pAlarmHandler:
     #  The class instance.
 
     def __setAlarmSetsPlotLists(self):
+        logging.info('Assigning the plots to the alarm sets...')
         for alarmSet in self.__XmlParser.getEnabledAlarmSets():
-	    alarmSet.setPlotsList(self.__findRootObjects(alarmSet.getName()))
+	    alarmSet.setPlotsList(self.__findRootObjects(alarmSet.Name))
+        logging.info('Done. %d enabled alarm set(s) found.\n' %\
+                     len(self.__XmlParser.getEnabledAlarmSets()))
 
     ## @brief Return all the ROOT objects whose name matches a specified
     #  pattern into the __RootObjectsDict variable.
@@ -105,7 +115,8 @@ class pAlarmHandler:
     def __findRootObjects(self, pattern):
         objectsList = []
         for (key, value) in self.__RootObjectsDict.items():
-            if key==pattern or key.replace(pattern.replace('*', ''), '').isdigit():
+            if (key == pattern) or \
+                   key.replace(pattern.replace('*', ''), '').isdigit():
                 objectsList.append(value)
         return objectsList
 
@@ -115,8 +126,11 @@ class pAlarmHandler:
     #  The class instance.
     
     def activateAlarms(self):
+        logging.info('Activating the alarms...')
         for alarm in self.__XmlParser.getEnabledAlarms():
             alarm.activate()
+        logging.info('Done. %d enabled alarm(s) found.\n' %\
+                     len(self.__XmlParser.getEnabledAlarms()))
         if self.__printLevel != None:
             print self
         self.writeXmlSummaryFile()
