@@ -25,7 +25,7 @@ class pXmlAlarmList(pXmlList):
         ## @brief Dictionary containing all the enabled alarm sets.
         
         pXmlList.__init__(self, element)
-        self.__EnabledAlarmSetsDict = {}
+        self.EnabledAlarmSetsDict = {}
         self.__populateEnabledAlarmSetsDict()
 
     ## @brief Populate the list of enabled alarm sets.
@@ -35,18 +35,19 @@ class pXmlAlarmList(pXmlList):
     def __populateEnabledAlarmSetsDict(self):
         for domElement in self.getEnabledElementsDict('alarmSet').values():
             alarmSet = pAlarmSet(domElement)
-            self.__EnabledAlarmSetsDict[alarmSet.getName()] = alarmSet
+            self.EnabledAlarmSetsDict[alarmSet.Name] = alarmSet
 
-    ## @brief Return the dictionary of populated alarm sets.
-    ## @param self
-    #  The class instance.
+    def getTextSummary(self):
+        return pXmlList.getTextSummary(self) +\
+               'En. sets : %s\n' % self.EnabledAlarmSetsDict
 
-    def getEnabledAlarmSetsDict(self):
-        return self.__EnabledAlarmSetsDict
+    def __str__(self):
+        return self.getTextSummary()
+
 
 if __name__ == '__main__':
     from xml.dom  import minidom
     doc = minidom.parse(file('../xml/config.xml'))
     for element in doc.getElementsByTagName('alarmList'):
         alarmList =  pXmlAlarmList(element)
-        print alarmList.getEnabledAlarmSetsDict()
+        print alarmList
