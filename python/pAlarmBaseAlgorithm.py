@@ -16,6 +16,9 @@ class pAlarmBaseAlgorithm:
         self.checkParameters()
         self.Output = pAlarmOutput(limits)
 
+    def isValid(self):
+        return self.__RootObjectOK and self.__ParametersOK
+
     def getName(self):
         return self.__class__.__name__.strip('alg__')
 
@@ -25,15 +28,17 @@ class pAlarmBaseAlgorithm:
     def checkObjectType(self):
         if self.getObjectType() not in self.SUPPORTED_TYPES:
             self.__RootObjectOK = False
-            logging.error('Invalid object type (%s) for algorithm %s.' %\
-                          (self.getObjectType(), self.getName()))
+            logging.error('Invalid object type (%s) for %s. '    %\
+                          (self.getObjectType(), self.getName()) +\
+                          'The alarm will be ignored.')
 
     def checkParameters(self):
         for paramName in self.ParamsDict.keys():
             if paramName not in self.SUPPORTED_PARAMETERS:
                 self.__ParametersOK = False
-                logging.error('Invalid parameter (%s) for algorithm %s.' %\
-                              (paramName, self.getName()))
+                logging.error('Invalid parameter (%s) for %s.' %\
+                              (paramName, self.getName())      +\
+                              'The alarm will be ignored.')
 
     def apply(self):
         if not self.__RootObjectOK:
