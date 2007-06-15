@@ -158,7 +158,7 @@ class pAlarm(pXmlBaseElement):
     #  The class instance.
 
     def getTxtFormattedFunction(self):
-        return pUtils.expandString(self.__Function,\
+        return pUtils.expandString(self.FunctionName,\
                                    SUMMARY_COLUMNS_DICT['Function'])
 
     ## @brief Return the alarm status, formatted to be printed on the
@@ -167,7 +167,7 @@ class pAlarm(pXmlBaseElement):
     #  The class instance.
 
     def getTxtFormattedStatus(self):
-        return pUtils.expandString(self.__Status,\
+        return pUtils.expandString(self.getStatusLabel(),\
                                    SUMMARY_COLUMNS_DICT['Status'])
 
     ## @brief Return the output value of the alarm, formatted to be printed
@@ -176,7 +176,7 @@ class pAlarm(pXmlBaseElement):
     #  The class instance.
 
     def getTxtFormattedOutputValue(self):
-        return pUtils.expandNumber(self.__OutputValue,\
+        return pUtils.expandNumber(self.getOutputValue(),\
                                    SUMMARY_COLUMNS_DICT['Output'])
 
     ## @brief Return the alarm limits, formatted to be printed on the terminal.
@@ -184,8 +184,10 @@ class pAlarm(pXmlBaseElement):
     #  The class instance.
 
     def getTxtFormattedLimits(self):
-        limits = '[%s/%s, %s/%s]' % (self.__ErrorMin, self.__WarningMin,\
-                                     self.__WarningMax, self.__ErrorMax)
+        limits = '[%s/%s, %s/%s]' % (self.Limits.ErrorMin,  \
+                                     self.Limits.WarningMin,\
+                                     self.Limits.WarningMax,\
+                                     self.Limits.ErrorMax)
         return pUtils.expandString(limits,\
                                    SUMMARY_COLUMNS_DICT['Limits'])
 

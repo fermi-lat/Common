@@ -189,7 +189,7 @@ class pAlarmHandler:
     def getTxtFormattedSummary(self, level=1):
         summary = self.__getTxtFormattedSummaryHeader()
         for alarm in self.__XmlParser.getEnabledAlarms():
-            if alarm.getLevel() > level:
+            if alarm.getStatusLevel() > level:
                 summary += alarm.getTxtFormattedSummary()
         summary += self.__getHorizontalLine()
         return summary
