@@ -66,6 +66,9 @@ class pAlarmOutput:
     def setDictValue(self, key, value):
         self.__Dict[key] = value
 
+    def incrementDictValue(self, key, amount = 1):
+        self.__Dict[key] += amount
+
     def appendDictValue(self, key, value):
         try:
             self.__Dict[key].append(value)

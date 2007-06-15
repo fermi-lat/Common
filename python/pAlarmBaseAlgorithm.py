@@ -25,6 +25,18 @@ class pAlarmBaseAlgorithm:
     def getObjectType(self):
         return self.RootObject.Class().GetName()
 
+    def getErrorMin(self):
+        return self.Limits.ErrorMin
+
+    def getWarningMin(self):
+        return self.Limits.WarningMin
+
+    def getWarningMax(self):
+        return self.Limits.WarningMax
+
+    def getErrorMax(self):
+        return self.Limits.ErrorMax
+
     def checkObjectType(self):
         if self.getObjectType() not in self.SUPPORTED_TYPES:
             self.__RootObjectOK = False
