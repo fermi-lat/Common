@@ -4,8 +4,9 @@ import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
-## @brief Return position of the center of the first populated bin of
-#  the histogram on the x axis.
+## @brief Return position of the center of the last populated bin of
+#  the histogram on the x axis minus the center of the first populated bin of
+#  the histogram on the x .
 #
 #  Valid parameters: None.
 #
