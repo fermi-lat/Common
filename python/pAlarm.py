@@ -5,21 +5,11 @@
 import sys
 import logging
 import re
-
 import pUtils
-import pAlarmAlgorithms
-
 from pXmlBaseElement import pXmlBaseElement
+from pAlarmLimits import pAlarmLimits
 
-UNDEFINED_STATUS     = 'UNDEFINED'
-CLEAN_STATUS         = 'CLEAN'
-WARNING_STATUS       = 'WARNING'
-ERROR_STATUS         = 'ERROR'
-LEVELS_DICT          = {UNDEFINED_STATUS: 4,
-                        CLEAN_STATUS    : 1,
-                        WARNING_STATUS  : 2,
-                        ERROR_STATUS    : 3
-                        }
+
 SUMMARY_COLUMNS_LIST = ['Plot name',
                         'Function' ,
                         'Status'   ,
@@ -50,74 +40,32 @@ class pAlarm(pXmlBaseElement):
     ## @param plot
     #  The ROOT object the alarm is set on.
     
-    def __init__(self, domElement, plot):
-
-        ## @var __Plot
-        ## @brief The ROOT object the alarm is set on.
+    def __init__(self, domElement, rootObject):
 
         ## @var __Function
         ## @brief The type of the alarm (i.e. the specific algorithm).
-
-        ## @var __WarningMin
-        ## @brief The lower bound for the warning.
-
-        ## @var __WarningMax
-        ## @brief The higher bound for the warning.
-
-        ## @var __ErrorMin
-        ## @brief The lower bound for the error.
-
-        ## @var __ErrorMax
-        ## @brief The higher bound for the error.
-
-        ## @var __OutputValue
-        ## @brief The output value given by the algorithm implementing the
-        #  alarm.
-
-        ## @var __Status
-        ## @brief The alarm status.
-        #
-        #  Set to undefined at the beginning; after the alarm has been
-        #  activated it is either clean or warning or error.
 
         ## @var __ParamsDict
         ## @brief Dictionary of optional parameters to be passed to the
         #  algorithm implementing the alarm.
  
         pXmlBaseElement.__init__(self, domElement)
-	self.__Plot        = plot
-        self.__Function    = self.getAttribute('function')
-     	(self.__WarningMin, self.__WarningMax) = self.__getLimits('warning')
-	(self.__ErrorMin  , self.__ErrorMax  ) = self.__getLimits('error')
-        self.__OutputValue = None
-        self.__Status      = UNDEFINED_STATUS
-	self.__ParamsDict  = self.__getParametersDict()
-        self.__validateLimits()
+	self.RootObject      = rootObject
+     	(warnMin, warnMax)   = self.__getLimits('warning')
+	(errMin  , errMax  ) = self.__getLimits('error')
+        self.Limits          = pAlarmLimits(warnMin, warnMax, errMin, errMax)
+	self.ParamsDict      = self.__getParametersDict()
+        self.FunctionName    = self.getAttribute('function')
+        try:
+            exec('from alg__%s import alg__%s' % (self.FunctionName,\
+                                                  self.FunctionName))
+            self.Algorithm = eval('alg__%s(self.Limits, self.RootObject, ' %\
+                                  self.FunctionName + 'self.ParamsDict)' )
+        except ImportError:
+            logging.error('Could not import alg__%s. ' % self.FunctionName +\
+                          'The algorithm is not defined.')
+            self.Algorithm = None
 
-    ## @brief Make sure that the warning/error limits are set consistently
-    #  (i.e. the warning min is higher than the error min etc...).
-    ## @param self
-    #  The class instance.    
-
-    def __validateLimits(self):
-        if self.__WarningMin > self.__WarningMax:
-            logging.error('Warning min is higher than warning max ' +\
-                         'for function %s.' % self.__Function)
-            sys.exit('Check the xml config file. Aborting...')
-        if self.__ErrorMin > self.__ErrorMax:
-            logging.error('Error min is higher than error max ' +\
-                         'for function %s.' % self.__Function)
-            sys.exit('Check the xml config file. Aborting...')        
-        if self.__WarningMin < self.__ErrorMin:
-            logging.warn('Warning min is lower than error min ' +\
-                         'for function %s.' % self.__Function)
-            self.__ErrorMin = self.__WarningMin
-            logging.warn('Error min set to %s' % self.__WarningMin)
-        if self.__WarningMax > self.__ErrorMax:
-            logging.warn('Warning max is higher than error max ' +\
-                         'for function %s.' % self.__Function)
-            self.__ErrorMax = self.__WarningMax
-            logging.warn('Error min set to %s' % self.__WarningMax)
         
     ## @brief Return a pXmlBaseElement object containg the
     #  (either warning or error) limits for the alarm.
@@ -129,9 +77,9 @@ class pAlarm(pXmlBaseElement):
     def __getLimits(self, type):
         limits = pXmlBaseElement(self.getElementByTagName('%s_limits' % type))
         (low,high)= (limits.getAttribute('min'), limits.getAttribute('max'))
-        mean= str(self.__Plot.GetMean())
-        rms= str(self.__Plot.GetRMS())
-        entries= str(self.__Plot.GetEntries())
+        mean= str(self.RootObject.GetMean())
+        rms= str(self.RootObject.GetRMS())
+        entries= str(self.RootObject.GetEntries())
         low=low.upper().replace('RMS',rms)
         high=high.upper().replace('RMS',rms)
         low=low.upper().replace('MEAN',mean)
@@ -144,6 +92,7 @@ class pAlarm(pXmlBaseElement):
             logging.error('Could not eval limits. ' +\
                           'Returning None...' )
             return None
+
     ## @brief Retrieve the function parameters from the xml
     #  element.
     ## @param self
@@ -157,65 +106,69 @@ class pAlarm(pXmlBaseElement):
                            xmlElement.evalAttribute('value')
         return parametersDict
 
-    ## @brief Return True if the alarm Status is CLEAN_STATUS.
-    ## @param self
-    #  The class instance.
+    def getOutput(self):
+        if self.Algorithm is not None:
+            return self.Algorithm.Output
+        return None
 
+    def getStatus(self):
+        if self.Algorithm is not None:
+            return self.getOutput().getStatus()
+        return None
+
+    def getStatusLevel(self):
+        if self.Algorithm is not None:
+            return self.getOutput().getStatusLevel()
+        return None
+    
+    def getStatusLabel(self):
+        if self.Algorithm is not None:
+            return self.getOutput().getStatusLabel()
+        return None
+    
     def isClean(self):
-        return (self.__Status == CLEAN_STATUS)
-
-    ## @brief Return the alarm level correspnding to its status.
-    #
-    #  Used while printing on the terinal.
-    ## @param self
-    #  The class instance.
-
-    def getLevel(self):
-        return LEVELS_DICT[self.__Status]
-
+        if self.Algorithm is not None:
+            return self.getOutput().isClean()
+        return None
+    
+    def getOutputValue(self):
+        if self.Algorithm is not None:
+            return self.getOutput().getValue()
+        return None
+    
+    def getOutputDict(self):
+        if self.Algorithm is not None:
+            return self.getOutput().getDict()
+        return None
+    
+    def getOutputDictValue(self, key):
+        if self.Algorithm is not None:
+            return self.getOutput().getDictValue(key)
+        return None
+    
     ## @brief Activate the alarm (i.e. actually verify the plot).
     ## @param self
     #  The class instance.
 
     def activate(self):
-        if self.__Function in dir(pAlarmAlgorithms):
-            self.__OutputValue = eval(\
-                ('pAlarmAlgorithms.%s' % self.__Function)+\
-                '(self._pAlarm__Plot, self._pAlarm__ParamsDict)')
-	    self.__checkStatus()
+        if self.Algorithm is not None:
+            self.Algorithm.apply()
         else:
-            logging.error('Function %s() not implemented in the alarms.' %\
-                          self.__Function)
-
-    ## @brief Check the status of the alarm after it has been activated.
-    ## @param self
-    #  The class instance.    
-
-    def __checkStatus(self):
-        if self.__OutputValue is None:
-	    self.__Status = UNDEFINED_STATUS
-        elif (self.__OutputValue > self.__WarningMin)\
-                 and (self.__OutputValue < self.__WarningMax):
-            self.__Status = CLEAN_STATUS
-        elif (self.__OutputValue < self.__ErrorMin)\
-                 or (self.__OutputValue > self.__ErrorMax):	
-            self.__Status = ERROR_STATUS
-        else:
-            self.__Status = WARNING_STATUS
+            logging.warning('Skipping %s...' % self.FunctionName)
 
     ## @brief Return the name of the plot the alarm is set on.
     ## @param self
     #  The class instance.            
 
-    def getPlotName(self):
-        return self.__Plot.GetName()
+    def getRootObjectName(self):
+        return self.RootObject.GetName()
 
     ## @brief Return the plot name, formatted to be printed on the terminal.
     ## @param self
     #  The class instance.      
 
     def getTxtFormattedPlotName(self):
-        return pUtils.expandString(self.getPlotName(),\
+        return pUtils.expandString(self.getRootObjectName(),\
                                    SUMMARY_COLUMNS_DICT['Plot name'])
 
     ## @brief Return the alarm function, formatted to be printed on the
@@ -273,16 +226,16 @@ class pAlarm(pXmlBaseElement):
     #  The class instance.
     
     def getXmlFormattedSummary(self):
-        summary = '<plot name="%s">\n' % self.getPlotName() +\
-                  '    <alarm function="%s">\n' % self.__Function
-        for item in self.__ParamsDict.items():
+        summary = '<plot name="%s">\n' % self.getRootObjectName() +\
+                  '    <alarm function="%s">\n' % self.FunctionName
+        for item in self.ParamsDict.items():
             summary += '        <parameter name="%s" value="%s"/>\n' % item
         summary += '        <warning_limits min="%s" max="%s"/>\n' %\
-                   (self.__WarningMin, self.__WarningMax) +\
+                   (self.Limits.WarningMin, self.Limits.WarningMax) +\
                    '        <error_limits min="%s" max="%s"/>\n' %\
-                   (self.__ErrorMin, self.__ErrorMax) +\
-                   '        <output>%s</output>\n' % self.__OutputValue +\
-                   '        <status>%s</status>\n' % self.__Status.lower() +\
+                   (self.Limits.ErrorMin, self.Limits.ErrorMax) +\
+                   '        <output>%s</output>\n' % self.getOutputValue() +\
+                   '        <status>%s</status>\n' % self.getStatusLabel() +\
                    '    </alarm>\n' +\
                    '</plot>\n'
         return summary
