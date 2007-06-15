@@ -14,8 +14,6 @@ clean:
 	rm -f pTKRcontributionIterator.py
 	rm -f pCALcontributionIterator.py
 	rm -f pAEMcontributionIterator.py
-	rm -f output.xml
-	rm -f test.root
 
 view:
 	htmlview ./doc/html/index.html &

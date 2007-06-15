@@ -40,17 +40,21 @@ class pXmlList(pXmlElement):
         outputDict = {}
         for domElement in self.getElementsByTagName(elementName):
 	    xmlElement = pXmlElement(domElement)
-	    if xmlElement.isEnabled():
-	      outputDict[xmlElement.getName()] = domElement
+	    if xmlElement.Enabled:
+	      outputDict[xmlElement.Name] = domElement
         return outputDict 
+
+    def getTextSummary(self):
+        return pXmlElement.getTextSummary(self) +\
+               'Group    : %s\n' % self.Group
 
     ## @brief Class representation.
     ## @param self
     #  The class instance.
 
     def __str__(self):
-        return pXmlElement.__str__(self)       +\
-               'Group   : %s\n' % self.Group
+        return self.getTextSummary()
+
 
 
 if __name__ == '__main__':
