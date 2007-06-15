@@ -28,28 +28,14 @@ class pXmlBaseElement:
 
     def __init__(self, domElement):
 
-        ## @var __DomElement
+        ## @var DomElement
         #  @brief The underlying xml.dom.minidom element.
 
-        ## @var __NodeName
+        ## @var NodeName
         #  The node name of the element.
 
-        self.__DomElement = domElement
-        self.__NodeName   = self.__DomElement.nodeName
-
-    ## @brief Return the underlying dom element.
-    ## @param self
-    #  The class instance.
-    
-    def getDomElement(self):
-        return self.__DomElement
-
-    ## @brief Return the node name.
-    ## @param self
-    #  The class instance.
-
-    def getNodeName(self):
-        return self.__NodeName
+        self.DomElement = domElement
+        self.NodeName   = self.DomElement.nodeName
 
     ## @brief Return the attribute corresponing to a given attribute name.
     #
@@ -65,10 +51,10 @@ class pXmlBaseElement:
     #  The default value (returned if the attribute does not exist).
 
     def getAttribute(self, attributeName, default=None):
-        attribute = str(self.__DomElement.getAttribute(attributeName))
+        attribute = str(self.DomElement.getAttribute(attributeName))
         if attribute == '':
-            logging.debug('Could not find attribute "%s" for node "%s". ' %\
-                          (attributeName, self.__NodeName)                +\
+            logging.debug('Could not find attribute %s for node %s. ' %\
+                          (attributeName, self.NodeName)              +\
                           'Returning "%s"...' % default)
             attribute = default
         return attribute
@@ -107,7 +93,7 @@ class pXmlBaseElement:
     #  The tag name
     
     def getElementsByTagName(self, tagName):
-        return self.__DomElement.getElementsByTagName(tagName)
+        return self.DomElement.getElementsByTagName(tagName)
 
     ## @brief Return a single dom element corresponding to a given tag name.
     #
@@ -174,12 +160,16 @@ class pXmlBaseElement:
         except:
             return default
 
+    def getTextSummary(self):
+        return '** pXmlBaseElement Summary **\n' +\
+               'Node name: %s' % self.NodeName 
+
     ## @brief Class representation.
     ## @param self
     #  The class instance.  
 
     def __str__(self):
-        return 'NodeName: %s' % self.NodeName
+        return self.getTextSummary()
 
 
 if __name__ == '__main__':
@@ -190,7 +180,7 @@ if __name__ == '__main__':
         xmlElement = pXmlBaseElement(domElement)
         print xmlElement
         print xmlElement.evalAttribute('enabled')
-        print xmlElement.evalAttribute('enableds', True)
+        print xmlElement.evalAttribute('enableds', None)
         print xmlElement.getElementsByTagName('parameter')
         print xmlElement.getElementsByTagName('parameters')
         print xmlElement.getElementByTagName('warning_limits')
