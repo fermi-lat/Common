@@ -32,8 +32,8 @@ class pAlarmSet(pXmlElement):
         ## @brief The list of enabled alarms within the set.
         
         pXmlElement.__init__(self, domElement)
-	self.__PlotsList         = []
-	self.__EnabledAlarmsList = []
+	self.PlotsList         = []
+	self.EnabledAlarmsList = []
 
     ## @brief Set the plot list for the alarm set.
     #
@@ -46,15 +46,8 @@ class pAlarmSet(pXmlElement):
     #  The list of plots.
 	
     def setPlotsList(self, plotsList):
-        self.__PlotsList = plotsList
+        self.PlotsList = plotsList
 	self.__populateEnabledAlarmsList()
-
-    ## @brief Return the plot list.
-    ## @param self
-    #  The class instance.
-
-    def getPlotsList(self):
-        return self.__PlotsList
 
     ## @brief Populate the list of enabled alarms.
     #
@@ -67,12 +60,6 @@ class pAlarmSet(pXmlElement):
         for element in self.getElementsByTagName('alarm'):
 	    xmlElement = pXmlElement(element)
 	    if xmlElement.isEnabled():
-	        for plot in self.__PlotsList:
-	            self.__EnabledAlarmsList.append(pAlarm(element, plot))
-
-    ## @brief Return the list of enabled alarms.
-    ## @param self
-    #  The class instance.
-		
-    def getEnabledAlarmsList(self):
-        return self.__EnabledAlarmsList
+	        for plot in self.PlotsList:
+	            self.EnabledAlarmsList.append(pAlarm(element, plot))
+                    
