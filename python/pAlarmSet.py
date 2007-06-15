@@ -61,5 +61,7 @@ class pAlarmSet(pXmlElement):
 	    xmlElement = pXmlElement(element)
 	    if xmlElement.Enabled:
 	        for plot in self.PlotsList:
-	            self.EnabledAlarmsList.append(pAlarm(element, plot))
+                    alarm = pAlarm(element, plot)
+                    if alarm.Algorithm is not None:
+                        self.EnabledAlarmsList.append(alarm)
                     

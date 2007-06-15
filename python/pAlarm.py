@@ -63,7 +63,7 @@ class pAlarm(pXmlBaseElement):
                                   self.FunctionName + 'self.ParamsDict)' )
         except ImportError:
             logging.error('Could not import alg__%s. ' % self.FunctionName +\
-                          'The algorithm is not defined.')
+                          'The alarm will be ignored.')
             self.Algorithm = None
 
         
@@ -107,54 +107,35 @@ class pAlarm(pXmlBaseElement):
         return parametersDict
 
     def getOutput(self):
-        if self.Algorithm is not None:
-            return self.Algorithm.Output
-        return None
+        return self.Algorithm.Output
 
     def getStatus(self):
-        if self.Algorithm is not None:
-            return self.getOutput().getStatus()
-        return None
+        return self.getOutput().getStatus()
 
     def getStatusLevel(self):
-        if self.Algorithm is not None:
-            return self.getOutput().getStatusLevel()
-        return None
+        return self.getOutput().getStatusLevel()
     
     def getStatusLabel(self):
-        if self.Algorithm is not None:
-            return self.getOutput().getStatusLabel()
-        return None
+        return self.getOutput().getStatusLabel()
     
     def isClean(self):
-        if self.Algorithm is not None:
-            return self.getOutput().isClean()
-        return None
+        return self.getOutput().isClean()
     
     def getOutputValue(self):
-        if self.Algorithm is not None:
-            return self.getOutput().getValue()
-        return None
+        return self.getOutput().getValue()
     
     def getOutputDict(self):
-        if self.Algorithm is not None:
-            return self.getOutput().getDict()
-        return None
+        return self.getOutput().getDict()
     
     def getOutputDictValue(self, key):
-        if self.Algorithm is not None:
-            return self.getOutput().getDictValue(key)
-        return None
+        return self.getOutput().getDictValue(key)
     
     ## @brief Activate the alarm (i.e. actually verify the plot).
     ## @param self
     #  The class instance.
 
     def activate(self):
-        if self.Algorithm is not None:
-            self.Algorithm.apply()
-        else:
-            logging.warning('Skipping %s...' % self.FunctionName)
+        self.Algorithm.apply()
 
     ## @brief Return the name of the plot the alarm is set on.
     ## @param self
