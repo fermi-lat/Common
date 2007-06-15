@@ -4,35 +4,51 @@ import logging
 import pUtils
 import pAlarm
 
+
+STATUS_CLEAN     = {'level': 1, 'label': 'CLEAN'}
+STATUS_WARNING   = {'level': 2, 'label': 'WARNING'}
+STATUS_ERROR     = {'level': 3, 'label': 'ERROR'}
+STATUS_UNDEFINED = {'level': 4, 'label': 'UNDEFINED'}
+
+
 class pAlarmOutput:
 
     def __init__(self, limits):
         self.__Limits = limits
         self.__Value  = None
-        self.__Status = pAlarm.UNDEFINED_STATUS
+        self.__Status = STATUS_UNDEFINED
         self.__Dict   = {}
 
     def getValue(self):
-        return self.__OutputValue
+        return self.__Value
 
     def setValue(self, value):
         self.__Value = value
-        self.processValue()
+        self.__processValue()
 
-    def processValue(self):
+    def __processValue(self):
         if self.__Value is None:
-	    self.__Status = pAlarm.UNDEFINED_STATUS
+	    self.__Status = STATUS_UNDEFINED
         elif (self.__Value > self.__Limits.WarningMin)\
                  and (self.__Value < self.__Limits.WarningMax):
-            self.__Status = pAlarm.CLEAN_STATUS
+            self.__Status = STATUS_CLEAN
         elif (self.__Value < self.__Limits.ErrorMin)\
                  or (self.__Value > self.__Limits.ErrorMax):	
-            self.__Status = pAlarm.ERROR_STATUS
+            self.__Status = STATUS_ERROR
         else:
-            self.__Status = pAlarm.WARNING_STATUS
+            self.__Status = STATUS_WARNING
 
     def getStatus(self):
         return self.__Status
+
+    def getStatusLevel(self):
+        return self.getStatus()['level']
+
+    def getStatusLabel(self):
+        return self.getStatus()['label']
+
+    def isClean(self):
+        return (self.getStatus() == STATUS_CLEAN) 
 
     def setStatus(self, status):
         self.__Status = status
