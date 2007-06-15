@@ -1,0 +1,45 @@
+
+import ROOT
+
+from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
+
+
+## @brief Return the rms of a gaussian fit to the plot.
+#
+#  @todo Implement support for fitting in a subrange (min and max not
+#  used, at the moment).
+#
+#  Valid parameters:
+#  @li <tt>min</tt>: the minimum x value for the fit.
+#  @li <tt>max</tt>: the maximum x value for the fit.
+#
+## @param plot
+#  The ROOT object.
+## @param paramsDict
+#  The (optional) dictionary of parameters.
+
+class alg__gauss_rms(pAlarmBaseAlgorithm):
+
+    SUPPORTED_TYPES      = ['TH1F']
+    SUPPORTED_PARAMETERS = ['min', 'max']
+
+    def __init__(self, limits, object, paramsDict = {}):
+        pAlarmBaseAlgorithm.__init__(self, limits, object, paramsDict)
+
+    def run(self):
+        self.adjustXRange()
+        gaussian = ROOT.TF1('g', 'gaus')
+        self.RootObject.Fit(gaussian, 'QN')
+        self.Output.setValue(gaussian.GetParameter(2))
+        self.resetXRange()
+
+
+if __name__ == '__main__':
+    from pAlarmLimits import pAlarmLimits
+    limits = pAlarmLimits(1, 2, 0, 3)
+    histogram = ROOT.TH1F('h', 'h', 100, -5, 5)
+    histogram.FillRandom('gaus', 1000)
+    dict = {}
+    algorithm = alg__gauss_rms(limits, histogram, dict)
+    algorithm.apply()
+    print algorithm.Output
