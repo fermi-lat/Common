@@ -69,7 +69,7 @@ class pXmlAlarmParser:
     def getEnabledAlarms(self):
         alarmsList = []
         for alarmSet in self.getEnabledAlarmSets():
-	    for alarm in alarmSet.getEnabledAlarmsList():
+	    for alarm in alarmSet.EnabledAlarmsList:
                 alarmsList.append(alarm)
         return alarmsList
 

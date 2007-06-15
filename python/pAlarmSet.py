@@ -59,7 +59,7 @@ class pAlarmSet(pXmlElement):
     def __populateEnabledAlarmsList(self):
         for element in self.getElementsByTagName('alarm'):
 	    xmlElement = pXmlElement(element)
-	    if xmlElement.isEnabled():
+	    if xmlElement.Enabled:
 	        for plot in self.PlotsList:
 	            self.EnabledAlarmsList.append(pAlarm(element, plot))
                     
