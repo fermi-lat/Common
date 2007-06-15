@@ -46,8 +46,8 @@ class pXmlElement(pXmlBaseElement):
 
     def getTextSummary(self):
         return '%s\n' % pXmlBaseElement.getTextSummary(self) +\
-               'Name     : %s\n' % self.Name                 +\
-               'Enabled  : %s\n' % self.Enabled
+               'Name     : %s\n' % self.Name +\
+               'Enabled  : %s' % self.Enabled
 
     def __str__(self):
         return self.getTextSummary()

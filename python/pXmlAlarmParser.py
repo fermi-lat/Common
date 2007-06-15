@@ -75,8 +75,8 @@ class pXmlAlarmParser:
 
     def getTextSummary(self):
         return 'Configuration file %s contains:\n' % self.XmlConfigFilePath +\
-               '%d alarm list(s)\n'        % len(self.AlarmListsDict)       +\
-               '%d enabled alarm set(s)\n' % len(self.EnabledAlarmSetsDict)
+               '%d alarm list(s)\n' % len(self.AlarmListsDict) +\
+               '%d enabled alarm set(s)' % len(self.EnabledAlarmSetsDict)
 
     def __str__(self):
         return self.getTextSummary()

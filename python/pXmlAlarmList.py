@@ -39,7 +39,7 @@ class pXmlAlarmList(pXmlList):
 
     def getTextSummary(self):
         return pXmlList.getTextSummary(self) +\
-               'En. sets : %s\n' % self.EnabledAlarmSetsDict
+               'En. sets : %s' % self.EnabledAlarmSetsDict
 
     def __str__(self):
         return self.getTextSummary()

@@ -49,7 +49,7 @@ class pXmlList(pXmlElement):
 
     def getTextSummary(self):
         return pXmlElement.getTextSummary(self) +\
-               'Group    : %s\n' % self.Group
+               'Group    : %s' % self.Group
 
     ## @brief Class representation.
     ## @param self
