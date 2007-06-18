@@ -8,7 +8,7 @@
     <alarmList group="TKR" name="TKR base" enabled="True">
 
 
-       <alarmSet name="tkr_tower_strip_count_tower_*" enabled="False">
+       <alarmSet name="tkr_tower_strip_count_tower_*" enabled="True">
          <alarm function="x_average" enabled="True">
             <parameter name="min" value="1.3"/>
             <parameter name="max" value="12.0"/>
@@ -45,10 +45,10 @@
 	 </alarm> 
        </alarmSet>       
 
-       <alarmSet name="Time" expression="nEvents" enabled="True">
+       <alarmSet name="Time/nEvents" enabled="True">
          <alarm function="values" enabled="True">
-            <warning_limits min="4000" max="6000"/>
-            <error_limits min="3500" max="6500"/>
+            <warning_limits min="4500" max="5000"/>
+            <error_limits min="4000" max="5500"/>
 	 </alarm> 
        </alarmSet>       
 

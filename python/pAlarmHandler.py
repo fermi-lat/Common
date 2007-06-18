@@ -36,10 +36,8 @@ class pAlarmHandler:
     #
     #  Used by the web tools for visualization.
 
-    def __init__(self, rootFilePath,\
-                 xmlConfigFilePath,
-                 xmlSummaryFilePath = None,\
-                 printLevel = None):
+    def __init__(self, rootFilePath, xmlConfigFilePath,\
+                 xmlSummaryFilePath = None, printLevel = None):
 
         ## @var __XmlParser
         ## @brief The base xml parser.
@@ -115,9 +113,11 @@ class pAlarmHandler:
     def __findRootObjects(self, pattern):
         objectsList = []
         for (key, value) in self.__RootObjectsDict.items():
-            if (key == pattern) or \
+            if key == pattern or \
                    key.replace(pattern.replace('*', ''), '').isdigit():
                 objectsList.append(value)
+            elif key == pattern.split('/')[0]:
+                objectsList.append(value.GetBranch(pattern.split('/')[1]))
         return objectsList
 
     ## @brief Activate all the alarms (i.e. dive into the ROOT file and
