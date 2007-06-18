@@ -10,10 +10,6 @@ cleandoc:
 
 clean:
 	rm -f *~ .*~ *.pyc *.pyo
-	rm -f pGEMcontribution.py 
-	rm -f pTKRcontributionIterator.py
-	rm -f pCALcontributionIterator.py
-	rm -f pAEMcontributionIterator.py
 
 view:
 	htmlview ./doc/html/index.html &
