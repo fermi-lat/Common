@@ -10,19 +10,22 @@ import pUtils
 
 class pBaseReportGenerator:
 
-    DOXY_CONFIG_FILE_NAME = 'config.doxygen'
-    DOXY_MAIN_FILE_NAME   = 'mainpage.doxygen'
-    HTML_DIR_NAME         = 'html'
-    LATEX_DIR_NAME        = 'latex'
+    CONFIG_FILE_NAME = 'config.doxygen'
+    MAIN_PAGE_NAME   = 'mainpage'
+    HTML_DIR_NAME    = 'html'
+    LATEX_DIR_NAME   = 'latex'
     
-    def __init__(self, outputDirPath, forceOverwrite=True):
+    def __init__(self, outputDirPath, mainPageTitle, forceOverwrite=True):
         self.OutputDirPath  = outputDirPath
+        self.MainPageTitle  = mainPageTitle
         self.ForceOverwrite = forceOverwrite
         self.HtmlDirPath    = os.path.join(self.OutputDirPath,\
                                            self.HTML_DIR_NAME)
         self.LatexDirPath   = os.path.join(self.OutputDirPath,\
                                            self.LATEX_DIR_NAME)
-        self.DoxyMainFile   = None
+        self.ConfigFilePath = os.path.join(self.OutputDirPath,
+                                           self.CONFIG_FILE_NAME)
+        self.DoxyFilesDict  = {}
     
     
     ## @brief Create the output directory for the report.
@@ -76,37 +79,28 @@ class pBaseReportGenerator:
     ## @param filePath
     #  The file path.
 
-    def openOutputFile(self, filePath):
+    def openOutputFile(self, filePath, mode = 'w'):
         try:
-            return file(filePath, 'w')
+            return file(filePath, mode)
         except:
             sys.exit('Could not open output file %s' % filePath)
 
-        ## @brief Create the doxygen configuration file.
-    ## @param self
-    #  The class instance.  
-
-    def createDoxyConfigFile(self):
-        filePath   = os.path.join(self.OutputDirPath,\
-                                  self.DOXY_CONFIG_FILE_NAME)
-        configFile = self.openOutputFile(filePath)
-        configFile.writelines('FILE_PATTERNS=%s\n' % self.DOXY_MAIN_FILE_NAME)
+    def addPage(self, pageName, pageTitle):
+        pageFileName = '%s.doxygen' % pageName.lower().replace(' ', '_')
+        filePath = os.path.join(self.OutputDirPath, pageFileName)
+        self.DoxyFilesDict[pageName] = self.openOutputFile(filePath)
+        self.writePageHeader(pageName, pageTitle)
+        if not os.path.exists(self.ConfigFilePath):
+            configFile = self.openOutputFile(self.ConfigFilePath)
+            configFile.writelines('FILE_PATTERNS = %s '% pageFileName)
+        else:
+            configFile = self.openOutputFile(self.ConfigFilePath, 'a')
+            configFile.writelines('%s '% pageFileName)
         configFile.close()
-
-    ## @brief Open the doxygen main page file.
-    ## @param self
-    #  The class instance.
-
-    def openDoxyMainFile(self):
-        filePath = os.path.join(self.OutputDirPath, self.DOXY_MAIN_FILE_NAME)
-        self.DoxyMainFile = self.openOutputFile(filePath)
-
-    ## @brief Close the doxygen main page file.
-    ## @param self
-    #  The class instance.
     
-    def closeDoxyMainFile(self):
-        self.DoxyMainFile.close()
+    def closeDoxyFiles(self):
+        for file in self.DoxyFilesDict.values():
+            file.close()
 
     ## @brief Write a line to the doxygen main page file.
     ## @param self
@@ -114,23 +108,25 @@ class pBaseReportGenerator:
     ## @param line
     #  The ilne to be written.
 
-    def write(self, line):
-        self.DoxyMainFile.writelines(line)
+    def write(self, line, page = MAIN_PAGE_NAME):
+        self.DoxyFilesDict[page].writelines(line)
 
     ## @brief Write a carriage return to the doxygen main page file.
     ## @param self
     #  The class instance.  
 
-    def skipLine(self):
-        self.write('\n')
+    def newline(self, page = MAIN_PAGE_NAME):
+        self.write('\n', page)
 
-    ## @brief Write the header in the doxygen main page file.
-    ## @param self
-    #  The class instance.
+    def writePageHeader(self, pageName, pageTitle):
+        if pageName == self.MAIN_PAGE_NAME:
+            header = '/** @%s %s\n' % (pageName, pageTitle)
+        else:
+            header = '/** @page %s %s\n' % (pageName, pageTitle)
+        self.write(header, pageName)
 
-    def writeHeader(self, author = 'automatically generated'):
-        header = '/** @mainpage Fast monitor report\n'                    +\
-                 '@htmlonly\n'                                            +\
+    def writeMainHeader(self, author = 'automatically generated'):
+        header = '@htmlonly\n'                                            +\
                  '<center>\n'                                             +\
                  '<a href="../latex/refman.ps" > PS report  </a> &nbsp\n' +\
                  '<a href="../latex/refman.pdf"> PDF report </a>\n'       +\
@@ -139,15 +135,16 @@ class pBaseReportGenerator:
                  '@author %s \n' % author                                 +\
                  '@date %s\n' % time.asctime()
         self.write(header)
-        self.skipLine()
+        self.newline()
 
     ## @brief Write the trailer in the doxygen main page file.
     ## @param self
     #  The class instance.
 
-    def writeTrailer(self):
-        self.skipLine()
-        self.write('*/')
+    def writeTrailers(self):
+        for pageName in self.DoxyFilesDict.keys():
+            self.newline(pageName)
+            self.write('*/', pageName)
 
     ## @brief Add a section to the doxygen main page file.
     ## @param self
@@ -157,10 +154,10 @@ class pBaseReportGenerator:
     ## @param name
     #  The section name.
 
-    def addSection(self, label, name):
-        self.skipLine()
-        self.write('@section %s %s\n' % (label, name))
-        self.skipLine()
+    def addSection(self, label, name, page = MAIN_PAGE_NAME):
+        self.newline(page)
+        self.write('@section %s %s\n' % (label, name), page)
+        self.newline(page)
 
     ## @brief Run doxygen on the main page.
     ## @param self
@@ -170,7 +167,7 @@ class pBaseReportGenerator:
         logging.info('Running doxygen...')
         startTime = time.time()
         command = 'cd %s; doxygen %s' % (self.OutputDirPath,\
-                                         self.DOXY_CONFIG_FILE_NAME)
+                                         self.CONFIG_FILE_NAME)
         if verbose:
             os.system(command)
         else:
@@ -193,13 +190,12 @@ class pBaseReportGenerator:
 
     def openReport(self):
         self.createDirs()
-        self.createDoxyConfigFile()
-        self.openDoxyMainFile()
-        self.writeHeader()
+        self.addPage(self.MAIN_PAGE_NAME, self.MainPageTitle)
+        self.writeMainHeader()
 
     def closeReport(self):
-        self.writeTrailer()
-        self.closeDoxyMainFile()
+        self.writeTrailers()
+        self.closeDoxyFiles()
 
     def compileReport(self):
         self.doxygenate()
@@ -208,9 +204,10 @@ class pBaseReportGenerator:
 
 if __name__ == '__main__':
     logging.basicConfig(level = logging.DEBUG)
-    generator = pBaseReportGenerator('./report')
+    generator = pBaseReportGenerator('./report', 'Base report')
     generator.openReport()
     generator.addSection('test', 'test')
+    generator.addPage('details', 'Detailed page')
     generator.closeReport()
     generator.compileReport()
 
