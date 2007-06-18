@@ -159,6 +159,85 @@ class pBaseReportGenerator:
         self.write('@section %s %s\n' % (label, name), page)
         self.newline(page)
 
+    def __LaTeXTableHeader(self, caption):
+        header = '@latexonly\n'               +\
+                 '\\begin{table}[!htb]\n'      +\
+                 '\\begin{center}\n'           +\
+                 '\\caption{%s}\n' % (caption) +\
+                 '\\label{%s}\n' % (caption)
+        return header
+
+    def __LaTeXTableHeaderRow(self, items):
+        line = '\\begin{tabular}{|'
+        for i in items:
+            line += "c|"
+        line += '}\n\\hline\n' + self.__LaTeXTableRow(items) +\
+                '\\hline\n\\hline\n'
+        return line
+
+    def __LaTeXTableRow(self, items):
+        line = ''
+        for item in items:
+            line += str(item) + ' & '
+        line = line[:-3] + '\\\\ \n\hline\n'
+        return pUtils.formatForLatex(line)
+
+    def __LaTeXTableTrailer(self):
+        trailer = '\end{tabular}\n'   +\
+                  '\end{center}\n'   +\
+                  '\end{table}\n'   +\
+                  '@endlatexonly\n\n'
+        return trailer
+
+    def writeLaTeXTable(self, header, rows, caption = '',\
+                       pageName = MAIN_PAGE_NAME):
+        
+        self.write(self.__LaTeXTableHeader(caption), pageName)
+        self.write(self.__LaTeXTableHeaderRow(header), pageName)
+        for row in rows:
+            self.write(self.__LaTeXTableRow(row), pageName)
+        self.write(self.__LaTeXTableTrailer(), pageName)
+    
+    def __htmlTableHeader(self, caption):
+        header = '@htmlonly\n'                         +\
+                 '<table border="1" width="100%">\n'   +\
+                 '<caption>%s</caption>\n' % (caption)
+        return header
+
+    def __htmlTableHeaderRow(self, items):
+        return self.__htmlTableRow(items, True)
+
+    def __htmlTableRow(self, items, bold = False):
+        row = '<tr>\n'
+        for item in items:
+            row += '%s\n' % self.__htmlTableCell(item, bold)
+        row += '</tr>\n'
+        return row
+
+    def __htmlTableCell(self, item, bold = False):
+        if not bold:
+            return '<td>%s</td>' % item
+        else:
+            return '<td><b>%s</b></td>' % item
+
+    def __htmlTableTrailer(self):
+        trailer = '</table>\n'   +\
+                  '@endhtmlonly\n\n'
+        return trailer
+
+    def writeHtmlTable(self, header, rows, caption = '',\
+                       pageName = MAIN_PAGE_NAME):
+        self.write(self.__htmlTableHeader(caption), pageName)
+        self.write(self.__htmlTableHeaderRow(header), pageName)
+        for row in rows:
+            self.write(self.__htmlTableRow(row), pageName)
+        self.write(self.__htmlTableTrailer(), pageName)
+
+    def writeTable(self, header, rows, caption = '',\
+                       pageName = MAIN_PAGE_NAME):
+        self.writeHtmlTable(header, rows, caption, pageName)
+        self.writeLaTeXTable(header, rows, caption, pageName)
+
     ## @brief Run doxygen on the main page.
     ## @param self
     #  The class instance.
@@ -207,6 +286,10 @@ if __name__ == '__main__':
     generator = pBaseReportGenerator('./report', 'Base report')
     generator.openReport()
     generator.addSection('test', 'test')
+    tableHeader = ['a', 'b', 'c'] 
+    tableRows   = [['my_test', 2, 3],
+                   [4, 5, 6]]
+    generator.writeTable(tableHeader, tableRows, 'Howdy, partner?')
     generator.addPage('details', 'Detailed page')
     generator.closeReport()
     generator.compileReport()
