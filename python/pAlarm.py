@@ -51,9 +51,7 @@ class pAlarm(pXmlBaseElement):
  
         pXmlBaseElement.__init__(self, domElement)
 	self.RootObject      = rootObject
-     	(warnMin, warnMax)   = self.__getLimits('warning')
-	(errMin  , errMax  ) = self.__getLimits('error')
-        self.Limits          = pAlarmLimits(warnMin, warnMax, errMin, errMax)
+        self.Limits          = self.__getLimits()
 	self.ParamsDict      = self.__getParametersDict()
         self.FunctionName    = self.getAttribute('function')
         try:
@@ -67,30 +65,48 @@ class pAlarm(pXmlBaseElement):
             self.Algorithm = None
 
         
-    ## @brief Return a pXmlBaseElement object containg the
-    #  (either warning or error) limits for the alarm.
-    ## @param self
-    #  The class instance.
-    ## @param type
-    #  The type of the limits (either warning or error).
+    ## @brief
 
-    def __getLimits(self, type):
-        limits = pXmlBaseElement(self.getElementByTagName('%s_limits' % type))
-        (low,high)= (limits.getAttribute('min'), limits.getAttribute('max'))
-        mean= str(self.RootObject.GetMean())
-        rms= str(self.RootObject.GetRMS())
-        entries= str(self.RootObject.GetEntries())
-        low=low.upper().replace('RMS',rms)
-        high=high.upper().replace('RMS',rms)
-        low=low.upper().replace('MEAN',mean)
-        high=high.upper().replace('MEAN',mean)
-        low=low.upper().replace('ENTRIES',entries)
-        high=high.upper().replace('ENTRIES',entries)
+    def __getLimits(self):
+        warnLims = pXmlBaseElement(self.getElementByTagName('warning_limits'))
+        warnMin  = warnLims.getAttribute('min')
+        warnMax  = warnLims.getAttribute('max')
+        errLims  = pXmlBaseElement(self.getElementByTagName('error_limits'))
+        errMin   = errLims.getAttribute('min')
+        errMax   = errLims.getAttribute('max')
+        strLims  = '%s%s%s%s' % (warnMin, warnMax, errMin, errMax)
+        if 'MEAN' in strLims:
+            mean = str(self.RootObject.GetMean())
+        else:
+            mean = ''
+        if 'RMS' in strLims:
+            rms = str(self.RootObject.GetRMS())
+        else:
+            rms = ''
+        if 'ENTRIES' in strLims:
+            entries = str(self.RootObject.GetEntries())
+        else:
+            entries = ''
+        warnMin  = warnMin.upper().replace('MEAN', mean)
+        warnMin  = warnMin.upper().replace('RMS', rms)
+        warnMin  = warnMin.upper().replace('ENTRIES', entries)
+        warnMin  = eval(warnMin)
+        warnMax  = warnMax.upper().replace('MEAN', mean)
+        warnMax  = warnMax.upper().replace('RMS', rms)
+        warnMax  = warnMax.upper().replace('ENTRIES', entries)
+        warnMax  = eval(warnMax)
+        errMin   = errMin.upper().replace('MEAN', mean)
+        errMin   = errMin.upper().replace('RMS', rms)
+        errMin   = errMin.upper().replace('ENTRIES', entries)
+        errMin   = eval(errMin)
+        errMax   = errMax.upper().replace('MEAN', mean)
+        errMax   = errMax.upper().replace('RMS', rms)
+        errMax   = errMax.upper().replace('ENTRIES', entries)
+        errMax   = eval(errMax)
         try:
-            return(eval(low),eval(high))
+            return pAlarmLimits(warnMin, warnMax, errMin, errMax)
         except:
-            logging.error('Could not eval limits. ' +\
-                          'Returning None...' )
+            logging.error('Could not eval limits. Returning None...' )
             return None
 
     ## @brief Retrieve the function parameters from the xml
