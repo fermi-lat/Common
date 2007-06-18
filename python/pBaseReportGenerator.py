@@ -190,8 +190,7 @@ class pBaseReportGenerator:
         return trailer
 
     def writeLaTeXTable(self, header, rows, caption = '',\
-                       pageName = MAIN_PAGE_NAME):
-        
+                       pageName = MAIN_PAGE_NAME):        
         self.write(self.__LaTeXTableHeader(caption), pageName)
         self.write(self.__LaTeXTableHeaderRow(header), pageName)
         for row in rows:
@@ -291,6 +290,7 @@ if __name__ == '__main__':
                    [4, 5, 6]]
     generator.writeTable(tableHeader, tableRows, 'Howdy, partner?')
     generator.addPage('details', 'Detailed page')
+    generator.writeTable(tableHeader, tableRows, 'Second Test', 'details' )
     generator.closeReport()
     generator.compileReport()
 
