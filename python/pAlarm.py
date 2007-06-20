@@ -195,16 +195,18 @@ class pAlarm(pXmlBaseElement):
         return pUtils.expandNumber(self.getOutputValue(),\
                                    SUMMARY_COLUMNS_DICT['Output'])
 
+    def getFullTxtFormattedLimits(self):
+        return '[%s/%s, %s/%s]' % (self.Limits.ErrorMin,  \
+                                   self.Limits.WarningMin,\
+                                   self.Limits.WarningMax,\
+                                   self.Limits.ErrorMax)
+
     ## @brief Return the alarm limits, formatted to be printed on the terminal.
     ## @param self
     #  The class instance.
 
     def getTxtFormattedLimits(self):
-        limits = '[%s/%s, %s/%s]' % (self.Limits.ErrorMin,  \
-                                     self.Limits.WarningMin,\
-                                     self.Limits.WarningMax,\
-                                     self.Limits.ErrorMax)
-        return pUtils.expandString(limits,\
+        return pUtils.expandString(self.getFullTxtFormattedLimits(),\
                                    SUMMARY_COLUMNS_DICT['Limits'])
 
     ## @brief Return all the relevant information on the alarm status,
@@ -218,6 +220,11 @@ class pAlarm(pXmlBaseElement):
                                              self.getTxtFormattedStatus(),
                                              self.getTxtFormattedOutputValue(),
                                              self.getTxtFormattedLimits())
+
+    def getTableSummaryRow(self):
+        return [self.getRootObjectName(), self.FunctionName,\
+                self.getStatusLabel(), self.getOutputValue(),\
+                self.getFullTxtFormattedLimits(), 'N/A']
 
     ## @brief Return all the relevant information on the alarm status,
     #  formatted for the xml output summary.

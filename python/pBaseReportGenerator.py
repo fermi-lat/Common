@@ -15,7 +15,7 @@ class pBaseReportGenerator:
     HTML_DIR_NAME    = 'html'
     LATEX_DIR_NAME   = 'latex'
     
-    def __init__(self, outputDirPath, mainPageTitle, forceOverwrite=True):
+    def __init__(self, outputDirPath, mainPageTitle, forceOverwrite = True):
         self.OutputDirPath  = outputDirPath
         self.MainPageTitle  = mainPageTitle
         self.ForceOverwrite = forceOverwrite
@@ -125,7 +125,7 @@ class pBaseReportGenerator:
             header = '/** @page %s %s\n' % (pageName, pageTitle)
         self.write(header, pageName)
 
-    def writeMainHeader(self, author = 'automatically generated'):
+    def writeMainHeader(self, author = 'unknown'):
         header = '@htmlonly\n'                                            +\
                  '<center>\n'                                             +\
                  '<a href="../latex/refman.ps" > PS report  </a> &nbsp\n' +\
@@ -266,10 +266,10 @@ class pBaseReportGenerator:
             commands.getoutput(command)
         logging.info('Done in %s s.\n' % (time.time() - startTime))
 
-    def openReport(self):
+    def openReport(self, author = 'unknown'):
         self.createDirs()
         self.addPage(self.MAIN_PAGE_NAME, self.MainPageTitle)
-        self.writeMainHeader()
+        self.writeMainHeader(author)
 
     def closeReport(self):
         self.writeTrailers()

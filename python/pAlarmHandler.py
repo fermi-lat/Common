@@ -15,6 +15,7 @@ from pXmlElement      import pXmlElement
 from pXmlAlarmParser  import pXmlAlarmParser
 from pAlarm           import pAlarm
 from pAlarm           import SUMMARY_COLUMNS_DICT, SUMMARY_COLUMNS_LIST
+from pAlarmReportGenerator import pAlarmReportGenerator
 
 logging.basicConfig(level=logging.INFO)
 
@@ -37,7 +38,8 @@ class pAlarmHandler:
     #  Used by the web tools for visualization.
 
     def __init__(self, rootFilePath, xmlConfigFilePath,\
-                 xmlSummaryFilePath = None, printLevel = None):
+                 xmlSummaryFilePath = None, reportDir = None,
+                 printLevel = None):
 
         ## @var __XmlParser
         ## @brief The base xml parser.
@@ -60,11 +62,20 @@ class pAlarmHandler:
             xmlSummaryFilePath = os.path.abspath(rootFilePath)
             xmlSummaryFilePath = xmlSummaryFilePath.replace('.root', '.xml')
         self.__XmlSummaryFilePath = xmlSummaryFilePath
+        if reportDir == None:
+            reportDir = os.path.dirname(os.path.abspath(rootFilePath))
+            reportDir = os.path.join(reportDir, 'alarms')
+        self.__ReportDir = reportDir
 	self.__RootFile = ROOT.TFile(rootFilePath)
         self.__RootObjectsDict = {}
 	self.__populateRootObjectsDict()
         self.__setAlarmSetsPlotLists()
         self.__printLevel = printLevel
+        self.__SummaryTable = []
+
+    def __getSummaryTableHeader(self):
+        return ['ROOT object name', 'Algorithm', 'Status', 'Output value',
+                'Limits', 'details']
 
     ## @brief Populate the dictionary of ROOT objects.
     #
@@ -129,6 +140,7 @@ class pAlarmHandler:
         logging.info('Activating the alarms...')
         for alarm in self.__XmlParser.getEnabledAlarms():
             alarm.activate()
+            self.__SummaryTable.append(alarm.getTableSummaryRow())
         logging.info('Done. %d enabled alarm(s) found.\n' %\
                      len(self.__XmlParser.getEnabledAlarms()))
         if self.__printLevel != None:
@@ -193,6 +205,16 @@ class pAlarmHandler:
                 summary += alarm.getTxtFormattedSummary()
         summary += self.__getHorizontalLine()
         return summary
+
+    def writeReport(self):
+        reportGenerator = pAlarmReportGenerator(self.__ReportDir)
+        reportGenerator.openReport()
+        reportGenerator.addSection('alarms_output', 'Alarms output')
+        reportGenerator.writeTable(self.__getSummaryTableHeader(),\
+                                   self.__SummaryTable,\
+                                   'Alarms output')
+        reportGenerator.closeReport()
+        reportGenerator.compileReport()
 
     ## @brief Class representation.
     ## @param self
@@ -303,3 +325,4 @@ if __name__ == '__main__':
                                  options.output_file,\
                                  options.screen_level )
     alarmHandler.activateAlarms()
+    alarmHandler.writeReport()
