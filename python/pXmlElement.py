@@ -40,6 +40,17 @@ class pXmlElement(pXmlBaseElement):
         self.Name    = self.getAttribute('name', '')
         self.Enabled = self.evalAttribute('enabled', True)
 
+    ## @brief Return the 'name' attribute of the element.
+    #
+    #  Note that the 'name' attribute sohould be defined for each
+    #  element.
+    ## @param self
+    #  The class instance.
+
+    def getName(self):
+        return self.Name
+        
+
     ## @brief Class representation.
     ## @param self
     #  The class instance.
