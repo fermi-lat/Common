@@ -5,6 +5,7 @@
 import logging
 import sys
 
+from pGlobals import *
 
 ## @brief Class describing a minimal xml element.
 #
