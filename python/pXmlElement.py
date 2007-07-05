@@ -50,11 +50,6 @@ class pXmlElement(pXmlBaseElement):
     def getName(self):
         return self.Name
         
-
-    ## @brief Class representation.
-    ## @param self
-    #  The class instance.
-
     def getTextSummary(self):
         return '%s\n' % pXmlBaseElement.getTextSummary(self) +\
                'Name     : %s\n' % self.Name +\

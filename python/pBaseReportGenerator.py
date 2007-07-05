@@ -4,16 +4,22 @@ import sys
 import logging
 import commands
 import time
+import ROOT
 
 import pUtils
 
 
 class pBaseReportGenerator:
 
-    CONFIG_FILE_NAME = 'config.doxygen'
-    MAIN_PAGE_NAME   = 'mainpage'
-    HTML_DIR_NAME    = 'html'
-    LATEX_DIR_NAME   = 'latex'
+    CONFIG_FILE_NAME   = 'config.doxygen'
+    MAIN_PAGE_NAME     = 'mainpage'
+    HTML_DIR_NAME      = 'html'
+    LATEX_DIR_NAME     = 'latex'
+    ROOT_PALETTE       = 1
+    AUX_CANVAS_WIDTH   = 500
+    AUX_CANVAS_HEIGHT  = 400
+    AUX_CANVAS_COLOR   = 10
+    LATEX_IMAGES_WIDTH = 11.0
     
     def __init__(self, outputDirPath, mainPageTitle, forceOverwrite = True):
         self.OutputDirPath  = outputDirPath
@@ -26,13 +32,23 @@ class pBaseReportGenerator:
         self.ConfigFilePath = os.path.join(self.OutputDirPath,
                                            self.CONFIG_FILE_NAME)
         self.DoxyFilesDict  = {}
-    
-    
+        self.AuxRootCanvas  = None
+
+    def createAuxRootCanvas(self, batchMode = True):
+        if batchMode:
+            ROOT.gROOT.SetBatch(1)
+        self.AuxRootCanvas  = ROOT.TCanvas('canvas', 'canvas',\
+                                           self.AUX_CANVAS_WIDTH,\
+                                           self.AUX_CANVAS_HEIGHT)
+        self.AuxRootCanvas.SetFillColor(self.AUX_CANVAS_COLOR)
+
+    def deleteAuxRootCanvas(self):
+        self.AuxRootCanvas = None
+        ROOT.gROOT.SetBatch(0)
+
     ## @brief Create the output directory for the report.
     ## @param self
     #  The class instance.
-    ## @param force
-    #  If this flag is set, existing files are overwritten without prompting.
     
     def __createOutputDir(self):
         logging.info('Creating output directory...')
@@ -237,6 +253,55 @@ class pBaseReportGenerator:
         self.writeHtmlTable(header, rows, caption, pageName)
         self.writeLaTeXTable(header, rows, caption, pageName)
 
+    ## @brief Add a plot to the doxygen main page file.
+    ## @todo There's room for improvements, here (in particular one
+    #  could write a method in pXmlPlotRep to return a list of plot reps
+    #  for all the levels - with their names, titles, etc - and avoid
+    #  the name parameter in this function).
+    ## @param self
+    #  The class instance.
+    ## @param plotRep
+    #  The pXmlPlotRep object representing the plot.
+    ## @param name
+    #  The plot name (needs to be passed because it may be different for all
+    #  the towers/layers).
+    
+    def addPlot(self, plotRep, name):
+        epsImagePath = os.path.join(self.LatexDirPath, ('%s.eps' % name))
+        gifImagePath = os.path.join(self.HtmlDirPath , ('%s.gif' % name))
+        epsImageName = os.path.basename(epsImagePath)
+        gifImageName = os.path.basename(gifImagePath)
+        self.AuxRootCanvas.SetLogx(plotRep.XLog)
+        self.AuxRootCanvas.SetLogy(plotRep.YLog)
+        try:
+            self.InputRootFile.Get(name).Draw(plotRep.DrawOptions)
+        except AttributeError:
+            sys.exit('Object %s not found in the input file.' % name)
+        self.AuxRootCanvas.SaveAs(epsImagePath)
+        self.AuxRootCanvas.SaveAs(gifImagePath)
+        title   = plotRep.Title
+        caption = plotRep.Caption
+        block   = ('@htmlonly\n'                                       +\
+                   '<div align="center">\n'                            +\
+                   '<p><strong>%s.</strong> %s</p>\n'                  +\
+                   '<img src="%s" alt="%s">\n'                         +\
+                   '</div>\n'                                          +\
+                   '@endhtmlonly\n'                                    +\
+                   '@latexonly\n'                                      +\
+                   '\\begin{figure}[H]\n'                              +\
+                   '\\begin{center}\n'                                 +\
+                   '\\includegraphics[width=%scm]{%s}\n'               +\
+                   '\\caption{{\\bf %s.} %s}\n'                        +\
+                   '\\end{center}\n'                                   +\
+                   '\\end{figure}\n'                                   +\
+                   '@endlatexonly\n'                                   +\
+                   '@latexonly\n'                                      +\
+                   '\\nopagebreak\n'                                   +\
+                   '@endlatexonly\n\n')                                %\
+                   (title, caption, gifImageName, gifImageName,         \
+                    self.LATEX_IMAGES_WIDTH, epsImageName, title, caption)
+        self.write(block)
+
     ## @brief Run doxygen on the main page.
     ## @param self
     #  The class instance.
@@ -274,10 +339,11 @@ class pBaseReportGenerator:
     def closeReport(self):
         self.writeTrailers()
         self.closeDoxyFiles()
-
-    def compileReport(self):
+        
+    def compileReport(self, compileLaTeX = True):
         self.doxygenate()
-        self.compileLaTeX()
+        if compileLaTeX:
+            self.compileLaTeX()
 
 
 if __name__ == '__main__':
