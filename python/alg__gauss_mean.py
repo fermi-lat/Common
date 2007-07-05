@@ -1,5 +1,5 @@
 
-import ROOT
+from pSafeROOT import *
 
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 

@@ -9,13 +9,12 @@ import sys
 import pUtils
 import time
 
-import ROOT
-
-from pXmlElement      import pXmlElement
-from pXmlAlarmParser  import pXmlAlarmParser
-from pAlarm           import pAlarm
-from pAlarm           import SUMMARY_COLUMNS_DICT, SUMMARY_COLUMNS_LIST
+from pXmlElement           import pXmlElement
+from pXmlAlarmParser       import pXmlAlarmParser
+from pAlarm                import pAlarm
+from pAlarm                import SUMMARY_COLUMNS_DICT, SUMMARY_COLUMNS_LIST
 from pAlarmReportGenerator import pAlarmReportGenerator
+from pSafeRoot             import *
 
 logging.basicConfig(level=logging.INFO)
 

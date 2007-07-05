@@ -4,9 +4,10 @@ import sys
 import logging
 import commands
 import time
-import ROOT
 
 import pUtils
+
+from pSafeROOT import *
 
 
 class pBaseReportGenerator:
@@ -15,7 +16,6 @@ class pBaseReportGenerator:
     MAIN_PAGE_NAME     = 'mainpage'
     HTML_DIR_NAME      = 'html'
     LATEX_DIR_NAME     = 'latex'
-    ROOT_PALETTE       = 1
     AUX_CANVAS_WIDTH   = 500
     AUX_CANVAS_HEIGHT  = 400
     AUX_CANVAS_COLOR   = 10
