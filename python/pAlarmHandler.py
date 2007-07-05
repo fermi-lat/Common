@@ -16,8 +16,6 @@ from pAlarm                import SUMMARY_COLUMNS_DICT, SUMMARY_COLUMNS_LIST
 from pAlarmReportGenerator import pAlarmReportGenerator
 from pSafeRoot             import *
 
-logging.basicConfig(level=logging.INFO)
-
 
 ## @brief Base class handling the alarms.
 
@@ -295,6 +293,7 @@ class pAlarmHandler:
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     from optparse import OptionParser
     parser = OptionParser(usage='usage: %prog [options] data_file')
     parser.add_option('-c', '--config-file', dest='config_file',
