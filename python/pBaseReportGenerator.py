@@ -1,3 +1,16 @@
+## @package pBaseReportGenerator
+## @brief Base package for autoamtic generation of test reports.
+#
+#  The basic strategy is to generate a set of doxygen pages which can
+#  be automatically compiled to provide html, LaTeX, ps and pdf outputs.
+#  The following features are supported:
+#  @li Multiple pages
+#  @li Sections, subsections
+#  @li Images (with the capability of producing gif and eps files
+#  directly from ROOT objects).
+#  @li Tables (both in html and LaTeX)
+#  @li Formatted representation of python dictionaries.
+
 
 import pSafeLogger
 logger = pSafeLogger.getLogger('pBaseReportGenerator')
@@ -12,20 +25,36 @@ import pUtils
 from pSafeROOT import ROOT
 
 
+## @brief Base class for aoutomatic generation of test reports.
+
 class pBaseReportGenerator:
 
     CONFIG_FILE_NAME   = 'config.doxygen'
-    MAIN_PAGE_NAME     = 'mainpage'
+    MAIN_PAGE_LABEL    = 'mainpage'
     HTML_DIR_NAME      = 'html'
     LATEX_DIR_NAME     = 'latex'
     AUX_CANVAS_WIDTH   = 500
     AUX_CANVAS_HEIGHT  = 400
     AUX_CANVAS_COLOR   = 10
     LATEX_IMAGES_WIDTH = 11.0
+
+    ## @brief Base constructor.
+    ## @param self
+    #  The class instance.
+    ## @param outputDirPath
+    #  The path to the directory in which the report must be created.
+    #
+    #  Two subdirectories (html and latex) will be created therein.
+    ## @param mainPageTitle
+    #  The title of the main page.
+    ## @param forceOverwrite
+    #  If True (default) the output dir is overwritten without messages.
     
-    def __init__(self, outputDirPath, mainPageTitle, forceOverwrite = True):
+    def __init__(self, outputDirPath, mainPageTitle = 'Main page',\
+                 author = 'unknown', forceOverwrite = True):
         self.OutputDirPath  = outputDirPath
         self.MainPageTitle  = mainPageTitle
+        self.Author         = author
         self.ForceOverwrite = forceOverwrite
         self.HtmlDirPath    = os.path.join(self.OutputDirPath,\
                                            self.HTML_DIR_NAME)
@@ -36,6 +65,15 @@ class pBaseReportGenerator:
         self.DoxyFilesDict  = {}
         self.AuxRootCanvas  = None
 
+    ## @brief Create an auxiliary ROOT canvas to draw plots on.
+    #
+    #  Used for including in the report histograms and graphs from a ROOT file.
+    ## @param self
+    #  The class instance.
+    ## @param batchMode
+    #  If True (default) ROOT is set in batch mode for preventing the canvas
+    #  from appearing on the screen.
+    
     def createAuxRootCanvas(self, batchMode = True):
         if batchMode:
             ROOT.gROOT.SetBatch(1)
@@ -44,11 +82,38 @@ class pBaseReportGenerator:
                                            self.AUX_CANVAS_HEIGHT)
         self.AuxRootCanvas.SetFillColor(self.AUX_CANVAS_COLOR)
 
+    ## @brief Delete the auxiliary ROOT canvas and put back ROOT in non-batch
+    #  mode.
+    ## @param self
+    #  The class instance.
+
     def deleteAuxRootCanvas(self):
         self.AuxRootCanvas = None
         ROOT.gROOT.SetBatch(0)
 
-    ## @brief Create the output directory for the report.
+    ## @brief Open the report.
+    #
+    #  Namely create the output directory structure and create the main page.
+    ## @param self
+    #  The class instance.
+    ## @param author
+    #  The page author (typically the script who generated it).
+
+    def openReport(self):
+        self.createDirs()
+        self.addPage(self.MAIN_PAGE_LABEL, self.MainPageTitle)
+
+    ## @brief Close the report.
+    #
+    #  Which means that the trailer is written and the files are closed.
+    ## @param self
+    #  The class instance.
+
+    def closeReport(self):
+        self.writeTrailers()
+        self.closeDoxyFiles()
+
+    ## @brief Create the base output directory for the report.
     ## @param self
     #  The class instance.
     
@@ -66,6 +131,7 @@ class pBaseReportGenerator:
             logger.info('Cleaning old directory, first...')
             os.system('rm -rf %s' % self.OutputDirPath)
         os.makedirs(self.OutputDirPath)
+        logger.info('Done.\n')
 
     ## @brief Create the output html report directory.
     ## @param self
@@ -95,6 +161,8 @@ class pBaseReportGenerator:
     #  The class instance.
     ## @param filePath
     #  The file path.
+    ## @param mode
+    #  The open mode.
 
     def openOutputFile(self, filePath, mode = 'w'):
         try:
@@ -102,11 +170,29 @@ class pBaseReportGenerator:
         except:
             sys.exit('Could not open output file %s' % filePath)
 
-    def addPage(self, pageName, pageTitle):
-        pageFileName = '%s.doxygen' % pageName.lower().replace(' ', '_')
+    ## @brief Close all the opened doxygen files.
+    
+    def closeDoxyFiles(self):
+        for file in self.DoxyFilesDict.values():
+            file.close()
+
+    ## @brief Add a page to the report.
+    #
+    #  This involves the creation of a new doxygen file for the page which
+    #  is then added with a new key to the DoxyFilesDict variable.
+    #  The Doxygen configuration file is also updated.
+    ## @param self
+    #  The class instance.
+    ## @param pageLabel
+    #  The page label (used for the doxygen internal references).
+    ## @param pageTitle
+    #  The page title (appearing on the report)
+
+    def addPage(self, label, title):
+        pageFileName = '%s.doxygen' % label.lower().replace(' ', '_')
         filePath = os.path.join(self.OutputDirPath, pageFileName)
-        self.DoxyFilesDict[pageName] = self.openOutputFile(filePath)
-        self.writePageHeader(pageName, pageTitle)
+        self.DoxyFilesDict[label] = self.openOutputFile(filePath)
+        self.writePageHeader(label, title)
         if not os.path.exists(self.ConfigFilePath):
             configFile = self.openOutputFile(self.ConfigFilePath)
             configFile.writelines('FILE_PATTERNS = %s '% pageFileName)
@@ -114,10 +200,6 @@ class pBaseReportGenerator:
             configFile = self.openOutputFile(self.ConfigFilePath, 'a')
             configFile.writelines('%s '% pageFileName)
         configFile.close()
-    
-    def closeDoxyFiles(self):
-        for file in self.DoxyFilesDict.values():
-            file.close()
 
     ## @brief Write a line to the doxygen main page file.
     ## @param self
@@ -125,187 +207,415 @@ class pBaseReportGenerator:
     ## @param line
     #  The ilne to be written.
 
-    def write(self, line, page = MAIN_PAGE_NAME):
-        self.DoxyFilesDict[page].writelines(line)
+    def write(self, line, pageLabel = MAIN_PAGE_LABEL):
+        self.DoxyFilesDict[pageLabel].writelines(line)
 
     ## @brief Write a carriage return to the doxygen main page file.
     ## @param self
     #  The class instance.  
 
-    def newline(self, page = MAIN_PAGE_NAME):
-        self.write('\n', page)
+    def newline(self, pageLabel = MAIN_PAGE_LABEL):
+        self.write('\n', pageLabel)
 
-    def writePageHeader(self, pageName, pageTitle):
-        if pageName == self.MAIN_PAGE_NAME:
-            header = '/** @%s %s\n' % (pageName, pageTitle)
+    ## @brief Write the page header.
+    #
+    #  Note that the page header for the mainpage is slightly different
+    #  with respect to those of the other pages.
+    ## @param self
+    #  The class instance
+    ## @param pageLabel
+    #  The page label (used for the doxygen internal references).
+    ## @param pageTitle
+    #  The page title (appearing on the report)
+
+    def writePageHeader(self, pageLabel, pageTitle):
+        if pageLabel == self.MAIN_PAGE_LABEL:
+            header = '/** @%s %s\n' % (pageLabel, pageTitle)              +\
+                     '@htmlonly\n'                                       +\
+                     '<center>\n'                                        +\
+                     '<a href="../latex/refman.ps">PS report</a>&nbsp\n' +\
+                     '<a href="../latex/refman.pdf">PDF report</a>\n'    +\
+                     '</center>\n'                                       +\
+                     '@endhtmlonly\n'                                    +\
+                     '@author %s \n' % self.Author                       +\
+                     '@date %s\n' % time.asctime()
         else:
-            header = '/** @page %s %s\n' % (pageName, pageTitle)
-        self.write(header, pageName)
-
-    def writeMainHeader(self, author = 'unknown'):
-        header = '@htmlonly\n'                                            +\
-                 '<center>\n'                                             +\
-                 '<a href="../latex/refman.ps" > PS report  </a> &nbsp\n' +\
-                 '<a href="../latex/refman.pdf"> PDF report </a>\n'       +\
-                 '</center>\n'                                            +\
-                 '@endhtmlonly\n'                                         +\
-                 '@author %s \n' % author                                 +\
-                 '@date %s\n' % time.asctime()
-        self.write(header)
+            header = '/** @page %s %s\n' % (pageLabel, pageTitle)
+        self.write(header, pageLabel)
         self.newline()
 
-    ## @brief Write the trailer in the doxygen main page file.
+    ## @brief Write the trailers in the doxygen pages.
     ## @param self
     #  The class instance.
 
     def writeTrailers(self):
-        for pageName in self.DoxyFilesDict.keys():
-            self.newline(pageName)
-            self.write('*/', pageName)
+        for pageLabel in self.DoxyFilesDict.keys():
+            self.newline(pageLabel)
+            self.write('*/', pageLabel)
 
-    ## @brief Add a section to the doxygen main page file.
+    ## @brief Add a section to a doxygen page.
     ## @param self
     #  The class instance.
     ## @param label
     #  The section label.
-    ## @param name
-    #  The section name.
+    ## @param title
+    #  The section title.
+    ## @param pageLabel
+    #  The page label.
 
-    def addSection(self, label, name, page = MAIN_PAGE_NAME):
-        self.newline(page)
-        self.write('@section %s %s\n' % (label, name), page)
-        self.newline(page)
+    def addSection(self, label, title, pageLabel = MAIN_PAGE_LABEL):
+        self.newline(pageLabel)
+        self.write('@section %s %s\n' % (label, title), pageLabel)
+        self.newline(pageLabel)
 
-    def __LaTeXTableHeader(self, caption):
-        header = '@latexonly\n'               +\
+    ## @brief Add a subsection to a doxygen page.
+    ## @param self
+    #  The class instance.
+    ## @param label
+    #  The subsection label.
+    ## @param title
+    #  The subsection title.
+    ## @param pageLabel
+    #  The page label.
+
+    def addSubsection(self, label, title, pageLabel = MAIN_PAGE_LABEL):
+        self.newline(pageLabel)
+        self.write('@subsection %s %s\n' % (label, title), pageLabel)
+        self.newline(pageLabel)
+
+    ## @brief Return the header section for a LaTeX-formatted table.
+    ## @param self
+    #  The class instance.
+    ## @param caption
+    #  The table caption.
+
+    def __getLaTeXTableHeader(self, caption):
+        header = '@latexonly\n'                +\
                  '\\begin{table}[!htb]\n'      +\
                  '\\begin{center}\n'           +\
                  '\\caption{%s}\n' % (caption) +\
                  '\\label{%s}\n' % (caption)
         return header
 
-    def __LaTeXTableHeaderRow(self, items):
+    ## @brief Return the header for a LaTeX-formatted table.
+    ## @param self
+    #  The class instance.
+    ## @param items
+    #  A python list containing the column labels.
+
+    def __getLaTeXTableHeaderRow(self, items):
         line = '\\begin{tabular}{|'
         for i in items:
             line += "c|"
-        line += '}\n\\hline\n' + self.__LaTeXTableRow(items) +\
+        line += '}\n\\hline\n' + self.__getLaTeXTableRow(items) +\
                 '\\hline\n\\hline\n'
         return line
 
-    def __LaTeXTableRow(self, items):
+    ## @brief Return a row for a LaTeX-formatted table.
+    ## @param self
+    #  The class instance.
+    ## @param items
+    #  A python list containing the row items.
+
+    def __getLaTeXTableRow(self, items):
         line = ''
         for item in items:
             line += str(item) + ' & '
         line = line[:-3] + '\\\\ \n\hline\n'
         return pUtils.formatForLatex(line)
 
-    def __LaTeXTableTrailer(self):
+    ## @brief Return the trailer for a LaTeX-formatted table.
+    ## @param self
+    #  The class instance.
+
+    def __getLaTeXTableTrailer(self):
         trailer = '\end{tabular}\n' +\
                   '\end{center}\n'  +\
                   '\end{table}\n'   +\
                   '@endlatexonly\n\n'
         return trailer
 
-    def writeLaTeXTable(self, header, rows, caption = '',\
-                       pageName = MAIN_PAGE_NAME):        
-        self.write(self.__LaTeXTableHeader(caption), pageName)
-        self.write(self.__LaTeXTableHeaderRow(header), pageName)
+    ## @brief Write to a specific page of the report a LaTeX-formatted table.
+    ## @param self
+    #  The class instance.
+    ## @param header
+    #  A pyhton list of string representing the table header row.
+    ## @param rows
+    #  A pyhton list of lists of strings representing the actual rows.
+    ## @param caption
+    #  The table caption.
+    ## @param pageLabel
+    #  The page label.
+
+    def addLaTeXTable(self, header, rows, caption = '',\
+                       pageLabel = MAIN_PAGE_LABEL):        
+        self.write(self.__getLaTeXTableHeader(caption), pageLabel)
+        self.write(self.__getLaTeXTableHeaderRow(header), pageLabel)
         for row in rows:
-            self.write(self.__LaTeXTableRow(row), pageName)
-        self.write(self.__LaTeXTableTrailer(), pageName)
+            self.write(self.__getLaTeXTableRow(row), pageLabel)
+        self.write(self.__getLaTeXTableTrailer(), pageLabel)
+
+    ## @brief Return the header section for a html-formatted table.
+    ## @param self
+    #  The class instance.
+    ## @param caption
+    #  The table caption.
     
-    def __htmlTableHeader(self, caption):
-        header = '@htmlonly\n'                         +\
-                 '<table border="1" width="100%">\n'   +\
+    def __getHtmlTableHeader(self, caption):
+        header = '@htmlonly\n'                       +\
+                 '<table border="1" width="100%">\n' +\
                  '<caption>%s</caption>\n' % (caption)
         return header
 
-    def __htmlTableHeaderRow(self, items):
-        return self.__htmlTableRow(items, True)
+    ## @brief Return the header row for a html-formatted table.
+    ## @param self
+    #  The class instance.
+    ## @param items
+    #  A python list containing the column labels.
 
-    def __htmlTableRow(self, items, bold = False):
+    def __getHtmlTableHeaderRow(self, items):
+        return self.__getHtmlTableRow(items, True)
+
+    ## @brief Return a row for a html-formatted table.
+    ## @param self
+    #  The class instance.
+    ## @param items
+    #  A python list containing the row items.
+    ## @param bold
+    #  If True (not default) the content of the cell is displayed in bold.
+
+    def __getHtmlTableRow(self, items, bold = False):
         row = '<tr>\n'
         for item in items:
-            row += '%s\n' % self.__htmlTableCell(item, bold)
+            row += '%s\n' % self.__getHtmlTableCell(item, bold)
         row += '</tr>\n'
         return row
 
-    def __htmlTableCell(self, item, bold = False):
+    ## @brief Return a cell for a html-formatted table.
+    ## @param self
+    #  The class instance.
+    ## @param item
+    #  The cell item.
+    ## @param bold
+    #  If True (not default) the content of the cell is displayed in bold.
+
+    def __getHtmlTableCell(self, item, bold = False):
         if not bold:
             return '<td>%s</td>' % item
         else:
             return '<td><b>%s</b></td>' % item
 
-    def __htmlTableTrailer(self):
+    ## @brief Return the trailer for a html-formatted table.
+    ## @param self
+    #  The class instance.
+
+    def __getHtmlTableTrailer(self):
         trailer = '</table>\n'   +\
                   '@endhtmlonly\n\n'
         return trailer
 
-    def writeHtmlTable(self, header, rows, caption = '',\
-                       pageName = MAIN_PAGE_NAME):
-        self.write(self.__htmlTableHeader(caption), pageName)
-        self.write(self.__htmlTableHeaderRow(header), pageName)
-        for row in rows:
-            self.write(self.__htmlTableRow(row), pageName)
-        self.write(self.__htmlTableTrailer(), pageName)
-
-    def writeTable(self, header, rows, caption = '',\
-                       pageName = MAIN_PAGE_NAME):
-        self.writeHtmlTable(header, rows, caption, pageName)
-        self.writeLaTeXTable(header, rows, caption, pageName)
-
-    ## @brief Add a plot to the doxygen main page file.
-    ## @todo There's room for improvements, here (in particular one
-    #  could write a method in pXmlPlotRep to return a list of plot reps
-    #  for all the levels - with their names, titles, etc - and avoid
-    #  the name parameter in this function).
+    ## @brief Write to a specific page of the report a html-formatted table.
     ## @param self
     #  The class instance.
-    ## @param plotRep
-    #  The pXmlPlotRep object representing the plot.
-    ## @param name
-    #  The plot name (needs to be passed because it may be different for all
-    #  the towers/layers).
+    ## @param header
+    #  A pyhton list of string representing the table header row.
+    ## @param rows
+    #  A pyhton list of lists of strings representing the actual rows.
+    ## @param caption
+    #  The table caption.
+    ## @param pageLabel
+    #  The page label.
+
+    def addHtmlTable(self, header, rows, caption = '',\
+                     pageLabel = MAIN_PAGE_LABEL):
+        self.write(self.__getHtmlTableHeader(caption), pageLabel)
+        self.write(self.__getHtmlTableHeaderRow(header), pageLabel)
+        for row in rows:
+            self.write(self.__getHtmlTableRow(row), pageLabel)
+        self.write(self.__getHtmlTableTrailer(), pageLabel)
+
+    ## @brief Write to a specific page of the report a table, formatted
+    #  both in LaTeX and in html.
+    ## @param self
+    #  The class instance.
+    ## @param header
+    #  A pyhton list of string representing the table header row.
+    ## @param rows
+    #  A pyhton list of lists of strings representing the actual rows.
+    ## @param caption
+    #  The table caption.
+    ## @param pageLabel
+    #  The page label.
+
+    def addTable(self, header, rows, caption = '',\
+                 pageLabel = MAIN_PAGE_LABEL):
+        self.addHtmlTable(header, rows, caption, pageLabel)
+        self.addLaTeXTable(header, rows, caption, pageLabel)
+
+    ## Return the doxygen block for adding an image to the LaTeX report.
+    ## @param self
+    #  The class instance.
+    ## @param epsImagePath
+    #  The path to the actual eps image to be included. 
+    ## @param title
+    #  The image title.
+    ## @param caption
+    #  The image caption.
+
+    def __getLaTeXImageBlock(self, epsImagePath, title, caption):
+        block = ('@latexonly\n'                        +\
+                 '\\begin{figure}[H]\n'                +\
+                 '\\begin{center}\n'                   +\
+                 '\\includegraphics[width=%scm]{%s}\n' +\
+                 '\\caption{{\\bf %s.} %s}\n'          +\
+                 '\\end{center}\n'                     +\
+                 '\\end{figure}\n'                     +\
+                 '@endlatexonly\n'                     +\
+                 '@latexonly\n'                        +\
+                 '\\nopagebreak\n'                     +\
+                 '@endlatexonly\n\n')                  %\
+                 (self.LATEX_IMAGES_WIDTH, epsImagePath, title, caption)
+        return block
     
-    def addPlot(self, plotRep, name):
-        epsImagePath = os.path.join(self.LatexDirPath, ('%s.eps' % name))
-        gifImagePath = os.path.join(self.HtmlDirPath , ('%s.gif' % name))
-        epsImageName = os.path.basename(epsImagePath)
-        gifImageName = os.path.basename(gifImagePath)
-        self.AuxRootCanvas.SetLogx(plotRep.XLog)
-        self.AuxRootCanvas.SetLogy(plotRep.YLog)
+    ## @brief Add to a specific page of the report a LaTeX-formatted image.
+    ## @param self
+    #  The class instance.
+    ## @param epsImagePath
+    #  The path to the actual eps image.
+    ## @param title
+    #  The image title.
+    ## @param caption
+    #  The image caption.
+    ## @param pageLabel
+    #  The page label.
+
+    def addLaTeXImage(self, epsImagePath, title = '', caption = '',\
+                      pageLabel = MAIN_PAGE_LABEL):
+        self.write(self.__getLaTeXImageBlock(epsImagePath, title, caption),\
+                   pageLabel)
+
+    ## Return the doxygen block for adding a image to the html report.
+    ## @param self
+    #  The class instance.
+    ## @param gifImagePath
+    #  The path to the actual gif image to be included. 
+    ## @param title
+    #  The image title.
+    ## @param caption
+    #  The image caption.
+
+    def __getHtmlImageBlock(self, gifImagePath, title, caption):
+        block = ('@htmlonly\n'                      +\
+                 '<div align="center">\n'           +\
+                 '<p><strong>%s.</strong> %s</p>\n' +\
+                 '<img src="%s" alt="%s">\n'        +\
+                 '</div>\n'                         +\
+                 '@endhtmlonly\n')                  %\
+                 (title, caption, gifImagePath, gifImagePath)
+        return block
+
+    ## @brief Add to a specific page of the report a html-formatted image.
+    ## @param self
+    #  The class instance.
+    ## @param gifImagePath
+    #  The path to the actual gif image.
+    ## @param title
+    #  The image title.
+    ## @param caption
+    #  The image caption.
+    ## @param pageLabel
+    #  The page label.
+
+    def addHtmlImage(self, gifImagePath, title = '', caption = '',\
+                     pageLabel = MAIN_PAGE_LABEL):
+        self.write(self.__getHtmlImageBlock(gifImagePath, title, caption),\
+                   pageLabel)
+
+    ## @brief Add to a specific page of the report an image (in both the html
+    #  and the LaTeX version).
+    ## @param self
+    #  The class instance.
+    ## @param gifImagePath
+    #  The path to the actual gif image.
+    ## @param epsImagePath
+    #  The path to the actual eps image.
+    ## @param title
+    #  The image title.
+    ## @param caption
+    #  The image caption.
+    ## @param pageLabel
+    #  The page label.
+
+    def addImage(self, gifImagePath, epsImagePath, title = '', caption = '',\
+                 pageLabel = MAIN_PAGE_LABEL):
+        self.addHtmlImage(gifImagePath, title, caption, pageLabel)
+        self.addLaTeXImage(epsImagePath, title, caption, pageLabel)
+
+    ## @brief Add a ROOT object (either histogram ot graph or whatever)
+    #  to the report (both html and LaTeX versions).
+    #
+    #  The plot is first drawn on an auxiliary canvas (therefore the ROOT
+    #  object must support the Draw() method) and it's then saved as image
+    #  and put into the report.
+    ## @param self
+    #  The class instance.
+    ## @param rootObject
+    #  The plot to be added (TH1, TH2, TGraph, etc.).
+    ## @param drawOptions
+    #  The options for the Draw() method.
+    ## @param title
+    #  The image title.
+    ## @param caption
+    #  The image caption.
+    ## @param xLog
+    #  Flag to set the log scale on the x axis.
+    ## @param yLog
+    #  Flag to set the log scale on the y axis.
+    ## @param pageLabel
+    #  The page label.
+ 
+    def addRootObject(self, rootObject, drawOptions = '', title = '',\
+                    caption = '', xLog = False, yLog = False,\
+                    pageLabel = MAIN_PAGE_LABEL):
+        auxCanvasMissing = False
+        if self.AuxRootCanvas is None:
+            auxCanvasMissing = True
+            logger.warn('Aux ROOT canvas needed to add a plot to the report.')
+            self.createAuxRootCanvas()
+            logger.info('Aux ROOT canvas created.')
+        epsImageName = '%s.eps' % rootObject.GetName()
+        gifImageName = '%s.gif' % rootObject.GetName()
+        self.AuxRootCanvas.SetLogx(xLog)
+        self.AuxRootCanvas.SetLogy(yLog)
         try:
-            self.InputRootFile.Get(name).Draw(plotRep.DrawOptions)
-        except AttributeError:
-            sys.exit('Object %s not found in the input file.' % name)
-        self.AuxRootCanvas.SaveAs(epsImagePath)
-        self.AuxRootCanvas.SaveAs(gifImagePath)
-        title   = plotRep.Title
-        caption = plotRep.Caption
-        block   = ('@htmlonly\n'                                       +\
-                   '<div align="center">\n'                            +\
-                   '<p><strong>%s.</strong> %s</p>\n'                  +\
-                   '<img src="%s" alt="%s">\n'                         +\
-                   '</div>\n'                                          +\
-                   '@endhtmlonly\n'                                    +\
-                   '@latexonly\n'                                      +\
-                   '\\begin{figure}[H]\n'                              +\
-                   '\\begin{center}\n'                                 +\
-                   '\\includegraphics[width=%scm]{%s}\n'               +\
-                   '\\caption{{\\bf %s.} %s}\n'                        +\
-                   '\\end{center}\n'                                   +\
-                   '\\end{figure}\n'                                   +\
-                   '@endlatexonly\n'                                   +\
-                   '@latexonly\n'                                      +\
-                   '\\nopagebreak\n'                                   +\
-                   '@endlatexonly\n\n')                                %\
-                   (title, caption, gifImageName, gifImageName,         \
-                    self.LATEX_IMAGES_WIDTH, epsImageName, title, caption)
-        self.write(block)
+            rootObject.Draw(drawOptions)
+        except:
+            logger.error('Could not draw %s.' % rootObject.GetName())
+        self.AuxRootCanvas.SaveAs(os.path.join(self.LatexDirPath,epsImageName))
+        self.AuxRootCanvas.SaveAs(os.path.join(self.HtmlDirPath, gifImageName))
+        self.addImage(gifImageName, epsImageName, title, caption, pageLabel)
+        if auxCanvasMissing:
+            logger.info('Deleting aux ROOT canvas.')
+            logger.warn('When saving multiple plots, you should probably ' +\
+                        'create the aux ROOT canvas explicitly.')
+            self.deleteAuxRootCanvas()
+
+    ## @brief "Virtual" method to be overridden by the derived classes
+    #  as to implement the actual generation of the reports.
+    ## @param self
+    #  The class instance.
+
+    def run(self):
+        print 'pBaseReportGenerator.run() not implemented, must be ' +\
+              'overridden by the derived classes.'
 
     ## @brief Run doxygen on the main page.
     ## @param self
     #  The class instance.
+    ## @param verbose
+    #  If False (default), the usual doxygen output is masked to the user
+    #  (meaning that, in case of errors, the system will just hang... the
+    #  verbose option is indeed useful, in some cases).
     
     def doxygenate(self, verbose = False):
         logger.info('Running doxygen...')
@@ -321,6 +631,10 @@ class pBaseReportGenerator:
     ## @brief Compile the LaTeX report and make ps and pdf files.
     ## @param self
     #  The class instance.
+    ## @param verbose
+    #  If False (default), the usual LaTeX output is masked to the user
+    #  (meaning that, in case of errors, the system will just hang... the
+    #  verbose option is indeed useful, in some cases).
 
     def compileLaTeX(self, verbose = False):
         logger.info('Compiling LaTeX report...')
@@ -332,14 +646,12 @@ class pBaseReportGenerator:
             commands.getoutput(command)
         logger.info('Done in %.2f s.\n' % (time.time() - startTime))
 
-    def openReport(self, author = 'unknown'):
-        self.createDirs()
-        self.addPage(self.MAIN_PAGE_NAME, self.MainPageTitle)
-        self.writeMainHeader(author)
-
-    def closeReport(self):
-        self.writeTrailers()
-        self.closeDoxyFiles()
+    ## @brief Compile the doxygen report and possibly the LaTeX output to
+    #  produce the ps and pdf reports.
+    ## @param self
+    #  The class instance.
+    ## @param compileLaTeX
+    #  If True (default) the LaTeX report is compiled to ps and pdf.
         
     def compileReport(self, compileLaTeX = True):
         self.doxygenate()
@@ -348,15 +660,16 @@ class pBaseReportGenerator:
 
 
 if __name__ == '__main__':
-    generator = pBaseReportGenerator('./report', 'Base report')
+    generator = pBaseReportGenerator('./report', 'My report', 'Luca Baldini')
     generator.openReport()
     generator.addSection('test', 'test')
+    generator.addSubsection('sub1', 'A subsection')
+    generator.addSubsection('sub2', 'Another subsection')
     tableHeader = ['a', 'b', 'c'] 
     tableRows   = [['my_test', 2, 3],
                    [4, 5, 6]]
-    generator.writeTable(tableHeader, tableRows, 'Howdy, partner?')
+    generator.addTable(tableHeader, tableRows, 'Howdy, partner?')
     generator.addPage('details', 'Detailed page')
-    generator.writeTable(tableHeader, tableRows, 'Second Test', 'details' )
+    generator.addTable(tableHeader, tableRows, 'Second Test', 'details' )
     generator.closeReport()
     generator.compileReport()
-
