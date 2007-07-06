@@ -2,7 +2,6 @@
 ## @package pXmAlarmlList
 ## @brief Description of a xml alarm list.
 
-import logging
 import sys
 
 from pXmlList  import pXmlList

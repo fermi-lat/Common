@@ -2,7 +2,6 @@
 ## @package pXmlList
 ## @brief Description of a xml list.
 
-import logging
 import sys
 
 from pXmlElement import pXmlElement

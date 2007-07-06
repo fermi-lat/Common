@@ -2,7 +2,6 @@
 ## @package pAlarmSet
 ## @brief Description of an alarm set.
 
-import logging
 import pUtils
 
 from pXmlElement import pXmlElement

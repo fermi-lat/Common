@@ -10,20 +10,22 @@
 #  Do not:
 #  > import ROOT
 #  explicitely in the code. Instead:
-#  > from pSafeROOT import *
+#  > from pSafeROOT import ROOT
 #  That should do it.
+
+import pSafeLogger
+logger = pSafeLogger.getLogger('pSafeROOT')
 
 ROOT_PALETTE = 1
 
 import sys
 import os
-import logging
 
 if 'ROOT' not in sys.modules:
     import ROOT
-    logging.info('First ROOT import, setting palette and fucking ROOT...')
+    logger.info('First ROOT import, setting palette and fucking ROOT...')
     currentDirPath = os.path.abspath(os.curdir)
-    logging.info('Current directory is %s.' % currentDirPath)
+    logger.info('Current dir: %s.' % currentDirPath)
     ROOT.gStyle.SetPalette(ROOT_PALETTE)
     os.chdir(currentDirPath)
-    logging.info('Done.')
+    logger.info('Done.\n')

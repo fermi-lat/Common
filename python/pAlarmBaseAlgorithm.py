@@ -1,5 +1,7 @@
 
-import logging
+import pSafeLogger
+logger = pSafeLogger.getLogger('pAlarmBaseAlgorithm')
+
 import pUtils
 from pAlarmOutput import pAlarmOutput
 
@@ -40,7 +42,7 @@ class pAlarmBaseAlgorithm:
     def checkObjectType(self):
         if self.getObjectType() not in self.SUPPORTED_TYPES:
             self.__RootObjectOK = False
-            logging.error('Invalid object type (%s) for %s. '    %\
+            logger.error('Invalid object type (%s) for %s. '    %\
                           (self.getObjectType(), self.getName()) +\
                           'The alarm will be ignored.')
 
@@ -48,26 +50,26 @@ class pAlarmBaseAlgorithm:
         for paramName in self.ParamsDict.keys():
             if paramName not in self.SUPPORTED_PARAMETERS:
                 self.__ParametersOK = False
-                logging.error('Invalid parameter (%s) for %s.' %\
+                logger.error('Invalid parameter (%s) for %s.' %\
                               (paramName, self.getName())      +\
                               'The alarm will be ignored.')
 
     def apply(self):
         if not self.__RootObjectOK:
-            logging.warn('Invalid object, %s will not be applied.' %\
+            logger.warn('Invalid object, %s will not be applied.' %\
                          self.getName())
         elif not self.__ParametersOK:
-            logging.warn('Invalid parameter(s), %s will not be applied.' %\
+            logger.warn('Invalid parameter(s), %s will not be applied.' %\
                          self.getName())
         else:
             self.run()
 
     def run(self):
-        logging.warn('Method run() not implemented.')
+        logger.warn('Method run() not implemented.')
 
     def adjustXRange(self):
         if self.getObjectType() not in ['TH1F']:
-            logging.warn('Cannot use setRangeX() on a %s object.' %\
+            logger.warn('Cannot use setRangeX() on a %s object.' %\
                          self.getObjectType())
             return None
         try:
@@ -82,7 +84,7 @@ class pAlarmBaseAlgorithm:
 
     def resetXRange(self):
         if self.getObjectType() not in ['TH1F']:
-            logging.warn('Cannot use setRangeX() on a %s object.' %\
+            logger.warn('Cannot use setRangeX() on a %s object.' %\
                          self.getObjectType())
             return None
         self.RootObject.GetXaxis().SetRange(1, 0)

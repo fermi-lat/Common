@@ -2,10 +2,10 @@
 ## @package pXmlBaseElement
 ## @brief Description of a minimal xml element.
 
-import logging
-import sys
+import pSafeLogger
+logger = pSafeLogger.getLogger('pXmlBaseElement')
 
-from pGlobals import *
+import sys
 
 ## @brief Class describing a minimal xml element.
 #
@@ -54,8 +54,8 @@ class pXmlBaseElement:
     def getAttribute(self, attributeName, default=None):
         attribute = str(self.DomElement.getAttribute(attributeName))
         if attribute == '':
-            logging.debug('Could not find attribute %s for node %s. ' %\
-                          (attributeName, self.NodeName)              +\
+            logger.debug('Could not find attribute %s for node %s. ' %\
+                          (attributeName, self.NodeName)             +\
                           'Returning "%s"...' % default)
             attribute = default
         return attribute
@@ -79,8 +79,8 @@ class pXmlBaseElement:
         try:
             return eval(attribute)
         except:
-            logging.error('Could not eval attribute %s for node %s. ' %\
-                          (attributeName, self.NodeName)              +\
+            logger.error('Could not eval attribute %s for node %s. ' %\
+                          (attributeName, self.NodeName)             +\
                           'Returning %s...' % default)
             return default
 
@@ -117,7 +117,7 @@ class pXmlBaseElement:
         if elementsList == []:
             return default
         elif len(elementsList)> 1:
-            logging.error('Tag %s multiply defined for node %s. ' %\
+            logger.error('Tag %s multiply defined for node %s. ' %\
                           (tagName, self.NodeName)                +\
                           'Returning the first one...')
         return elementsList[0]
@@ -174,7 +174,6 @@ class pXmlBaseElement:
 
 if __name__ == '__main__':
     from xml.dom  import minidom
-    logging.basicConfig(level=logging.DEBUG)
     doc = minidom.parse(file('../xml/config.xml'))
     for domElement in doc.getElementsByTagName('alarmList'):
         xmlElement = pXmlBaseElement(domElement)

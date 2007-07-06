@@ -1,7 +1,6 @@
 
 import os
 import sys
-import logging
 import commands
 import time
 
@@ -25,7 +24,6 @@ class pAlarmReportGenerator(pBaseReportGenerator):
     
 
 if __name__ == '__main__':
-    logging.basicConfig(level = logging.DEBUG)
     generator = pAlarmReportGenerator('./report', 'Base report')
     generator.openReport()
     generator.addSection('test', 'test')

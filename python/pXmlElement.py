@@ -2,7 +2,6 @@
 ## @package pXmlElement
 ## @brief Description of an xml element.
 
-import logging
 import sys
 
 from pXmlBaseElement import pXmlBaseElement
@@ -61,7 +60,6 @@ class pXmlElement(pXmlBaseElement):
 
 if __name__ == '__main__':
     from xml.dom  import minidom
-    logging.basicConfig(level=logging.DEBUG)
     doc = minidom.parse(file('../xml/config.xml'))
     for element in doc.getElementsByTagName('alarmList'):
         print 'Printing pXmlElement object...'

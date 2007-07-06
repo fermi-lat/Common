@@ -1,5 +1,6 @@
 
-import logging
+import pSafeLogger
+logger = pSafeLogger.getLogger('pAlarmOutput')
 
 import pUtils
 import pAlarm
@@ -60,7 +61,7 @@ class pAlarmOutput:
         try:
             return self.__Dict[key]
         except KeyError:
-            logging.warn('Unknown key (%s) in the alarm output dict.' % key)
+            logger.warn('Unknown key (%s) in the alarm output dict.' % key)
             return None
 
     def setDictValue(self, key, value):

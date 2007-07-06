@@ -1,5 +1,6 @@
 
-import logging
+import pSafeLogger
+logger = pSafeLogger.getLogger('pAlarmLimits')
 
 
 class pAlarmLimits:
@@ -13,16 +14,16 @@ class pAlarmLimits:
 
     def __validate(self):
         if self.WarningMin > self.WarningMax:
-            logging.error('Warning min (%s) higher than warning max (%s).'  %\
+            logger.error('Warning min (%s) higher than warning max (%s).'  %\
                           (self.WarningMin, self.WarningMax))
         if self.ErrorMin > self.ErrorMax:
-            logging.error('Error min (%s) higher than error max (%s).'      %\
+            logger.error('Error min (%s) higher than error max (%s).'      %\
                           (self.ErrorMin, self.ErrorMax))
         if self.WarningMin < self.ErrorMin:
-            logging.error('Warning min (%s) lower than error min (%s).'     %\
+            logger.error('Warning min (%s) lower than error min (%s).'     %\
                           (self.WarningMin, self.ErrorMin))
         if self.WarningMax > self.ErrorMax:
-            logging.error('Warning max (%s) is higher than error max (%s).' %\
+            logger.error('Warning max (%s) is higher than error max (%s).' %\
                           (self.WarningMax, self.ErrorMax))
 
     def getTextSummary(self):

@@ -3,7 +3,9 @@
 ## @package pAlarmHandler
 ## @brief Module managing the data automated alarm system.
 
-import logging
+import pSafeLogger
+logger = pSafeLogger.getLogger('pAlarmHandler')
+
 import os
 import sys
 import pUtils
@@ -14,7 +16,7 @@ from pXmlAlarmParser       import pXmlAlarmParser
 from pAlarm                import pAlarm
 from pAlarm                import SUMMARY_COLUMNS_DICT, SUMMARY_COLUMNS_LIST
 from pAlarmReportGenerator import pAlarmReportGenerator
-from pSafeRoot             import *
+from pSafeROOT             import ROOT
 
 
 ## @brief Base class handling the alarms.
@@ -51,10 +53,10 @@ class pAlarmHandler:
         ## @brief Dictionary containing all the objects in the input
         #  ROOT file, indexed by object name.
 
-        logging.info('Instantiating the xml parser...')
+        logger.info('Instantiating the xml parser...')
         self.__XmlParser = pXmlAlarmParser(xmlConfigFilePath)
         print self.__XmlParser
-        logging.info('Done.\n')
+        logger.info('Done.\n')
         if xmlSummaryFilePath == None:
             xmlSummaryFilePath = os.path.abspath(rootFilePath)
             xmlSummaryFilePath = xmlSummaryFilePath.replace('.root', '.xml')
@@ -82,13 +84,13 @@ class pAlarmHandler:
     #  The class instance.
 
     def __populateRootObjectsDict(self):
-        logging.info('Populating the dictionary of ROOT objects...')
+        logger.info('Populating the dictionary of ROOT objects...')
         for i in range(self.__RootFile.GetListOfKeys().LastIndex()):
 	    key    = self.__RootFile.GetListOfKeys().At(i)
             name   = key.GetName()
 	    object = self.__RootFile.FindObjectAny(name)
             self.__RootObjectsDict[name] = object
-        logging.info('Done. %d objects found in the ROOT file.\n' %\
+        logger.info('Done. %d objects found in the ROOT file.\n' %\
                      len(self.__RootObjectsDict))
 
     ## @brief Go through all the alarms sets and identify in the ROOT
@@ -100,10 +102,10 @@ class pAlarmHandler:
     #  The class instance.
 
     def __setAlarmSetsPlotLists(self):
-        logging.info('Assigning the plots to the alarm sets...')
+        logger.info('Assigning the plots to the alarm sets...')
         for alarmSet in self.__XmlParser.getEnabledAlarmSets():
 	    alarmSet.setPlotsList(self.__findRootObjects(alarmSet.Name))
-        logging.info('Done. %d enabled alarm set(s) found.\n' %\
+        logger.info('Done. %d enabled alarm set(s) found.\n' %\
                      len(self.__XmlParser.getEnabledAlarmSets()))
 
     ## @brief Return all the ROOT objects whose name matches a specified
@@ -134,11 +136,11 @@ class pAlarmHandler:
     #  The class instance.
     
     def activateAlarms(self):
-        logging.info('Activating the alarms...')
+        logger.info('Activating the alarms...')
         for alarm in self.__XmlParser.getEnabledAlarms():
             alarm.activate()
             self.__SummaryTable.append(alarm.getTableSummaryRow())
-        logging.info('Done. %d enabled alarm(s) found.\n' %\
+        logger.info('Done. %d enabled alarm(s) found.\n' %\
                      len(self.__XmlParser.getEnabledAlarms()))
         if self.__printLevel != None:
             print self
@@ -150,7 +152,7 @@ class pAlarmHandler:
     #  The class instance.
 
     def writeXmlSummaryFile(self):
-        logging.info('Writing summary to %s...' %\
+        logger.info('Writing summary to %s...' %\
                      os.path.abspath(self.__XmlSummaryFilePath))
         xmlSummaryFile = file(self.__XmlSummaryFilePath, 'w')
         xmlSummaryFile.writelines('<alarmSummary>\n')
@@ -158,7 +160,7 @@ class pAlarmHandler:
             xmlSummaryFile.writelines(alarm.getXmlFormattedSummary())
         xmlSummaryFile.writelines('</alarmSummary>\n')
         xmlSummaryFile.close()
-        logging.info('Done.')
+        logger.info('Done.')
 
     ## @brief Return a horizontal text line of the right length for
     #  the summary.
@@ -286,14 +288,13 @@ class pAlarmHandler:
 ##     #  The output file path.
     
 ##     def writeDoxygenFormattedSummary(self, filePath):
-##         logging.info('Writing the alarms file for the report...')
+##         logger.info('Writing the alarms file for the report...')
 ##         startTime = time.time()
 ##         file(filePath, 'w').writelines(self.getDoxygenFormattedSummary())
-##         logging.info('Done in %s s.\n' % (time.time() - startTime))
+##         logger.info('Done in %s s.\n' % (time.time() - startTime))
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
     from optparse import OptionParser
     parser = OptionParser(usage='usage: %prog [options] data_file')
     parser.add_option('-c', '--config-file', dest='config_file',

@@ -2,8 +2,10 @@
 ## @package pAlarm
 ## @brief Description of an alarm.
 
+import pSafeLogger
+logger = pSafeLogger.getLogger('pAlarm')
+
 import sys
-import logging
 import re
 import pUtils
 from pXmlBaseElement import pXmlBaseElement
@@ -60,7 +62,7 @@ class pAlarm(pXmlBaseElement):
             self.Algorithm = eval('alg__%s(self.Limits, self.RootObject, ' %\
                                   self.FunctionName + 'self.ParamsDict)' )
         except ImportError:
-            logging.error('Could not import alg__%s. ' % self.FunctionName +\
+            logger.error('Could not import alg__%s. ' % self.FunctionName +\
                           'The alarm will be ignored.')
             self.Algorithm = None
 
@@ -106,7 +108,7 @@ class pAlarm(pXmlBaseElement):
         try:
             return pAlarmLimits(warnMin, warnMax, errMin, errMax)
         except:
-            logging.error('Could not eval limits. Returning None...' )
+            logger.error('Could not eval limits. Returning None...' )
             return None
 
     ## @brief Retrieve the function parameters from the xml

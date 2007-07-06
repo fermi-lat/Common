@@ -1,8 +1,6 @@
 ## @package pUtils
 ## @brief Package containing utilities of general interest.
 
-import logging
-
 ## @brief Expand a specified string to a given length.
 #
 ## @param string

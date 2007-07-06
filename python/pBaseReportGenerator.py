@@ -1,13 +1,15 @@
 
+import pSafeLogger
+logger = pSafeLogger.getLogger('pBaseReportGenerator')
+
 import os
 import sys
-import logging
 import commands
 import time
 
 import pUtils
 
-from pSafeROOT import *
+from pSafeROOT import ROOT
 
 
 class pBaseReportGenerator:
@@ -51,20 +53,19 @@ class pBaseReportGenerator:
     #  The class instance.
     
     def __createOutputDir(self):
-        logging.info('Creating output directory...')
+        logger.info('Creating output directory...')
         if os.path.exists(self.OutputDirPath):
             if not self.ForceOverwrite:
-                logging.warn('Output directory already exists.')
+                logger.warn('Output directory already exists.')
                 answer = None
                 while answer not in ['y', 'n']:
                     answer = raw_input('Do you want to overwrite the old ' +\
                                        'files (y or n)?\n')
                 if answer == 'n':
                     sys.exit('Aborting...')
-            logging.info('Cleaning old directory, first...')
+            logger.info('Cleaning old directory, first...')
             os.system('rm -rf %s' % self.OutputDirPath)
         os.makedirs(self.OutputDirPath)
-        logging.info('Done.\n')
 
     ## @brief Create the output html report directory.
     ## @param self
@@ -199,8 +200,8 @@ class pBaseReportGenerator:
         return pUtils.formatForLatex(line)
 
     def __LaTeXTableTrailer(self):
-        trailer = '\end{tabular}\n'   +\
-                  '\end{center}\n'   +\
+        trailer = '\end{tabular}\n' +\
+                  '\end{center}\n'  +\
                   '\end{table}\n'   +\
                   '@endlatexonly\n\n'
         return trailer
@@ -307,7 +308,7 @@ class pBaseReportGenerator:
     #  The class instance.
     
     def doxygenate(self, verbose = False):
-        logging.info('Running doxygen...')
+        logger.info('Running doxygen...')
         startTime = time.time()
         command = 'cd %s; doxygen %s' % (self.OutputDirPath,\
                                          self.CONFIG_FILE_NAME)
@@ -315,21 +316,21 @@ class pBaseReportGenerator:
             os.system(command)
         else:
             commands.getoutput(command)
-        logging.info('Done in %s s.\n' % (time.time() - startTime))
+        logger.info('Done in %s s.\n' % (time.time() - startTime))
 
     ## @brief Compile the LaTeX report and make ps and pdf files.
     ## @param self
     #  The class instance.
 
     def compileLaTeX(self, verbose = False):
-        logging.info('Compiling LaTeX report...')
+        logger.info('Compiling LaTeX report...')
         startTime = time.time()
         command = 'cd %s; make pdf' % self.LatexDirPath
         if verbose:
             os.system(command)
         else:
             commands.getoutput(command)
-        logging.info('Done in %s s.\n' % (time.time() - startTime))
+        logger.info('Done in %s s.\n' % (time.time() - startTime))
 
     def openReport(self, author = 'unknown'):
         self.createDirs()
@@ -347,7 +348,6 @@ class pBaseReportGenerator:
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level = logging.DEBUG)
     generator = pBaseReportGenerator('./report', 'Base report')
     generator.openReport()
     generator.addSection('test', 'test')
