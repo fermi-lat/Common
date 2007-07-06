@@ -74,9 +74,11 @@ class pBaseReportGenerator:
     #  If True (default) ROOT is set in batch mode for preventing the canvas
     #  from appearing on the screen.
     
-    def createAuxRootCanvas(self, batchMode = True):
+    def createAuxRootCanvas(self, batchMode = True, verbose = False):
         if batchMode:
             ROOT.gROOT.SetBatch(1)
+        if not verbose:
+            pass
         self.AuxRootCanvas  = ROOT.TCanvas('canvas', 'canvas',\
                                            self.AUX_CANVAS_WIDTH,\
                                            self.AUX_CANVAS_HEIGHT)
@@ -470,8 +472,6 @@ class pBaseReportGenerator:
                  '\\caption{{\\bf %s.} %s}\n'          +\
                  '\\end{center}\n'                     +\
                  '\\end{figure}\n'                     +\
-                 '@endlatexonly\n'                     +\
-                 '@latexonly\n'                        +\
                  '\\nopagebreak\n'                     +\
                  '@endlatexonly\n\n')                  %\
                  (self.LATEX_IMAGES_WIDTH, epsImagePath, title, caption)
@@ -574,8 +574,8 @@ class pBaseReportGenerator:
     ## @param pageLabel
     #  The page label.
  
-    def addRootObject(self, rootObject, drawOptions = '', title = '',\
-                    caption = '', xLog = False, yLog = False,\
+    def addRootObject(self, rootObject , title = '', caption = '',\
+                      drawOptions = '', xLog = False, yLog = False,\
                     pageLabel = MAIN_PAGE_LABEL):
         auxCanvasMissing = False
         if self.AuxRootCanvas is None:
@@ -599,6 +599,158 @@ class pBaseReportGenerator:
             logger.warn('When saving multiple plots, you should probably ' +\
                         'create the aux ROOT canvas explicitly.')
             self.deleteAuxRootCanvas()
+
+    ## @brief Return the representation of a pyhton list for the LaTeX report.
+    ## @param self
+    #  The class instance.
+    ## @param name
+    #  The list name appearing on the report.
+    ## @param list
+    #  The actual list.
+
+    def __getLaTeXListBlock(self, name, list):
+        block = ('@latexonly\n'              +\
+                 '{\\bfseries %s}: %s\\\\\n' +\
+                 '@endlatexonly\n\n')        %\
+                 (name, list)
+        return block
+
+    ## @brief Return the representation of a pyhton list for the html report.
+    ## @param self
+    #  The class instance.
+    ## @param name
+    #  The list name appearing on the report.
+    ## @param list
+    #  The actual list.
+
+    def __getHtmlListBlock(self, name, list):
+        block = ('@htmlonly\n'         +\
+                 '<b>%s</b>: %s<br>\n' +\
+                 '@endhtmlonly\n')     %\
+                 (name, list)
+        return block
+
+    ## @brief Write a python list to a specific page of the LaTeX report.
+    ## @param self
+    #  The class instance.
+    ## @param name
+    #  The list name appearing on the report.
+    ## @param list
+    #  The actual list.
+    ## @param pageLabel
+    #  The page label.
+
+    def addLaTeXListBlock(self, name, list, pageLabel = MAIN_PAGE_LABEL):
+        self.write(self.__getLaTeXListBlock(name, list), pageLabel)
+
+    ## @brief Write a python list to a specific page of the html report.
+    ## @param self
+    #  The class instance.
+    ## @param name
+    #  The list name appearing on the report.
+    ## @param list
+    #  The actual list.
+    ## @param pageLabel
+    #  The page label.
+
+    def addHtmlListBlock(self, name, list, pageLabel = MAIN_PAGE_LABEL):
+        self.write(self.__getHtmlListBlock(name, list), pageLabel)
+
+    ## @brief Add a pyhton list to a specific page of the (both LaTeX and
+    #  html) report.
+    ## @param self
+    #  The class instance
+    ## @param name
+    #  The list name appearing on the report.
+    ## @param list
+    #  The actual list.
+    ## @param pageLabel
+    #  The page label.
+
+    def addList(self, name, list, pageLabel = MAIN_PAGE_LABEL):
+        self.addLaTeXListBlock(name, list, pageLabel)
+        self.addHtmlListBlock(name, list, pageLabel)
+
+    ## @brief Return the representation of a pyhton dictionary for the
+    #  LaTeX report.
+    ## @param self
+    #  The class instance.
+    ## @param name
+    #  The dictionary name appearing on the report.
+    ## @param dictionary
+    #  The actual dictionary.
+
+    def __getLaTeXDictBlock(self, name, dictionary):
+        block = ('@latexonly\n'                  +\
+                 '{\\bfseries %s}\n'             +\
+                 '\\begin{itemize}\n')           %\
+                 (name)
+        for (key, value) in dictionary.items():
+            block += '\\item{\\texttt %s}: %s\n' %\
+                     (key, value)
+        block += '\\end{itemize}\n'              +\
+                 '@endlatexonly\n\n'
+        return block
+
+    ## @brief Return the representation of a pyhton dictionary for the
+    #  html report.
+    ## @param self
+    #  The class instance.
+    ## @param name
+    #  The dictionary name appearing on the report.
+    ## @param dictionary
+    #  The actual dictionary.
+
+    def __getHtmlDictBlock(self, name, dictionary):
+        block = ('@htmlonly\n'               +\
+                 '<b>%s</b>\n')              %\
+                 (name)
+        for (key, value) in dictionary.items():
+            block += '<li><tt>%s</tt>: %s\n' %\
+                     (key, value)
+        block += '@endhtmlonly\n'
+        return block
+
+    ## @brief Write a python dictionary to a specific page of the LaTeX report.
+    ## @param self
+    #  The class instance.
+    ## @param name
+    #  The dictionary name appearing on the report.
+    ## @param dictionary
+    #  The actual dictionary.
+    ## @param pageLabel
+    #  The page label.
+
+    def addLaTeXDictBlock(self, name, dictionary, pageLabel = MAIN_PAGE_LABEL):
+        self.write(self.__getLaTeXDictBlock(name, dictionary), pageLabel)
+
+    ## @brief Write a python dictionary to a specific page of the html report.
+    ## @param self
+    #  The class instance.
+    ## @param name
+    #  The dictionary name appearing on the report.
+    ## @param dictionary
+    #  The actual dictionary.
+    ## @param pageLabel
+    #  The page label.
+
+    def addHtmlDictBlock(self, name, dictionary, pageLabel = MAIN_PAGE_LABEL):
+        self.write(self.__getHtmlDictBlock(name, dictionary), pageLabel)
+
+    ## @brief Add a pyhton dictionary to a specific page of the (both LaTeX
+    #  and html) report.
+    ## @param self
+    #  The class instance
+    ## @param name
+    #  The list name appearing on the report.
+    ## @param list
+    #  The actual list.
+    ## @param pageLabel
+    #  The page label.
+
+    def addDictionary(self, name, dictionary, pageLabel = MAIN_PAGE_LABEL):
+        self.addLaTeXDictBlock(name, dictionary, pageLabel)
+        self.addHtmlDictBlock(name, dictionary, pageLabel)
 
     ## @brief "Virtual" method to be overridden by the derived classes
     #  as to implement the actual generation of the reports.
@@ -660,16 +812,25 @@ class pBaseReportGenerator:
 
 
 if __name__ == '__main__':
-    generator = pBaseReportGenerator('./report', 'My report', 'Luca Baldini')
+    TEST_LIST         = [1, 2, 3]
+    TEST_DICT         = {'First key': 1, 'Second key': 2, 'Third key': 3}
+    TEST_TABLE_HEADER = ['Column 1', 'Column 2', 'Column 3']
+    TEST_TABLE_ROWS   = [[1, 2, 3], [4, 5, 6]]
+    TEST_HISTOGRAM    = ROOT.TH1F('histogram', 'histogram', 100, -5, 5)
+    TEST_HISTOGRAM.FillRandom('gaus')
+    
+    generator = pBaseReportGenerator('./report', 'Test report', 'Luca Baldini')
     generator.openReport()
-    generator.addSection('test', 'test')
-    generator.addSubsection('sub1', 'A subsection')
-    generator.addSubsection('sub2', 'Another subsection')
-    tableHeader = ['a', 'b', 'c'] 
-    tableRows   = [['my_test', 2, 3],
-                   [4, 5, 6]]
-    generator.addTable(tableHeader, tableRows, 'Howdy, partner?')
+    generator.addSection('listsanddicts', 'Lists and dictionaries')
+    generator.addSubsection('lists', 'Python lists')
+    generator.addList('Example list', TEST_LIST)
+    generator.addSubsection('dicts', 'Python dictionaries')
+    generator.addDictionary('Example dictionary', TEST_DICT)
+    generator.addSection('tables', 'Tables')
+    generator.addTable(TEST_TABLE_HEADER, TEST_TABLE_ROWS, 'Example table')
+    generator.addSection('rootobjects', 'Root objects')
+    generator.addRootObject(TEST_HISTOGRAM, 'Example histogram',\
+                            'Histogram filled with random gaussian numbers.')
     generator.addPage('details', 'Detailed page')
-    generator.addTable(tableHeader, tableRows, 'Second Test', 'details' )
     generator.closeReport()
     generator.compileReport()
