@@ -7,6 +7,8 @@ logger = pSafeLogger.getLogger('pXmlBaseElement')
 
 import sys
 
+from pGlobals import *
+
 ## @brief Class describing a minimal xml element.
 #
 #  At the lowest level, the class describe a piece of xml looking like:
