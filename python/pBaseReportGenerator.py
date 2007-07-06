@@ -316,7 +316,7 @@ class pBaseReportGenerator:
             os.system(command)
         else:
             commands.getoutput(command)
-        logger.info('Done in %s s.\n' % (time.time() - startTime))
+        logger.info('Done in %.2f s.\n' % (time.time() - startTime))
 
     ## @brief Compile the LaTeX report and make ps and pdf files.
     ## @param self
@@ -330,7 +330,7 @@ class pBaseReportGenerator:
             os.system(command)
         else:
             commands.getoutput(command)
-        logger.info('Done in %s s.\n' % (time.time() - startTime))
+        logger.info('Done in %.2f s.\n' % (time.time() - startTime))
 
     def openReport(self, author = 'unknown'):
         self.createDirs()
