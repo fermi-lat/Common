@@ -1,6 +1,6 @@
 
 LOGGING_LEVEL  = 'DEBUG'
-LOGGING_FORMAT = '- %(levelname)s : %(name)s - %(message)s'
+LOGGING_FORMAT = '%(levelname)s:%(name)s -- %(message)s'
 
 import sys
 
