@@ -162,66 +162,11 @@ class pAlarm(pXmlBaseElement):
     def getRootObjectName(self):
         return self.RootObject.GetName()
 
-    ## @brief Return the plot name, formatted to be printed on the terminal.
-    ## @param self
-    #  The class instance.      
-
-    def getTxtFormattedPlotName(self):
-        return pUtils.expandString(self.getRootObjectName(),\
-                                   SUMMARY_COLUMNS_DICT['Plot name'])
-
-    ## @brief Return the alarm function, formatted to be printed on the
-    #  terminal.
-    ## @param self
-    #  The class instance.
-
-    def getTxtFormattedFunction(self):
-        return pUtils.expandString(self.FunctionName,\
-                                   SUMMARY_COLUMNS_DICT['Function'])
-
-    ## @brief Return the alarm status, formatted to be printed on the
-    #  terminal.
-    ## @param self
-    #  The class instance.
-
-    def getTxtFormattedStatus(self):
-        return pUtils.expandString(self.getStatusLabel(),\
-                                   SUMMARY_COLUMNS_DICT['Status'])
-
-    ## @brief Return the output value of the alarm, formatted to be printed
-    #  on the terminal.
-    ## @param self
-    #  The class instance.
-
-    def getTxtFormattedOutputValue(self):
-        return pUtils.expandNumber(self.getOutputValue(),\
-                                   SUMMARY_COLUMNS_DICT['Output'])
-
     def getFullTxtFormattedLimits(self):
         return '[%s/%s, %s/%s]' % (self.Limits.ErrorMin,  \
                                    self.Limits.WarningMin,\
                                    self.Limits.WarningMax,\
                                    self.Limits.ErrorMax)
-
-    ## @brief Return the alarm limits, formatted to be printed on the terminal.
-    ## @param self
-    #  The class instance.
-
-    def getTxtFormattedLimits(self):
-        return pUtils.expandString(self.getFullTxtFormattedLimits(),\
-                                   SUMMARY_COLUMNS_DICT['Limits'])
-
-    ## @brief Return all the relevant information on the alarm status,
-    #  nicely formatted.
-    ## @param self
-    #  The class instance.
-
-    def getTxtFormattedSummary(self):
-        return '%s | %s | %s | %s | %s\n' % (self.getTxtFormattedPlotName(),
-                                             self.getTxtFormattedFunction(),
-                                             self.getTxtFormattedStatus(),
-                                             self.getTxtFormattedOutputValue(),
-                                             self.getTxtFormattedLimits())
 
     def getTableSummaryRow(self):
         return [self.getRootObjectName(), self.FunctionName,\
@@ -247,27 +192,3 @@ class pAlarm(pXmlBaseElement):
                    '    </alarm>\n' +\
                    '</plot>\n'
         return summary
-    
-    ## @brief Return all the relevant information on the alarm status,
-    #  formatted for the html report.
-    ## @param self
-    #  The class instance.
-    
-    def getHtmlFormattedStatus(self):
-        return '\t\t<td>%s</td>\n' % self.__Function    +\
-               '\t\t<td>%s</td>\n' % self.__Status      +\
-               '\t\t<td>%s</td>\n' % self.__OutputValue +\
-               '\t\t<td>%s</td>\n' % self.getFormattedLimits()
-
-    ## @brief Return all the relevant information on the alarm status,
-    #  formatted for the LaTeX report.
-    ## @param self
-    #  The class instance.
-
-    def getLatexFormattedStatus(self):
-        return '%s & %s & %s & %s \\\\\n' % (self.__Function, self.__Status,\
-                                             self.__OutputValue            ,\
-                                             self.getFormattedLimits())
-
-    def __str__(self):
-        return self.getTxtFormattedSummary()

@@ -25,8 +25,7 @@ from pRootFileManager      import pRootFileManager
 class pAlarmHandler:
 
     def __init__(self, rootFilePath, xmlConfigFilePath,\
-                 xmlSummaryFilePath = None, reportDir = None,
-                 printLevel = None):
+                 xmlSummaryFilePath = None, reportDir = None):
         self.XmlParser = pXmlAlarmParser(xmlConfigFilePath)
         if xmlSummaryFilePath == None:
             xmlSummaryFilePath = os.path.abspath(rootFilePath)
@@ -35,17 +34,18 @@ class pAlarmHandler:
         if reportDir == None:
             reportDir = os.path.dirname(os.path.abspath(rootFilePath))
             reportDir = os.path.join(reportDir, 'alarms')
-        self.__ReportDir = reportDir
+        self.ReportDir = reportDir
         self.RootFileManager = pRootFileManager(rootFilePath)
-        self.__setAlarmSetsPlotLists()
-        self.__printLevel = printLevel
+        self.setAlarmSetsPlotLists()
+        self.activateAlarms()
+        pAlarmReportGenerator(self, self.ReportDir).run()
 
-    def __setAlarmSetsPlotLists(self):
+    def setAlarmSetsPlotLists(self):
         logger.info('Assigning the plots to the alarm sets...')
         for alarmSet in self.XmlParser.getEnabledAlarmSets():
             alarmSet.setPlotsList(self.RootFileManager.find(alarmSet.Name))
         logger.info('Done. %d enabled alarm set(s) found.\n' %\
-                     len(self.XmlParser.getEnabledAlarmSets()))
+                    len(self.XmlParser.getEnabledAlarmSets()))
 
     def activateAlarms(self):
         logger.info('Activating the alarms...')
@@ -53,8 +53,6 @@ class pAlarmHandler:
             alarm.activate()
         logger.info('Done. %d enabled alarm(s) found.\n' %\
                      len(self.XmlParser.getEnabledAlarms()))
-        if self.__printLevel != None:
-            print self
         self.writeXmlSummaryFile()
 
     def writeXmlSummaryFile(self):
@@ -68,36 +66,6 @@ class pAlarmHandler:
         xmlSummaryFile.close()
         logger.info('Done.')
 
-    def __getHorizontalLine(self):
-        return '-'*(sum(SUMMARY_COLUMNS_DICT.values()) +\
-                    3*(len(SUMMARY_COLUMNS_LIST) - 1)) + '\n'
-
-    def __getTxtFormattedSummaryHeader(self):
-        header = '** Alarm handler summary **\n\n'
-        header += self.__getHorizontalLine()
-        for label in SUMMARY_COLUMNS_LIST[:-1]:
-            length = SUMMARY_COLUMNS_DICT[label]
-            header += '%s | ' % pUtils.expandString(label, length)
-        label  = SUMMARY_COLUMNS_LIST[-1]
-        length = SUMMARY_COLUMNS_DICT[label]
-        header += '%s\n' % pUtils.expandString(label, length)
-        header += self.__getHorizontalLine()
-        return header
-
-    def getTxtFormattedSummary(self, level=1):
-        summary = self.__getTxtFormattedSummaryHeader()
-        for alarm in self.XmlParser.getEnabledAlarms():
-            if alarm.getStatusLevel() > level:
-                summary += alarm.getTxtFormattedSummary()
-        summary += self.__getHorizontalLine()
-        return summary
-
-    def writeReport(self):
-        reportGenerator = pAlarmReportGenerator(self, self.__ReportDir)
-        reportGenerator.run()
-
-    def __str__(self):
-        return self.getTxtFormattedSummary(self.__printLevel)
 
 
 if __name__ == '__main__':
@@ -109,9 +77,7 @@ if __name__ == '__main__':
     parser.add_option('-o', '--output-file', dest='output_file',
                       default=None, type=str,
                       help='path to the output xml file')
-    parser.add_option('-l', '--screen-level', dest='screen_level',
-                      default=None, type=int,
-                      help='level of the on-screen output, No level by default')
+
     (options, args) = parser.parse_args()
     if len(args) != 1:
         parser.print_help()
@@ -127,7 +93,4 @@ if __name__ == '__main__':
            
     alarmHandler = pAlarmHandler(args[0],\
                                  options.config_file,\
-                                 options.output_file,\
-                                 options.screen_level )
-    alarmHandler.activateAlarms()
-    alarmHandler.writeReport()
+                                 options.output_file)
