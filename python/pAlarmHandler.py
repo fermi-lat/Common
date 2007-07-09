@@ -11,13 +11,13 @@ import sys
 import pUtils
 import time
 
-from pXmlElement           import pXmlElement
-from pXmlAlarmParser       import pXmlAlarmParser
-from pAlarm                import pAlarm
-from pAlarm                import SUMMARY_COLUMNS_DICT, SUMMARY_COLUMNS_LIST
-from pAlarmReportGenerator import pAlarmReportGenerator
-from pSafeROOT             import ROOT
-from pRootFileManager      import pRootFileManager
+from pXmlElement               import pXmlElement
+from pXmlAlarmParser           import pXmlAlarmParser
+from pAlarm                    import pAlarm
+from pAlarmReportGenerator     import pAlarmReportGenerator
+from pAlarmXmlSummaryGenerator import pAlarmXmlSummaryGenerator
+from pSafeROOT                 import ROOT
+from pRootFileManager          import pRootFileManager
 
 
 ## @brief Base class handling the alarms.
@@ -38,7 +38,8 @@ class pAlarmHandler:
         self.RootFileManager = pRootFileManager(rootFilePath)
         self.setAlarmSetsPlotLists()
         self.activateAlarms()
-        pAlarmReportGenerator(self, self.ReportDir).run()
+        pAlarmXmlSummaryGenerator(self).run()
+        pAlarmReportGenerator(self).run()
 
     def setAlarmSetsPlotLists(self):
         logger.info('Assigning the plots to the alarm sets...')
@@ -53,18 +54,6 @@ class pAlarmHandler:
             alarm.activate()
         logger.info('Done. %d enabled alarm(s) found.\n' %\
                      len(self.XmlParser.getEnabledAlarms()))
-        self.writeXmlSummaryFile()
-
-    def writeXmlSummaryFile(self):
-        logger.info('Writing summary to %s...' %\
-                     os.path.abspath(self.XmlSummaryFilePath))
-        xmlSummaryFile = file(self.XmlSummaryFilePath, 'w')
-        xmlSummaryFile.writelines('<alarmSummary>\n')
-        for alarm in self.XmlParser.getEnabledAlarms():
-            xmlSummaryFile.writelines(alarm.getXmlFormattedSummary())
-        xmlSummaryFile.writelines('</alarmSummary>\n')
-        xmlSummaryFile.close()
-        logger.info('Done.')
 
 
 

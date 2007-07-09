@@ -15,88 +15,73 @@ STATUS_UNDEFINED = {'level': 4, 'label': 'UNDEFINED'}
 class pAlarmOutput:
 
     def __init__(self, limits):
-        self.__Limits = limits
-        self.__Value  = None
-        self.__Status = STATUS_UNDEFINED
-        self.__Dict   = {}
-
-    def getValue(self):
-        return self.__Value
+        self.Limits       = limits
+        self.Value        = None
+        self.Status       = STATUS_UNDEFINED
+        self.DetailedDict = {}
 
     def setValue(self, value):
-        self.__Value = value
+        self.Value = value
         self.__processValue()
 
     def __processValue(self):
-        if self.__Value is None:
-	    self.__Status = STATUS_UNDEFINED
-        elif (self.__Value > self.__Limits.WarningMin)\
-                 and (self.__Value < self.__Limits.WarningMax):
-            self.__Status = STATUS_CLEAN
-        elif (self.__Value < self.__Limits.ErrorMin)\
-                 or (self.__Value > self.__Limits.ErrorMax):	
-            self.__Status = STATUS_ERROR
+        if self.Value is None:
+	    self.Status = STATUS_UNDEFINED
+        elif (self.Value > self.Limits.WarningMin)\
+                 and (self.Value < self.Limits.WarningMax):
+            self.Status = STATUS_CLEAN
+        elif (self.Value < self.Limits.ErrorMin)\
+                 or (self.Value > self.Limits.ErrorMax):	
+            self.Status = STATUS_ERROR
         else:
-            self.__Status = STATUS_WARNING
-
-    def getStatus(self):
-        return self.__Status
+            self.Status = STATUS_WARNING
 
     def getStatusLevel(self):
-        return self.getStatus()['level']
+        return self.Status['level']
 
     def getStatusLabel(self):
-        return self.getStatus()['label']
+        return self.Status['label']
 
     def isClean(self):
-        return (self.getStatus() == STATUS_CLEAN) 
+        return (self.Status == STATUS_CLEAN) 
 
     def setStatus(self, status):
-        self.__Status = status
-
-    def getDict(self):
-        return self.__Dict
+        self.Status = status
 
     def getDictValue(self, key):
         try:
-            return self.__Dict[key]
+            return self.DetailedDict[key]
         except KeyError:
             logger.warn('Unknown key (%s) in the alarm output dict.' % key)
             return None
 
     def setDictValue(self, key, value):
-        self.__Dict[key] = value
+        self.DetailedDict[key] = value
 
     def incrementDictValue(self, key, amount = 1):
-        self.__Dict[key] += amount
+        self.DetailedDict[key] += amount
 
     def appendDictValue(self, key, value):
         try:
-            self.__Dict[key].append(value)
+            self.DetailedDict[key].append(value)
         except KeyError:
-            self.__Dict[key] = [value]
+            self.DetailedDict[key] = [value]
 
     def getDictTextSummary(self):
         summary = 'Optional output dictionary following...\n'
-        if self.__Dict == {}:
+        if self.DetailedDict == {}:
             summary += 'Empty\n'
         else:
-            for (key, value) in self.__Dict.items():
+            for (key, value) in self.DetailedDict.items():
                 summary += '%s: %s\n' % (pUtils.expandString(key, 20), value)
         return summary
 
     def getTextSummary(self):
-        return '** Alarm output summary **\n'                        +\
-               'Output value: %s\n' % self.__Value                   +\
-               'Limits:     : %s\n' % self.__Limits.getTextSummary() +\
-               'Status      : %s\n' % self.__Status                  +\
+        return '** Alarm output summary **\n'                      +\
+               'Output value: %s\n' % self.Value                   +\
+               'Limits:     : %s\n' % self.Limits.getTextSummary() +\
+               'Status      : %s\n' % self.Status                  +\
                self.getDictTextSummary()
-
-    def getXmlSummary(self):
-        pass
-
-    def getDoxygenSummary(self):
-        pass
 
     def __str__(self):
         return self.getTextSummary()

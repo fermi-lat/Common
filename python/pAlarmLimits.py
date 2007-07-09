@@ -27,8 +27,8 @@ class pAlarmLimits:
                           (self.WarningMax, self.ErrorMax))
 
     def getTextRep(self):
-        return '[%s/%s; %s/%s]' % (self.ErrorMin, self.WarningMin,
-                                   self.WarningMax, self.ErrorMax)
+        return '[%s / %s --- %s / %s]' % (self.ErrorMin, self.WarningMin,
+                                          self.WarningMax, self.ErrorMax)
 
     def __str__(self):
         return self.getTextRep()

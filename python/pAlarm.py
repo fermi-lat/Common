@@ -12,20 +12,6 @@ from pXmlBaseElement import pXmlBaseElement
 from pAlarmLimits import pAlarmLimits
 
 
-SUMMARY_COLUMNS_LIST = ['Plot name',
-                        'Function' ,
-                        'Status'   ,
-                        'Output'   ,
-                        'Limits'
-                        ]
-SUMMARY_COLUMNS_DICT = {'Plot name': 25,
-                        'Function' : 10,
-                        'Status'   : 7 ,
-                        'Output'   : 6 ,
-                        'Limits'   : 19
-                        }
-
-
 ## @brief Class describing an alarm to be activated on a plot.
 #
 #  The basic idea, here, is that the alarm must verify whether a simple
@@ -39,23 +25,23 @@ class pAlarm(pXmlBaseElement):
     #  The class instance.
     ## @param domElement
     #  The xml element from which the alarm is constructed.
-    ## @param plot
+    ## @param rootObject
     #  The ROOT object the alarm is set on.
     
     def __init__(self, domElement, rootObject):
 
-        ## @var __Function
+        ## @var Function
         ## @brief The type of the alarm (i.e. the specific algorithm).
 
-        ## @var __ParamsDict
+        ## @var ParamsDict
         ## @brief Dictionary of optional parameters to be passed to the
         #  algorithm implementing the alarm.
  
         pXmlBaseElement.__init__(self, domElement)
-	self.RootObject      = rootObject
-        self.Limits          = self.__getLimits()
-	self.ParamsDict      = self.__getParametersDict()
-        self.FunctionName    = self.getAttribute('function')
+	self.RootObject   = rootObject
+        self.Limits       = self.__extractLimits()
+	self.ParamsDict   = self.__extractParametersDict()
+        self.FunctionName = self.getAttribute('function')
         try:
             exec('from alg__%s import alg__%s' % (self.FunctionName,\
                                                   self.FunctionName))
@@ -69,7 +55,7 @@ class pAlarm(pXmlBaseElement):
         
     ## @brief
 
-    def __getLimits(self):
+    def __extractLimits(self):
         warnLims = pXmlBaseElement(self.getElementByTagName('warning_limits'))
         warnMin  = warnLims.getAttribute('min')
         warnMax  = warnLims.getAttribute('max')
@@ -116,7 +102,7 @@ class pAlarm(pXmlBaseElement):
     ## @param self
     #  The class instance.
 
-    def __getParametersDict(self):
+    def __extractParametersDict(self):
         parametersDict = {}
         for domElement in self.getElementsByTagName('parameter'):
             xmlElement = pXmlBaseElement(domElement)
@@ -124,29 +110,14 @@ class pAlarm(pXmlBaseElement):
                            xmlElement.evalAttribute('value')
         return parametersDict
 
-    def getOutput(self):
-        return self.Algorithm.Output
-
     def getStatus(self):
-        return self.getOutput().getStatus()
+        return self.Algorithm.Output.Status['label']
 
-    def getStatusLevel(self):
-        return self.getOutput().getStatusLevel()
-    
-    def getStatusLabel(self):
-        return self.getOutput().getStatusLabel()
-    
-    def isClean(self):
-        return self.getOutput().isClean()
-    
-    def getOutputValue(self):
-        return self.getOutput().getValue()
-    
-    def getOutputDict(self):
-        return self.getOutput().getDict()
-    
-    def getOutputDictValue(self, key):
-        return self.getOutput().getDictValue(key)
+    def getValue(self):
+        return self.Algorithm.Output.Value
+
+    def getLimits(self):
+        return self.Limits.getTextRep()
     
     ## @brief Activate the alarm (i.e. actually verify the plot).
     ## @param self
@@ -155,34 +126,4 @@ class pAlarm(pXmlBaseElement):
     def activate(self):
         self.Algorithm.apply()
 
-    ## @brief Return the name of the plot the alarm is set on.
-    ## @param self
-    #  The class instance.            
-
-    def getRootObjectName(self):
-        return self.RootObject.GetName()
-
-    def getTableSummaryRow(self):
-        return [self.getRootObjectName(), self.FunctionName,\
-                self.getStatusLabel(), self.getOutputValue(),\
-                self.Limits.getTextRep(), 'N/A']
-
-    ## @brief Return all the relevant information on the alarm status,
-    #  formatted for the xml output summary.
-    ## @param self
-    #  The class instance.
     
-    def getXmlFormattedSummary(self):
-        summary = '<plot name="%s">\n' % self.getRootObjectName() +\
-                  '    <alarm function="%s">\n' % self.FunctionName
-        for item in self.ParamsDict.items():
-            summary += '        <parameter name="%s" value="%s"/>\n' % item
-        summary += '        <warning_limits min="%s" max="%s"/>\n' %\
-                   (self.Limits.WarningMin, self.Limits.WarningMax) +\
-                   '        <error_limits min="%s" max="%s"/>\n' %\
-                   (self.Limits.ErrorMin, self.Limits.ErrorMax) +\
-                   '        <output>%s</output>\n' % self.getOutputValue() +\
-                   '        <status>%s</status>\n' % self.getStatusLabel() +\
-                   '    </alarm>\n' +\
-                   '</plot>\n'
-        return summary
