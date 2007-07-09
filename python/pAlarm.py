@@ -162,16 +162,10 @@ class pAlarm(pXmlBaseElement):
     def getRootObjectName(self):
         return self.RootObject.GetName()
 
-    def getFullTxtFormattedLimits(self):
-        return '[%s/%s, %s/%s]' % (self.Limits.ErrorMin,  \
-                                   self.Limits.WarningMin,\
-                                   self.Limits.WarningMax,\
-                                   self.Limits.ErrorMax)
-
     def getTableSummaryRow(self):
         return [self.getRootObjectName(), self.FunctionName,\
                 self.getStatusLabel(), self.getOutputValue(),\
-                self.getFullTxtFormattedLimits(), 'N/A']
+                self.Limits.getTextRep(), 'N/A']
 
     ## @brief Return all the relevant information on the alarm status,
     #  formatted for the xml output summary.

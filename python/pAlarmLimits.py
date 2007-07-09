@@ -26,12 +26,12 @@ class pAlarmLimits:
             logger.error('Warning max (%s) is higher than error max (%s).' %\
                           (self.WarningMax, self.ErrorMax))
 
-    def getTextSummary(self):
+    def getTextRep(self):
         return '[%s/%s; %s/%s]' % (self.ErrorMin, self.WarningMin,
                                    self.WarningMax, self.ErrorMax)
 
     def __str__(self):
-        return self.getTextSummary()
+        return self.getTextRep()
 
 
 if __name__ == '__main__':
