@@ -11,6 +11,7 @@ cleandoc:
 clean:
 	rm -f *~ .*~ *.pyc *.pyo
 	rm -rf testreport
+	rm -rf *_test.*
 
 cleanall:
 	make clean

@@ -118,7 +118,7 @@ class pAsciiWriter:
 
 
 if __name__ == '__main__':
-    writer = pAsciiWriter('test.txt')
+    writer = pAsciiWriter('ascii_test.txt')
     writer.writeLine('Howdy partner, how are you doing?')
     writer.indent(3)
     writer.writeLine('Well...')
