@@ -10,7 +10,10 @@
 #  directly from ROOT objects).
 #  @li Tables (both in html and LaTeX)
 #  @li Formatted representation of python dictionaries.
-
+#  @li Formatted representation of python lists.
+#
+#  @todo Add a reference mechanism to link objects (i.e. sections, tables,
+#  images) within the report.
 
 import pSafeLogger
 logger = pSafeLogger.getLogger('pBaseReportGenerator')
@@ -25,9 +28,33 @@ import pUtils
 from pSafeROOT import ROOT
 
 
-## @brief Base class for aoutomatic generation of test reports.
+## @brief Base class for automatic generation of test reports.
 
 class pBaseReportGenerator:
+
+    ## @var CONFIG_FILE_NAME
+    ## @brief The name of the doxygen config file.
+
+    ## @var MAIN_PAGE_LABEL
+    ## @brief The label for the doxygen main page.
+
+    ## @var HTML_DIR_NAME
+    ## @brief The name of the html report directory.
+
+    ## @var LATEX_DIR_NAME
+    ## @brief The name of the LaTeX report directory.
+
+    ## @var AUX_CANVAS_WIDTH
+    ## @brief The width of the ROOT auxiliary canvas.
+
+    ## @var AUX_CANVAS_HEIGHT
+    ## @brief The height of the ROOT auxiliary canvas.
+
+    ## @var AUX_CANVAS_COLOR
+    ## @brief The backround color of the ROOT auxiliary canvas.
+
+    ## @var LATEX_IMAGES_WIDTH
+    ## @brief The width of the images in the LaTeX report.
 
     CONFIG_FILE_NAME   = 'config.doxygen'
     MAIN_PAGE_LABEL    = 'mainpage'
@@ -52,6 +79,40 @@ class pBaseReportGenerator:
     
     def __init__(self, outputDirPath, mainPageTitle = 'Main page',\
                  author = 'unknown', forceOverwrite = True):
+
+        ## @var OutputDirPath
+        ## @brief The path to the output dir.
+
+        ## @var MainPageTitle
+        ## @brief The title of the main page.
+
+        ## @var Author
+        ## @brief The report's author.
+
+        ## @var ForceOverwrite
+        ## @brief If True (default) overwrites existing folders without
+        #  messages.
+
+        ## @var HtmlDirPath
+        ## @brief The path to the html report dir.
+
+        ## @var LatexDirPath
+        ## @brief The path to the LaTeX report dir.
+
+        ## @var ConfigFilePath
+        ## @brief The path to the doxygen configuration file.
+
+        ## @var DoxyFilesDict
+        ## @brief Dictionary of doxygen files (one per page).
+
+        ## @var AuxRootCanvas
+        ## @brief Auxiliary ROOT canvas to draw ROOT objects on before they
+        #  are included in the report as images.
+
+        ## @var OutRootGuard
+        ## @brief ROOT.TRedirectOutputGuard object used for redirecting the
+        #  ROOT text output.
+    
         self.OutputDirPath  = outputDirPath
         self.MainPageTitle  = mainPageTitle
         self.Author         = author
@@ -64,21 +125,25 @@ class pBaseReportGenerator:
                                            self.CONFIG_FILE_NAME)
         self.DoxyFilesDict  = {}
         self.AuxRootCanvas  = None
+        self.OutRootGuard   = None
 
     ## @brief Create an auxiliary ROOT canvas to draw plots on.
     #
     #  Used for including in the report histograms and graphs from a ROOT file.
     ## @param self
     #  The class instance.
-    ## @param batchMode
+    ## @param batch
     #  If True (default) ROOT is set in batch mode for preventing the canvas
     #  from appearing on the screen.
+    ## @param verbose
+    #  If False (default) ROOT is prevented from printing informations on the
+    #  screen while saving eps files.
     
-    def createAuxRootCanvas(self, batchMode = True, verbose = False):
-        if batchMode:
-            ROOT.gROOT.SetBatch(1)
+    def createAuxRootCanvas(self, batch = True, verbose = False):
+        if batch:
+            self.disableRootGraphicsOutput()
         if not verbose:
-            pass
+            self.disableRootTextOutput()
         self.AuxRootCanvas  = ROOT.TCanvas('canvas', 'canvas',\
                                            self.AUX_CANVAS_WIDTH,\
                                            self.AUX_CANVAS_HEIGHT)
@@ -91,6 +156,36 @@ class pBaseReportGenerator:
 
     def deleteAuxRootCanvas(self):
         self.AuxRootCanvas = None
+        self.enableRootTextOutput()
+        self.enableRootGraphicsOutput()
+
+    ## @brief Prevents ROOT from printing informations on the screen while
+    #  saving eps files.
+    ## @param self
+    #  The class instance.
+
+    def disableRootTextOutput(self):
+        self.OutRootGuard = ROOT.TRedirectOutputGuard('/dev/null', 'w')
+
+    ## @brief Restore the normal ROOT text output. 
+    ## @param self
+    #  The class instance.
+
+    def enableRootTextOutput(self):
+        self.OutRootGuard  = None
+
+    ## @brief Set ROOT in batch mode.
+    ## @param self
+    #  The class instance.
+
+    def disableRootGraphicsOutput(self):
+        ROOT.gROOT.SetBatch(1)
+
+    ## @brief Set ROOT in normal (graphics) mode.
+    ## @param self
+    #  The class instance.
+        
+    def enableRootGraphicsOutput(self):
         ROOT.gROOT.SetBatch(0)
 
     ## @brief Open the report.
@@ -102,7 +197,7 @@ class pBaseReportGenerator:
     #  The page author (typically the script who generated it).
 
     def openReport(self):
-        self.createDirs()
+        self.__createDirs()
         self.addPage(self.MAIN_PAGE_LABEL, self.MainPageTitle)
 
     ## @brief Close the report.
@@ -112,8 +207,8 @@ class pBaseReportGenerator:
     #  The class instance.
 
     def closeReport(self):
-        self.writeTrailers()
-        self.closeDoxyFiles()
+        self.__writeTrailers()
+        self.__closeDoxyFiles()
 
     ## @brief Create the base output directory for the report.
     ## @param self
@@ -153,7 +248,7 @@ class pBaseReportGenerator:
     ## @param self
     #  The class instance.
     
-    def createDirs(self):
+    def __createDirs(self):
         self.__createOutputDir()
         self.__createHtmlDir()
         self.__createLatexDir()
@@ -166,7 +261,7 @@ class pBaseReportGenerator:
     ## @param mode
     #  The open mode.
 
-    def openOutputFile(self, filePath, mode = 'w'):
+    def __openOutputFile(self, filePath, mode = 'w'):
         try:
             return file(filePath, mode)
         except:
@@ -174,7 +269,7 @@ class pBaseReportGenerator:
 
     ## @brief Close all the opened doxygen files.
     
-    def closeDoxyFiles(self):
+    def __closeDoxyFiles(self):
         for file in self.DoxyFilesDict.values():
             file.close()
 
@@ -193,13 +288,13 @@ class pBaseReportGenerator:
     def addPage(self, label, title):
         pageFileName = '%s.doxygen' % label.lower().replace(' ', '_')
         filePath = os.path.join(self.OutputDirPath, pageFileName)
-        self.DoxyFilesDict[label] = self.openOutputFile(filePath)
-        self.writePageHeader(label, title)
+        self.DoxyFilesDict[label] = self.__openOutputFile(filePath)
+        self.__writePageHeader(label, title)
         if not os.path.exists(self.ConfigFilePath):
-            configFile = self.openOutputFile(self.ConfigFilePath)
+            configFile = self.__openOutputFile(self.ConfigFilePath)
             configFile.writelines('FILE_PATTERNS = %s '% pageFileName)
         else:
-            configFile = self.openOutputFile(self.ConfigFilePath, 'a')
+            configFile = self.__openOutputFile(self.ConfigFilePath, 'a')
             configFile.writelines('%s '% pageFileName)
         configFile.close()
 
@@ -230,7 +325,7 @@ class pBaseReportGenerator:
     ## @param pageTitle
     #  The page title (appearing on the report)
 
-    def writePageHeader(self, pageLabel, pageTitle):
+    def __writePageHeader(self, pageLabel, pageTitle):
         if pageLabel == self.MAIN_PAGE_LABEL:
             header = '/** @%s %s\n' % (pageLabel, pageTitle)              +\
                      '@htmlonly\n'                                       +\
@@ -250,7 +345,7 @@ class pBaseReportGenerator:
     ## @param self
     #  The class instance.
 
-    def writeTrailers(self):
+    def __writeTrailers(self):
         for pageLabel in self.DoxyFilesDict.keys():
             self.newline(pageLabel)
             self.write('*/', pageLabel)
@@ -267,6 +362,7 @@ class pBaseReportGenerator:
 
     def addSection(self, label, title, pageLabel = MAIN_PAGE_LABEL):
         self.newline(pageLabel)
+        self.write('@htmlonly\n<br><br>\n@endhtmlonly\n')
         self.write('@section %s %s\n' % (label, title), pageLabel)
         self.newline(pageLabel)
 
@@ -282,6 +378,7 @@ class pBaseReportGenerator:
 
     def addSubsection(self, label, title, pageLabel = MAIN_PAGE_LABEL):
         self.newline(pageLabel)
+        self.write('@htmlonly\n<br>\n@endhtmlonly\n')
         self.write('@subsection %s %s\n' % (label, title), pageLabel)
         self.newline(pageLabel)
 
@@ -291,12 +388,10 @@ class pBaseReportGenerator:
     ## @param caption
     #  The table caption.
 
-    def __getLaTeXTableHeader(self, caption):
-        header = '@latexonly\n'                +\
-                 '\\begin{table}[!htb]\n'      +\
-                 '\\begin{center}\n'           +\
-                 '\\caption{%s}\n' % (caption) +\
-                 '\\label{%s}\n' % (caption)
+    def __getLaTeXTableHeader(self):
+        header = '@latexonly\n'           +\
+                 '\\begin{table}[!htb]\n' +\
+                 '\\begin{center}\n'
         return header
 
     ## @brief Return the header for a LaTeX-formatted table.
@@ -330,10 +425,11 @@ class pBaseReportGenerator:
     ## @param self
     #  The class instance.
 
-    def __getLaTeXTableTrailer(self):
-        trailer = '\end{tabular}\n' +\
-                  '\end{center}\n'  +\
-                  '\end{table}\n'   +\
+    def __getLaTeXTableTrailer(self, title, caption):
+        trailer = '\end{tabular}\n'                               +\
+                  '\\caption{{\\bf %s.} %s}\n' % (title, caption) +\
+                  '\end{center}\n'                                +\
+                  '\end{table}\n'                                 +\
                   '@endlatexonly\n\n'
         return trailer
 
@@ -349,13 +445,13 @@ class pBaseReportGenerator:
     ## @param pageLabel
     #  The page label.
 
-    def addLaTeXTable(self, header, rows, caption = '',\
-                       pageLabel = MAIN_PAGE_LABEL):        
-        self.write(self.__getLaTeXTableHeader(caption), pageLabel)
+    def __addLaTeXTableBlock(self, header, rows, title = '', caption = '',\
+                             pageLabel = MAIN_PAGE_LABEL):        
+        self.write(self.__getLaTeXTableHeader(), pageLabel)
         self.write(self.__getLaTeXTableHeaderRow(header), pageLabel)
         for row in rows:
             self.write(self.__getLaTeXTableRow(row), pageLabel)
-        self.write(self.__getLaTeXTableTrailer(), pageLabel)
+        self.write(self.__getLaTeXTableTrailer(title, caption), pageLabel)
 
     ## @brief Return the header section for a html-formatted table.
     ## @param self
@@ -363,10 +459,10 @@ class pBaseReportGenerator:
     ## @param caption
     #  The table caption.
     
-    def __getHtmlTableHeader(self, caption):
-        header = '@htmlonly\n'                       +\
-                 '<table border="1" width="100%">\n' +\
-                 '<caption>%s</caption>\n' % (caption)
+    def __getHtmlTableHeader(self):
+        header = '@htmlonly\n'            +\
+                 '<div align="center">\n' +\
+                 '<table border="1">\n'
         return header
 
     ## @brief Return the header row for a html-formatted table.
@@ -411,8 +507,10 @@ class pBaseReportGenerator:
     ## @param self
     #  The class instance.
 
-    def __getHtmlTableTrailer(self):
-        trailer = '</table>\n'   +\
+    def __getHtmlTableTrailer(self, title, caption):
+        trailer = '</table>\n'                                          +\
+                  '<p><strong>%s.</strong> %s</p>\n' % (title, caption) +\
+                  '</div>\n'                                            +\
                   '@endhtmlonly\n\n'
         return trailer
 
@@ -428,13 +526,13 @@ class pBaseReportGenerator:
     ## @param pageLabel
     #  The page label.
 
-    def addHtmlTable(self, header, rows, caption = '',\
-                     pageLabel = MAIN_PAGE_LABEL):
-        self.write(self.__getHtmlTableHeader(caption), pageLabel)
+    def __addHtmlTableBlock(self, header, rows, title = '', caption = '',\
+                            pageLabel = MAIN_PAGE_LABEL):
+        self.write(self.__getHtmlTableHeader(), pageLabel)
         self.write(self.__getHtmlTableHeaderRow(header), pageLabel)
         for row in rows:
             self.write(self.__getHtmlTableRow(row), pageLabel)
-        self.write(self.__getHtmlTableTrailer(), pageLabel)
+        self.write(self.__getHtmlTableTrailer(title, caption), pageLabel)
 
     ## @brief Write to a specific page of the report a table, formatted
     #  both in LaTeX and in html.
@@ -449,12 +547,12 @@ class pBaseReportGenerator:
     ## @param pageLabel
     #  The page label.
 
-    def addTable(self, header, rows, caption = '',\
+    def addTable(self, header, rows, title = '', caption = '',\
                  pageLabel = MAIN_PAGE_LABEL):
-        self.addHtmlTable(header, rows, caption, pageLabel)
-        self.addLaTeXTable(header, rows, caption, pageLabel)
+        self.__addHtmlTableBlock(header, rows, title, caption, pageLabel)
+        self.__addLaTeXTableBlock(header, rows, title, caption, pageLabel)
 
-    ## Return the doxygen block for adding an image to the LaTeX report.
+    ## @brief Return the doxygen block for adding an image to the LaTeX report.
     ## @param self
     #  The class instance.
     ## @param epsImagePath
@@ -489,12 +587,12 @@ class pBaseReportGenerator:
     ## @param pageLabel
     #  The page label.
 
-    def addLaTeXImage(self, epsImagePath, title = '', caption = '',\
-                      pageLabel = MAIN_PAGE_LABEL):
+    def __addLaTeXImageBlock(self, epsImagePath, title = '', caption = '',\
+                             pageLabel = MAIN_PAGE_LABEL):
         self.write(self.__getLaTeXImageBlock(epsImagePath, title, caption),\
                    pageLabel)
 
-    ## Return the doxygen block for adding a image to the html report.
+    ## @brief Return the doxygen block for adding a image to the html report.
     ## @param self
     #  The class instance.
     ## @param gifImagePath
@@ -505,13 +603,12 @@ class pBaseReportGenerator:
     #  The image caption.
 
     def __getHtmlImageBlock(self, gifImagePath, title, caption):
-        block = ('@htmlonly\n'                      +\
-                 '<div align="center">\n'           +\
-                 '<p><strong>%s.</strong> %s</p>\n' +\
-                 '<img src="%s" alt="%s">\n'        +\
-                 '</div>\n'                         +\
-                 '@endhtmlonly\n')                  %\
-                 (title, caption, gifImagePath, gifImagePath)
+        block = '@htmlonly\n'                                              +\
+                '<div align="center">\n'                                   +\
+                '<img src="%s" alt="%s">\n' % (gifImagePath, gifImagePath) +\
+                '<p><strong>%s.</strong> %s</p>\n' % (title, caption)      +\
+                '</div>\n'                                                 +\
+                '@endhtmlonly\n'
         return block
 
     ## @brief Add to a specific page of the report a html-formatted image.
@@ -526,8 +623,8 @@ class pBaseReportGenerator:
     ## @param pageLabel
     #  The page label.
 
-    def addHtmlImage(self, gifImagePath, title = '', caption = '',\
-                     pageLabel = MAIN_PAGE_LABEL):
+    def __addHtmlImageBlock(self, gifImagePath, title = '', caption = '',\
+                            pageLabel = MAIN_PAGE_LABEL):
         self.write(self.__getHtmlImageBlock(gifImagePath, title, caption),\
                    pageLabel)
 
@@ -548,8 +645,8 @@ class pBaseReportGenerator:
 
     def addImage(self, gifImagePath, epsImagePath, title = '', caption = '',\
                  pageLabel = MAIN_PAGE_LABEL):
-        self.addHtmlImage(gifImagePath, title, caption, pageLabel)
-        self.addLaTeXImage(epsImagePath, title, caption, pageLabel)
+        self.__addHtmlImageBlock(gifImagePath, title, caption, pageLabel)
+        self.__addLaTeXImageBlock(epsImagePath, title, caption, pageLabel)
 
     ## @brief Add a ROOT object (either histogram ot graph or whatever)
     #  to the report (both html and LaTeX versions).
@@ -580,9 +677,9 @@ class pBaseReportGenerator:
         auxCanvasMissing = False
         if self.AuxRootCanvas is None:
             auxCanvasMissing = True
-            logger.warn('Aux ROOT canvas needed to add a plot to the report.')
-            self.createAuxRootCanvas()
+            logger.warn('Aux ROOT canvas needed to add a ROOT object.')
             logger.info('Aux ROOT canvas created.')
+            self.createAuxRootCanvas()
         epsImageName = '%s.eps' % rootObject.GetName()
         gifImageName = '%s.gif' % rootObject.GetName()
         self.AuxRootCanvas.SetLogx(xLog)
@@ -590,15 +687,17 @@ class pBaseReportGenerator:
         try:
             rootObject.Draw(drawOptions)
         except:
+            self.enableRootTextOutput()
             logger.error('Could not draw %s.' % rootObject.GetName())
+            self.disableRootTextOutput()
         self.AuxRootCanvas.SaveAs(os.path.join(self.LatexDirPath,epsImageName))
         self.AuxRootCanvas.SaveAs(os.path.join(self.HtmlDirPath, gifImageName))
         self.addImage(gifImageName, epsImageName, title, caption, pageLabel)
         if auxCanvasMissing:
-            logger.info('Deleting aux ROOT canvas.')
+            self.deleteAuxRootCanvas()
+            logger.info('Aux ROOT canvas deleted.')
             logger.warn('When saving multiple plots, you should probably ' +\
                         'create the aux ROOT canvas explicitly.')
-            self.deleteAuxRootCanvas()
 
     ## @brief Return the representation of a pyhton list for the LaTeX report.
     ## @param self
@@ -609,10 +708,9 @@ class pBaseReportGenerator:
     #  The actual list.
 
     def __getLaTeXListBlock(self, name, list):
-        block = ('@latexonly\n'              +\
-                 '{\\bfseries %s}: %s\\\\\n' +\
-                 '@endlatexonly\n\n')        %\
-                 (name, list)
+        block = '@latexonly\n'                             +\
+                '{\\bfseries %s}: %s\\\\\n' % (name, list) +\
+                '@endlatexonly\n\n'
         return block
 
     ## @brief Return the representation of a pyhton list for the html report.
@@ -640,7 +738,7 @@ class pBaseReportGenerator:
     ## @param pageLabel
     #  The page label.
 
-    def addLaTeXListBlock(self, name, list, pageLabel = MAIN_PAGE_LABEL):
+    def __addLaTeXListBlock(self, name, list, pageLabel = MAIN_PAGE_LABEL):
         self.write(self.__getLaTeXListBlock(name, list), pageLabel)
 
     ## @brief Write a python list to a specific page of the html report.
@@ -653,7 +751,7 @@ class pBaseReportGenerator:
     ## @param pageLabel
     #  The page label.
 
-    def addHtmlListBlock(self, name, list, pageLabel = MAIN_PAGE_LABEL):
+    def __addHtmlListBlock(self, name, list, pageLabel = MAIN_PAGE_LABEL):
         self.write(self.__getHtmlListBlock(name, list), pageLabel)
 
     ## @brief Add a pyhton list to a specific page of the (both LaTeX and
@@ -668,8 +766,8 @@ class pBaseReportGenerator:
     #  The page label.
 
     def addList(self, name, list, pageLabel = MAIN_PAGE_LABEL):
-        self.addLaTeXListBlock(name, list, pageLabel)
-        self.addHtmlListBlock(name, list, pageLabel)
+        self.__addLaTeXListBlock(name, list, pageLabel)
+        self.__addHtmlListBlock(name, list, pageLabel)
 
     ## @brief Return the representation of a pyhton dictionary for the
     #  LaTeX report.
@@ -681,14 +779,12 @@ class pBaseReportGenerator:
     #  The actual dictionary.
 
     def __getLaTeXDictBlock(self, name, dictionary):
-        block = ('@latexonly\n'                  +\
-                 '{\\bfseries %s}\n'             +\
-                 '\\begin{itemize}\n')           %\
-                 (name)
+        block = '@latexonly\n'               +\
+                '{\\bfseries %s}\n' % (name) +\
+                '\\begin{itemize}\n'
         for (key, value) in dictionary.items():
-            block += '\\item{\\texttt %s}: %s\n' %\
-                     (key, value)
-        block += '\\end{itemize}\n'              +\
+            block += '\\item{\\texttt %s}: %s\n' % (key, value)
+        block += '\\end{itemize}\n' +\
                  '@endlatexonly\n\n'
         return block
 
@@ -702,12 +798,10 @@ class pBaseReportGenerator:
     #  The actual dictionary.
 
     def __getHtmlDictBlock(self, name, dictionary):
-        block = ('@htmlonly\n'               +\
-                 '<b>%s</b>\n')              %\
-                 (name)
+        block = '@htmlonly\n' +\
+                '<b>%s</b>\n' % (name)
         for (key, value) in dictionary.items():
-            block += '<li><tt>%s</tt>: %s\n' %\
-                     (key, value)
+            block += '<li><tt>%s</tt>: %s\n' % (key, value)
         block += '@endhtmlonly\n'
         return block
 
@@ -721,7 +815,8 @@ class pBaseReportGenerator:
     ## @param pageLabel
     #  The page label.
 
-    def addLaTeXDictBlock(self, name, dictionary, pageLabel = MAIN_PAGE_LABEL):
+    def __addLaTeXDictBlock(self, name, dictionary,\
+                            pageLabel = MAIN_PAGE_LABEL):
         self.write(self.__getLaTeXDictBlock(name, dictionary), pageLabel)
 
     ## @brief Write a python dictionary to a specific page of the html report.
@@ -734,7 +829,8 @@ class pBaseReportGenerator:
     ## @param pageLabel
     #  The page label.
 
-    def addHtmlDictBlock(self, name, dictionary, pageLabel = MAIN_PAGE_LABEL):
+    def __addHtmlDictBlock(self, name, dictionary,\
+                           pageLabel = MAIN_PAGE_LABEL):
         self.write(self.__getHtmlDictBlock(name, dictionary), pageLabel)
 
     ## @brief Add a pyhton dictionary to a specific page of the (both LaTeX
@@ -749,8 +845,8 @@ class pBaseReportGenerator:
     #  The page label.
 
     def addDictionary(self, name, dictionary, pageLabel = MAIN_PAGE_LABEL):
-        self.addLaTeXDictBlock(name, dictionary, pageLabel)
-        self.addHtmlDictBlock(name, dictionary, pageLabel)
+        self.__addLaTeXDictBlock(name, dictionary, pageLabel)
+        self.__addHtmlDictBlock(name, dictionary, pageLabel)
 
     ## @brief "Virtual" method to be overridden by the derived classes
     #  as to implement the actual generation of the reports.
@@ -819,7 +915,8 @@ if __name__ == '__main__':
     TEST_HISTOGRAM    = ROOT.TH1F('histogram', 'histogram', 100, -5, 5)
     TEST_HISTOGRAM.FillRandom('gaus')
     
-    generator = pBaseReportGenerator('./report', 'Test report', 'Luca Baldini')
+    generator = pBaseReportGenerator('./testreport', 'Test report',\
+                                     'Luca Baldini')
     generator.openReport()
     generator.addSection('listsanddicts', 'Lists and dictionaries')
     generator.addSubsection('lists', 'Python lists')
@@ -827,10 +924,13 @@ if __name__ == '__main__':
     generator.addSubsection('dicts', 'Python dictionaries')
     generator.addDictionary('Example dictionary', TEST_DICT)
     generator.addSection('tables', 'Tables')
-    generator.addTable(TEST_TABLE_HEADER, TEST_TABLE_ROWS, 'Example table')
+    generator.addTable(TEST_TABLE_HEADER, TEST_TABLE_ROWS, 'Example table',\
+                       'A very stupid table, actually.')
     generator.addSection('rootobjects', 'Root objects')
+    generator.createAuxRootCanvas()
     generator.addRootObject(TEST_HISTOGRAM, 'Example histogram',\
                             'Histogram filled with random gaussian numbers.')
+    generator.deleteAuxRootCanvas()
     generator.addPage('details', 'Detailed page')
     generator.closeReport()
     generator.compileReport()
