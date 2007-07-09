@@ -162,6 +162,10 @@ class pXmlBaseElement:
         except:
             return default
 
+    ## @brief Return a formatted text representation of the class instances.
+    ## @param self
+    #  The class instance.
+
     def getTextSummary(self):
         return 'Node name: %s' % self.NodeName 
 

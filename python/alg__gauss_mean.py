@@ -4,7 +4,7 @@ from pSafeROOT import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
-## @brief Return the mean of a gaussian fit to the plot.
+## @brief Make sure the mean of a gaussian fit is within limits.
 #
 #  @todo Implement support for fitting in a subrange (min and max not
 #  used, at the moment).
@@ -12,11 +12,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  Valid parameters:
 #  @li <tt>min</tt>: the minimum x value for the fit.
 #  @li <tt>max</tt>: the maximum x value for the fit.
-#
-## @param plot
-#  The ROOT object.
-## @param paramsDict
-#  The (optional) dictionary of parameters.
+
 
 class alg__gauss_mean(pAlarmBaseAlgorithm):
 

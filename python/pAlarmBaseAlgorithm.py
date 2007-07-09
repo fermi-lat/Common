@@ -1,3 +1,5 @@
+## @package pAlarmBaseAlgorithm
+## @brief Base package for implementation of algorithms.
 
 import pSafeLogger
 logger = pSafeLogger.getLogger('pAlarmBaseAlgorithm')
@@ -6,9 +8,56 @@ import pUtils
 from pAlarmOutput import pAlarmOutput
 
 
+## @brief Base class for alarm algorithms.
+#
+#  Provides a general structure for the implementation of the algorithms,
+#  along with some ROOT-related useful functions (like setting histogram
+#  range etc...).
+
 class pAlarmBaseAlgorithm:
 
+    ## @var SUPPORTED_TYPES
+    ## @brief The list of ROOT object types which are supported by a given
+    #  algorithm.
+
+    ## @var SUPPORTED_PARAMETERS
+    ## @brief The list of (optional) parameters supported by a given
+    #  algorithm.
+
+    SUPPORTED_TYPES      = []
+    SUPPORTED_PARAMETERS = []
+
+    ## @brief Basic constructor
+    ## @param self
+    #  The class instance.
+    ## @param limits
+    #  The alarm limits.
+    ## @param object
+    #  The ROOT object the alarm is set on.
+    ## @param paramsDict
+    #  The dictionary of optional algorithm parameters.
+
     def __init__(self, limits, object, paramsDict):
+
+        ## @var Limits
+        ## @brief The alarm limits.
+
+        ## @var RootObject
+        ## @brief The ROOT object the alarm is set on.
+        
+        ## @var ParamsDict
+        ## @brief The dictionary of optional algorithm parameters.
+
+        ## @var __RootObjectOK
+        ## @brief Flag.
+
+        ## @var __ParametersOK
+        ## @brief Flag.
+        
+        ## @var Output
+        ## @brief The alarm output (initialized to an undefined pAlarmOutput
+        #  object in the constructor).
+     
         self.Limits = limits
         self.RootObject = object
         self.ParamsDict = paramsDict
@@ -18,26 +67,33 @@ class pAlarmBaseAlgorithm:
         self.checkParameters()
         self.Output = pAlarmOutput(limits)
 
+    ## @brief Return True if the algorithm is valid (i.e. both the ROOT
+    #  object type and the parameters type are supported).
+    ## @param self
+    #  The class instance.
+
     def isValid(self):
         return self.__RootObjectOK and self.__ParametersOK
+
+    ## @brief Return the algorithm name.
+    ## @param self
+    #  The class instance.
 
     def getName(self):
         return self.__class__.__name__.strip('alg__')
 
+    ## @brief Return the ROOT object type (the name of the class the
+    #  object belongs to).
+    ## @param self
+    #  The class instance.
+
     def getObjectType(self):
         return self.RootObject.Class().GetName()
 
-    def getErrorMin(self):
-        return self.Limits.ErrorMin
-
-    def getWarningMin(self):
-        return self.Limits.WarningMin
-
-    def getWarningMax(self):
-        return self.Limits.WarningMax
-
-    def getErrorMax(self):
-        return self.Limits.ErrorMax
+    ## @brief Make sure the algorithm supports the ROOT object it has
+    #  to operate on.
+    ## @param self
+    #  The class instance.
 
     def checkObjectType(self):
         if self.getObjectType() not in self.SUPPORTED_TYPES:
@@ -46,6 +102,10 @@ class pAlarmBaseAlgorithm:
                           (self.getObjectType(), self.getName()) +\
                           'The alarm will be ignored.')
 
+    ## @brief Make sure all the optional parameters are supported.
+    ## @param self
+    #  The class instance.
+
     def checkParameters(self):
         for paramName in self.ParamsDict.keys():
             if paramName not in self.SUPPORTED_PARAMETERS:
@@ -53,6 +113,10 @@ class pAlarmBaseAlgorithm:
                 logger.error('Invalid parameter (%s) for %s.' %\
                               (paramName, self.getName())      +\
                               'The alarm will be ignored.')
+
+    ## @brief Apply the algorithm on the ROOT object.
+    ## @param self
+    #  The class instance.
 
     def apply(self):
         if not self.__RootObjectOK:
@@ -64,8 +128,18 @@ class pAlarmBaseAlgorithm:
         else:
             self.run()
 
+    ## @brief Actual algorithm implementation ("virtual" function to be
+    #  overridden by the derived classes).
+    ## @param self
+    #  The class instance.
+
     def run(self):
         logger.warn('Method run() not implemented.')
+
+    ## @brief Adjust the range of the x axis of a ROOT object according
+    #  to the dictionary of optional parameters.
+    ## @param self
+    #  The class instance.
 
     def adjustXRange(self):
         if self.getObjectType() not in ['TH1F']:
@@ -82,20 +156,14 @@ class pAlarmBaseAlgorithm:
             max = self.RootObject.GetXaxis().GetXmax()
         self.RootObject.GetXaxis().SetRangeUser(min, max)
 
+    ## @brief Restore the original x axis range for a ROOT object.
+    ## @param self
+    #  The class instance.
+
     def resetXRange(self):
         if self.getObjectType() not in ['TH1F']:
             logger.warn('Cannot use setRangeX() on a %s object.' %\
                          self.getObjectType())
             return None
         self.RootObject.GetXaxis().SetRange(1, 0)
-
-    def getTextSummary(self):
-        return '** Algorithm summary **\n' +\
-               '%s: %s' % (pUtils.expandString('Algorithm type', 20),\
-                           self.getName()) +\
-               pUtils.expandString('') +\
-               pUtils.expandString('')
-
-    def __str__(self):
-        pass
-    
+        

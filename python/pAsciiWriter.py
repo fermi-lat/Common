@@ -8,18 +8,29 @@ import sys
 import os
 
 
+## @brief Implementation of an ASCII writer.
+
 class pAsciiWriter:
 
     ## @var NUM_INDENT_SPACES
     ## @brief The default number of spaces for the indentation.
     
-    NUM__INDENT_SPACES = 4
+    NUM_INDENT_SPACES = 4
 
     ## @brief Constructor.
     ## @param self
     #  The class instance.
+    ## @param outputFilePath
+    #  The path for the output file (None by default).
 
     def __init__(self, outputFilePath = None):
+
+        ## @var OutputFile
+        ## @brief The actual output file.
+
+        ## @var IndentLevel
+        ## @brief The current indentation level.
+        
         self.OutputFile  = None
         self.IndentLevel = None
         if outputFilePath is not None:
@@ -61,16 +72,20 @@ class pAsciiWriter:
             logger.warning('Negative indent level requested, set to 0.')
             self.IndentLevel = 0
 
-    ## @brief Increase the indentation level by one unit.
+    ## @brief Increase the indentation level.
     ## @param self
     #  The class instance.
+    ## @param numLevels
+    #  The number of levels.
     
     def indent(self, numLevels = 1):
         self.setIndentLevel(self.IndentLevel + numLevels)
 
-    ## @brief Decrease the indentation level by one unit.
+    ## @brief Decrease the indentation level.
     ## @param self
     #  The class instance.
+    ## @param numLevels
+    #  The number of levels.
 
     def backup(self, numLevels = 1):
         self.setIndentLevel(self.IndentLevel - numLevels)
@@ -112,7 +127,7 @@ class pAsciiWriter:
     #  The line to be written.    
 
     def writeLine(self, line):
-        spaces = self.IndentLevel*self.NUM__INDENT_SPACES*' '
+        spaces = self.IndentLevel*self.NUM_INDENT_SPACES*' '
         self.__write('%s%s\n' % (spaces, line))
     
 

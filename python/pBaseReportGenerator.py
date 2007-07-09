@@ -56,6 +56,12 @@ class pBaseReportGenerator:
     ## @var LATEX_IMAGES_WIDTH
     ## @brief The width of the images in the LaTeX report.
 
+    ## @var MAIN_PAGE_TITLE
+    ## @brief The title for the main page.
+
+    ## @var REPORT_AUTHOR
+    ## @brief The name of the report's author.
+
     CONFIG_FILE_NAME   = 'config.doxygen'
     MAIN_PAGE_LABEL    = 'mainpage'
     HTML_DIR_NAME      = 'html'
@@ -64,6 +70,8 @@ class pBaseReportGenerator:
     AUX_CANVAS_HEIGHT  = 400
     AUX_CANVAS_COLOR   = 10
     LATEX_IMAGES_WIDTH = 11.0
+    MAIN_PAGE_TITLE    = 'Main page'
+    REPORT_AUTHOR      = 'Unknown'
 
     ## @brief Base constructor.
     ## @param self
@@ -72,22 +80,13 @@ class pBaseReportGenerator:
     #  The path to the directory in which the report must be created.
     #
     #  Two subdirectories (html and latex) will be created therein.
-    ## @param mainPageTitle
-    #  The title of the main page.
     ## @param forceOverwrite
     #  If True (default) the output dir is overwritten without messages.
     
-    def __init__(self, outputDirPath, mainPageTitle = 'Main page',\
-                 author = 'unknown', forceOverwrite = True):
+    def __init__(self, outputDirPath, forceOverwrite = True):
 
         ## @var OutputDirPath
         ## @brief The path to the output dir.
-
-        ## @var MainPageTitle
-        ## @brief The title of the main page.
-
-        ## @var Author
-        ## @brief The report's author.
 
         ## @var ForceOverwrite
         ## @brief If True (default) overwrites existing folders without
@@ -114,8 +113,6 @@ class pBaseReportGenerator:
         #  ROOT text output.
     
         self.OutputDirPath  = outputDirPath
-        self.MainPageTitle  = mainPageTitle
-        self.Author         = author
         self.ForceOverwrite = forceOverwrite
         self.HtmlDirPath    = os.path.join(self.OutputDirPath,\
                                            self.HTML_DIR_NAME)
@@ -193,12 +190,10 @@ class pBaseReportGenerator:
     #  Namely create the output directory structure and create the main page.
     ## @param self
     #  The class instance.
-    ## @param author
-    #  The page author (typically the script who generated it).
 
     def openReport(self):
         self.__createDirs()
-        self.addPage(self.MAIN_PAGE_LABEL, self.MainPageTitle)
+        self.addPage(self.MAIN_PAGE_LABEL, self.MAIN_PAGE_TITLE)
 
     ## @brief Close the report.
     #
@@ -285,11 +280,11 @@ class pBaseReportGenerator:
     ## @param pageTitle
     #  The page title (appearing on the report)
 
-    def addPage(self, label, title):
-        pageFileName = '%s.doxygen' % label.lower().replace(' ', '_')
+    def addPage(self, pageLabel, pageTitle):
+        pageFileName = '%s.doxygen' % pageLabel.lower().replace(' ', '_')
         filePath = os.path.join(self.OutputDirPath, pageFileName)
-        self.DoxyFilesDict[label] = self.__openOutputFile(filePath)
-        self.__writePageHeader(label, title)
+        self.DoxyFilesDict[pageLabel] = self.__openOutputFile(filePath)
+        self.__writePageHeader(pageLabel, pageTitle)
         if not os.path.exists(self.ConfigFilePath):
             configFile = self.__openOutputFile(self.ConfigFilePath)
             configFile.writelines('FILE_PATTERNS = %s '% pageFileName)
@@ -303,13 +298,17 @@ class pBaseReportGenerator:
     #  The class instance.
     ## @param line
     #  The ilne to be written.
+    ## @param pageLabel
+    #  The page label.
 
     def write(self, line, pageLabel = MAIN_PAGE_LABEL):
         self.DoxyFilesDict[pageLabel].writelines(line)
 
     ## @brief Write a carriage return to the doxygen main page file.
     ## @param self
-    #  The class instance.  
+    #  The class instance.
+    ## @param pageLabel
+    #  The page label.
 
     def newline(self, pageLabel = MAIN_PAGE_LABEL):
         self.write('\n', pageLabel)
@@ -334,7 +333,7 @@ class pBaseReportGenerator:
                      '<a href="../latex/refman.pdf">PDF report</a>\n'    +\
                      '</center>\n'                                       +\
                      '@endhtmlonly\n'                                    +\
-                     '@author %s \n' % self.Author                       +\
+                     '@author %s \n' % self.REPORT_AUTHOR                +\
                      '@date %s\n' % time.asctime()
         else:
             header = '/** @page %s %s\n' % (pageLabel, pageTitle)
@@ -385,8 +384,6 @@ class pBaseReportGenerator:
     ## @brief Return the header section for a LaTeX-formatted table.
     ## @param self
     #  The class instance.
-    ## @param caption
-    #  The table caption.
 
     def __getLaTeXTableHeader(self):
         header = '@latexonly\n'           +\
@@ -424,6 +421,10 @@ class pBaseReportGenerator:
     ## @brief Return the trailer for a LaTeX-formatted table.
     ## @param self
     #  The class instance.
+    ## @param title
+    #  The table title.
+    ## @param caption
+    #  The table caption.
 
     def __getLaTeXTableTrailer(self, title, caption):
         trailer = '\end{tabular}\n'                               +\
@@ -440,6 +441,8 @@ class pBaseReportGenerator:
     #  A pyhton list of string representing the table header row.
     ## @param rows
     #  A pyhton list of lists of strings representing the actual rows.
+    ## @param title
+    #  The table title.
     ## @param caption
     #  The table caption.
     ## @param pageLabel
@@ -456,8 +459,6 @@ class pBaseReportGenerator:
     ## @brief Return the header section for a html-formatted table.
     ## @param self
     #  The class instance.
-    ## @param caption
-    #  The table caption.
     
     def __getHtmlTableHeader(self):
         header = '@htmlonly\n'            +\
@@ -506,6 +507,10 @@ class pBaseReportGenerator:
     ## @brief Return the trailer for a html-formatted table.
     ## @param self
     #  The class instance.
+    ## @param title
+    #  The table title.
+    ## @param caption
+    #  The table caption.
 
     def __getHtmlTableTrailer(self, title, caption):
         trailer = '</table>\n'                                          +\
@@ -521,6 +526,8 @@ class pBaseReportGenerator:
     #  A pyhton list of string representing the table header row.
     ## @param rows
     #  A pyhton list of lists of strings representing the actual rows.
+    ## @param title
+    #  The table title.
     ## @param caption
     #  The table caption.
     ## @param pageLabel
@@ -542,6 +549,8 @@ class pBaseReportGenerator:
     #  A pyhton list of string representing the table header row.
     ## @param rows
     #  A pyhton list of lists of strings representing the actual rows.
+    ## @param title
+    #  The table title.
     ## @param caption
     #  The table caption.
     ## @param pageLabel
@@ -838,8 +847,8 @@ class pBaseReportGenerator:
     ## @param self
     #  The class instance
     ## @param name
-    #  The list name appearing on the report.
-    ## @param list
+    #  The dictionary name appearing on the report.
+    ## @param dictionary
     #  The actual list.
     ## @param pageLabel
     #  The page label.
@@ -915,8 +924,7 @@ if __name__ == '__main__':
     TEST_HISTOGRAM    = ROOT.TH1F('histogram', 'histogram', 100, -5, 5)
     TEST_HISTOGRAM.FillRandom('gaus')
     
-    generator = pBaseReportGenerator('./testreport', 'Test report',\
-                                     'Luca Baldini')
+    generator = pBaseReportGenerator('./testreport')
     generator.openReport()
     generator.addSection('listsanddicts', 'Lists and dictionaries')
     generator.addSubsection('lists', 'Python lists')

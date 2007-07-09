@@ -83,7 +83,7 @@ class pRootFileManager:
     #  Otherwise the objects are searched directly.
     ## @param self
     #  The class instance
-    ## @param
+    ## @param pattern
     #  The name pattern.
 
     def find(self, pattern):
@@ -96,7 +96,7 @@ class pRootFileManager:
     #  ROOT file.
     ## @param self
     #  The class instance
-    ## @param
+    ## @param pattern
     #  The name pattern.
 
     def findObjects(self, pattern):
@@ -115,7 +115,7 @@ class pRootFileManager:
     #  (slash-separated).
     ## @param self
     #  The class instance
-    ## @param
+    ## @param pattern
     #  The name pattern.
 
     def findTreeBranches(self, pattern):

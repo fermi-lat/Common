@@ -1,4 +1,3 @@
-
 ## @package pXmlAlarmParser
 ## @brief Specific xml parser for the alarm handler.
 
@@ -22,21 +21,24 @@ class pXmlAlarmParser:
 
     def __init__(self, xmlConfigFilePath):
 
-        ## @var self.__AlarmListsDict
+        ## @var AlarmListsDict
         ## @brief A dictionary containing the alarm lists, indexed by name.
 
-        ## @var self.__EnabledAlarmSetsDict
+        ## @var EnabledAlarmSetsDict
         ## @brief A dictionary containing the enabled alem sets, indexed by
         #  name.
 
-        ## @var __XmlDoc
+        ## @var XmlConfigFilePath
+        ## @brief The path to the xml config file. 
+
+        ## @var XmlDoc
         ## @brief The xml document representation from the minidom module.
         
         self.AlarmListsDict       = {}
         self.EnabledAlarmSetsDict = {}
         self.XmlConfigFilePath    = xmlConfigFilePath
         if os.path.exists(self.XmlConfigFilePath):
-            self.__XmlDoc = minidom.parse(file(xmlConfigFilePath))
+            self.XmlDoc = minidom.parse(file(xmlConfigFilePath))
         else:
             sys.exit('Input configuration file %s not found. Exiting...' %\
         	     filePath)
@@ -48,7 +50,7 @@ class pXmlAlarmParser:
     #  The class instance.
 
     def __populateAlarmLists(self):
-        for element in self.__XmlDoc.getElementsByTagName('alarmList'):
+        for element in self.XmlDoc.getElementsByTagName('alarmList'):
     	    xmlList = pXmlList(element)
 	    self.AlarmListsDict[xmlList.Name] = xmlList
 	    if xmlList.Enabled:
@@ -73,10 +75,18 @@ class pXmlAlarmParser:
                 alarmsList.append(alarm)
         return alarmsList
 
+    ## @brief Return a formatted text representation of the class instances.
+    ## @param self
+    #  The class instance.
+
     def getTextSummary(self):
         return 'Configuration file %s contains:\n' % self.XmlConfigFilePath +\
                '%d alarm list(s)\n' % len(self.AlarmListsDict) +\
                '%d enabled alarm set(s)' % len(self.EnabledAlarmSetsDict)
+
+    ## @brief Class representation.
+    ## @param self
+    #  The class instance.
 
     def __str__(self):
         return self.getTextSummary()

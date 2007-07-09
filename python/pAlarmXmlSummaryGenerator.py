@@ -1,13 +1,32 @@
+## @package pAlarmXmlSummaryGenerator
+## @brief Module for generating the alarm handler xml summary.
 
 from pXmlWriter import pXmlWriter
 
 
+## @brief Class implementing the xml summary generation for the
+#  alarm handler.
+
 class pAlarmXmlSummaryGenerator(pXmlWriter):
 
+    ## @brief Basic constructor.
+    ## @param self
+    #  The class instance.
+    ## @param alarmHandler
+    #  The parent alarm handler.
+
     def __init__(self, alarmHandler):
+
+        ## @var AlarmHandler
+        ## @brief The parent alarm handler.
+        
         self.AlarmHandler = alarmHandler
         pXmlWriter.__init__(self, self.AlarmHandler.XmlSummaryFilePath)
 
+    ## @brief Implementation of the summary generation.
+    ## @param self
+    #  The class instance.
+    
     def run(self):
         self.openTag('alarmSummary')
         for alarm in self.AlarmHandler.XmlParser.getEnabledAlarms():

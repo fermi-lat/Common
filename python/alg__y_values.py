@@ -4,6 +4,8 @@ from pSafeROOT import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
+## @brief Make sure all the y values are within limits.
+
 class alg__y_values(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']

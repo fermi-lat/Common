@@ -1,4 +1,3 @@
-
 ## @package pXmlElement
 ## @brief Description of an xml element.
 
@@ -25,12 +24,12 @@ class pXmlElement(pXmlBaseElement):
 
     def __init__(self, domElement):
 
-        ## @var __Name
+        ## @var Name
         ## @brief The value of the "name" attribute.
         #
         #  By default is an empty string.
 
-        ## @var __Enabled
+        ## @var Enabled
         ## @brief The value of the "enabled" attribute.
         #
         #  By default is True.
@@ -48,11 +47,19 @@ class pXmlElement(pXmlBaseElement):
 
     def getName(self):
         return self.Name
+
+    ## @brief Return a formatted text representation of the class instances.
+    ## @param self
+    #  The class instance.
         
     def getTextSummary(self):
         return '%s\n' % pXmlBaseElement.getTextSummary(self) +\
                'Name     : %s\n' % self.Name +\
                'Enabled  : %s' % self.Enabled
+
+    ## @brief Class representation.
+    ## @param self
+    #  The class instance.
 
     def __str__(self):
         return self.getTextSummary()

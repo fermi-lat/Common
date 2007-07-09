@@ -1,6 +1,5 @@
-
 ## @package pAlarm
-## @brief Description of an alarm.
+## @brief Module describing an alarm.
 
 import pSafeLogger
 logger = pSafeLogger.getLogger('pAlarm')
@@ -13,10 +12,6 @@ from pAlarmLimits import pAlarmLimits
 
 
 ## @brief Class describing an alarm to be activated on a plot.
-#
-#  The basic idea, here, is that the alarm must verify whether a simple
-#  plot parameter (average value or RMS of a histogram, etc., depending
-#  on the alarm Function) lies or not within a specified interval.
 
 class pAlarm(pXmlBaseElement):
 
@@ -30,12 +25,24 @@ class pAlarm(pXmlBaseElement):
     
     def __init__(self, domElement, rootObject):
 
-        ## @var Function
-        ## @brief The type of the alarm (i.e. the specific algorithm).
+        ## @var RootObject
+        ## @brief The ROOT object the alarm is set on.
+
+        ## @var Limits
+        ## @brief The alarm (both error and warning limits).
+        #
+        #  It's a pAlarmLimits object.
 
         ## @var ParamsDict
         ## @brief Dictionary of optional parameters to be passed to the
         #  algorithm implementing the alarm.
+
+        ## @var FunctionName
+        ## @brief The name of the specific algorithm that the alarm is
+        #  supposed to apply.
+
+        ## @var Algorithm
+        ## @brief The actual algorithm the alarm is applying. 
  
         pXmlBaseElement.__init__(self, domElement)
 	self.RootObject   = rootObject
@@ -53,7 +60,9 @@ class pAlarm(pXmlBaseElement):
             self.Algorithm = None
 
         
-    ## @brief
+    ## @brief Extract the limits from the underlying dom element.
+    ## @param self
+    #  The class instance.
 
     def __extractLimits(self):
         warnLims = pXmlBaseElement(self.getElementByTagName('warning_limits'))
@@ -97,8 +106,8 @@ class pAlarm(pXmlBaseElement):
             logger.error('Could not eval limits. Returning None...' )
             return None
 
-    ## @brief Retrieve the function parameters from the xml
-    #  element.
+    ## @brief Extract the dictionary of parameters from the underlying
+    #  dom element.
     ## @param self
     #  The class instance.
 
@@ -110,11 +119,24 @@ class pAlarm(pXmlBaseElement):
                            xmlElement.evalAttribute('value')
         return parametersDict
 
+    ## @brief Return the status label (i.e. CLEAN, WARNING, ERROR, UNDEFINED)
+    #  of the algorithm output.
+    ## @param self
+    #  The class instance.
+
     def getStatus(self):
         return self.Algorithm.Output.Status['label']
 
+    ## @brief Return the output value of the algorithm.
+    ## @param self
+    #  The class instance.
+
     def getValue(self):
         return self.Algorithm.Output.Value
+    
+    ## @brief Return a formatted representation of the alarm limits.
+    ## @param self
+    #  The class instance.
 
     def getLimits(self):
         return self.Limits.getTextRep()
@@ -125,5 +147,3 @@ class pAlarm(pXmlBaseElement):
 
     def activate(self):
         self.Algorithm.apply()
-
-    

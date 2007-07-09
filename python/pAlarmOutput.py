@@ -1,3 +1,5 @@
+## @package pAlarmOutput
+## @brief Module describing the output of an alarm.
 
 import pSafeLogger
 logger = pSafeLogger.getLogger('pAlarmOutput')
@@ -12,18 +14,59 @@ STATUS_ERROR     = {'level': 3, 'label': 'ERROR'}
 STATUS_UNDEFINED = {'level': 4, 'label': 'UNDEFINED'}
 
 
+## @brief Class describing the output of an alarm.
+#
+#  The output of an alarms consists of three main pieces:
+#  @li an output value returned by a given algorithm.
+#  @li a status resulting from the comparison of the value with the limits.
+#  @li a detailed dictionary wich can be filled with arbitrary informations
+#  while the alarm algorithm is run on the ROOT object.
+#
+#  This class is responsible for checking the output value provided by
+#  an algorithm against the alarm limits. This happens whenever the
+#  setValue() method is called.
+
 class pAlarmOutput:
 
+    ## @brief Basic constructor.
+    ## @param self
+    #  The class instance.
+    ## @param limits
+    #  The alarm limits.
+    
     def __init__(self, limits):
+
+        ## @var Limits
+        ## @brief The alarm limits.
+
+        ## @var Value
+        ## @brief The algorithm output value.
+
+        ## @var Status
+        ## @brief The status label.
+
+        ## @var DetailedDict
+        ## @brief The dictionary containing the detailed information.
+        
         self.Limits       = limits
         self.Value        = None
         self.Status       = STATUS_UNDEFINED
         self.DetailedDict = {}
 
+    ## @brief Set the output value and check it against the alarm limits.
+    ## @param self
+    #  The class instance.
+    ## @param value
+    #  The output value.
+        
     def setValue(self, value):
         self.Value = value
         self.__processValue()
 
+    ## @brief Check the output value against the limits.
+    ## @param self
+    #  The class instance.
+    
     def __processValue(self):
         if self.Value is None:
 	    self.Status = STATUS_UNDEFINED
@@ -36,71 +79,41 @@ class pAlarmOutput:
         else:
             self.Status = STATUS_WARNING
 
-    def getStatusLevel(self):
-        return self.Status['level']
-
-    def getStatusLabel(self):
-        return self.Status['label']
-
-    def isClean(self):
-        return (self.Status == STATUS_CLEAN) 
-
-    def setStatus(self, status):
-        self.Status = status
-
-    def getDictValue(self, key):
-        try:
-            return self.DetailedDict[key]
-        except KeyError:
-            logger.warn('Unknown key (%s) in the alarm output dict.' % key)
-            return None
+    ## @brief Set the value corresponding to a particular key of the
+    #  detailed dictionary.
+    ## @param self
+    #  The class instance.
+    ## @param key
+    #  The dictionary key.
+    ## @param value
+    #  The dictionary value.
 
     def setDictValue(self, key, value):
         self.DetailedDict[key] = value
 
+    ## @brief Increment the value corresponding to a particular key of the
+    #  detailed dictionary by a specific amount.
+    ## @param self
+    #  The class instance.
+    ## @param key
+    #  The dictionary key.
+    ## @param amount
+    #  The amount.
+
     def incrementDictValue(self, key, amount = 1):
         self.DetailedDict[key] += amount
+
+    ## @brief Append an element to a specific key of the detailed dictionary.
+    ## @param self
+    #  The class instance.
+    ## @param key
+    #  The dictionary key.
+    ## @param value
+    #  The value to append.
 
     def appendDictValue(self, key, value):
         try:
             self.DetailedDict[key].append(value)
         except KeyError:
             self.DetailedDict[key] = [value]
-
-    def getDictTextSummary(self):
-        summary = 'Optional output dictionary following...\n'
-        if self.DetailedDict == {}:
-            summary += 'Empty\n'
-        else:
-            for (key, value) in self.DetailedDict.items():
-                summary += '%s: %s\n' % (pUtils.expandString(key, 20), value)
-        return summary
-
-    def getTextSummary(self):
-        return '** Alarm output summary **\n'                      +\
-               'Output value: %s\n' % self.Value                   +\
-               'Limits:     : %s\n' % self.Limits.getTextSummary() +\
-               'Status      : %s\n' % self.Status                  +\
-               self.getDictTextSummary()
-
-    def __str__(self):
-        return self.getTextSummary()
-    
-
-if __name__ == '__main__':
-    from pAlarmLimits import pAlarmLimits
-    limits = pAlarmLimits(1, 2, 0, 3)
-    output = pAlarmOutput(limits)
-    output.setDictValue('How is it going?', 'Not too bad...')
-    output.appendDictValue('A list', 9)
-    output.appendDictValue('A list', 'test')
-    output.setValue(2.3)
-    print output
-    output = pAlarmOutput(limits)
-    output.setValue(3.5)
-    print output
-    output = pAlarmOutput(limits)
-    output.setValue(1.5)
-    print output
-    output = pAlarmOutput(limits)
-    print output
+            

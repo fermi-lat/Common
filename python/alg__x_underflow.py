@@ -5,13 +5,6 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
 ## @brief Return the number of entries in the underflow bin
-#
-#  Valid parameters: None.
-#
-## @param plot
-#  The ROOT object.
-## @param paramsDict
-#  The (optional) dictionary of parameters.
 
 class alg__x_underflow(pAlarmBaseAlgorithm):
 

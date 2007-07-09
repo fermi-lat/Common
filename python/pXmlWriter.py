@@ -1,7 +1,6 @@
 ## @package pXmlWriter
 ## @brief Module providing utilities for writing xml files.
 
-
 import pSafeLogger
 logger = pSafeLogger.getLogger('pXmlWriter')
 
@@ -12,13 +11,20 @@ import time
 from pAsciiWriter import pAsciiWriter
 
 
+## @brief Implementation of the Xml writer.
+
 class pXmlWriter(pAsciiWriter):
 
+    ## @var PROLOG
+    ## @brief The file header.
+    
     PROLOG = '<?xml version="1.0" encoding="ISO-8859-15"?>'
 
     ## @brief Constructor.
     ## @param self
     #  The class instance.
+    ## @param outputFilePath
+    #  Path to the output xml file.
 
     def __init__(self, outputFilePath = None):
         pAsciiWriter.__init__(self, outputFilePath)
@@ -54,7 +60,7 @@ class pXmlWriter(pAsciiWriter):
     ## @param attributesDict
     #  A dictionary specifying the tag attributes (names and values).
     ## @param close
-    #  If True (not the default), the tag is closed in the form <tag_name/>.
+    #  If True (not the default), the tag is closed.
 
     def getOpenTagBlock(self, tagName, attributesDict = {}, close = False):
         block = '<%s' % tagName
@@ -83,8 +89,7 @@ class pXmlWriter(pAsciiWriter):
     ## @param attributesDict
     #  A dictionary specifying the tag attributes (names and values).
     ## @param value
-    #  The tag value. By default it is None and the tag is closed in the
-    #  form <tag_name/>.
+    #  The tag value. By default it is None and the tag is closed.
 
     def getTagBlock(self, tagName, attributesDict = {}, value = None):
         if value is None:
@@ -101,7 +106,7 @@ class pXmlWriter(pAsciiWriter):
     ## @param attributesDict
     #  A dictionary specifying the tag attributes (names and values).
     ## @param close
-    #  If True (not the default), the tag is closed in the form <tag_name/>.
+    #  If True (not the default), the tag is closed.
 
     def openTag(self, tagName, attributesDict = {}, close = False):
         self.writeLine(self.getOpenTagBlock(tagName, attributesDict, close))
@@ -123,8 +128,7 @@ class pXmlWriter(pAsciiWriter):
     ## @param attributesDict
     #  A dictionary specifying the tag attributes (names and values).
     ## @param value
-    #  The tag value. By default it is None and the tag is closed in the
-    #  form <tag_name/>.
+    #  The tag value. By default it is None and the tag is closed.
 
     def writeTag(self, tagName, attributesDict, value = None):
         self.writeLine(self.getTagBlock(tagName, attributesDict, value))

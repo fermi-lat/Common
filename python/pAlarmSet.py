@@ -1,4 +1,3 @@
-
 ## @package pAlarmSet
 ## @brief Description of an alarm set.
 
@@ -24,10 +23,10 @@ class pAlarmSet(pXmlElement):
     
     def __init__(self, domElement):
         
-        ## @var __PlotsList
+        ## @var PlotsList
         ## @brief The list of plots the alarm is set on.
 
-        ## @var __EnabledAlarmsList
+        ## @var EnabledAlarmsList
         ## @brief The list of enabled alarms within the set.
         
         pXmlElement.__init__(self, domElement)

@@ -1,4 +1,3 @@
-
 ## @package pXmAlarmlList
 ## @brief Description of a xml alarm list.
 
@@ -20,7 +19,7 @@ class pXmlAlarmList(pXmlList):
 
     def __init__(self, element):
 
-        ## @var __EnabledAlarmSetsDict
+        ## @var EnabledAlarmSetsDict
         ## @brief Dictionary containing all the enabled alarm sets.
         
         pXmlList.__init__(self, element)

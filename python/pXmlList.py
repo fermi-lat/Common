@@ -1,4 +1,3 @@
-
 ## @package pXmlList
 ## @brief Description of a xml list.
 
@@ -34,6 +33,10 @@ class pXmlList(pXmlElement):
     #
     #  Note that the dictionary elements are dom elements, not pXmlElement
     #  objects. The dictionary is indexed by element name.
+    ## @param self
+    #  The class instance.
+    ## @param elementName
+    #  The element name.
 	
     def getEnabledElementsDict(self, elementName):
         outputDict = {}
@@ -43,8 +46,19 @@ class pXmlList(pXmlElement):
 	      outputDict[xmlElement.Name] = domElement
         return outputDict
 
+    ## @brief Return all the enabled dom elements corresponding to a given
+    #  element name.
+    ## @param self
+    #  The class instance.
+    ## @param elementName
+    #  The element name.
+
     def getEnabledItems(self, elementName):
         return self.getEnabledElementsDict(elementName).items()
+
+    ## @brief Return a formatted text representation of the class instances.
+    ## @param self
+    #  The class instance.
 
     def getTextSummary(self):
         return pXmlElement.getTextSummary(self) +\

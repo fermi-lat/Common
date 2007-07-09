@@ -4,7 +4,7 @@ from pSafeROOT import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
-
+## @brief Make sure the number of entries is within limits.
 
 class alg__num_entries(pAlarmBaseAlgorithm):
 
