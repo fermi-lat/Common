@@ -1,14 +1,22 @@
 
-LOGGING_LEVEL  = 'DEBUG'
-LOGGING_FORMAT = '%(levelname)s:%(name)s -- %(message)s'
+DEF_LOGGING_LEVEL  = 'DEBUG'
+DEF_LOGGING_FORMAT = '%(levelname)s:%(name)s -- %(message)s'
 
 import sys
 
-if 'logging' not in sys.modules:
-    import logging
-    loggingLevel = eval('logging.%s' % LOGGING_LEVEL)
-    logging.basicConfig(level = loggingLevel, format = LOGGING_FORMAT)
-    logger = logging.getLogger('pSafeLogger')
-
 def getLogger(loggerName):
     return logging.getLogger(loggerName)
+
+def setLevel(loglevel = DEF_LOGGING_LEVEL):
+    try:
+        loglevel = eval('logging.%s' % loglevel)
+    except:
+        loglevel = eval('logging.%s' % DEF_LOGGING_LEVEL)
+        logging.error('Could not set the logging level to %s. ' % loglevel +\
+                      'Setting it to %s instead...' % DEF_LOGGING_LEVEL)
+    logging.basicConfig(level = loglevel, format = DEF_LOGGING_FORMAT)
+
+if 'logging' not in sys.modules:
+    import logging
+    setLevel()
+    logger = logging.getLogger('pSafeLogger')
