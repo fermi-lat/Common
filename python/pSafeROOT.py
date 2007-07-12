@@ -23,7 +23,7 @@ import os
 
 if 'ROOT' not in sys.modules:
     import ROOT
-    logger.info('First ROOT import, setting palette and fucking ROOT...')
+    logger.info('First ROOT import, setting palette and fooling ROOT...')
     currentDirPath = os.path.abspath(os.curdir)
     logger.info('Current dir: %s.' % currentDirPath)
     ROOT.gStyle.SetPalette(ROOT_PALETTE)

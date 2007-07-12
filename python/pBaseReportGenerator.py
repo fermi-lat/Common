@@ -688,7 +688,7 @@ class pBaseReportGenerator:
  
     def addRootObject(self, rootObject , title = '', caption = '',\
                       drawOptions = '', xLog = False, yLog = False,\
-                    pageLabel = MAIN_PAGE_LABEL):
+                      pageLabel = MAIN_PAGE_LABEL):
         auxCanvasMissing = False
         if self.AuxRootCanvas is None:
             auxCanvasMissing = True
@@ -918,10 +918,10 @@ class pBaseReportGenerator:
     ## @param compileLaTeX
     #  If True (default) the LaTeX report is compiled to ps and pdf.
         
-    def compileReport(self, compileLaTeX = True):
-        self.doxygenate()
+    def compileReport(self, verbose = False, compileLaTeX = True):
+        self.doxygenate(verbose)
         if compileLaTeX:
-            self.compileLaTeX()
+            self.compileLaTeX(verbose)
 
 
 if __name__ == '__main__':
