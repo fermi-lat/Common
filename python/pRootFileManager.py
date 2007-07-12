@@ -64,7 +64,9 @@ class pRootFileManager:
         try:
             return self.RootFile.Get(name)
         except:
-            logger.error('Could not find %s in the ROOT file.' % name)
+            logger.error('Could not find %s in ROOT file %s.' %\
+                         (name, self.RootFile.GetName()))
+            return None
 
     ## @brief Function implementing the pattern match.
     #

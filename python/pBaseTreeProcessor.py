@@ -26,54 +26,42 @@ class pBaseTreeProcessor:
     ## @param outputFilePath
     #  Path to the output ROOT file.
     
-    def __init__(self, xmlParser, inputFilePath, treeName,\
+    def __init__(self, xmlParser, inputFilePath, rootTreeName,\
                  outputFilePath = None):
+        self.XmlParser      = xmlParser
+        self.InputFilePath  = inputFilePath
+        self.RootTreeName   = rootTreeName
+        if outputFilePath is None:
+            outputFilePath = inputFilePath.replace('.root', '.processed.root')
+        self.OutputFilePath = outputFilePath
 
-        ## @var XmlParser
-        ## @brief The xml parser containing the requested output lists.
-
-        ## @var InputFilePath
-        ## @brief Path to the input ROOT TFile object.
-
-        ## @var InputFile
-        ## @brief The input ROOT TFile object.
-
-        ## @var OutputFilePath
-        ## @brief Path to the output ROOT file.
-
-        ## @var OutputFile
-        ## @brief The output ROOT TFile object.
-
-        ## @var RootTree
-        ## @brief The ROOT TTree object to be read from the input file.
-        
-        self.XmlParser     = xmlParser
-        self.InputFile     = ROOT.TFile(inputFilePath)
-        self.RootTree      = self.InputFile.Get(treeName)
+    def open(self):
+        self.InputFile  = ROOT.TFile(self.InputFilePath)
+        self.RootTree   = self.InputFile.Get(self.RootTreeName)
         if self.RootTree is None:
             sys.exit('Could not find TTree %s in %s.' % (treeName,\
                                                          self.InputFilePath))
-        if outputFilePath is None:
-            outputFilePath = inputFilePath.replace('.root', '.processed.root')
-        self.OutputFile    = ROOT.TFile(outputFilePath, 'recreate')
+        self.OutputFile = ROOT.TFile(self.OutputFilePath, 'recreate')
 
     ## @brief Close the output ROOT file.
     ## @param self
     #  The class instance.
 
-    def closeOutputFile(self):
+    def close(self):
         self.OutputFile.Write()
         self.OutputFile.Close()
+        self.InputFile.Close()
 
     ## @param self
     #  The class instance.
 
-    def process(self):
+    def run(self):
         logger.info('Processing the root tree and writing histograms...')
         startTime = time.time()
+        self.open()
         self.__createObjects()
         logger.info('Done in %.2f s.\n' % (time.time() - startTime))
-        self.closeOutputFile()
+        self.close()
 
     ## @brief Create the ROOT objects defined in the enabled output lists
     #  of the xml configuration file.

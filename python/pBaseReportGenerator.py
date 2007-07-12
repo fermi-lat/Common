@@ -304,6 +304,10 @@ class pBaseReportGenerator:
     def write(self, line, pageLabel = MAIN_PAGE_LABEL):
         self.DoxyFilesDict[pageLabel].writelines(line)
 
+    def formatForLaTeX(self, line):
+        line = str(line).replace('_', '\_')
+        return line
+
     ## @brief Write a carriage return to the doxygen main page file.
     ## @param self
     #  The class instance.
@@ -416,7 +420,7 @@ class pBaseReportGenerator:
         for item in items:
             line += str(item) + ' & '
         line = line[:-3] + '\\\\ \n\hline\n'
-        return pUtils.formatForLatex(line)
+        return self.formatForLatex(line)
 
     ## @brief Return the trailer for a LaTeX-formatted table.
     ## @param self
@@ -427,10 +431,11 @@ class pBaseReportGenerator:
     #  The table caption.
 
     def __getLaTeXTableTrailer(self, title, caption):
-        trailer = '\end{tabular}\n'                               +\
-                  '\\caption{{\\bf %s.} %s}\n' % (title, caption) +\
-                  '\end{center}\n'                                +\
-                  '\end{table}\n'                                 +\
+        trailer = '\end{tabular}\n'                                          +\
+                  '\\caption{{\\bf %s.} %s}\n' % (self.formatForLaTeX(title) ,\
+                                                  self.formatForLaTeXcaption)+\
+                  '\end{center}\n'                                           +\
+                  '\end{table}\n'                                            +\
                   '@endlatexonly\n\n'
         return trailer
 
@@ -581,7 +586,8 @@ class pBaseReportGenerator:
                  '\\end{figure}\n'                     +\
                  '\\nopagebreak\n'                     +\
                  '@endlatexonly\n\n')                  %\
-                 (self.LATEX_IMAGES_WIDTH, epsImagePath, title, caption)
+                 (self.LATEX_IMAGES_WIDTH, epsImagePath,\
+                  self.formatForLaTeX(title), self.formatForLaTeX(caption))
         return block
     
     ## @brief Add to a specific page of the report a LaTeX-formatted image.
@@ -598,8 +604,8 @@ class pBaseReportGenerator:
 
     def __addLaTeXImageBlock(self, epsImagePath, title = '', caption = '',\
                              pageLabel = MAIN_PAGE_LABEL):
-        self.write(self.__getLaTeXImageBlock(epsImagePath, title, caption),\
-                   pageLabel)
+        self.write(self.__getLaTeXImageBlock(epsImagePath, title,\
+                                                  caption), pageLabel)
 
     ## @brief Return the doxygen block for adding a image to the html report.
     ## @param self
@@ -717,8 +723,9 @@ class pBaseReportGenerator:
     #  The actual list.
 
     def __getLaTeXListBlock(self, name, list):
-        block = '@latexonly\n'                             +\
-                '{\\bfseries %s}: %s\\\\\n' % (name, list) +\
+        block = '@latexonly\n'                                            +\
+                '{\\bfseries %s}: %s\\\\\n' % (self.formatForLaTeX(name)  ,\
+                                               self.formatForLaTeX(list)) +\
                 '@endlatexonly\n\n'
         return block
 
@@ -788,11 +795,12 @@ class pBaseReportGenerator:
     #  The actual dictionary.
 
     def __getLaTeXDictBlock(self, name, dictionary):
-        block = '@latexonly\n'               +\
-                '{\\bfseries %s}\n' % (name) +\
+        block = '@latexonly\n'                                  +\
+                '{\\bfseries %s}\n' % self.formatForLaTeX(name) +\
                 '\\begin{itemize}\n'
         for (key, value) in dictionary.items():
-            block += '\\item{\\texttt %s}: %s\n' % (key, value)
+            block += '\\item{\\texttt{%s}}: %s\n' % (self.formatForLaTeX(key),\
+                                                    self.formatForLaTeX(value))
         block += '\\end{itemize}\n' +\
                  '@endlatexonly\n\n'
         return block

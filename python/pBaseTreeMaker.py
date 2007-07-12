@@ -40,12 +40,21 @@ class pBaseTreeMaker:
         ## @var VariablesDictionary
         ## @brief The dictionary containing the tree variables
         #  (which are numpy.array objects).
- 
-        self.RootFile  = ROOT.TFile(outputFilePath, 'recreate')
-        self.RootTree  = ROOT.TTree(treeName, treeName)
-        self.XmlParser = xmlParser
+
+        self.XmlParser      = xmlParser
+        self.OutputFilePath = outputFilePath
+        self.OutputFile     = ROOT.TFile(self.OutputFilePath, 'recreate')
+        self.RootTree       = ROOT.TTree(treeName, treeName)
         self.VariablesDictionary = {}
         self.__createBranches()
+
+    ## @brief Close the output ROOT file.
+    ## @param self
+    #  The class instance.
+    
+    def close(self):
+        self.OutputFile.Write()
+        self.OutputFile.Close()
 
     ## @brief Create all the tree branches, based on the information
     #  from the xml parser.
@@ -92,10 +101,3 @@ class pBaseTreeMaker:
         for variable in self.XmlParser.EnabledVariablesDict.values():
             variable.reset()
 
-    ## @brief Close the output ROOT file.
-    ## @param self
-    #  The class instance.
-    
-    def closeFile(self):
-        self.RootFile.Write()
-        self.RootFile.Close()
