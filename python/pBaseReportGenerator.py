@@ -302,7 +302,7 @@ class pBaseReportGenerator:
     #  The page label.
 
     def write(self, line, pageLabel = MAIN_PAGE_LABEL):
-        self.DoxyFilesDict[pageLabel].writelines(line)
+        self.DoxyFilesDict[pageLabel].writelines('%s\n' % line)
 
     def formatForLaTeX(self, line):
         line = str(line).replace('_', '\_')
@@ -338,9 +338,9 @@ class pBaseReportGenerator:
                      '</center>\n'                                       +\
                      '@endhtmlonly\n'                                    +\
                      '@author %s \n' % self.REPORT_AUTHOR                +\
-                     '@date %s\n' % time.asctime()
+                     '@date %s' % time.asctime()
         else:
-            header = '/** @page %s %s\n' % (pageLabel, pageTitle)
+            header = '/** @page %s %s' % (pageLabel, pageTitle)
         self.write(header, pageLabel)
         self.newline()
 
@@ -365,8 +365,8 @@ class pBaseReportGenerator:
 
     def addSection(self, label, title, pageLabel = MAIN_PAGE_LABEL):
         self.newline(pageLabel)
-        self.write('@htmlonly\n<br><br>\n@endhtmlonly\n')
-        self.write('@section %s %s\n' % (label, title), pageLabel)
+        self.write('@htmlonly\n<br><br>\n@endhtmlonly')
+        self.write('@section %s %s' % (label, title), pageLabel)
         self.newline(pageLabel)
 
     ## @brief Add a subsection to a doxygen page.
@@ -381,8 +381,8 @@ class pBaseReportGenerator:
 
     def addSubsection(self, label, title, pageLabel = MAIN_PAGE_LABEL):
         self.newline(pageLabel)
-        self.write('@htmlonly\n<br>\n@endhtmlonly\n')
-        self.write('@subsection %s %s\n' % (label, title), pageLabel)
+        self.write('@htmlonly\n<br>\n@endhtmlonly')
+        self.write('@subsection %s %s' % (label, title), pageLabel)
         self.newline(pageLabel)
 
     ## @brief Return the header section for a LaTeX-formatted table.
@@ -392,7 +392,7 @@ class pBaseReportGenerator:
     def __getLaTeXTableHeader(self):
         header = '@latexonly\n'           +\
                  '\\begin{table}[!htb]\n' +\
-                 '\\begin{center}\n'
+                 '\\begin{center}'
         return header
 
     ## @brief Return the header for a LaTeX-formatted table.
@@ -406,7 +406,7 @@ class pBaseReportGenerator:
         for i in items:
             line += "c|"
         line += '}\n\\hline\n' + self.__getLaTeXTableRow(items) +\
-                '\\hline\n\\hline\n'
+                '\\hline\n\\hline'
         return line
 
     ## @brief Return a row for a LaTeX-formatted table.
@@ -419,7 +419,7 @@ class pBaseReportGenerator:
         line = ''
         for item in items:
             line += str(item) + ' & '
-        line = line[:-3] + '\\\\ \n\hline\n'
+        line = line[:-3] + '\\\\ \n\hline'
         return self.formatForLatex(line)
 
     ## @brief Return the trailer for a LaTeX-formatted table.
@@ -436,7 +436,7 @@ class pBaseReportGenerator:
                                                   self.formatForLaTeXcaption)+\
                   '\end{center}\n'                                           +\
                   '\end{table}\n'                                            +\
-                  '@endlatexonly\n\n'
+                  '@endlatexonly'
         return trailer
 
     ## @brief Write to a specific page of the report a LaTeX-formatted table.
@@ -468,7 +468,7 @@ class pBaseReportGenerator:
     def __getHtmlTableHeader(self):
         header = '@htmlonly\n'            +\
                  '<div align="center">\n' +\
-                 '<table border="1">\n'
+                 '<table border="1">'
         return header
 
     ## @brief Return the header row for a html-formatted table.
@@ -492,7 +492,7 @@ class pBaseReportGenerator:
         row = '<tr>\n'
         for item in items:
             row += '%s\n' % self.__getHtmlTableCell(item, bold)
-        row += '</tr>\n'
+        row += '</tr>'
         return row
 
     ## @brief Return a cell for a html-formatted table.
@@ -521,7 +521,7 @@ class pBaseReportGenerator:
         trailer = '</table>\n'                                          +\
                   '<p><strong>%s.</strong> %s</p>\n' % (title, caption) +\
                   '</div>\n'                                            +\
-                  '@endhtmlonly\n\n'
+                  '@endhtmlonly\n'
         return trailer
 
     ## @brief Write to a specific page of the report a html-formatted table.
@@ -585,7 +585,7 @@ class pBaseReportGenerator:
                  '\\end{center}\n'                     +\
                  '\\end{figure}\n'                     +\
                  '\\nopagebreak\n'                     +\
-                 '@endlatexonly\n\n')                  %\
+                 '@endlatexonly')                      %\
                  (self.LATEX_IMAGES_WIDTH, epsImagePath,\
                   self.formatForLaTeX(title), self.formatForLaTeX(caption))
         return block
@@ -623,7 +623,7 @@ class pBaseReportGenerator:
                 '<img src="%s" alt="%s">\n' % (gifImagePath, gifImagePath) +\
                 '<p><strong>%s.</strong> %s</p>\n' % (title, caption)      +\
                 '</div>\n'                                                 +\
-                '@endhtmlonly\n'
+                '@endhtmlonly'
         return block
 
     ## @brief Add to a specific page of the report a html-formatted image.
@@ -726,7 +726,7 @@ class pBaseReportGenerator:
         block = '@latexonly\n'                                            +\
                 '{\\bfseries %s}: %s\\\\\n' % (self.formatForLaTeX(name)  ,\
                                                self.formatForLaTeX(list)) +\
-                '@endlatexonly\n\n'
+                '@endlatexonly'
         return block
 
     ## @brief Return the representation of a pyhton list for the html report.
@@ -740,7 +740,7 @@ class pBaseReportGenerator:
     def __getHtmlListBlock(self, name, list):
         block = ('@htmlonly\n'         +\
                  '<b>%s</b>: %s<br>\n' +\
-                 '@endhtmlonly\n')     %\
+                 '@endhtmlonly')       %\
                  (name, list)
         return block
 
@@ -802,7 +802,7 @@ class pBaseReportGenerator:
             block += '\\item{\\texttt{%s}}: %s\n' % (self.formatForLaTeX(key),\
                                                     self.formatForLaTeX(value))
         block += '\\end{itemize}\n' +\
-                 '@endlatexonly\n\n'
+                 '@endlatexonly'
         return block
 
     ## @brief Return the representation of a pyhton dictionary for the
@@ -819,7 +819,7 @@ class pBaseReportGenerator:
                 '<b>%s</b>\n' % (name)
         for (key, value) in dictionary.items():
             block += '<li><tt>%s</tt>: %s\n' % (key, value)
-        block += '@endhtmlonly\n'
+        block += '@endhtmlonly'
         return block
 
     ## @brief Write a python dictionary to a specific page of the LaTeX report.
