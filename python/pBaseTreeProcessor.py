@@ -59,7 +59,7 @@ class pBaseTreeProcessor:
         logger.info('Processing the root tree and writing histograms...')
         startTime = time.time()
         self.open()
-        self.__createObjects()
+        self.createObjects()
         logger.info('Done in %.2f s.\n' % (time.time() - startTime))
         self.close()
 
@@ -68,6 +68,6 @@ class pBaseTreeProcessor:
     ## @param self
     #  The class instance.
 
-    def __createObjects(self):
+    def createObjects(self):
         for rep in self.XmlParser.EnabledPlotRepsDict.values():
-            rep.createRootObjects(self.RootTree)
+            rep.createRootObject(self.RootTree)
