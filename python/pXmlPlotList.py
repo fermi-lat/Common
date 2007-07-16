@@ -1,9 +1,10 @@
-from pXmlList import pXmlList
-from pXmlPlotRep import pXmlTH1FRep
-from pXmlPlotRep import pXmlTH2FRep
+from pXmlList     import pXmlList
+from pXmlPlotRep  import pXmlTH1FRep
+from pXmlPlotRep  import pXmlTH2FRep
+from pSkyMapUtils import pXmlSkyMapRep
 
 
-SUPPORTED_PLOT_TYPES = ['TH1F', 'TH2F']
+SUPPORTED_PLOT_TYPES = ['TH1F', 'TH2F', 'SkyMap']
 
 class pXmlPlotList(pXmlList):   
 

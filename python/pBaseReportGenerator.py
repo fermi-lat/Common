@@ -66,7 +66,7 @@ class pBaseReportGenerator:
     MAIN_PAGE_LABEL    = 'mainpage'
     HTML_DIR_NAME      = 'html'
     LATEX_DIR_NAME     = 'latex'
-    AUX_CANVAS_WIDTH   = 500
+    AUX_CANVAS_WIDTH   = 650
     AUX_CANVAS_HEIGHT  = 400
     AUX_CANVAS_COLOR   = 10
     LATEX_IMAGES_WIDTH = 11.0
@@ -712,7 +712,7 @@ class pBaseReportGenerator:
         if auxCanvasMissing:
             self.deleteAuxRootCanvas()
             logger.info('Aux ROOT canvas deleted.')
-            logger.warn('When saving multiple plots, you should probably ' +\
+            logger.warn('When saving multiple plots, you should ' +\
                         'create the aux ROOT canvas explicitly.')
 
     ## @brief Add a plot to the doxygen main page file.
@@ -731,9 +731,35 @@ class pBaseReportGenerator:
     def addPlot(self, plotRep, name, pageLabel):
         rootObject = self.RootFileManager.get(name)
         if rootObject is not None:
-            self.addRootObject(rootObject, plotRep.Title, plotRep.Caption,\
-                               plotRep.DrawOptions, plotRep.XLog,\
-                               plotRep.YLog, plotRep.ZLog, pageLabel)
+            auxCanvasMissing = False
+            if self.AuxRootCanvas is None:
+                auxCanvasMissing = True
+                logger.warn('Aux ROOT canvas needed to add a ROOT object.')
+                logger.info('Aux ROOT canvas created.')
+                self.createAuxRootCanvas()
+            epsImageName = '%s.eps' % rootObject.GetName()
+            gifImageName = '%s.gif' % rootObject.GetName()
+            self.AuxRootCanvas.SetLogx(plotRep.XLog)
+            self.AuxRootCanvas.SetLogy(plotRep.YLog)
+            self.AuxRootCanvas.SetLogz(plotRep.ZLog)
+            try:
+                rootObject.Draw(plotRep.DrawOptions)
+                plotRep.postProcess()
+            except:
+                self.enableRootTextOutput()
+                logger.error('Could not draw %s.' % rootObject.GetName())
+                self.disableRootTextOutput()
+            self.AuxRootCanvas.SaveAs(os.path.join(self.LatexDirPath,\
+                                                   epsImageName))
+            self.AuxRootCanvas.SaveAs(os.path.join(self.HtmlDirPath,\
+                                                   gifImageName))
+            self.addImage(gifImageName, epsImageName, plotRep.Title,\
+                          plotRep.Caption, pageLabel)
+            if auxCanvasMissing:
+                self.deleteAuxRootCanvas()
+                logger.info('Aux ROOT canvas deleted.')
+                logger.warn('When saving multiple plots, you should '+ \
+                            'create the aux ROOT canvas explicitly.')
 
     def addPlotsList(self, list):
         pageLabel = 'list_%s' % list.Name.replace(' ', '_')

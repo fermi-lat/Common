@@ -74,7 +74,6 @@ class pTreeProcessorReportGenerator(pBaseReportGenerator):
             self.addPlot(plotRep, plotRep.Name, pageLabel)
 
 
-
 class pTreeProcessor(pBaseTreeProcessor):
 
     def __init__(self, xmlParser, inputFilePath, outputFilePath = None):

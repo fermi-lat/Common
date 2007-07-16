@@ -2,9 +2,9 @@
 import pSafeLogger
 logger = pSafeLogger.getLogger('pXmlPlotRep')
 
-from pXmlElement import pXmlElement
-from pXmlList    import pXmlList
-from pSafeROOT   import ROOT
+from pXmlElement  import pXmlElement
+from pXmlList     import pXmlList
+from pSafeROOT    import ROOT
 
 
 class pXmlBasePlotRep(pXmlElement):
@@ -22,6 +22,9 @@ class pXmlBasePlotRep(pXmlElement):
         self.DrawOptions  = self.getTagValue('drawoptions', '')
         self.Caption      = self.getTagValue('caption', '')
         self.RootObject   = None
+
+    def postProcess(self):
+        pass
 
     def formatRootHistogram(self):
         self.RootObject.GetXaxis().SetTitle(self.XLabel)
@@ -65,3 +68,4 @@ class pXmlTH2FRep(pXmlTH1FRep):
                                     self.YMin, self.YMax)
         self.formatRootHistogram()
         self.projectTree(rootTree, numEntries)
+
