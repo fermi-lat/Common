@@ -1,6 +1,6 @@
 from pXmlList import pXmlList
-from pXmlRootPlotsRep import pXmlTH1FRep
-from pXmlRootPlotsRep import pXmlTH2FRep
+from pXmlPlotRep import pXmlTH1FRep
+from pXmlPlotRep import pXmlTH2FRep
 
 
 SUPPORTED_PLOT_TYPES = ['TH1F', 'TH2F']

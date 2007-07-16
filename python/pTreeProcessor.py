@@ -84,45 +84,13 @@ class pTreeProcessor(pBaseTreeProcessor):
 
 
 if __name__ == '__main__':
-    from optparse import OptionParser
-    parser = OptionParser(usage='usage: %prog [options] data_file')
-    parser.add_option('-c', '--config-file', dest='config_file',
-                      default='../xml/config.xml', type=str,
-                      help='path to the input xml configuration file')
-    parser.add_option('-o', '--output-file', dest='output_file',
-                      default=None, type=str,
-                      help='path to the output xml file')
-    parser.add_option('-r', '--create-report', action='store_true',
-                      dest='create_report', default=False,
-                      help='generate the report from the processed ROOT file')
-    parser.add_option('-v', '--verbose', action='store_true',
-                      dest='verbose', default=False,
-                      help='print a lot of ROOT/doxygen/LaTeX related stuff')
-    parser.add_option('-L', '--disable-LaTeX', action='store_true',
-                      dest='disable_LaTeX', default=False,
-                      help='do not compile the LaTeX version of the report')
-    parser.add_option('-V', '--view-report', action='store_true',
-                      dest='view_report', default=False,
-                      help='view the report right after it has been generated')
-
-    (options, args) = parser.parse_args()
-    if len(args) != 1:
-        parser.print_help()
-        parser.error('incorrect number of arguments')
-        sys.exit()
-    if not os.path.isfile(args[0]):
-        parser.error('first argument is not an existing file')
-        sys.exit()
-    if not os.path.isfile(options.config_file):
-        parser.error('input configuration file (%s) not found'%\
-                     (options.config_file))
-        sys.exit()
-           
-    parser    = pTreeProcessorXmlParser(options.config_file)
-    processor = pTreeProcessor(parser, args[0])
+    from pOptionParser import pOptionParser
+    optparser = pOptionParser('corvLV')
+    parser    = pTreeProcessorXmlParser(optparser.Options.c)
+    processor = pTreeProcessor(parser, optparser.Argument)
     processor.run()
-    if options.create_report:
+    if optparser.Options.r:
         reportGenerator = pTreeProcessorReportGenerator(processor)
-        reportGenerator.run(options.verbose, options.disable_LaTeX)
-        if options.view_report:
+        reportGenerator.run(optparser.Options.v, optparser.Options.L)
+        if optparser.Options.V:
             reportGenerator.viewReport()
