@@ -85,10 +85,10 @@ class pTreeProcessor(pBaseTreeProcessor):
 
 if __name__ == '__main__':
     from pOptionParser import pOptionParser
-    optparser = pOptionParser('corvLV')
+    optparser = pOptionParser('corvLVn')
     parser    = pTreeProcessorXmlParser(optparser.Options.c)
     processor = pTreeProcessor(parser, optparser.Argument)
-    processor.run()
+    processor.run(optparser.Options.n)
     if optparser.Options.r:
         reportGenerator = pTreeProcessorReportGenerator(processor)
         reportGenerator.run(optparser.Options.v, optparser.Options.L)

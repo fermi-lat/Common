@@ -27,7 +27,9 @@ class pXmlBasePlotRep(pXmlElement):
         self.RootObject.GetXaxis().SetTitle(self.XLabel)
         self.RootObject.GetYaxis().SetTitle(self.YLabel)
 
-    def projectTree(self, rootTree, numEntries = 1000000000):
+    def projectTree(self, rootTree, numEntries):
+        if numEntries < 0:
+            numEntries = 1000000000
         rootTree.Project(self.Name, self.Expression, self.Cut, '', numEntries)
 
 
@@ -39,7 +41,7 @@ class pXmlTH1FRep(pXmlBasePlotRep):
         self.XMin     = self.evalTagValue('xmin')
         self.XMax     = self.evalTagValue('xmax')
 
-    def createRootObject(self, rootTree, numEntries = 1000000000):
+    def createRootObject(self, rootTree, numEntries):
         logger.debug('Creating TH1F %s' % self.Name)
         self.RootObject = ROOT.TH1F(self.Name, self.Title, self.NumXBins,\
                                     self.XMin, self.XMax)
@@ -56,7 +58,7 @@ class pXmlTH2FRep(pXmlTH1FRep):
         self.YMax     = self.evalTagValue('ymax')
         self.ZLog     = self.evalTagValue('zlog', False)
 
-    def createRootObject(self, rootTree, numEntries = 1000000000):
+    def createRootObject(self, rootTree, numEntries):
         logger.debug('Creating TH2F %s' % self.Name)
         self.RootObject = ROOT.TH2F(self.Name, self.Title, self.NumXBins,\
                                     self.XMin, self.XMax, self.NumYBins,\
