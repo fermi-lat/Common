@@ -23,8 +23,8 @@ class pXmlBasePlotRep(pXmlElement):
         self.Caption      = self.getTagValue('caption', '')
         self.RootObject   = None
 
-    def postProcess(self):
-        pass
+    def draw(self, rootObject):
+        rootObject.Draw(self.DrawOptions)
 
     def formatRootHistogram(self):
         self.RootObject.GetXaxis().SetTitle(self.XLabel)

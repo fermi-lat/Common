@@ -743,8 +743,7 @@ class pBaseReportGenerator:
             self.AuxRootCanvas.SetLogy(plotRep.YLog)
             self.AuxRootCanvas.SetLogz(plotRep.ZLog)
             try:
-                rootObject.Draw(plotRep.DrawOptions)
-                plotRep.postProcess()
+                plotRep.draw(rootObject)
             except:
                 self.enableRootTextOutput()
                 logger.error('Could not draw %s.' % rootObject.GetName())

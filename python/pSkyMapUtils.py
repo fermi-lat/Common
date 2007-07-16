@@ -88,7 +88,10 @@ class pXmlSkyMapRep(pXmlTH2FRep):
                                           eval('rootTree.%s' % varY))
             self.RootObject.Fill(x, y)
 
-    def postProcess(self):
+    def draw(self, rootObject):
+        rootObject.GetXaxis().SetAxisColor(10)
+        rootObject.GetYaxis().SetAxisColor(10)
+        pXmlTH2FRep.draw(self, rootObject)
         self.SkyMapGrid.draw()
 
 
