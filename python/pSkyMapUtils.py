@@ -79,11 +79,13 @@ class pXmlSkyMapRep(pXmlTH2FRep):
                                     self.XMin, self.XMax, self.NumYBins,\
                                     self.YMin, self.YMax)
         self.formatRootHistogram()
+        (varX, varY) = self.Expression.split(':')
         if numEntries < 0:
             numEntries = rootTree.GetEntriesFast()
         for i in range(numEntries):
             rootTree.GetEntry(i)
-            (x, y) = getCanvasCoordinates(rootTree.McL, rootTree.McB)
+            (x, y) = getCanvasCoordinates(eval('rootTree.%s' % varX),\
+                                          eval('rootTree.%s' % varY))
             self.RootObject.Fill(x, y)
 
     def postProcess(self):
