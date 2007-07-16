@@ -14,6 +14,7 @@ class pXmlBasePlotRep(pXmlElement):
         self.YLabel       = self.getTagValue('ylabel', '')
         self.XLog         = self.evalTagValue('xlog', False)
         self.YLog         = self.evalTagValue('ylog', False)
+        self.ZLog         = self.evalTagValue('zlog', False)
         self.DrawOptions  = self.getTagValue('drawoptions', '')
         self.Caption      = self.getTagValue('caption', '')
         self.RootObject   = None

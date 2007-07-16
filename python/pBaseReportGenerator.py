@@ -688,7 +688,7 @@ class pBaseReportGenerator:
  
     def addRootObject(self, rootObject , title = '', caption = '',\
                       drawOptions = '', xLog = False, yLog = False,\
-                      pageLabel = MAIN_PAGE_LABEL):
+                      zLog = False, pageLabel = MAIN_PAGE_LABEL):
         auxCanvasMissing = False
         if self.AuxRootCanvas is None:
             auxCanvasMissing = True
@@ -699,6 +699,7 @@ class pBaseReportGenerator:
         gifImageName = '%s.gif' % rootObject.GetName()
         self.AuxRootCanvas.SetLogx(xLog)
         self.AuxRootCanvas.SetLogy(yLog)
+        self.AuxRootCanvas.SetLogz(zLog)
         try:
             rootObject.Draw(drawOptions)
         except:
@@ -713,6 +714,34 @@ class pBaseReportGenerator:
             logger.info('Aux ROOT canvas deleted.')
             logger.warn('When saving multiple plots, you should probably ' +\
                         'create the aux ROOT canvas explicitly.')
+
+    ## @brief Add a plot to the doxygen main page file.
+    ## @todo There's room for improvements, here (in particular one
+    #  could write a method in pXmlPlotRep to return a list of plot reps
+    #  for all the levels - with their names, titles, etc - and avoid
+    #  the name parameter in this function).
+    ## @param self
+    #  The class instance.
+    ## @param plotRep
+    #  The pXmlPlotRep object representing the plot.
+    ## @param name
+    #  The plot name (needs to be passed because it may be different for all
+    #  the towers/layers).
+    
+    def addPlot(self, plotRep, name, pageLabel):
+        rootObject = self.RootFileManager.get(name)
+        if rootObject is not None:
+            self.addRootObject(rootObject, plotRep.Title, plotRep.Caption,\
+                               plotRep.DrawOptions, plotRep.XLog,\
+                               plotRep.YLog, plotRep.ZLog, pageLabel)
+
+    def addPlotsList(self, list):
+        pageLabel = 'list_%s' % list.Name.replace(' ', '_')
+        pageTitle = '%s plots list' % list.Name
+        self.addPage(pageLabel, pageTitle)
+        for plotRep in list.EnabledPlotRepsDict.values():
+            for name in plotRep.getRootObjectsName():
+                self.addPlot(plotRep, name, pageLabel)  
 
     ## @brief Return the representation of a pyhton list for the LaTeX report.
     ## @param self
@@ -922,6 +951,10 @@ class pBaseReportGenerator:
         self.doxygenate(verbose)
         if compileLaTeX:
             self.compileLaTeX(verbose)
+
+    def viewReport(self):
+        os.system('htmlview %s/index.html' % self.HtmlDirPath)
+
 
 
 if __name__ == '__main__':
