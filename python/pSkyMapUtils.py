@@ -30,11 +30,11 @@ class pSkyMapGrid:
 
     def __init__(self, numDivisions = 20):
         self.NumDivisions = numDivisions
-        self.PointArrayX  = {}
-        self.PointArrayY  = {}
-        self.__createPointArray()
+        self.PolyLineX  = {}
+        self.PolyLineY  = {}
+        self.__createPolyLines()
 
-    def __createPointArray(self):
+    def __createPolyLines(self):
         basePointsX = array.array('f', [0.0]*(self.NumDivisions - 1))
         basePointsY = array.array('f', [0.0]*(self.NumDivisions - 1))
         pointsX     = array.array('f', [0.0]*(self.NumDivisions - 1))
@@ -47,24 +47,24 @@ class pSkyMapGrid:
                 (x, y) = getCanvasCoordinates(basePointsX[i], basePointsY[j])
                 pointsX[i] = x
                 pointsY[i] = y
-            self.PointArrayX[j] = ROOT.TPolyLine(self.NumDivisions - 1,\
+            self.PolyLineX[j] = ROOT.TPolyLine(self.NumDivisions - 1,\
                                                  pointsX, pointsY)
         for j in range(self.NumDivisions - 1):
             for i in range(self.NumDivisions - 1):
                 (x, y) = getCanvasCoordinates(basePointsX[j], basePointsY[i])
                 pointsX[i] = x
                 pointsY[i] = y
-            self.PointArrayY[j] = ROOT.TPolyLine(self.NumDivisions - 1,\
+            self.PolyLineY[j] = ROOT.TPolyLine(self.NumDivisions - 1,\
                                                  pointsX, pointsY)
 
     def draw(self):
         for i in range(self.NumDivisions - 1):
-            self.PointArrayX[i].SetLineStyle(2)
-            self.PointArrayY[i].SetLineStyle(2)
-            self.PointArrayX[i].SetLineColor(1)
-            self.PointArrayY[i].SetLineColor(1)
-            self.PointArrayX[i].Draw()
-            self.PointArrayY[i].Draw()
+            self.PolyLineX[i].SetLineStyle(2)
+            self.PolyLineY[i].SetLineStyle(2)
+            self.PolyLineX[i].SetLineColor(1)
+            self.PolyLineY[i].SetLineColor(1)
+            self.PolyLineX[i].Draw()
+            self.PolyLineY[i].Draw()
 
 
 class pXmlSkyMapRep(pXmlTH2FRep):
