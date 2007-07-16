@@ -1,3 +1,7 @@
+
+import pSafeLogger
+logger = pSafeLogger.getLogger('pXmlPlotRep')
+
 from pXmlElement import pXmlElement
 from pXmlList    import pXmlList
 from pSafeROOT   import ROOT
@@ -19,8 +23,12 @@ class pXmlBasePlotRep(pXmlElement):
         self.Caption      = self.getTagValue('caption', '')
         self.RootObject   = None
 
-    def createRootObject(self, rootTree):
-        self.RootObject = self.getRootObject(rootTree)
+    def formatRootHistogram(self):
+        self.RootObject.GetXaxis().SetTitle(self.XLabel)
+        self.RootObject.GetYaxis().SetTitle(self.YLabel)
+
+    def projectTree(self, rootTree, numEntries = 1000000000):
+        rootTree.Project(self.Name, self.Expression, self.Cut, '', numEntries)
 
 
 class pXmlTH1FRep(pXmlBasePlotRep):
@@ -31,13 +39,12 @@ class pXmlTH1FRep(pXmlBasePlotRep):
         self.XMin     = self.evalTagValue('xmin')
         self.XMax     = self.evalTagValue('xmax')
 
-    def getRootObject(self, rootTree):
-        histogram = ROOT.TH1F(self.Name, self.Title, self.NumXBins, self.XMin,\
-                              self.XMax)
-        histogram.GetXaxis().SetTitle(self.XLabel)
-        histogram.GetYaxis().SetTitle(self.YLabel)
-        rootTree.Project(self.Name, self.Expression, self.Cut)
-        return histogram
+    def createRootObject(self, rootTree, numEntries = 1000000000):
+        logger.debug('Creating TH1F %s' % self.Name)
+        self.RootObject = ROOT.TH1F(self.Name, self.Title, self.NumXBins,\
+                                    self.XMin, self.XMax)
+        self.formatRootHistogram()
+        self.projectTree(rootTree, numEntries)
 
 
 class pXmlTH2FRep(pXmlTH1FRep):
@@ -49,10 +56,10 @@ class pXmlTH2FRep(pXmlTH1FRep):
         self.YMax     = self.evalTagValue('ymax')
         self.ZLog     = self.evalTagValue('zlog', False)
 
-    def getRootObject(self, rootTree):
-        histogram = ROOT.TH2F(self.Name, self.Title, self.NumXBins, self.XMin,\
-                              self.XMax, self.NumYBins, self.YMin, self.YMax)
-        histogram.GetXaxis().SetTitle(self.XLabel)
-        histogram.GetYaxis().SetTitle(self.YLabel)
-        rootTree.Project(self.Name, self.Expression, self.Cut)
-        return histogram
+    def createRootObject(self, rootTree, numEntries = 1000000000):
+        logger.debug('Creating TH2F %s' % self.Name)
+        self.RootObject = ROOT.TH2F(self.Name, self.Title, self.NumXBins,\
+                                    self.XMin, self.XMax, self.NumYBins,\
+                                    self.YMin, self.YMax)
+        self.formatRootHistogram()
+        self.projectTree(rootTree, numEntries)
