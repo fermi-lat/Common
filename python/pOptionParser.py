@@ -44,9 +44,9 @@ class pOptionParser:
                                help = 'number of events to be processed')
 
     def add_d(self):
-        parser.add_option('-d', '--output-dir', dest = 'd',
-                          default = None, type = str,
-                          help = 'path to the output directory')
+        self.Parser.add_option('-d', '--output-dir', dest = 'd',
+                               default = None, type = str,
+                               help = 'path to the output directory')
 
     def add_r(self):
         self.Parser.add_option('-r', '--create-report', dest = 'r',
@@ -67,3 +67,13 @@ class pOptionParser:
         self.Parser.add_option('-V', '--view-report', dest = 'V',
                                default = False, action='store_true',
                                help='launch the html report at the end')
+
+    def add_p(self):
+        self.Parser.add_option('-p', '--process-tree', dest = 'p',
+                               default = False, action = 'store_true',
+                               help='process the ROOT tree')
+
+    def add_f(self):
+        self.Parser.add_option('-f', '--force-overwrite', dest = 'f',
+                               default = False, action = 'store_true',
+                               help='not used anymore.')
