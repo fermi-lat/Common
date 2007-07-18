@@ -2,6 +2,8 @@
 import pSafeLogger
 logger = pSafeLogger.getLogger('pXmlPlotRep')
 
+import array
+
 from pXmlElement  import pXmlElement
 from pXmlList     import pXmlList
 from pSafeROOT    import ROOT
@@ -30,6 +32,9 @@ class pXmlBasePlotRep(pXmlElement):
         self.RootObject.GetXaxis().SetTitle(self.XLabel)
         self.RootObject.GetYaxis().SetTitle(self.YLabel)
 
+    def getBranchType(self, rootTree, branchName):
+        return rootTree.GetBranch(branchName).GetTitle()[-1].lower()
+
     def projectTree(self, rootTree, numEntries):
         if numEntries < 0:
             numEntries = 1000000000
@@ -50,6 +55,30 @@ class pXmlTH1FRep(pXmlBasePlotRep):
                                     self.XMin, self.XMax)
         self.formatRootHistogram()
         self.projectTree(rootTree, numEntries)
+
+
+class pXmlTGraphRep(pXmlBasePlotRep):
+
+    def __init__(self, element):
+        pXmlBasePlotRep.__init__(self, element)
+
+    def createRootObject(self, rootTree, numEntries):
+        logger.debug('Creating TGraph %s' % self.Name)
+        (xBranchName, yBranchName) = self.Expression.split(':')
+        xBranchType = self.getBranchType(rootTree, xBranchName)
+        yBranchType = self.getBranchType(rootTree, yBranchName)
+        xArray = array.array(xBranchType, [0])
+        yArray = array.array(yBranchType, [0])
+        rootTree.SetBranchAddress(xBranchName, xArray)
+        rootTree.SetBranchAddress(yBranchName, yArray)
+        if numEntries < 0:
+            numEntries = rootTree.GetEntriesFast()
+        self.RootObject = ROOT.TGraph(numEntries)
+        self.RootObject.SetNameTitle(self.Name, self.Title)
+        for i in range(numEntries):
+            rootTree.GetEntry(i)
+            self.RootObject.SetPoint(i, xArray[0], yArray[0])
+        ROOT.gDirectory.Add(self.RootObject)
 
 
 class pXmlTH2FRep(pXmlTH1FRep):

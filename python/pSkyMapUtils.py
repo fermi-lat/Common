@@ -67,6 +67,8 @@ class pSkyMapGrid:
             self.PolyLineY[i].Draw()
 
 
+## Can be faster by setting addresses!!!
+
 class pXmlSkyMapRep(pXmlTH2FRep):
 
     def __init__(self, element):
@@ -74,7 +76,7 @@ class pXmlSkyMapRep(pXmlTH2FRep):
         self.SkyMapGrid = pSkyMapGrid()
 
     def createRootObject(self, rootTree, numEntries):
-        logger.debug('Creating TH2F %s' % self.Name)
+        logger.debug('Creating SkyMap %s' % self.Name)
         self.RootObject = ROOT.TH2F(self.Name, self.Title, self.NumXBins,\
                                     self.XMin, self.XMax, self.NumYBins,\
                                     self.YMin, self.YMax)
