@@ -729,7 +729,7 @@ class pBaseReportGenerator:
                 plotRep.draw(rootObject)
             except:
                 self.enableRootTextOutput()
-                logger.error('Could not draw %s.' % rootObject.GetName())
+                logger.error('Could not draw %s.' % name)
                 self.disableRootTextOutput()
             self.AuxRootCanvas.SaveAs(os.path.join(self.LatexDirPath,\
                                                    epsImageName))
@@ -740,7 +740,7 @@ class pBaseReportGenerator:
             self.deleteAuxRootCanvas()
         else:
             self.enableRootTextOutput()
-            logger.error('Could not find %s.' % rootObject.GetName())
+            logger.error('Could not find %s.' % name)
             self.disableRootTextOutput()
 
     def addPlotsList(self, list):

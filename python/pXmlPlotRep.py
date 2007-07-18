@@ -35,7 +35,12 @@ class pXmlBasePlotRep(pXmlElement):
         self.RootObject.GetYaxis().SetTitle(self.YLabel)
 
     def getBranchType(self, rootTree, branchName):
-        return rootTree.GetBranch(branchName).GetTitle()[-1].lower()
+        try:
+            return rootTree.GetBranch(branchName).GetTitle()[-1].lower()
+        except:
+            logger.error('Could not determine type for TBranch %s.' %\
+                         branchName)
+            return None
 
     def projectTree(self, rootTree, numEntries):
         if numEntries < 0:
@@ -72,6 +77,9 @@ class pXmlTGraphRep(pXmlBasePlotRep):
         (xBranchName, yBranchName) = self.Expression.split(':')
         xBranchType = self.getBranchType(rootTree, xBranchName)
         yBranchType = self.getBranchType(rootTree, yBranchName)
+        if (xBranchType is None) or (yBranchType is None):
+            logger.error('Cannot create %s.' % self.Name)
+            return None
         self.ArrayX = array.array(xBranchType, [0])
         self.ArrayY = array.array(yBranchType, [0])
         rootTree.SetBranchAddress(xBranchName, self.ArrayX)

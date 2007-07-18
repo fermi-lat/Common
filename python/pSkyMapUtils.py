@@ -80,7 +80,7 @@ class pXmlSkyMapRep(pXmlTH2FRep):
         self.RootObject = ROOT.TH2F(self.Name, self.Title, self.NumXBins,\
                                     self.XMin, self.XMax, self.NumYBins,\
                                     self.YMin, self.YMax)
-        self.formatRootHistogram()
+        self.formatAxes()
         (varX, varY) = self.Expression.split(':')
         if numEntries < 0:
             numEntries = rootTree.GetEntriesFast()
