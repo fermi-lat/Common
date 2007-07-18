@@ -23,6 +23,8 @@ class pXmlBasePlotRep(pXmlElement):
         self.ZLog         = self.evalTagValue('zlog', False)
         self.DrawOptions  = self.getTagValue('drawoptions', '')
         self.Caption      = self.getTagValue('caption', '')
+        if self.Cut != '':
+            self.Caption += '(applied cut: "%s")' % self.Cut
         self.RootObject   = None
 
     def draw(self, rootObject):
