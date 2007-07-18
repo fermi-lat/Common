@@ -30,7 +30,7 @@ class pXmlBasePlotRep(pXmlElement):
     def draw(self, rootObject):
         rootObject.Draw(self.DrawOptions)
 
-    def formatRootHistogram(self):
+    def formatAxes(self):
         self.RootObject.GetXaxis().SetTitle(self.XLabel)
         self.RootObject.GetYaxis().SetTitle(self.YLabel)
 
@@ -55,7 +55,7 @@ class pXmlTH1FRep(pXmlBasePlotRep):
         logger.debug('Creating TH1F %s' % self.Name)
         self.RootObject = ROOT.TH1F(self.Name, self.Title, self.NumXBins,\
                                     self.XMin, self.XMax)
-        self.formatRootHistogram()
+        self.formatAxes()
         self.projectTree(rootTree, numEntries)
 
 
@@ -64,22 +64,28 @@ class pXmlTGraphRep(pXmlBasePlotRep):
     def __init__(self, element):
         pXmlBasePlotRep.__init__(self, element)
 
+    def addPoint(self, i):
+        self.RootObject.SetPoint(i, self.ArrayX[0], self.ArrayY[0])
+
     def createRootObject(self, rootTree, numEntries):
         logger.debug('Creating TGraph %s' % self.Name)
         (xBranchName, yBranchName) = self.Expression.split(':')
         xBranchType = self.getBranchType(rootTree, xBranchName)
         yBranchType = self.getBranchType(rootTree, yBranchName)
-        xArray = array.array(xBranchType, [0])
-        yArray = array.array(yBranchType, [0])
-        rootTree.SetBranchAddress(xBranchName, xArray)
-        rootTree.SetBranchAddress(yBranchName, yArray)
+        self.ArrayX = array.array(xBranchType, [0])
+        self.ArrayY = array.array(yBranchType, [0])
+        rootTree.SetBranchAddress(xBranchName, self.ArrayX)
+        rootTree.SetBranchAddress(yBranchName, self.ArrayY)
+        rootTree.GetEntry(0)
+        self.FirstValueX = self.ArrayX[0]
         if numEntries < 0:
             numEntries = rootTree.GetEntriesFast()
         self.RootObject = ROOT.TGraph(numEntries)
         self.RootObject.SetNameTitle(self.Name, self.Title)
         for i in range(numEntries):
             rootTree.GetEntry(i)
-            self.RootObject.SetPoint(i, xArray[0], yArray[0])
+            self.addPoint(i)
+        self.formatAxes()
         ROOT.gDirectory.Add(self.RootObject)
 
 
@@ -97,6 +103,6 @@ class pXmlTH2FRep(pXmlTH1FRep):
         self.RootObject = ROOT.TH2F(self.Name, self.Title, self.NumXBins,\
                                     self.XMin, self.XMax, self.NumYBins,\
                                     self.YMin, self.YMax)
-        self.formatRootHistogram()
+        self.formatAxes()
         self.projectTree(rootTree, numEntries)
 

@@ -1,11 +1,13 @@
-from pXmlList     import pXmlList
-from pXmlPlotRep  import pXmlTH1FRep
-from pXmlPlotRep  import pXmlTH2FRep
-from pXmlPlotRep  import pXmlTGraphRep
-from pSkyMapUtils import pXmlSkyMapRep
+
+from pXmlList         import pXmlList
+from pXmlPlotRep      import pXmlTH1FRep
+from pXmlPlotRep      import pXmlTH2FRep
+from pXmlPlotRep      import pXmlTGraphRep
+from pSkyMapUtils     import pXmlSkyMapRep
+from pTimeSeriesUtils import pXmlTimeSeriesRep
 
 
-SUPPORTED_PLOT_TYPES = ['TH1F', 'TGraph', 'TH2F', 'SkyMap']
+SUPPORTED_PLOT_TYPES = ['TH1F', 'TGraph', 'TH2F', 'SkyMap', 'TimeSeries']
 
 class pXmlPlotList(pXmlList):   
 

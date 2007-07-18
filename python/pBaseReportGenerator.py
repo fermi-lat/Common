@@ -50,9 +50,6 @@ class pBaseReportGenerator:
     ## @var AUX_CANVAS_HEIGHT
     ## @brief The height of the ROOT auxiliary canvas.
 
-    ## @var AUX_CANVAS_COLOR
-    ## @brief The backround color of the ROOT auxiliary canvas.
-
     ## @var LATEX_IMAGES_WIDTH
     ## @brief The width of the images in the LaTeX report.
 
@@ -68,7 +65,6 @@ class pBaseReportGenerator:
     LATEX_DIR_NAME     = 'latex'
     AUX_CANVAS_WIDTH   = 650
     AUX_CANVAS_HEIGHT  = 400
-    AUX_CANVAS_COLOR   = 10
     LATEX_IMAGES_WIDTH = 11.0
     MAIN_PAGE_TITLE    = 'Main page'
     REPORT_AUTHOR      = 'Unknown'
@@ -141,10 +137,10 @@ class pBaseReportGenerator:
             self.disableRootGraphicsOutput()
         if not verbose:
             self.disableRootTextOutput()
-        self.AuxRootCanvas  = ROOT.TCanvas('canvas', 'canvas',\
-                                           self.AUX_CANVAS_WIDTH,\
-                                           self.AUX_CANVAS_HEIGHT)
-        self.AuxRootCanvas.SetFillColor(self.AUX_CANVAS_COLOR)
+        if self.AuxRootCanvas is None:
+            self.AuxRootCanvas = ROOT.TCanvas('canvas', 'canvas',\
+                                              self.AUX_CANVAS_WIDTH,\
+                                              self.AUX_CANVAS_HEIGHT)
 
     ## @brief Delete the auxiliary ROOT canvas and put back ROOT in non-batch
     #  mode.
@@ -152,7 +148,8 @@ class pBaseReportGenerator:
     #  The class instance.
 
     def deleteAuxRootCanvas(self):
-        self.AuxRootCanvas = None
+        if self.AuxRootCanvas is not None:
+            self.AuxRootCanvas = None
         self.enableRootTextOutput()
         self.enableRootGraphicsOutput()
 
@@ -689,12 +686,7 @@ class pBaseReportGenerator:
     def addRootObject(self, rootObject , title = '', caption = '',\
                       drawOptions = '', xLog = False, yLog = False,\
                       zLog = False, pageLabel = MAIN_PAGE_LABEL):
-        auxCanvasMissing = False
-        if self.AuxRootCanvas is None:
-            auxCanvasMissing = True
-            logger.warn('Aux ROOT canvas needed to add a ROOT object.')
-            logger.info('Aux ROOT canvas created.')
-            self.createAuxRootCanvas()
+        self.createAuxRootCanvas()
         epsImageName = '%s.eps' % rootObject.GetName()
         gifImageName = '%s.gif' % rootObject.GetName()
         self.AuxRootCanvas.SetLogx(xLog)
@@ -709,11 +701,7 @@ class pBaseReportGenerator:
         self.AuxRootCanvas.SaveAs(os.path.join(self.LatexDirPath,epsImageName))
         self.AuxRootCanvas.SaveAs(os.path.join(self.HtmlDirPath, gifImageName))
         self.addImage(gifImageName, epsImageName, title, caption, pageLabel)
-        if auxCanvasMissing:
-            self.deleteAuxRootCanvas()
-            logger.info('Aux ROOT canvas deleted.')
-            logger.warn('When saving multiple plots, you should ' +\
-                        'create the aux ROOT canvas explicitly.')
+        self.deleteAuxRootCanvas()
 
     ## @brief Add a plot to the doxygen main page file.
     ## @todo There's room for improvements, here (in particular one
@@ -731,12 +719,7 @@ class pBaseReportGenerator:
     def addPlot(self, plotRep, name, pageLabel):
         rootObject = self.RootFileManager.get(name)
         if rootObject is not None:
-            auxCanvasMissing = False
-            if self.AuxRootCanvas is None:
-                auxCanvasMissing = True
-                logger.warn('Aux ROOT canvas needed to add a ROOT object.')
-                logger.info('Aux ROOT canvas created.')
-                self.createAuxRootCanvas()
+            self.createAuxRootCanvas()
             epsImageName = '%s.eps' % rootObject.GetName()
             gifImageName = '%s.gif' % rootObject.GetName()
             self.AuxRootCanvas.SetLogx(plotRep.XLog)
@@ -754,11 +737,11 @@ class pBaseReportGenerator:
                                                    gifImageName))
             self.addImage(gifImageName, epsImageName, plotRep.Title,\
                           plotRep.Caption, pageLabel)
-            if auxCanvasMissing:
-                self.deleteAuxRootCanvas()
-                logger.info('Aux ROOT canvas deleted.')
-                logger.warn('When saving multiple plots, you should '+ \
-                            'create the aux ROOT canvas explicitly.')
+            self.deleteAuxRootCanvas()
+        else:
+            self.enableRootTextOutput()
+            logger.error('Could not find %s.' % rootObject.GetName())
+            self.disableRootTextOutput()
 
     def addPlotsList(self, list):
         pageLabel = 'list_%s' % list.Name.replace(' ', '_')
