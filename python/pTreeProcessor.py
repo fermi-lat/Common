@@ -36,8 +36,7 @@ class pTreeProcessorReportGenerator(pBaseReportGenerator):
     def __init__(self, treeProcessor):
         self.TreeProcessor = treeProcessor
         self.RootFilePath  = self.TreeProcessor.OutputFilePath
-        reportDirPath      = os.path.dirname(self.RootFilePath)
-        reportDirPath      = os.path.join(reportDirPath, 'report')
+        reportDirPath = self.RootFilePath.replace('.root', '.report')
         pBaseReportGenerator.__init__(self, reportDirPath)
         self.RootFileManager = pRootFileManager()
 
