@@ -23,14 +23,18 @@ class pXmlBasePlotRep(pXmlElement):
         self.ZLog         = self.evalTagValue('zlog', False)
         self.DrawOptions  = self.getTagValue('drawoptions', '')
         self.Caption      = self.getTagValue('caption', '')
-        if self.Cut != '':
-            self.Caption += '(applied cut: "%s")' % self.Cut
+        self.Caption += '(plotted expression: "%s", cut: "%s")' %\
+                        (self.Expression, self.Cut)
         self.RootObject   = None
 
     def draw(self, rootObject):
         rootObject.Draw(self.DrawOptions)
 
+    def processLabels(self):
+        pass
+
     def formatAxes(self):
+        self.processLabels()
         self.RootObject.GetXaxis().SetTitle(self.XLabel)
         self.RootObject.GetYaxis().SetTitle(self.YLabel)
 
@@ -56,6 +60,12 @@ class pXmlTH1FRep(pXmlBasePlotRep):
         self.XMin     = self.evalTagValue('xmin')
         self.XMax     = self.evalTagValue('xmax')
 
+    def processLabels(self):
+        if self.XLabel == '':
+            self.XLabel = self.Expression
+        if self.YLabel == '':
+            self.YLabel = 'entries/bin'
+
     def createRootObject(self, rootTree, numEntries):
         logger.debug('Creating TH1F %s' % self.Name)
         self.RootObject = ROOT.TH1F(self.Name, self.Title, self.NumXBins,\
@@ -68,6 +78,13 @@ class pXmlTGraphRep(pXmlBasePlotRep):
 
     def __init__(self, element):
         pXmlBasePlotRep.__init__(self, element)
+
+    def processLabels(self):
+        (yExpression, xExpression) = self.Expression.split(':')
+        if self.XLabel == '':
+            self.XLabel = xExpression
+        if self.YLabel == '':
+            self.YLabel = yExpression
 
     def addPoint(self, i):
         self.RootObject.SetPoint(i, self.ArrayX[0], self.ArrayY[0])
@@ -105,6 +122,13 @@ class pXmlTH2FRep(pXmlTH1FRep):
         self.YMin     = self.evalTagValue('ymin')
         self.YMax     = self.evalTagValue('ymax')
         self.ZLog     = self.evalTagValue('zlog', False)
+
+    def processLabels(self):
+        (yExpression, xExpression) = self.Expression.split(':')
+        if self.XLabel == '':
+            self.XLabel = xExpression
+        if self.YLabel == '':
+            self.YLabel = yExpression
 
     def createRootObject(self, rootTree, numEntries):
         logger.debug('Creating TH2F %s' % self.Name)
