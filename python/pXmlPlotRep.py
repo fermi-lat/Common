@@ -57,8 +57,8 @@ class pXmlTH1FRep(pXmlBasePlotRep):
     def __init__(self, element):
         pXmlBasePlotRep.__init__(self, element)
         self.NumXBins = self.evalTagValue('xbins', 100)
-        self.XMin     = self.evalTagValue('xmin')
-        self.XMax     = self.evalTagValue('xmax')
+        self.XMin     = self.evalTagValue('xmin', None, True)
+        self.XMax     = self.evalTagValue('xmax', None, True)
 
     def processLabels(self):
         if self.XLabel == '':
@@ -119,8 +119,8 @@ class pXmlTH2FRep(pXmlTH1FRep):
     def __init__(self, element):
         pXmlTH1FRep.__init__(self, element)
         self.NumYBins = self.evalTagValue('ybins', 100)
-        self.YMin     = self.evalTagValue('ymin')
-        self.YMax     = self.evalTagValue('ymax')
+        self.YMin     = self.evalTagValue('ymin', None, True)
+        self.YMax     = self.evalTagValue('ymax', None, True)
         self.ZLog     = self.evalTagValue('zlog', False)
 
     def processLabels(self):

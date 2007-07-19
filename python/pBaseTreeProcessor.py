@@ -70,5 +70,7 @@ class pBaseTreeProcessor:
 
     def createObjects(self, numEntries):
         for rep in self.XmlParser.EnabledPlotRepsDict.values():
-            rep.createRootObject(self.RootTree, numEntries)
-
+            try:
+                rep.createRootObject(self.RootTree, numEntries)
+            except:
+                logger.error('Could not create %s.' % rep.Name)

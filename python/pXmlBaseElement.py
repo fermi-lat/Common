@@ -113,9 +113,11 @@ class pXmlBaseElement:
     #  The value to be returned in case there are no tags corresponding to a
     #  given tag name.
 
-    def getElementByTagName(self, tagName, default=None):
+    def getElementByTagName(self, tagName, default=None, required=False):
         elementsList = self.getElementsByTagName(tagName)
         if elementsList == []:
+            if required:
+                logger.error('Tag %s missing for %s.' % (tagName, self.Name))
             return default
         elif len(elementsList)> 1:
             logger.error('Tag %s multiply defined for node %s. ' %\
@@ -133,8 +135,8 @@ class pXmlBaseElement:
     #  The value to be returned in case there are no tags corresponding to a
     #  given tag name or the tag has no value.
     
-    def getTagValue(self, tagName, default=None):
-        element = self.getElementByTagName(tagName, default)
+    def getTagValue(self, tagName, default=None, required=False):
+        element = self.getElementByTagName(tagName, default, required)
         if element == default:
             return default
         try:
@@ -153,8 +155,8 @@ class pXmlBaseElement:
     #  given tag name or the tag has no value or the eval statement fails
     #  for some reason.
 
-    def evalTagValue(self, tagName, default=None):
-        value = self.getTagValue(tagName, default)
+    def evalTagValue(self, tagName, default=None, required=False):
+        value = self.getTagValue(tagName, default, required)
         if value == default:
             return default
         try:
