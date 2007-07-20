@@ -302,7 +302,9 @@ class pBaseReportGenerator:
         self.DoxyFilesDict[pageLabel].writelines('%s\n' % line)
 
     def formatForLaTeX(self, line):
-        line = str(line).replace('_', '\_')
+        line = str(line)
+        line = line.replace('_', '\_')
+        line = line.replace('&', '\&')
         return line
 
     ## @brief Write a carriage return to the doxygen main page file.
@@ -429,8 +431,8 @@ class pBaseReportGenerator:
 
     def __getLaTeXTableTrailer(self, title, caption):
         trailer = '\end{tabular}\n'                                          +\
-                  '\\caption{{\\bf %s.} %s}\n' % (self.formatForLaTeX(title) ,\
-                                                  self.formatForLaTeXcaption)+\
+                  '\\caption{{\\bf %s.} %s}\n' %\
+                  (self.formatForLaTeX(title), self.formatForLaTeX(caption)) +\
                   '\end{center}\n'                                           +\
                   '\end{table}\n'                                            +\
                   '@endlatexonly'
