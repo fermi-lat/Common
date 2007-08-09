@@ -115,7 +115,7 @@
 	    <ylog>True</ylog>
 	    <xlabel>log(Energy) (MeV)</xlabel>
 	    <expression>CTBBestLogEnergy</expression>
-	    <cut>McSourceId==-3001||McSourceId==-3002</cut>
+	    <cut>McSourceId==-3000 || McSourceId==-3001||McSourceId==-3002</cut>
 	</TH1F>
     	<TH1F name="bkg_protons" enabled="True">
 	    <title>MC background spectrum (protons)</title>
@@ -188,7 +188,7 @@
 	    <xlabel>Right ascention</xlabel>
 	    <ylabel>Declination</ylabel>
             <expression>McDec:McRa</expression>
-	    <cut>McSourceId==-3001||McSourceId==-3002</cut>
+	    <cut>McSourceId==-3000 || McSourceId==-3001||McSourceId==-3002</cut>
 	    <drawoptions>colz</drawoptions>
         </TH2F>
         <TH2F name="bkg_protons_map" enabled="True">
