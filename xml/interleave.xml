@@ -1,0 +1,259 @@
+<?xml version="1.0" ?>
+
+<monitoring>
+    <inputRootTree name="MeritTuple"/>
+    
+    <outputList group="orbit" name="Orbit check" enabled="True">
+        <TGraph name="pt_sc_zenith" enabled="False">
+	    <title>Spacecraft zenith</title>
+	    <xlabel>Elapsed time (s)</xlabel>
+	    <ylabel>PtSCzenith</ylabel>
+	    <expression>EvtElapsedTime:PtSCzenith</expression>
+	    <drawoptions>alp</drawoptions>
+        </TGraph>
+        <TimeSeries name="pt_sc_zenith_ts" enabled="True">
+	    <title>Spacecraft pointing zenith</title>
+	    <xlabel>Elapsed time (days)</xlabel>
+	    <ylabel>PtSCzenith</ylabel>
+	    <expression>EvtElapsedTime:PtSCzenith</expression>
+	    <drawoptions>alp</drawoptions>
+        </TimeSeries>
+        <TimeSeries name="pt_rax_ts" enabled="True">
+	    <title>Pointing Rax</title>
+	    <xlabel>Elapsed time (days)</xlabel>
+	    <ylabel>PtRax</ylabel>
+	    <expression>EvtElapsedTime:PtRax</expression>
+	    <drawoptions>alp</drawoptions>
+        </TimeSeries>
+        <TimeSeries name="pt_decx_ts" enabled="True">
+	    <title>Pointing Decx</title>
+	    <xlabel>Elapsed time (days)</xlabel>
+	    <ylabel>PtDecx</ylabel>
+	    <expression>EvtElapsedTime:PtDecx</expression>
+	    <drawoptions>alp</drawoptions>
+        </TimeSeries>
+        <TimeSeries name="pt_raz_ts" enabled="True">
+	    <title>Pointing Raz</title>
+	    <xlabel>Elapsed time (days)</xlabel>
+	    <ylabel>PtRaz</ylabel>
+	    <expression>EvtElapsedTime:PtRaz</expression>
+	    <drawoptions>alp</drawoptions>
+        </TimeSeries>
+        <TimeSeries name="pt_decz_ts" enabled="True">
+	    <title>Pointing Decz</title>
+	    <xlabel>Elapsed time (days)</xlabel>
+	    <ylabel>PtDecz</ylabel>
+	    <expression>EvtElapsedTime:PtDecz</expression>
+	    <drawoptions>alp</drawoptions>
+        </TimeSeries>
+        <TH2F name="pt_decz_pt_raz_map" enabled="True">
+	    <title>LAT Z-axis Pointing History</title>
+	    <caption>Z-axis satellite pointing history, no cuts</caption>
+	    <xbins>180</xbins>
+	    <xmin>0</xmin>
+	    <xmax>360</xmax>
+	    <ybins>100</ybins>
+	    <ymin>-90</ymin>
+	    <ymax>90</ymax>
+	    <zlog>True</zlog>
+	    <xlabel>Satellite Right ascention</xlabel>
+	    <ylabel>Satellite Declination</ylabel>
+            <expression>PtDecz:PtRaz</expression>
+	</TH2F>
+    </outputList>
+    
+
+    <outputList group="skymap" name="Sky Map" enabled="True">
+        <TH2F name="raw_skymap" enabled="True">
+	    <title>Raw sky map</title>
+	    <caption>Just a simple skymap, no cuts</caption>
+	    <xbins>500</xbins>
+	    <xmin>0</xmin>
+	    <xmax>360</xmax>
+	    <ybins>500</ybins>
+	    <ymin>-90</ymin>
+	    <ymax>90</ymax>
+	    <zlog>True</zlog>
+	    <xlabel>Right ascention</xlabel>
+	    <ylabel>Declination</ylabel>
+            <expression>McDec:McRa</expression>
+	    <drawoptions>colz</drawoptions>
+        </TH2F>
+        <SkyMap name="real_skymap" enabled="True">
+	    <title>Real sky map</title>
+	    <caption>A more sophisticated skymap</caption>
+	    <xbins>500</xbins>
+	    <xmin>-180</xmin>
+	    <xmax>180</xmax>
+	    <ybins>500</ybins>
+	    <ymin>-90</ymin>
+	    <ymax>90</ymax>
+	    <zlog>True</zlog>
+	    <xlabel>Galactic longitude (L)</xlabel>
+	    <ylabel>Galactic latitude (B)</ylabel>
+            <expression>McL:McB</expression>
+	    <drawoptions>colz</drawoptions>
+        </SkyMap>
+    </outputList>
+  
+    <outputList group="background" name="Background" enabled="True">
+    	<TH1F name="bkg_electrons" enabled="True">
+	    <title>MC background spectrum (electrons)</title>
+	    <xbins>100</xbins>
+	    <xmin>1</xmin>
+	    <xmax>5</xmax>
+	    <ylog>True</ylog>
+	    <xlabel>log(Energy) (MeV)</xlabel>
+	    <expression>CTBBestLogEnergy</expression>
+	    <cut>McSourceId==-2000||McSourceId==-2001||McSourceId==-2002</cut> 
+	</TH1F>
+    	<TH1F name="bkg_positrons" enabled="True">
+	    <title>MC background spectrum (positrons)</title>
+	    <xbins>100</xbins>
+	    <xmin>1</xmin>
+	    <xmax>5</xmax>
+	    <ylog>True</ylog>
+	    <xlabel>log(Energy) (MeV)</xlabel>
+	    <expression>CTBBestLogEnergy</expression>
+	    <cut>McSourceId==-3001||McSourceId==-3002</cut>
+	</TH1F>
+    	<TH1F name="bkg_protons" enabled="True">
+	    <title>MC background spectrum (protons)</title>
+	    <xbins>100</xbins>
+	    <xmin>1</xmin>
+	    <xmax>5</xmax>
+	    <ylog>True</ylog>
+	    <xlabel>log(Energy) (MeV)</xlabel>
+	    <expression>CTBBestLogEnergy</expression>
+	    <cut>McSourceId==-1000||McSourceId==-1001||McSourceId==-1002</cut> 
+	</TH1F>
+    	<TH1F name="bkg_alpha" enabled="True">
+	    <title>MC background spectrum (alpha)</title>
+	    <xbins>100</xbins>
+	    <xmin>1</xmin>
+	    <xmax>5</xmax>
+	    <ylog>True</ylog>
+	    <xlabel>log(Energy) (MeV)</xlabel>
+	    <expression>CTBBestLogEnergy</expression>
+	    <cut>McSourceId==-4000</cut> 
+	</TH1F>
+    	<TH1F name="bkg_heavy_ions" enabled="True">
+	    <title>MC background spectrum (heavy ions)</title>
+	    <xbins>100</xbins>
+	    <xmin>1</xmin>
+	    <xmax>5</xmax>
+	    <ylog>True</ylog>
+	    <xlabel>log(Energy) (MeV)</xlabel>
+	    <expression>CTBBestLogEnergy</expression>
+	    <cut>McSourceId==-5000</cut> 
+	</TH1F>
+	<TH1F name="bkg_earth10" enabled="True">
+	    <title>MC background spectrum (Earth)</title>
+	    <xbins>100</xbins>
+	    <xmin>1</xmin>
+	    <xmax>5</xmax>
+	    <ylog>True</ylog>
+	    <xlabel>log(Energy) (MeV)</xlabel>
+	    <expression>CTBBestLogEnergy</expression>
+	    <cut>McSourceId==-6000</cut> 
+	</TH1F>
+    </outputList>
+    <outputList group="background_map" name="Background Maps" enabled="True">
+        <TH2F name="bkg_electrons_map" enabled="True">
+	    <title>Mc background map (electrons)</title>
+	    <caption>Mc background map (electrons)</caption>
+	    <xbins>500</xbins>
+	    <xmin>0</xmin>
+	    <xmax>360</xmax>
+	    <ybins>500</ybins>
+	    <ymin>-90</ymin>
+	    <ymax>90</ymax>
+	    <zlog>True</zlog>
+	    <xlabel>Right ascention</xlabel>
+	    <ylabel>Declination</ylabel>
+            <expression>McDec:McRa</expression>
+	    <cut>McSourceId==-2000||McSourceId==-2001||McSourceId==-2002</cut> 
+	    <drawoptions>colz</drawoptions>
+        </TH2F>
+        <TH2F name="bkg_positrons_map" enabled="True">
+	    <title>Mc background map (positrons)</title>
+	    <caption>Mc background map (positrons)</caption>
+	    <xbins>500</xbins>
+	    <xmin>0</xmin>
+	    <xmax>360</xmax>
+	    <ybins>500</ybins>
+	    <ymin>-90</ymin>
+	    <ymax>90</ymax>
+	    <zlog>True</zlog>
+	    <xlabel>Right ascention</xlabel>
+	    <ylabel>Declination</ylabel>
+            <expression>McDec:McRa</expression>
+	    <cut>McSourceId==-3001||McSourceId==-3002</cut>
+	    <drawoptions>colz</drawoptions>
+        </TH2F>
+        <TH2F name="bkg_protons_map" enabled="True">
+	    <title>Mc background map (protons)</title>
+	    <caption>Mc background map (protons)</caption>
+	    <xbins>500</xbins>
+	    <xmin>0</xmin>
+	    <xmax>360</xmax>
+	    <ybins>500</ybins>
+	    <ymin>-90</ymin>
+	    <ymax>90</ymax>
+	    <zlog>True</zlog>
+	    <xlabel>Right ascention</xlabel>
+	    <ylabel>Declination</ylabel>
+            <expression>McDec:McRa</expression>
+	    <cut>McSourceId==-1000||McSourceId==-1001||McSourceId==-1002</cut> 
+	    <drawoptions>colz</drawoptions>
+        </TH2F>
+        <TH2F name="bkg_alpha_map" enabled="True">
+	    <title>Mc background map (alpha)</title>
+	    <caption>Mc background map (alpha)</caption>
+	    <xbins>500</xbins>
+	    <xmin>0</xmin>
+	    <xmax>360</xmax>
+	    <ybins>500</ybins>
+	    <ymin>-90</ymin>
+	    <ymax>90</ymax>
+	    <zlog>True</zlog>
+	    <xlabel>Right ascention</xlabel>
+	    <ylabel>Declination</ylabel>
+            <expression>McDec:McRa</expression>
+	    <cut>McSourceId==-4000</cut> 
+	    <drawoptions>colz</drawoptions>
+        </TH2F>
+        <TH2F name="bkg_heavy_ions_map" enabled="True">
+	    <title>Mc background map (heavy_ions)</title>
+	    <caption>Mc background map (heavy_ions)</caption>
+	    <xbins>500</xbins>
+	    <xmin>0</xmin>
+	    <xmax>360</xmax>
+	    <ybins>500</ybins>
+	    <ymin>-90</ymin>
+	    <ymax>90</ymax>
+	    <zlog>True</zlog>
+	    <xlabel>Right ascention</xlabel>
+	    <ylabel>Declination</ylabel>
+            <expression>McDec:McRa</expression>
+	    <cut>McSourceId==-5000</cut> 
+	    <drawoptions>colz</drawoptions>
+        </TH2F>
+        <TH2F name="bkg_earth10_map" enabled="True">
+	    <title>Mc background map (earth10)</title>
+	    <caption>Mc background map (earth10)</caption>
+	    <xbins>500</xbins>
+	    <xmin>0</xmin>
+	    <xmax>360</xmax>
+	    <ybins>500</ybins>
+	    <ymin>-90</ymin>
+	    <ymax>90</ymax>
+	    <zlog>True</zlog>
+	    <xlabel>Right ascention</xlabel>
+	    <ylabel>Declination</ylabel>
+            <expression>McDec:McRa</expression>
+	    <cut>McSourceId==-6000</cut> 
+	    <drawoptions>colz</drawoptions>
+        </TH2F>
+    </outputList>
+</monitoring>
