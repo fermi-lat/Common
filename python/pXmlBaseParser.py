@@ -18,6 +18,7 @@ class pXmlBaseParser:
 
     def parseInputFile(self, filePath):
         if filePath is None:
+            logger.error('Undefined configuration file. Returning None')
             return None
         logger.info('Parsing xml file %s...' % filePath)
         if os.path.exists(filePath):
