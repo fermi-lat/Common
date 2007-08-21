@@ -30,7 +30,7 @@ class pOptionParser:
 
     def add_c(self):
         self.Parser.add_option('-c', '--config-file', dest = 'c',
-                               default = 'config.xml', type = str,
+                               default = None, type = str,
                                help = 'path to the input xml config file')
 
     def add_o(self):
