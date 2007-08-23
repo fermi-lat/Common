@@ -79,6 +79,16 @@ class pAlarmOutput:
         else:
             self.Status = STATUS_WARNING
 
+    ## @brief Get the value corresponding to a particular key of the
+    #  detailed dictionary.
+    ## @param self
+    #  The class instance.
+    ## @param key
+    #  The dictionary key.
+
+    def getDictValue(self, key):
+        return self.DetailedDict[key]
+
     ## @brief Set the value corresponding to a particular key of the
     #  detailed dictionary.
     ## @param self

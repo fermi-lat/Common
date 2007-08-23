@@ -5,6 +5,16 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
 ## @brief Make sure all the y values are within limits.
+#
+#  The algorithm loops over the contents of each bins and checks that
+#  all the values are within the limits.
+#  In case of an error/warning the content of the FIRST bin out of limits
+#  is returned.
+#  The detailed output dictionary contains the value and the bin center of
+#  all the bins the are out of the limits. 
+#
+#  Valid parameters:
+#  @li None
 
 class alg__y_values(pAlarmBaseAlgorithm):
 
@@ -22,11 +32,11 @@ class alg__y_values(pAlarmBaseAlgorithm):
         for bin in range(self.RootObject.GetXaxis().GetFirst(),\
                          self.RootObject.GetXaxis().GetLast()+1):
             value = self.RootObject.GetBinContent(bin)
-            if value < self.getErrorMin() or value > self.getErrorMax():
+            if value < self.Limits.ErrorMin() or value > self.Limits.ErrorMax():
                 point = (self.RootObject.GetBinCenter(bin), value)
                 self.Output.incrementDictValue('num_error_points')
                 self.Output.appendDictValue('error_points', point)
-            elif value < self.getWarningMin() or value > self.getWarningMax():
+            elif value < self.Limits.WarningMin() or value > self.Limits.WarningMax():
                 point = (self.RootObject.GetBinCenter(bin), value)
                 self.Output.incrementDictValue('num_warning_points')
                 self.Output.appendDictValue('warning_points', point)

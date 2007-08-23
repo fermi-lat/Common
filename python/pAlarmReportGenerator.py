@@ -12,6 +12,8 @@ from pBaseReportGenerator import pBaseReportGenerator
 
 
 ## @brief Class implementing the generation of reports for the alarm handler.
+#
+#  @todo Save the the content of the output detailed dictionary 
 
 class pAlarmReportGenerator(pBaseReportGenerator):
 

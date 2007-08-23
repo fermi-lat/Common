@@ -4,7 +4,17 @@ from pSafeROOT import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
-## @brief Make sure all the values are
+## @brief Make sure all the entries are within limits
+#
+#  The algorithm loops over the entry of the branch and that
+#  all the values are within the limits.
+#  In case of an error/warning the content of the FIRST entry out of limits
+#  is returned.
+#  The detailed output dictionary contains the value and the entry number of
+#  all the entrie the are out of the limits. 
+#
+#  Valid parameters:
+#  @li None
 
 class alg__values(pAlarmBaseAlgorithm):
 
@@ -26,11 +36,11 @@ class alg__values(pAlarmBaseAlgorithm):
         self.Output.setDictValue('error_points'  , [])
         for entry in range(self.RootObject.GetEntries()):
             value = self.getBranchContent(entry)
-            if value < self.getErrorMin() or value > self.getErrorMax():
+            if value < self.Limits.ErrorMin or value > self.Limits.ErrorMax:
                 point = (entry, value)
                 self.Output.incrementDictValue('num_error_points')
                 self.Output.appendDictValue('error_points', point)
-            elif value < self.getWarningMin() or value > self.getWarningMax():
+            elif value < self.Limits.WarningMin or value > self.Limits.WarningMax:
                 point = (entry, value)
                 self.Output.incrementDictValue('num_warning_points')
                 self.Output.appendDictValue('warning_points', point)
@@ -41,14 +51,10 @@ class alg__values(pAlarmBaseAlgorithm):
             else:
                 entry = self.RootObject.GetEntries()/2
                 self.Output.setValue(self.RootObject.GetBranchContent(entry))
+
+
                 
 
 if __name__ == '__main__':
     pass
-    #from pAlarmLimits import pAlarmLimits
-    #limits = pAlarmLimits(4, 16, 2, 24)
-    #histogram = ROOT.TH1F('h', 'h', 100, -5, 5)
-    #histogram.FillRandom('pol0', 1000)
-    #algorithm = alg__y_values(limits, histogram)
-    #algorithm.apply()
-    #print algorithm.Output
+

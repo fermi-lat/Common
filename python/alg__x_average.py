@@ -14,10 +14,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  @li <tt>min</tt>: the minimum x value for the average calculation.
 #  @li <tt>max</tt>: the maximum x value for the average calculation.
 #
-## @param plot
-#  The ROOT object.
-## @param paramsDict
-#  The (optional) dictionary of parameters.
+
 
 class alg__x_average(pAlarmBaseAlgorithm):
 
