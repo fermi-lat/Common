@@ -36,7 +36,7 @@
        </alarmSet>
 
 
-       <alarmSet name="tkr_strip_count" enabled="False">
+       <alarmSet name="tkr_strip_count" enabled="True">
          <alarm function="x_average" enabled="True">
             <parameter name="min" value="1.3"/>
             <parameter name="max" value="12.0"/>
@@ -45,13 +45,6 @@
 	 </alarm> 
        </alarmSet>       
 
-       <alarmSet name="Time/nEvents" enabled="True">
-         <alarm function="values" enabled="True">
-            <warning_limits min="4500" max="5000"/>
-            <error_limits min="4000" max="5500"/>
-	 </alarm> 
-       </alarmSet>       
 
-    </alarmList>
 
 </alarms>
