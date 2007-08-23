@@ -419,7 +419,7 @@ class pBaseReportGenerator:
         for item in items:
             line += str(item) + ' & '
         line = line[:-3] + '\\\\ \n\hline'
-        return self.formatForLatex(line)
+        return self.formatForLaTeX(line)
 
     ## @brief Return the trailer for a LaTeX-formatted table.
     ## @param self
@@ -855,7 +855,7 @@ class pBaseReportGenerator:
 
     def __getHtmlDictBlock(self, name, dictionary):
         block = '@htmlonly\n' +\
-                '<b>%s</b>\n' % (name)
+                '<p><b>%s</b>\n' % (name)
         for (key, value) in dictionary.items():
             block += '<li><tt>%s</tt>: %s\n' % (key, value)
         block += '@endhtmlonly'
@@ -981,6 +981,7 @@ if __name__ == '__main__':
     generator.addSubsection('lists', 'Python lists')
     generator.addList('Example list', TEST_LIST)
     generator.addSubsection('dicts', 'Python dictionaries')
+    generator.addDictionary('Example dictionary', TEST_DICT)
     generator.addDictionary('Example dictionary', TEST_DICT)
     generator.addSection('tables', 'Tables')
     generator.addTable(TEST_TABLE_HEADER, TEST_TABLE_ROWS, 'Example table',\
