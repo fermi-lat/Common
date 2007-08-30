@@ -101,3 +101,11 @@ class pBaseTreeMaker:
         for variable in self.XmlParser.EnabledVariablesDict.values():
             variable.reset()
 
+    ## @brief Check if a specific variable is defined in the VariablesDictionary
+    ## @param self
+    #  The class instance.
+    ## @param name
+    #  The VariablesDictionary key corresponding to the desired variable. 
+
+    def existVariable(self, name):
+        return self.VariablesDictionary.has_key(name)
