@@ -1,6 +1,49 @@
 ## @package pUtils
 ## @brief Package containing utilities of general interest.
 
+import re
+
+## @brief Convert a ROOT cut string to a string
+#  representing a python valid line 
+#
+## @param CutString
+#  The ROOT cut string
+## @param prefix
+#  The prefix to be added ("entry." by default)
+
+def Root2PythonCutConverter(CutString, prefix = "entry." ):
+    CHANGE_DICT = {"&&":" and ",
+                   "||": " or "}
+    
+    tmpCutString = AddCutPrefix(CutString, prefix)
+   
+    
+    for (RootKey, PyKey) in  CHANGE_DICT.items():
+        
+        tmpCutString = tmpCutString.replace(RootKey, PyKey)
+    return tmpCutString
+
+## @brief Add a user selectable prefix to all the variables
+#  of a ROOT Cut string
+#
+## @param CutString
+#  The ROOT cut string
+## @param prefix
+#  The prefix to be added (empty by default)
+
+def AddCutPrefix(CutString, prefix = "" ):
+
+    Seeker = re.compile("[a-z_]+", re.IGNORECASE)
+
+    tmpCutString = CutString
+    CutIter = Seeker.finditer(CutString)
+
+    for varMatch in CutIter:
+        varName = varMatch.group()
+        tmpCutString = tmpCutString.replace(varName, prefix + varName)
+
+    return tmpCutString
+
 ## @brief Expand a specified string to a given length.
 #
 ## @param string
@@ -52,6 +95,7 @@ def formatForLatex(string):
 
 def verbatim(string):
     return '<tt>%s</tt>' % string
+
 
 
 if __name__ == '__main__':
