@@ -23,11 +23,26 @@ class pAlarmXmlSummaryGenerator(pXmlWriter):
         self.AlarmHandler = alarmHandler
         pXmlWriter.__init__(self, self.AlarmHandler.XmlSummaryFilePath)
 
+    ## @brief Evaluation of alarm statistics to be written
+    #  at the beginning of the output .xml file
+    ## @param self
+    #  The class instance.
+
+    def evalStatistics(self):
+        StatDict = {"error"     : 0,
+                    "warning"    : 0,
+                    "clean"     : 0,
+                    "undefined" : 0}
+        for alarm in self.AlarmHandler.XmlParser.getEnabledAlarms():
+            StatDict[alarm.getStatus().lower()] +=1
+        return StatDict
+
     ## @brief Implementation of the summary generation.
     ## @param self
     #  The class instance.
     
     def run(self):
+        self.openTag('alarmStatistics', self.evalStatistics(), close=True)
         self.openTag('alarmSummary')
         for alarm in self.AlarmHandler.XmlParser.getEnabledAlarms():
             self.openTag('plot', {'name': alarm.RootObject.GetName()})
