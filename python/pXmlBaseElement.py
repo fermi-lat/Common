@@ -56,8 +56,8 @@ class pXmlBaseElement:
     def getAttribute(self, attributeName, default=None):
         attribute = str(self.DomElement.getAttribute(attributeName))
         if attribute == '':
-            logger.debug('"%s" set to "%s" for node "%s" (not in xml).' %\
-                         (attributeName, default, self.NodeName))
+            #logger.debug('"%s" set to "%s" for node "%s" (not in xml).' %\
+            #             (attributeName, default, self.NodeName))
             attribute = default
         return attribute
 
