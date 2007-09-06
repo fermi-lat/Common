@@ -4,6 +4,7 @@ logger = pSafeLogger.getLogger('pSkyMapUtils')
 import math
 import numpy
 import array
+import time
 
 from pXmlPlotRep import pXmlTH2FRep
 
@@ -76,6 +77,7 @@ class pXmlSkyMapRep(pXmlTH2FRep):
         self.SkyMapGrid = pSkyMapGrid()
 
     def createRootObject(self, rootTree, numEntries):
+        startTime = time.time()
         logger.debug('Creating SkyMap %s' % self.Name)
         self.RootObject = ROOT.TH2F(self.Name, self.Title, self.NumXBins,\
                                     self.XMin, self.XMax, self.NumYBins,\
@@ -89,6 +91,7 @@ class pXmlSkyMapRep(pXmlTH2FRep):
             (x, y) = getCanvasCoordinates(eval('rootTree.%s' % varX),\
                                           eval('rootTree.%s' % varY))
             self.RootObject.Fill(x, y)
+        logger.debug('Done in %.2f s.' % (time.time() - startTime))
 
     def draw(self, rootObject):
         rootObject.GetXaxis().SetAxisColor(10)
