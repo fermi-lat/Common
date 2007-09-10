@@ -6,7 +6,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 ## @brief Make sure all the entries are within limits
 #
-#  The algorithm loops over the entry of the branch and that
+#  The algorithm loops over the entries of the branch and makes sure that
 #  all the values are within the limits.
 #  In case of an error/warning the content of the FIRST entry out of limits
 #  is returned.

@@ -8,7 +8,8 @@ import pUtils
 from pAlarmOutput import pAlarmOutput
 
 
-## @brief Base class for alarm algorithms. Look at the inheritance diagram for the list of implemented algorithms.
+## @brief Base class for alarm algorithms. Look at the inheritance diagram for
+#  the list of implemented algorithms.
 #
 #  Provides a general structure for the implementation of the algorithms,
 #  along with some ROOT-related useful functions (like setting histogram
