@@ -13,6 +13,7 @@ import re
 
 def Root2PythonCutConverter(CutString, prefix = "entry." ):
     CHANGE_DICT = {"&&":" and ",
+                   "!": " not ",
                    "||": " or "}
     
     tmpCutString = AddCutPrefix(CutString, prefix)
@@ -38,9 +39,12 @@ def AddCutPrefix(CutString, prefix = "" ):
     tmpCutString = CutString
     CutIter = Seeker.finditer(CutString)
 
+    varList = []
     for varMatch in CutIter:
         varName = varMatch.group()
-        tmpCutString = tmpCutString.replace(varName, prefix + varName)
+        if varName not in varList:
+	    tmpCutString = tmpCutString.replace(varName, prefix + varName)
+	    varList.append(varName)
 
     return tmpCutString
 
