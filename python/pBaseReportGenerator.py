@@ -737,7 +737,7 @@ class pBaseReportGenerator:
                                                    epsImageName))
             self.AuxRootCanvas.SaveAs(os.path.join(self.HtmlDirPath,\
                                                    gifImageName))
-            self.addImage(gifImageName, epsImageName, plotRep.Title,\
+            self.addImage(gifImageName, epsImageName, '%s (%s)' % (plotRep.Title, name),\
                           plotRep.Caption, pageLabel)
             self.deleteAuxRootCanvas()
         else:
@@ -747,7 +747,7 @@ class pBaseReportGenerator:
 
     def addPlotsList(self, list):
         pageLabel = 'list_%s' % list.Name.replace(' ', '_')
-        pageTitle = '%s plots list' % list.Name
+        pageTitle = list.Name
         self.addPage(pageLabel, pageTitle)
         for plotRep in list.EnabledPlotRepsDict.values():
             for name in plotRep.getRootObjectsName():
