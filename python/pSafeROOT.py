@@ -51,6 +51,7 @@ def applyGlastStyle():
     ROOT.gStyle.SetTitleY(0.98)
     ROOT.gStyle.SetTitleW(0.70)
     ROOT.gStyle.SetTitleH(0.05)
+    ROOT.gStyle.SetStatStyle(0)
     ROOT.gStyle.SetStatFont(42)
     ROOT.gStyle.SetStatX(0.91)
     ROOT.gStyle.SetStatY(0.90)
