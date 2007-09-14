@@ -12,6 +12,8 @@ import re
 #  The prefix to be added ("entry." by default)
 
 def Root2PythonCutConverter(CutString, prefix = "entry." ):
+    if CutString == '':
+        return "True"
     CHANGE_DICT = {"&&":" and ",
                    "!": " not ",
                    "||": " or "}
