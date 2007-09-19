@@ -50,6 +50,21 @@ def AddCutPrefix(CutString, prefix = "" ):
 
     return tmpCutString
 
+## @brief Return a list of the variables involved in a cut.
+#
+#  Used for disabling the branches of a ROOT tree if necessary for speed.
+## @param The cut expression.
+
+def getCutVariables(cut):
+    seeker = re.compile("[a-z_]+", re.IGNORECASE)
+    iterator = seeker.finditer(cut)
+    varList = []
+    for item in iterator:
+        varName = item.group()
+        if varName not in varList:
+            varList.append(varName)
+    return varList
+
 ## @brief Expand a specified string to a given length.
 #
 ## @param string
@@ -105,6 +120,4 @@ def verbatim(string):
 
 
 if __name__ == '__main__':
-    print '"%s"' % expandString('test')
-    print '"%s"' % expandString('test', 8)
-    print '"%s"' % expandNumber(1.236547)
+    print getCutVariables("CalTransRms > 14 && CalTransRms < 34 && CalXtalsTrunc > 8 && CalXtalsTrunc < 20") 
