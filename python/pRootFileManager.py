@@ -68,6 +68,14 @@ class pRootFileManager:
                          (name, self.RootFile.GetName()))
             return None
 
+    def getPlotsDict(self):
+        plotsDict = {}
+        keys = self.RootFile.GetListOfKeys()
+        for key in keys:
+            plotName = key.GetName()
+            plotsDict[plotName] = self.get(plotName)
+        return plotsDict
+
     ## @brief Function implementing the pattern match.
     #
     #  Return True if the name (after the * has been stripped off) differs

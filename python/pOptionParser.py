@@ -6,16 +6,17 @@ from optparse import OptionParser
 
 class pOptionParser:
 
-    def __init__(self, options = ''):
+    def __init__(self, options = '', minArgs = 1, maxArgs = 1, resolve = True):
         self.Parser = OptionParser(usage = 'usage: %prog [options] filename')
         for option in options:
             exec('self.add_%s()' % option)
         (self.Options, self.Arguments) = self.Parser.parse_args()
-        self.resolveOptionClashes()
-        if len(self.Arguments) > 1:
-            self.error('too many arguments (exactly one required)')
-        elif len(self.Arguments) == 0:
-            self.error('please specify the file to be processed')
+        if resolve:
+            self.resolveOptionClashes()
+        if len(self.Arguments) > maxArgs:
+            self.error('too many arguments')
+        elif len(self.Arguments) < minArgs:
+            self.error('not enough arguments')
         self.Argument = self.Arguments[0]
 
     def error(self, message = ''):
