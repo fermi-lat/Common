@@ -78,3 +78,8 @@ class pOptionParser:
         self.Parser.add_option('-f', '--force-overwrite', dest = 'f',
                                default = False, action = 'store_true',
                                help='not used anymore.')
+
+    def add_i(self):
+        self.Parser.add_option('-i', '--interactive', dest = 'i',
+                               default = False, action = 'store_true',
+                               help='run interactively.')
