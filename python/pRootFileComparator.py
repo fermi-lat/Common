@@ -17,12 +17,14 @@ ROOT.gStyle.SetOptStat(111111)
 ROOT.gStyle.SetOptTitle(1)
 
 
-COMPARISON_METHODS = {'TH1': ['GetEntries()', 'GetEffectiveEntries()',\
+COMPARISON_METHODS = {'TH1': [#'GetEntries()',\
+                              'GetEffectiveEntries()',\
                               'GetNbinsX()',\
                               'GetXaxis().GetXmin()', 'GetXaxis().GetXmax()',\
                               'GetMean()', 'GetRMS()', 'GetBinContent(0)',\
                               'GetBinContent(_p_.GetNbinsX() + 1)'],\
-                      'TH2': ['GetEntries()', 'GetEffectiveEntries()',\
+                      'TH2': [#'GetEntries()',\
+                              'GetEffectiveEntries()',\
                               'GetNbinsX()', 'GetNbinsY()',\
                               'GetXaxis().GetXmin()', 'GetXaxis().GetXmax()',\
                               'GetYaxis().GetXmin()', 'GetYaxis().GetXmax()',\
