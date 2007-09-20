@@ -22,13 +22,14 @@ COMPARISON_METHODS = {'TH1': ['GetEntries()', 'GetEffectiveEntries()',\
                               'GetXaxis().GetXmin()', 'GetXaxis().GetXmax()',\
                               'GetMean()', 'GetRMS()', 'GetBinContent(0)',\
                               'GetBinContent(_p_.GetNbinsX() + 1)'],\
-                      'TH2': ['GetEntries()', 'GetNbinsX()', 'GetNbinsY()',\
+                      'TH2': ['GetEntries()', 'GetEffectiveEntries()',\
+                              'GetNbinsX()', 'GetNbinsY()',\
                               'GetXaxis().GetXmin()', 'GetXaxis().GetXmax()',\
                               'GetYaxis().GetXmin()', 'GetYaxis().GetXmax()',\
                               'GetMean()', 'GetMean(2)', 'GetRMS()',\
                               'GetRMS(2)']
                       }
-DRAW_OPTIONS = {'TH1': '', 'TH2': 'col'}
+DRAW_OPTIONS = {'TH1': '', 'TH2': 'colz'}
 
 
 ## @brief Class for ROOT file comparison.

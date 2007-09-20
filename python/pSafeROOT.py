@@ -25,7 +25,6 @@ def applyGlastStyle():
     logger.info('Applying GLAST ROOT style conventions...')
     ROOT.gROOT.SetStyle('Plain')
     ROOT.gStyle.SetPalette(1)
-    ROOT.gStyle.SetFillColor(0)
     ROOT.gStyle.SetCanvasColor(10)
     ROOT.gStyle.SetFrameBorderMode(0)
     ROOT.gStyle.SetFrameFillColor(0)
