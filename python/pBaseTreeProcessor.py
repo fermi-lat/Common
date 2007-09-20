@@ -39,7 +39,7 @@ class pBaseTreeProcessor:
         self.InputFile  = ROOT.TFile(self.InputFilePath)
         self.RootTree   = self.InputFile.Get(self.RootTreeName)
         if self.RootTree is None:
-            sys.exit('Could not find TTree %s in %s.' % (treeName,\
+            sys.exit('Could not find TTree %s in %s.' % (self.RootTreeName,\
                                                          self.InputFilePath))
         self.OutputFile = ROOT.TFile(self.OutputFilePath, 'recreate')
 
