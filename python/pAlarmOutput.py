@@ -16,10 +16,10 @@ STATUS_UNDEFINED = {'level': 4, 'label': 'UNDEFINED'}
 
 ## @brief Class describing the output of an alarm.
 #
-#  The output of an alarms consists of three main pieces:
+#  The output of an alarm consists of three main pieces:
 #  @li an output value returned by a given algorithm.
 #  @li a status resulting from the comparison of the value with the limits.
-#  @li a detailed dictionary wich can be filled with arbitrary informations
+#  @li a detailed dictionary wich can be filled with arbitrary information
 #  while the alarm algorithm is run on the ROOT object.
 #
 #  This class is responsible for checking the output value provided by
@@ -127,3 +127,15 @@ class pAlarmOutput:
         except KeyError:
             self.DetailedDict[key] = [value]
             
+
+    def getTextSummary(self):
+        return 'The algorithm output value is : %s' % self.Value
+   ###     return 'The algorithm alarm limits are : %s' % self.Limits
+
+    def __str__(self):
+        return self.getTextSummary()
+
+    
+if __name__ == '__main__':
+    AlarmOutput = pAlarmOutput()
+    print AlarmOutput
