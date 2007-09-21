@@ -58,6 +58,8 @@ class pAlarmReportGenerator(pBaseReportGenerator):
     def run(self, verbose = False, compileLaTeX = True):
         self.fillSummaryTables()
         self.openReport()
+        self.addSection('alarms_summary', 'Alarm summary')
+        self.addDictionary('Alarm summary',self.AlarmHandler.AlarmStats )
         self.addSection('alarms_output', 'Alarms output')
         for label in self.ALARM_STATUS_LABELS:
             subsectionLabel = 'alarms_%s' % label.lower()
@@ -78,7 +80,7 @@ class pAlarmReportGenerator(pBaseReportGenerator):
     def fillSummaryTables(self):
         for alarm in self.AlarmHandler.XmlParser.getEnabledAlarms():
             row = [alarm.RootObject.GetName(), alarm.FunctionName,\
-                   alarm.getStatus(), alarm.getValue(), alarm.getLimits(),\
+                   alarm.getStatus(), "%.2f"%alarm.getValue(), alarm.getLimits(),\
                    'N/A']
             self.SummaryTablesDict[alarm.getStatus()].append(row)
     

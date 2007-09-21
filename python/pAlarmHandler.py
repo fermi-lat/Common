@@ -72,6 +72,7 @@ class pAlarmHandler:
         self.RootFileManager = pRootFileManager(rootFilePath)
         self.setAlarmSetsPlotLists()
         self.activateAlarms()
+        self.AlarmStats = self.evalStatistics()
         pAlarmXmlSummaryGenerator(self).run()
         pAlarmReportGenerator(self).run(verbose, compileLatex)
 
@@ -99,6 +100,20 @@ class pAlarmHandler:
             alarm.activate()
         logger.info('Done. %d enabled alarm(s) found.\n' %\
                      len(self.XmlParser.getEnabledAlarms()))
+        
+    ## @brief Evaluation of alarm statistics to be written
+    #  at the beginning of the output .xml file anf .html report
+    ## @param self
+    #  The class instance.
+    
+    def evalStatistics(self):
+        StatDict = {"error"     : 0,
+                    "warning"   : 0,
+                    "clean"     : 0,
+                    "undefined" : 0}
+        for alarm in self.XmlParser.getEnabledAlarms():
+            StatDict[alarm.getStatus().lower()] +=1
+        return StatDict
 
 
 
