@@ -43,7 +43,8 @@ class pAlarmHandler:
     #  The path to directory containing the final report.
     
     def __init__(self, rootFilePath, xmlConfigFilePath,\
-                 xmlSummaryFilePath = None, reportDir = None):
+                 xmlSummaryFilePath = None, reportDir = None,\
+                 verbose = False, compileLatex = False):
 
         ## @var XmlParser
         ## @brief The pXmlAlarmParser object responsible for parsing the
@@ -72,7 +73,7 @@ class pAlarmHandler:
         self.setAlarmSetsPlotLists()
         self.activateAlarms()
         pAlarmXmlSummaryGenerator(self).run()
-        pAlarmReportGenerator(self).run()
+        pAlarmReportGenerator(self).run(verbose, compileLatex)
 
     ## @brief Assing the ROOT objects to the alarm sets.
     #
@@ -110,7 +111,7 @@ if __name__ == '__main__':
     parser.add_option('-o', '--output-file', dest='output_file',
                       default=None, type=str,
                       help='path to the output xml file')
-
+    
     (options, args) = parser.parse_args()
     if len(args) != 1:
         parser.print_help()

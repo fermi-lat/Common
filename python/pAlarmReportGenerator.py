@@ -55,7 +55,7 @@ class pAlarmReportGenerator(pBaseReportGenerator):
         for label in self.ALARM_STATUS_LABELS:
             self.SummaryTablesDict[label] = []
 
-    def run(self):
+    def run(self, verbose = False, compileLaTeX = True):
         self.fillSummaryTables()
         self.openReport()
         self.addSection('alarms_output', 'Alarms output')
@@ -69,7 +69,7 @@ class pAlarmReportGenerator(pBaseReportGenerator):
                           self.SummaryTablesDict[label]  ,\
                           tableName, tableCaption)
         self.closeReport()
-        self.compileReport()
+        self.compileReport(verbose, compileLaTeX)
 
     ## @brief Fill the summary tables for the report.
     ## @param self
