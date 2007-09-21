@@ -737,8 +737,8 @@ class pBaseReportGenerator:
                                                    epsImageName))
             self.AuxRootCanvas.SaveAs(os.path.join(self.HtmlDirPath,\
                                                    gifImageName))
-            self.addImage(gifImageName, epsImageName, '%s (%s)' % (plotRep.Title, name),\
-                          plotRep.Caption, pageLabel)
+            self.addImage(gifImageName, epsImageName, '%s (%s)' %\
+                          (plotRep.Title, name), plotRep.Caption, pageLabel)
             self.deleteAuxRootCanvas()
         else:
             self.enableRootTextOutput()
