@@ -7,43 +7,49 @@
     -->
     <alarmList group="TKR" name="TKR base" enabled="True">
 
-
-       <alarmSet name="tkr_tower_strip_count_tower_*" enabled="True">
+       <alarmSet name="TkrTotalHits_Histo1" enabled="True">
          <alarm function="x_average" enabled="True">
-            <parameter name="min" value="1.3"/>
-            <parameter name="max" value="12.0"/>
+            <parameter name="min" value="1"/>
+            <parameter name="max" value="9999"/>
             <warning_limits min="21" max="30"/>
             <error_limits min="5.0" max="40.0"/>
+         </alarm> 
+         <alarm function="x_rms" enabled="True">
+            <parameter name="min" value="1"/>
+            <parameter name="max" value="9999"/>
+            <warning_limits min="5.5" max="6.5"/>
+            <error_limits min="5.0" max="7.0"/>
+	       </alarm> 
+       </alarmSet>	 
+
+       <alarmSet name="TkrHits_Histo1_Tower_*" enabled="True">
+         <alarm function="x_average" enabled="True">
+            <parameter name="min" value="1"/>
+            <parameter name="max" value="9999"/>
+            <warning_limits min="5.0" max="12.0"/>
+            <error_limits min="3.0" max="20.0"/>
 	 </alarm> 
          <alarm function="x_rms" enabled="True">
-            <parameter name="min" value="1.3"/>
-            <parameter name="max" value="12.0"/>
-            <warning_limits min="5.5" max="6.5"/>
-            <error_limits min="5.0" max="7.0"/>
+            <parameter name="min" value="1"/>
+            <parameter name="max" value="9999"/>
+            <warning_limits min="20.0" max="46.0"/>
+            <error_limits min="10.0" max="60.0"/>
 	 </alarm> 
-         <alarm function="x_min_bin" enabled="True">
+         <alarm function="x_min_bin" enabled="False">
             <warning_limits min="5.5" max="6.5"/>
             <error_limits min="5.0" max="7.0"/>
 	 </alarm>
-         <alarm function="gauss_mean" enabled="True">
+         <alarm function="gauss_mean" enabled="False">
             <warning_limits min="5.5" max="6.5"/>
             <error_limits min="5.0" max="7.0"/>
 	 </alarm>
-         <alarm function="gauss_rms" enabled="True">
+         <alarm function="gauss_rms" enabled="False">
             <warning_limits min="5.5" max="6.5"/>
             <error_limits min="5.0" max="7.0"/>
 	 </alarm>
        </alarmSet>
 
-
-       <alarmSet name="tkr_strip_count" enabled="True">
-         <alarm function="x_average" enabled="True">
-            <parameter name="min" value="1.3"/>
-            <parameter name="max" value="12.0"/>
-            <warning_limits min="5.5" max="6.5"/>
-            <error_limits min="5.0" max="7.0"/>
-	 </alarm> 
-       </alarmSet>       
+     
 
     </alarmList>
 
