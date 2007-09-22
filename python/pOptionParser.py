@@ -60,9 +60,9 @@ class pOptionParser:
                                help='print (a lot of!) debug messages')
         
     def add_L(self):
-        self.Parser.add_option('-L', '--disable-LaTeX', dest = 'L',
+        self.Parser.add_option('-L', '--compile-LaTeX', dest = 'L',
                                default = False, action = 'store_true',
-                               help='do not compile the LaTeX report')
+                               help='compile the LaTeX report')
 
     def add_V(self):
         self.Parser.add_option('-V', '--view-report', dest = 'V',

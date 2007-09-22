@@ -59,22 +59,24 @@ class pAlarmHandler:
         ## @var RootFileManager
         ## @brief A pRootFileManager object providing the facilities for
         #  managing the input ROOT file.
+
         
         self.XmlParser = pXmlAlarmParser(xmlConfigFilePath)
-        if xmlSummaryFilePath == None:
-            xmlSummaryFilePath = os.path.abspath(rootFilePath)
-            xmlSummaryFilePath = xmlSummaryFilePath.replace('.root', '.xml')
-        self.XmlSummaryFilePath = xmlSummaryFilePath
         if reportDir == None:
             reportDir = os.path.dirname(os.path.abspath(rootFilePath))
-            reportDir = os.path.join(reportDir, 'alarms')
-        self.ReportDir = reportDir
+        if xmlSummaryFilePath == None:
+            xmlSummaryFilePath = reportDir
+            xmlSummaryFilePath = os.path.join(xmlSummaryFilePath,\
+                                 os.path.basename(rootFilePath).replace('.root', '.xml'))
+        self.XmlSummaryFilePath = xmlSummaryFilePath
+        self.ReportDir = os.path.join(reportDir, 'alarms')
         self.RootFileManager = pRootFileManager(rootFilePath)
         self.setAlarmSetsPlotLists()
         self.activateAlarms()
         self.AlarmStats = self.evalStatistics()
         pAlarmXmlSummaryGenerator(self).run()
-        pAlarmReportGenerator(self).run(verbose, compileLatex)
+        self.ReportGenerator = pAlarmReportGenerator(self)
+        self.ReportGenerator.run(verbose, compileLatex)
 
     ## @brief Assing the ROOT objects to the alarm sets.
     #
@@ -118,28 +120,12 @@ class pAlarmHandler:
 
 
 if __name__ == '__main__':
-    from optparse import OptionParser
-    parser = OptionParser(usage='usage: %prog [options] data_file')
-    parser.add_option('-c', '--config-file', dest='config_file',
-                      default='../xml/config.xml', type=str,
-                      help='path to the input xml configuration file')
-    parser.add_option('-o', '--output-file', dest='output_file',
-                      default=None, type=str,
-                      help='path to the output xml file')
-    
-    (options, args) = parser.parse_args()
-    if len(args) != 1:
-        parser.print_help()
-        parser.error('incorrect number of arguments')
-        sys.exit()
-    if not os.path.isfile(args[0]):
-        parser.error('first argument is not an existing file')
-        sys.exit()
-    if not os.path.isfile(options.config_file):
-        parser.error('input configuration file (%s) not found'%\
-                     (options.config_file))
-        sys.exit()
-           
-    alarmHandler = pAlarmHandler(args[0],\
-                                 options.config_file,\
-                                 options.output_file)
+    from pOptionParser import pOptionParser
+    optparser = pOptionParser('codvVL',1,1,False)
+    alarmHandler = pAlarmHandler(optparser.Argument, optparser.Options.c,\
+                                 optparser.Options.o, optparser.Options.d,\
+                                 optparser.Options.v, optparser.Options.L)
+    if optparser.Options.V:
+        alarmHandler.ReportGenerator.viewReport()
+
+        
