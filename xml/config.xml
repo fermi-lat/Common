@@ -60,7 +60,7 @@
     -->
     <alarmList group="TKR" name="TKR base" enabled="True">
 
-       <alarmSet name="TkrTotalHits_TH1" enabled="True">
+       <alarmSet name="TkrTotalHits_TH1" enabled="False">
          <alarm function="x_average" enabled="True">
             <parameter name="min" value="1"/>
             <parameter name="max" value="9999"/>
