@@ -7,8 +7,10 @@ logger = pSafeLogger.getLogger('pAlarm')
 import sys
 import re
 import pUtils
+
 from pXmlBaseElement import pXmlBaseElement
 from pAlarmLimits import pAlarmLimits
+
 
 
 ## @brief Class describing an alarm to be activated on a plot.
@@ -131,6 +133,9 @@ class pAlarm(pXmlBaseElement):
 
     def getStatus(self):
         return self.Algorithm.Output.Status['label']
+
+    def isClean(self):
+        return self.Algorithm.Output.isClean()
 
     ## @brief Return the output value of the algorithm.
     ## @param self

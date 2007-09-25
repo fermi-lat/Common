@@ -53,6 +53,9 @@ class pAlarmOutput:
         self.Status       = STATUS_UNDEFINED
         self.DetailedDict = {}
 
+    def isClean(self):
+        return self.Status['level'] == STATUS_CLEAN['level']
+
     ## @brief Set the output value and check it against the alarm limits.
     ## @param self
     #  The class instance.
