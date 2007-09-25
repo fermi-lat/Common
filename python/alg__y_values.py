@@ -19,7 +19,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 class alg__y_values(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
-    SUPPORTED_PARAMETERS = []
+    SUPPORTED_PARAMETERS = ['normalize']
 
     def __init__(self, limits, object, paramsDict = {}):
         pAlarmBaseAlgorithm.__init__(self, limits, object, paramsDict)
@@ -28,15 +28,21 @@ class alg__y_values(pAlarmBaseAlgorithm):
         self.Output.setDictValue('num_warning_points', 0)
         self.Output.setDictValue('num_error_points'  , 0)
         self.Output.setDictValue('warning_points', [])
-        self.Output.setDictValue('error_points'  , []) 
+        self.Output.setDictValue('error_points'  , [])
+        if self.ParamsDict.has_key('normalize') and self.ParamsDict['normalize'] == True:
+            nEntries = self.RootObject.GetEntries()
+            self.Limits.ErrorMax   *= nEntries
+            self.Limits.ErrorMin   *= nEntries
+            self.Limits.WarningMin *= nEntries
+            self.Limits.WarningMax *= nEntries
         for bin in range(self.RootObject.GetXaxis().GetFirst(),\
                          self.RootObject.GetXaxis().GetLast()+1):
             value = self.RootObject.GetBinContent(bin)
-            if value < self.Limits.ErrorMin() or value > self.Limits.ErrorMax():
+            if value < self.Limits.ErrorMin or value > self.Limits.ErrorMax:
                 point = (self.RootObject.GetBinCenter(bin), value)
                 self.Output.incrementDictValue('num_error_points')
                 self.Output.appendDictValue('error_points', point)
-            elif value < self.Limits.WarningMin() or value > self.Limits.WarningMax():
+            elif value < self.Limits.WarningMin or value > self.Limits.WarningMax:
                 point = (self.RootObject.GetBinCenter(bin), value)
                 self.Output.incrementDictValue('num_warning_points')
                 self.Output.appendDictValue('warning_points', point)
@@ -56,3 +62,5 @@ if __name__ == '__main__':
     algorithm = alg__y_values(limits, histogram)
     algorithm.apply()
     print algorithm.Output
+    print algorithm.Output.DetailedDict
+    histogram.Draw()
