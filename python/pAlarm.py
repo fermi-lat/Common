@@ -138,6 +138,9 @@ class pAlarm(pXmlBaseElement):
 
     def getValue(self):
         return self.Algorithm.Output.Value
+
+    def getDetails(self):
+        return self.Algorithm.Output.DetailedDict
     
     ## @brief Return a formatted representation of the alarm limits.
     ## @param self
