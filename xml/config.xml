@@ -1,6 +1,44 @@
 <?xml version="1.0" ?>
 
 <alarms>
+    <!--
+    ACD group.
+    -->
+    <alarmList group="GEM" name="GEM vectors" enabled="True">
+
+       <alarmSet name="AcdGemROI_Tower_TH1" enabled="True">
+         <alarm function="y_values" enabled="True">
+				    <parameter name="normalize" value="True"/>
+            <warning_limits min="0.0475" max="0.0775"/>
+            <error_limits min="0.0425" max="0.0825"/>
+	       </alarm>
+       </alarmSet>
+       <alarmSet name="CalHiTrigger_Tower_TH1" enabled="True">
+         <alarm function="y_values" enabled="True">
+				    <parameter name="normalize" value="True"/>
+            <warning_limits min="0.0475" max="0.0775"/>
+            <error_limits min="0.0425" max="0.0825"/>
+	       </alarm>
+       </alarmSet>
+			 
+       <alarmSet name="TkrTrigger_Tower_TH1" enabled="True">
+         <alarm function="y_values" enabled="True">
+				    <parameter name="normalize" value="True"/>
+            <warning_limits min="0.0475" max="0.0775"/>
+            <error_limits min="0.0425" max="0.0825"/>
+	       </alarm>
+       </alarmSet>	
+			 
+       <alarmSet name="CalLOWTrigger_Tower_TH1" enabled="True">
+         <alarm function="y_values" enabled="True">
+				    <parameter name="normalize" value="True"/>
+            <warning_limits min="0.0475" max="0.0775"/>
+            <error_limits min="0.0425" max="0.0825"/>
+	       </alarm>
+       </alarmSet>
+
+			 		 
+    </alarmList>
 
     <!--
     ACD group.
