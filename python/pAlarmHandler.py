@@ -67,9 +67,9 @@ class pAlarmHandler:
         if xmlSummaryFilePath == None:
             xmlSummaryFilePath = reportDir
             xmlSummaryFilePath = os.path.join(xmlSummaryFilePath,\
-                                 os.path.basename(rootFilePath).replace('.root', '.xml'))
+                                 os.path.basename(rootFilePath).replace('.root', '.alarms.xml'))
         self.XmlSummaryFilePath = xmlSummaryFilePath
-        self.ReportDir = os.path.join(reportDir, 'alarms')
+        self.ReportDir = xmlSummaryFilePath.replace('.xml','')
         self.RootFileManager = pRootFileManager(rootFilePath)
         self.setAlarmSetsPlotLists()
         self.activateAlarms()
