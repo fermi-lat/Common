@@ -61,7 +61,9 @@ class pAlarm(pXmlBaseElement):
             self.Algorithm = None
 
     def __cmp__(self, other):
-        return int(self.PlotName > other.PlotName)
+        if self.PlotName > other.PlotName:
+            return 1
+        return -1
         
     ## @brief Extract the limits from the underlying dom element.
     ## @param self

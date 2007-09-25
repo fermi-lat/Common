@@ -73,6 +73,7 @@ class pXmlAlarmParser:
         for alarmSet in self.getEnabledAlarmSets():
 	    for alarm in alarmSet.EnabledAlarmsList:
                 alarmsList.append(alarm)
+        alarmsList.sort()
         return alarmsList
 
     ## @brief Return a formatted text representation of the class instances.
