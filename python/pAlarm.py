@@ -46,6 +46,7 @@ class pAlarm(pXmlBaseElement):
  
         pXmlBaseElement.__init__(self, domElement)
 	self.RootObject   = rootObject
+        self.PlotName     = self.RootObject.GetName()
         self.Limits       = self.__extractLimits()
 	self.ParamsDict   = self.__extractParametersDict()
         self.FunctionName = self.getAttribute('function')
@@ -59,6 +60,8 @@ class pAlarm(pXmlBaseElement):
                           'The alarm will be ignored.')
             self.Algorithm = None
 
+    def __cmp__(self, other):
+        return int(self.PlotName > other.PlotName)
         
     ## @brief Extract the limits from the underlying dom element.
     ## @param self
@@ -139,7 +142,7 @@ class pAlarm(pXmlBaseElement):
     #  The class instance.
 
     def getLimits(self):
-        return self.Limits.getTextRep()
+        return self.Limits.getSummary()
     
     ## @brief Activate the alarm (i.e. actually verify the plot).
     ## @param self
@@ -147,3 +150,7 @@ class pAlarm(pXmlBaseElement):
 
     def activate(self):
         self.Algorithm.apply()
+
+
+if __name__ == '__main__':
+    
