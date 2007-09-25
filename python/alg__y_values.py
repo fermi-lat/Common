@@ -14,7 +14,9 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  all the bins the are out of the limits. 
 #
 #  Valid parameters:
-#  @li None
+#  @li normalize: if set to True the alarm limits will be multiplied
+#  by the number of entries in the histogram.
+#  Used to set limits that does not depend on run statistics.
 
 class alg__y_values(pAlarmBaseAlgorithm):
 
