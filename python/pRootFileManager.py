@@ -111,7 +111,7 @@ class pRootFileManager:
 
     def findObjects(self, pattern):
         objects = []
-        for i in range(self.RootFile.GetListOfKeys().LastIndex()):
+        for i in range(self.RootFile.GetListOfKeys().LastIndex() + 1):
 	    key    = self.RootFile.GetListOfKeys().At(i).GetName()
             if key == pattern or self.__match(key, pattern):
                 objects.append(self.RootFile.FindObjectAny(key))
