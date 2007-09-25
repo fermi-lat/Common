@@ -150,7 +150,3 @@ class pAlarm(pXmlBaseElement):
 
     def activate(self):
         self.Algorithm.apply()
-
-
-if __name__ == '__main__':
-    

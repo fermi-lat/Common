@@ -80,11 +80,7 @@ class pAlarmReportGenerator(pBaseReportGenerator):
     def fillSummaryTables(self):
         for alarm in self.AlarmHandler.XmlParser.getEnabledAlarms():
             row = [alarm.RootObject.GetName(), alarm.FunctionName,\
-                   alarm.getStatus(), "%.2f"%alarm.getValue(), alarm.getLimits(),\
-                   'N/A']
+                   alarm.getStatus(), "%.2f" % alarm.getValue(),\
+                   alarm.getLimits(), 'N/A']
             self.SummaryTablesDict[alarm.getStatus()].append(row)
-    
-
-if __name__ == '__main__':
-    generator = pAlarmReportGenerator('./report', 'Base report')
 

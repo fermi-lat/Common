@@ -67,16 +67,16 @@ class pAlarmLimits:
     ## @param self
     #  The class instance.
 
-    def getTextRep(self):
-        return '[%s / %s --- %s / %s]' % (self.ErrorMin, self.WarningMin,
-                                          self.WarningMax, self.ErrorMax)
+    def getSummary(self):
+        return '[%.2f / %.2f --- %.2f / %.2f]'%(self.ErrorMin, self.WarningMin,
+                                                self.WarningMax, self.ErrorMax)
 
     ## @brief Class representation.
     ## @param self
     #  The class instance.
     
     def __str__(self):
-        return self.getTextRep()
+        return self.getSummary()
 
 
 if __name__ == '__main__':
