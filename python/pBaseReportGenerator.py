@@ -837,7 +837,10 @@ class pBaseReportGenerator:
         block = '@latexonly\n'                                  +\
                 '{\\bfseries %s}\n' % self.formatForLaTeX(name) +\
                 '\\begin{itemize}\n'
-        for (key, value) in dictionary.items():
+        listOfKeys = dictionary.keys()
+        listOfKeys.sort()
+        for key in listOfKeys:
+            value = dictionary[key]
             block += '\\item{\\texttt{%s}}: %s\n' % (self.formatForLaTeX(key),\
                                                     self.formatForLaTeX(value))
         block += '\\end{itemize}\n' +\
@@ -856,7 +859,10 @@ class pBaseReportGenerator:
     def __getHtmlDictBlock(self, name, dictionary):
         block = '@htmlonly\n' +\
                 '<p><b>%s</b>\n' % (name)
-        for (key, value) in dictionary.items():
+        listOfKeys = dictionary.keys()
+        listOfKeys.sort()
+        for key in listOfKeys:
+            value = dictionary[key]
             block += '<li><tt>%s</tt>: %s\n' % (key, value)
         block += '@endhtmlonly'
         return block
