@@ -67,7 +67,7 @@ class pAlarmHandler:
         if xmlSummaryFilePath == None:
             xmlSummaryFilePath = reportDir
             xmlSummaryFilePath = os.path.join(xmlSummaryFilePath,\
-                                 os.path.basename(rootFilePath).replace('.root', '.alarms.xml'))
+               os.path.basename(rootFilePath).replace('.root', '.alarms.xml'))
         self.XmlSummaryFilePath = xmlSummaryFilePath
         self.ReportDir = xmlSummaryFilePath.replace('.xml','')
         self.RootFileManager = pRootFileManager(rootFilePath)
@@ -91,7 +91,7 @@ class pAlarmHandler:
             PlotList = self.RootFileManager.find(alarmSet.Name)
             alarmSet.setPlotsList(PlotList)
             if PlotList == []:
-                logger.error('Alarm set %s has no associated alarms (check names).' %\
+                logger.error('Alarm set %s has no associated alarms.' %\
                              alarmSet.Name)
         logger.info('Done. %d enabled alarm set(s) found.\n' %\
                     len(self.XmlParser.getEnabledAlarmSets()))
@@ -125,10 +125,9 @@ class pAlarmHandler:
 
 if __name__ == '__main__':
     from pOptionParser import pOptionParser
-    optparser = pOptionParser('codvVL',1,1,False)
+    optparser = pOptionParser('codV',1,1,False)
     alarmHandler = pAlarmHandler(optparser.Argument, optparser.Options.c,\
-                                 optparser.Options.o, optparser.Options.d,\
-                                 optparser.Options.v, optparser.Options.L)
+                                 optparser.Options.o, optparser.Options.d)
     if optparser.Options.V:
         alarmHandler.ReportGenerator.viewReport()
 
