@@ -40,6 +40,7 @@ class alg__y_values(pAlarmBaseAlgorithm):
         for bin in range(self.RootObject.GetXaxis().GetFirst(),\
                          self.RootObject.GetXaxis().GetLast()+1):
             value = self.RootObject.GetBinContent(bin)
+            
             if value < self.Limits.ErrorMin or value > self.Limits.ErrorMax:
                 point = (self.RootObject.GetBinCenter(bin), value)
                 self.Output.incrementDictValue('num_error_points')
@@ -53,7 +54,7 @@ class alg__y_values(pAlarmBaseAlgorithm):
         elif self.Output.getDictValue('num_warning_points'):
             self.Output.setValue(self.Output.getDictValue('warning_points')[0][1])
         else:
-            bin = self.RootObject.GetXaxis().GetLast()/2
+            bin = self.RootObject.GetXaxis().GetFirst()
             self.Output.setValue(self.RootObject.GetBinContent(bin))
 
 if __name__ == '__main__':
