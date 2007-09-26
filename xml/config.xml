@@ -131,5 +131,43 @@
      
 
     </alarmList>
+    <!--
+    Trending group
+    -->
+    <alarmList group="Trending" name="Trending base" enabled="True">
+
+       <alarmSet name="trending_TkrHitsTower_Tower_*" enabled="True">
+         <alarm function="y_values" enabled="True">
+            <warning_limits min="6.0" max="9.0"/>
+            <error_limits min="4.0" max="12.0"/>
+         </alarm> 
+       </alarmSet>	 
+       <alarmSet name="trending_TkrHits" enabled="True">
+         <alarm function="y_values" enabled="True">
+            <warning_limits min="95.0" max="105.0"/>
+            <error_limits min="80.0" max="120.0"/>
+         </alarm> 
+       </alarmSet>	 
+
+       <alarmSet name="trending_CalXHit_Tower_Tower_*" enabled="True">
+         <alarm function="y_values" enabled="True">
+            <warning_limits min="1.0" max="2.0"/>
+            <error_limits min="0.5" max="3.0"/>
+         </alarm> 
+       </alarmSet>	 
+       <alarmSet name="trending_CalXHit" enabled="True">
+         <alarm function="y_values" enabled="True">
+            <warning_limits min="18.0" max="22.0"/>
+            <error_limits min="15.0" max="25.0"/>
+         </alarm> 
+       </alarmSet>	 
+       <alarmSet name="trending_CalTowerCount" enabled="True">
+         <alarm function="y_values" enabled="True">
+            <warning_limits min="1.0" max="1.5"/>
+            <error_limits min="0.5" max="2.0"/>
+         </alarm> 
+       </alarmSet>	 
+
+    </alarmList>
 
 </alarms>

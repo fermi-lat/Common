@@ -20,7 +20,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 class alg__y_values(pAlarmBaseAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH1F']
+    SUPPORTED_TYPES      = ['TH1F', 'TProfile']
     SUPPORTED_PARAMETERS = ['normalize']
 
     def __init__(self, limits, object, paramsDict = {}):
