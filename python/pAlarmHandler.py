@@ -126,6 +126,8 @@ class pAlarmHandler:
 if __name__ == '__main__':
     from pOptionParser import pOptionParser
     optparser = pOptionParser('codV',1,1,False)
+    if optparser.Options.c is None:
+        optparser.error('Please supply an xml configuration file.')
     alarmHandler = pAlarmHandler(optparser.Argument, optparser.Options.c,\
                                  optparser.Options.o, optparser.Options.d)
     if optparser.Options.V:
