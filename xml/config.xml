@@ -144,7 +144,7 @@
        </alarmSet>	 
        <alarmSet name="trending_TkrHits" enabled="True">
          <alarm function="y_values" enabled="True">
-            <warning_limits min="90.0" max="110.0"/>
+            <warning_limits min="94.0" max="110.0"/>
             <error_limits min="75.0" max="125.0"/>
          </alarm> 
        </alarmSet>	 
