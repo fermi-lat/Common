@@ -35,7 +35,6 @@ def applyGlastStyle():
     ROOT.gStyle.SetPadRightMargin(0.11)
     ROOT.gStyle.SetPadBottomMargin(0.1)
     ROOT.gStyle.SetPadTickX(1)
-    ROOT.gStyle.SetPadTickY(1)
     ROOT.gStyle.SetHistFillStyle(0)
     ROOT.gStyle.SetOptTitle(0)
     ROOT.gStyle.SetTitleSize(0.22)
@@ -60,6 +59,7 @@ def applyGlastStyle():
     ROOT.gStyle.SetLabelSize(0.035, 'xyz')
     ROOT.gStyle.SetGridColor(16)
     ROOT.gStyle.SetLegendBorderSize(0)
+    ROOT.gStyle.SetMarkerStyle(24)
 
 if 'ROOT' not in sys.modules:
     import ROOT
