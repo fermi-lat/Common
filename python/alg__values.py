@@ -40,10 +40,10 @@ class alg__values(pAlarmBaseAlgorithm):
                 indices=self.indexlist(index)
                 if(indices!=[]):
                     if "Only" in self.ParamsDict:
-                        if not indices in self.ParamsDict["Only"]:
+                        if not self.matchindex(indices,self.ParamsDict["Only"]):
                             continue
                     if "Exclude" in self.ParamsDict:
-                        if indices in self.ParamsDict["Exclude"]:
+                        if self.matchindex(indices , self.ParamsDict["Exclude"]):
                             continue
                 value = self.getBranchContent(entry,index)
                 if value < self.Limits.ErrorMin or value > self.Limits.ErrorMax:
@@ -83,7 +83,25 @@ class alg__values(pAlarmBaseAlgorithm):
             ind-=ind/fact*fact
         return retlist
         
+    def matchindex(self,indices, matchlist):    
+        if indices in matchlist:
+            return True
+        for ix in matchlist:
+            match=True
+            if not '*' in ix:
+                continue
+            for i in range(len(indices)):
+                if ix[i]=='*':
+                    continue
+                if indices[i]==ix[i]:
+                    continue
+                match=False
+                break
+            if match==True:
+                return True
+        return False
         
+            
 
 if __name__ == '__main__':
     pass
