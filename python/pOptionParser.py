@@ -39,6 +39,11 @@ class pOptionParser:
                                default = None, type = str,
                                help = 'path to the output file')
 
+    def add_p(self):
+        self.Parser.add_option('-p', '--process-tree', dest = 'p',
+                               default = None, type = str,
+                               help='path to the processed the ROOT tree')
+
     def add_n(self):
         self.Parser.add_option('-n', '--num-events', dest = 'n',
                                default = -1, type = int,
@@ -68,11 +73,6 @@ class pOptionParser:
         self.Parser.add_option('-V', '--view-report', dest = 'V',
                                default = False, action='store_true',
                                help='launch the html report at the end')
-
-    def add_p(self):
-        self.Parser.add_option('-p', '--process-tree', dest = 'p',
-                               default = False, action = 'store_true',
-                               help='process the ROOT tree')
 
     def add_f(self):
         self.Parser.add_option('-f', '--force-overwrite', dest = 'f',

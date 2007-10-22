@@ -35,6 +35,12 @@ class pBaseTreeProcessor:
             outputFilePath = inputFilePath.replace('.root', '.processed.root')
         self.OutputFilePath = outputFilePath
 
+        outputFileDir = os.path.split(outputFilePath)[0]
+        if not os.path.exists(outputFileDir):
+            os.makedirs(outputFileDir)
+            logger.debug('Creating new directory to store output files: %s' %\
+                         outputFileDir )
+
     def open(self):
         self.InputFile  = ROOT.TFile(self.InputFilePath)
         self.RootTree   = self.InputFile.Get(self.RootTreeName)
