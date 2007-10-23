@@ -43,8 +43,7 @@ class pAlarmHandler:
     #  The path to directory containing the final report.
     
     def __init__(self, rootFilePath, xmlConfigFilePath,\
-                 xmlSummaryFilePath = None, reportDir = None,\
-                 verbose = False, compileLatex = False):
+                 xmlSummaryFilePath = None):
 
         ## @var XmlParser
         ## @brief The pXmlAlarmParser object responsible for parsing the
@@ -62,12 +61,8 @@ class pAlarmHandler:
 
         
         self.XmlParser = pXmlAlarmParser(xmlConfigFilePath)
-        if reportDir == None:
-            reportDir = os.path.dirname(os.path.abspath(rootFilePath))
         if xmlSummaryFilePath == None:
-            xmlSummaryFilePath = reportDir
-            xmlSummaryFilePath = os.path.join(xmlSummaryFilePath,\
-               os.path.basename(rootFilePath).replace('.root', '.alarms.xml'))
+            xmlSummaryFilePath = rootFilePath.replace('.root', '.alarms.xml')
         self.XmlSummaryFilePath = xmlSummaryFilePath
         self.ReportDir = xmlSummaryFilePath.replace('.xml','')
         self.RootFileManager = pRootFileManager(rootFilePath)
@@ -75,8 +70,7 @@ class pAlarmHandler:
         self.activateAlarms()
         self.AlarmStats = self.evalStatistics()
         pAlarmXmlSummaryGenerator(self).run()
-        self.ReportGenerator = pAlarmReportGenerator(self)
-        self.ReportGenerator.run(verbose, compileLatex)
+        
 
     ## @brief Assing the ROOT objects to the alarm sets.
     #
@@ -125,12 +119,20 @@ class pAlarmHandler:
 
 if __name__ == '__main__':
     from pOptionParser import pOptionParser
-    optparser = pOptionParser('codV',1,1,False)
+    optparser = pOptionParser('corV',1,1,False)
     if optparser.Options.c is None:
         optparser.error('Please supply an xml configuration file.')
+
+    if optparser.Options.V and not optparser.Options.r:
+        logger.warning('Without the -r option the -V option will be ignored!')
+    
     alarmHandler = pAlarmHandler(optparser.Argument, optparser.Options.c,\
-                                 optparser.Options.o, optparser.Options.d)
-    if optparser.Options.V:
-        alarmHandler.ReportGenerator.viewReport()
+                                 optparser.Options.o)
+    
+    if optparser.Options.r:
+        ReportGenerator = pAlarmReportGenerator(alarmHandler)
+        ReportGenerator.run(False, False)
+        if optparser.Options.V:
+            ReportGenerator.viewReport()
 
         
