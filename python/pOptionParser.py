@@ -83,3 +83,8 @@ class pOptionParser:
         self.Parser.add_option('-i', '--interactive', dest = 'i',
                                default = False, action = 'store_true',
                                help='run interactively.')
+
+    def add_e(self):
+        self.Parser.add_option('-e', '--error-file', dest = 'e',
+                               default = None, type = str,
+                               help = 'path to the output error xml file')
