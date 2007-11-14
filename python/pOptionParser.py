@@ -1,3 +1,5 @@
+import pSafeLogger
+logger = pSafeLogger.getLogger('pOptionParser')
 
 import os
 
@@ -65,9 +67,8 @@ class pOptionParser:
                                help='print (a lot of!) debug messages')
         
     def add_L(self):
-        self.Parser.add_option('-L', '--compile-LaTeX', dest = 'L',
-                               default = False, action = 'store_true',
-                               help='compile the LaTeX report')
+        logger.warn('The LaTeX report is not supported anymore.')
+        logger.warn('Please do not use the -L command line option.')
 
     def add_V(self):
         self.Parser.add_option('-V', '--view-report', dest = 'V',

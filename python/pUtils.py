@@ -99,16 +99,6 @@ def expandNumber(number, targetLength):
     else:
         return '%s' % string[:targetLength]
 
-## @brief Format a string to be put in the LaTeX version of the report.
-#
-#  The following operations are performed:
-#  @li Replace '_' with '\\_' (to allow the '_' out of the math mode).
-## @param string
-#  The string to be formatted.
-
-def formatForLatex(string):
-    return string.replace('_', '\_')
-
 ## @brief Format a string to appear with monospace (typesetter) font in the
 #  test report
 ## @param string

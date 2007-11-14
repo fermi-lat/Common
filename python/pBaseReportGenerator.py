@@ -2,13 +2,13 @@
 ## @brief Base package for autoamtic generation of test reports.
 #
 #  The basic strategy is to generate a set of doxygen pages which can
-#  be automatically compiled to provide html, LaTeX, ps and pdf outputs.
+#  be automatically compiled to provide html output.
 #  The following features are supported:
 #  @li Multiple pages
 #  @li Sections, subsections
 #  @li Images (with the capability of producing gif and eps files
 #  directly from ROOT objects).
-#  @li Tables (both in html and LaTeX)
+#  @li Tables
 #  @li Formatted representation of python dictionaries.
 #  @li Formatted representation of python lists.
 #
@@ -41,17 +41,11 @@ class pBaseReportGenerator:
     ## @var HTML_DIR_NAME
     ## @brief The name of the html report directory.
 
-    ## @var LATEX_DIR_NAME
-    ## @brief The name of the LaTeX report directory.
-
     ## @var AUX_CANVAS_WIDTH
     ## @brief The width of the ROOT auxiliary canvas.
 
     ## @var AUX_CANVAS_HEIGHT
     ## @brief The height of the ROOT auxiliary canvas.
-
-    ## @var LATEX_IMAGES_WIDTH
-    ## @brief The width of the images in the LaTeX report.
 
     ## @var MAIN_PAGE_TITLE
     ## @brief The title for the main page.
@@ -62,10 +56,8 @@ class pBaseReportGenerator:
     CONFIG_FILE_NAME   = 'config.doxygen'
     MAIN_PAGE_LABEL    = 'mainpage'
     HTML_DIR_NAME      = 'html'
-    LATEX_DIR_NAME     = 'latex'
     AUX_CANVAS_WIDTH   = 650
     AUX_CANVAS_HEIGHT  = 400
-    LATEX_IMAGES_WIDTH = 11.0
     MAIN_PAGE_TITLE    = 'Main page'
     REPORT_AUTHOR      = 'Unknown'
 
@@ -75,12 +67,10 @@ class pBaseReportGenerator:
     ## @param outputDirPath
     #  The path to the directory in which the report must be created.
     #
-    #  Two subdirectories (html and latex) will be created therein.
     ## @param forceOverwrite
     #  If True (default) the output dir is overwritten without messages.
     
-    def __init__(self, outputDirPath, forceOverwrite = True,\
-                 linkLaTeX = False):
+    def __init__(self, outputDirPath, forceOverwrite = True):
 
         ## @var OutputDirPath
         ## @brief The path to the output dir.
@@ -91,9 +81,6 @@ class pBaseReportGenerator:
 
         ## @var HtmlDirPath
         ## @brief The path to the html report dir.
-
-        ## @var LatexDirPath
-        ## @brief The path to the LaTeX report dir.
 
         ## @var ConfigFilePath
         ## @brief The path to the doxygen configuration file.
@@ -111,11 +98,8 @@ class pBaseReportGenerator:
     
         self.OutputDirPath  = outputDirPath
         self.ForceOverwrite = forceOverwrite
-        self.LinkLaTeX      = linkLaTeX
         self.HtmlDirPath    = os.path.join(self.OutputDirPath,\
                                            self.HTML_DIR_NAME)
-        self.LatexDirPath   = os.path.join(self.OutputDirPath,\
-                                           self.LATEX_DIR_NAME)
         self.ConfigFilePath = os.path.join(self.OutputDirPath,
                                            self.CONFIG_FILE_NAME)
         self.DoxyFilesDict  = {}
@@ -231,13 +215,6 @@ class pBaseReportGenerator:
     def __createHtmlDir(self):
         os.makedirs(self.HtmlDirPath)
 
-    ## @brief Create the output LaTeX report directory.
-    ## @param self
-    #  The class instance.
-
-    def __createLatexDir(self):
-        os.makedirs(self.LatexDirPath)
-
     ## @brief Create all the necessary output directories.
     ## @param self
     #  The class instance.
@@ -245,7 +222,6 @@ class pBaseReportGenerator:
     def __createDirs(self):
         self.__createOutputDir()
         self.__createHtmlDir()
-        self.__createLatexDir()
 
     ## @brief Open a generic file in write mode.
     ## @param self
@@ -303,12 +279,6 @@ class pBaseReportGenerator:
     def write(self, line, pageLabel = MAIN_PAGE_LABEL):
         self.DoxyFilesDict[pageLabel].writelines('%s\n' % line)
 
-    def formatForLaTeX(self, line):
-        line = str(line)
-        line = line.replace('_', '\_')
-        line = line.replace('&', '\&')
-        return line
-
     ## @brief Write a carriage return to the doxygen main page file.
     ## @param self
     #  The class instance.
@@ -331,16 +301,13 @@ class pBaseReportGenerator:
 
     def __writePageHeader(self, pageLabel, pageTitle):
         if pageLabel == self.MAIN_PAGE_LABEL:
-            header = '/** @%s %s\n' % (pageLabel, pageTitle)              +\
-                     '@htmlonly\n'                                        +\
-                     '<center>\n'
-            if self.LinkLaTeX:
-                header += '<a href="../latex/refman.ps">PS report</a>&nbsp\n'+\
-                          '<a href="../latex/refman.pdf">PDF report</a>\n'
-            header += '</center>\n'                                       +\
-                      '@endhtmlonly\n'                                    +\
-                      '@author %s \n' % self.REPORT_AUTHOR                +\
-                      '@date %s' % time.asctime()
+            header = '/** @%s %s\n' % (pageLabel, pageTitle) +\
+                     '@htmlonly\n'                           +\
+                     '<center>\n'                            +\
+                     '</center>\n'                           +\
+                     '@endhtmlonly\n'                        +\
+                     '@author %s \n' % self.REPORT_AUTHOR    +\
+                     '@date %s' % time.asctime()
         else:
             header = '/** @page %s %s' % (pageLabel, pageTitle)
         self.write(header, pageLabel)
@@ -386,82 +353,6 @@ class pBaseReportGenerator:
         self.write('@htmlonly\n<br>\n@endhtmlonly')
         self.write('@subsection %s %s' % (label, title), pageLabel)
         self.newline(pageLabel)
-
-    ## @brief Return the header section for a LaTeX-formatted table.
-    ## @param self
-    #  The class instance.
-
-    def getLaTeXTableHeader(self):
-        header = '@latexonly\n'           +\
-                 '\\begin{table}[!htb]\n' +\
-                 '\\begin{center}'
-        return header
-
-    ## @brief Return the header for a LaTeX-formatted table.
-    ## @param self
-    #  The class instance.
-    ## @param items
-    #  A python list containing the column labels.
-
-    def getLaTeXTableHeaderRow(self, items):
-        line = '\\begin{tabular}{|'
-        for i in items:
-            line += "c|"
-        line += '}\n\\hline\n' + self.getLaTeXTableRow(items) +\
-                '\\hline\n\\hline'
-        return line
-
-    ## @brief Return a row for a LaTeX-formatted table.
-    ## @param self
-    #  The class instance.
-    ## @param items
-    #  A python list containing the row items.
-
-    def getLaTeXTableRow(self, items):
-        line = ''
-        for item in items:
-            line += str(item) + ' & '
-        line = line[:-3] + '\\\\ \n\hline'
-        return self.formatForLaTeX(line)
-
-    ## @brief Return the trailer for a LaTeX-formatted table.
-    ## @param self
-    #  The class instance.
-    ## @param title
-    #  The table title.
-    ## @param caption
-    #  The table caption.
-
-    def getLaTeXTableTrailer(self, title, caption):
-        trailer = '\end{tabular}\n'                                          +\
-                  '\\caption{{\\bf %s.} %s}\n' %\
-                  (self.formatForLaTeX(title), self.formatForLaTeX(caption)) +\
-                  '\end{center}\n'                                           +\
-                  '\end{table}\n'                                            +\
-                  '@endlatexonly'
-        return trailer
-
-    ## @brief Write to a specific page of the report a LaTeX-formatted table.
-    ## @param self
-    #  The class instance.
-    ## @param header
-    #  A pyhton list of string representing the table header row.
-    ## @param rows
-    #  A pyhton list of lists of strings representing the actual rows.
-    ## @param title
-    #  The table title.
-    ## @param caption
-    #  The table caption.
-    ## @param pageLabel
-    #  The page label.
-
-    def addLaTeXTableBlock(self, header, rows, title = '', caption = '',\
-                             pageLabel = MAIN_PAGE_LABEL):        
-        self.write(self.getLaTeXTableHeader(), pageLabel)
-        self.write(self.getLaTeXTableHeaderRow(header), pageLabel)
-        for row in rows:
-            self.write(self.getLaTeXTableRow(row), pageLabel)
-        self.write(self.getLaTeXTableTrailer(title, caption), pageLabel)
 
     ## @brief Return the header section for a html-formatted table.
     ## @param self
@@ -549,7 +440,7 @@ class pBaseReportGenerator:
         self.write(self.getHtmlTableTrailer(title, caption), pageLabel)
 
     ## @brief Write to a specific page of the report a table, formatted
-    #  both in LaTeX and in html.
+    #  in html.
     ## @param self
     #  The class instance.
     ## @param header
@@ -566,48 +457,6 @@ class pBaseReportGenerator:
     def addTable(self, header, rows, title = '', caption = '',\
                  pageLabel = MAIN_PAGE_LABEL):
         self.addHtmlTableBlock(header, rows, title, caption, pageLabel)
-        self.addLaTeXTableBlock(header, rows, title, caption, pageLabel)
-
-    ## @brief Return the doxygen block for adding an image to the LaTeX report.
-    ## @param self
-    #  The class instance.
-    ## @param epsImagePath
-    #  The path to the actual eps image to be included. 
-    ## @param title
-    #  The image title.
-    ## @param caption
-    #  The image caption.
-
-    def getLaTeXImageBlock(self, epsImagePath, title, caption):
-        block = ('@latexonly\n'                        +\
-                 '\\begin{figure}[H]\n'                +\
-                 '\\begin{center}\n'                   +\
-                 '\\includegraphics[width=%scm]{%s}\n' +\
-                 '\\caption{{\\bf %s.} %s}\n'          +\
-                 '\\end{center}\n'                     +\
-                 '\\end{figure}\n'                     +\
-                 '\\nopagebreak\n'                     +\
-                 '@endlatexonly')                      %\
-                 (self.LATEX_IMAGES_WIDTH, epsImagePath,\
-                  self.formatForLaTeX(title), self.formatForLaTeX(caption))
-        return block
-    
-    ## @brief Add to a specific page of the report a LaTeX-formatted image.
-    ## @param self
-    #  The class instance.
-    ## @param epsImagePath
-    #  The path to the actual eps image.
-    ## @param title
-    #  The image title.
-    ## @param caption
-    #  The image caption.
-    ## @param pageLabel
-    #  The page label.
-
-    def addLaTeXImageBlock(self, epsImagePath, title = '', caption = '',\
-                             pageLabel = MAIN_PAGE_LABEL):
-        self.write(self.getLaTeXImageBlock(epsImagePath, title,\
-                                                  caption), pageLabel)
 
     ## @brief Return the doxygen block for adding a image to the html report.
     ## @param self
@@ -645,14 +494,12 @@ class pBaseReportGenerator:
         self.write(self.getHtmlImageBlock(gifImagePath, title, caption),\
                    pageLabel)
 
-    ## @brief Add to a specific page of the report an image (in both the html
-    #  and the LaTeX version).
+    ## @brief Add to a specific page of the report an image (in the html
+    #  version).
     ## @param self
     #  The class instance.
     ## @param gifImagePath
     #  The path to the actual gif image.
-    ## @param epsImagePath
-    #  The path to the actual eps image.
     ## @param title
     #  The image title.
     ## @param caption
@@ -660,13 +507,12 @@ class pBaseReportGenerator:
     ## @param pageLabel
     #  The page label.
 
-    def addImage(self, gifImagePath, epsImagePath, title = '', caption = '',\
+    def addImage(self, gifImagePath, title = '', caption = '',\
                  pageLabel = MAIN_PAGE_LABEL):
         self.addHtmlImageBlock(gifImagePath, title, caption, pageLabel)
-        self.addLaTeXImageBlock(epsImagePath, title, caption, pageLabel)
 
     ## @brief Add a ROOT object (either histogram ot graph or whatever)
-    #  to the report (both html and LaTeX versions).
+    #  to the report (html version).
     #
     #  The plot is first drawn on an auxiliary canvas (therefore the ROOT
     #  object must support the Draw() method) and it's then saved as image
@@ -692,7 +538,6 @@ class pBaseReportGenerator:
                       drawOptions = '', xLog = False, yLog = False,\
                       zLog = False, pageLabel = MAIN_PAGE_LABEL):
         self.createAuxRootCanvas()
-        epsImageName = '%s.eps' % rootObject.GetName()
         gifImageName = '%s.gif' % rootObject.GetName()
         self.AuxRootCanvas.SetLogx(xLog)
         self.AuxRootCanvas.SetLogy(yLog)
@@ -703,9 +548,8 @@ class pBaseReportGenerator:
             self.enableRootTextOutput()
             logger.error('Could not draw %s.' % rootObject.GetName())
             self.disableRootTextOutput()
-        #self.AuxRootCanvas.SaveAs(os.path.join(self.LatexDirPath,epsImageName))
         self.AuxRootCanvas.SaveAs(os.path.join(self.HtmlDirPath, gifImageName))
-        self.addImage(gifImageName, epsImageName, title, caption, pageLabel)
+        self.addImage(gifImageName, title, caption, pageLabel)
         self.deleteAuxRootCanvas()
 
     ## @brief Add a plot to the doxygen main page file.
@@ -725,7 +569,6 @@ class pBaseReportGenerator:
         rootObject = self.RootFileManager.get(name)
         if rootObject is not None:
             self.createAuxRootCanvas()
-            epsImageName = '%s.eps' % rootObject.GetName()
             gifImageName = '%s.gif' % rootObject.GetName()
             self.AuxRootCanvas.SetLogx(plotRep.XLog)
             self.AuxRootCanvas.SetLogy(plotRep.YLog)
@@ -735,15 +578,11 @@ class pBaseReportGenerator:
             except:
                 self.enableRootTextOutput()
                 logger.error('Could not draw %s.' % name)
-                self.disableRootTextOutput()
-            #self.AuxRootCanvas.SaveAs(os.path.join(self.LatexDirPath,\
-            #                                       epsImageName))
-            
+                self.disableRootTextOutput()            
             self.AuxRootCanvas.SaveAs(os.path.join(self.HtmlDirPath,\
                                                    gifImageName))
-            self.addImage(gifImageName, epsImageName, '%s (%s)' %\
-                          (plotRep.Title, name), plotRep.Caption, pageLabel)
-            
+            self.addImage(gifImageName, '%s (%s)' % (plotRep.Title, name),\
+                          plotRep.Caption, pageLabel)
             self.deleteAuxRootCanvas()
         else:
             self.enableRootTextOutput()
@@ -757,21 +596,6 @@ class pBaseReportGenerator:
         for plotRep in list.EnabledPlotRepsDict.values():
             for name in plotRep.getRootObjectsName():
                 self.addPlot(plotRep, name, pageLabel)  
-
-    ## @brief Return the representation of a pyhton list for the LaTeX report.
-    ## @param self
-    #  The class instance.
-    ## @param name
-    #  The list name appearing on the report.
-    ## @param list
-    #  The actual list.
-
-    def getLaTeXListBlock(self, name, list):
-        block = '@latexonly\n'                                            +\
-                '{\\bfseries %s}: %s\\\\\n' % (self.formatForLaTeX(name)  ,\
-                                               self.formatForLaTeX(list)) +\
-                '@endlatexonly'
-        return block
 
     ## @brief Return the representation of a pyhton list for the html report.
     ## @param self
@@ -788,19 +612,6 @@ class pBaseReportGenerator:
                  (name, list)
         return block
 
-    ## @brief Write a python list to a specific page of the LaTeX report.
-    ## @param self
-    #  The class instance.
-    ## @param name
-    #  The list name appearing on the report.
-    ## @param list
-    #  The actual list.
-    ## @param pageLabel
-    #  The page label.
-
-    def addLaTeXListBlock(self, name, list, pageLabel = MAIN_PAGE_LABEL):
-        self.write(self.getLaTeXListBlock(name, list), pageLabel)
-
     ## @brief Write a python list to a specific page of the html report.
     ## @param self
     #  The class instance.
@@ -814,8 +625,7 @@ class pBaseReportGenerator:
     def addHtmlListBlock(self, name, list, pageLabel = MAIN_PAGE_LABEL):
         self.write(self.getHtmlListBlock(name, list), pageLabel)
 
-    ## @brief Add a pyhton list to a specific page of the (both LaTeX and
-    #  html) report.
+    ## @brief Add a pyhton list to a specific page of the html report.
     ## @param self
     #  The class instance
     ## @param name
@@ -826,31 +636,7 @@ class pBaseReportGenerator:
     #  The page label.
 
     def addList(self, name, list, pageLabel = MAIN_PAGE_LABEL):
-        self.addLaTeXListBlock(name, list, pageLabel)
         self.addHtmlListBlock(name, list, pageLabel)
-
-    ## @brief Return the representation of a pyhton dictionary for the
-    #  LaTeX report.
-    ## @param self
-    #  The class instance.
-    ## @param name
-    #  The dictionary name appearing on the report.
-    ## @param dictionary
-    #  The actual dictionary.
-
-    def getLaTeXDictBlock(self, name, dictionary):
-        block = '@latexonly\n'                                  +\
-                '{\\bfseries %s}\n' % self.formatForLaTeX(name) +\
-                '\\begin{itemize}\n'
-        listOfKeys = dictionary.keys()
-        listOfKeys.sort()
-        for key in listOfKeys:
-            value = dictionary[key]
-            block += '\\item{\\texttt{%s}}: %s\n' % (self.formatForLaTeX(key),\
-                                                    self.formatForLaTeX(value))
-        block += '\\end{itemize}\n' +\
-                 '@endlatexonly'
-        return block
 
     ## @brief Return the representation of a pyhton dictionary for the
     #  html report.
@@ -874,19 +660,6 @@ class pBaseReportGenerator:
         block += '@endhtmlonly'
         return block
 
-    ## @brief Write a python dictionary to a specific page of the LaTeX report.
-    ## @param self
-    #  The class instance.
-    ## @param name
-    #  The dictionary name appearing on the report.
-    ## @param dictionary
-    #  The actual dictionary.
-    ## @param pageLabel
-    #  The page label.
-
-    def addLaTeXDictBlock(self, name, dictionary, pageLabel):
-        self.write(self.getLaTeXDictBlock(name, dictionary), pageLabel)
-
     ## @brief Write a python dictionary to a specific page of the html report.
     ## @param self
     #  The class instance.
@@ -901,8 +674,7 @@ class pBaseReportGenerator:
         self.write(self.getHtmlDictBlock(name, dictionary, anchor),\
                    pageLabel)
 
-    ## @brief Add a pyhton dictionary to a specific page of the (both LaTeX
-    #  and html) report.
+    ## @brief Add a pyhton dictionary to a specific page of the html report.
     ## @param self
     #  The class instance
     ## @param name
@@ -914,7 +686,6 @@ class pBaseReportGenerator:
 
     def addDictionary(self, name, dictionary, pageLabel = MAIN_PAGE_LABEL,\
                       anchor = None):
-        self.addLaTeXDictBlock(name, dictionary, pageLabel)
         self.addHtmlDictBlock(name, dictionary, pageLabel, anchor)
 
     def getHtmlLinkBlock(self, text, address):
@@ -948,36 +719,12 @@ class pBaseReportGenerator:
             commands.getoutput(command)
         logger.info('Done in %.2f s.\n' % (time.time() - startTime))
 
-    ## @brief Compile the LaTeX report and make ps and pdf files.
+    ## @brief Compile the doxygen report.
     ## @param self
     #  The class instance.
-    ## @param verbose
-    #  If False (default), the usual LaTeX output is masked to the user
-    #  (meaning that, in case of errors, the system will just hang... the
-    #  verbose option is indeed useful, in some cases).
-
-    def compileLaTeX(self, verbose = False):
-        logger.info('Compiling LaTeX report...')
-        startTime = time.time()
-        command = 'cd %s; make pdf' % self.LatexDirPath
-        if verbose:
-            os.system(command)
-        else:
-            commands.getoutput(command)
-        logger.info('Done in %.2f s.\n' % (time.time() - startTime))
-
-    ## @brief Compile the doxygen report and possibly the LaTeX output to
-    #  produce the ps and pdf reports.
-    ## @param self
-    #  The class instance.
-    ## @param compileLaTeX
-    #  If True (default) the LaTeX report is compiled to ps and pdf.
-        
-    def compileReport(self, verbose = False, compileLaTeX = True):
+    
+    def compileReport(self, verbose = False):
         self.doxygenate(verbose)
-        if compileLaTeX:
-            logger.warn('LaTeX report not supported anymore.')
-        #    self.compileLaTeX(verbose)
 
     def viewReport(self):
         cmd = 'htmlview %s/index.html' % self.HtmlDirPath

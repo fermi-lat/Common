@@ -40,7 +40,7 @@ class pTreeProcessorReportGenerator(pBaseReportGenerator):
         pBaseReportGenerator.__init__(self, reportDirPath)
         self.RootFileManager = pRootFileManager()
 
-    def run(self, verbose = False, compileLaTeX = False):
+    def run(self, verbose = False):
         logger.info('Writing doxygen report files...')
         startTime = time.time()
         self.RootFileManager.openFile(self.RootFilePath)
@@ -50,7 +50,7 @@ class pTreeProcessorReportGenerator(pBaseReportGenerator):
         self.closeReport()
         self.RootFileManager.closeFile()
         logger.info('Done in %.2f s.\n' % (time.time() - startTime))
-        self.compileReport(verbose, compileLaTeX)
+        self.compileReport(verbose)
         
     def fillMainPage(self):
         self.addSection('main_summary', 'Summary')
@@ -81,7 +81,7 @@ class pTreeProcessor(pBaseTreeProcessor):
 
 if __name__ == '__main__':
     from pOptionParser import pOptionParser
-    optparser = pOptionParser('corvLVn')
+    optparser = pOptionParser('corvVn')
     parser    = pTreeProcessorXmlParser(optparser.Options.c)
     processor = pTreeProcessor(parser, optparser.Argument, optparser.Options.o)
     processor.run(optparser.Options.n)
