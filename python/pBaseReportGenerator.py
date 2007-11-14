@@ -262,6 +262,7 @@ class pBaseReportGenerator:
         self.__writePageHeader(pageLabel, pageTitle)
         if not os.path.exists(self.ConfigFilePath):
             configFile = self.__openOutputFile(self.ConfigFilePath)
+            configFile.writelines('GENERATE_LATEX = NO\n')
             configFile.writelines('FILE_PATTERNS = %s '% pageFileName)
         else:
             configFile = self.__openOutputFile(self.ConfigFilePath, 'a')
@@ -472,7 +473,7 @@ class pBaseReportGenerator:
         block = '@htmlonly\n'                                              +\
                 '<div align="center">\n'                                   +\
                 '<img src="%s" alt="%s">\n' % (gifImagePath, gifImagePath) +\
-                '<p><strong>%s.</strong> %s</p>\n' % (title, caption)      +\
+                '<p><strong>%s.</strong><br/>%s</p>\n' % (title, caption)  +\
                 '</div>\n'                                                 +\
                 '@endhtmlonly'
         return block
