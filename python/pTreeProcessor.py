@@ -40,7 +40,7 @@ class pTreeProcessorReportGenerator(pBaseReportGenerator):
         pBaseReportGenerator.__init__(self, reportDirPath)
         self.RootFileManager = pRootFileManager()
 
-    def run(self, verbose = False, compileLaTeX = True):
+    def run(self, verbose = False, compileLaTeX = False):
         logger.info('Writing doxygen report files...')
         startTime = time.time()
         self.RootFileManager.openFile(self.RootFilePath)
@@ -73,7 +73,7 @@ class pTreeProcessorReportGenerator(pBaseReportGenerator):
 
 class pTreeProcessor(pBaseTreeProcessor):
 
-    def __init__(self, xmlParser, inputFilePath, outputFilePath = None):
+    def __init__(self, xmlParser, inputFilePath, outputFilePath):
         rootTreeName = xmlParser.InputRootTreeName
         pBaseTreeProcessor.__init__(self, xmlParser, inputFilePath,\
                                     rootTreeName, outputFilePath)
@@ -83,10 +83,10 @@ if __name__ == '__main__':
     from pOptionParser import pOptionParser
     optparser = pOptionParser('corvLVn')
     parser    = pTreeProcessorXmlParser(optparser.Options.c)
-    processor = pTreeProcessor(parser, optparser.Argument)
+    processor = pTreeProcessor(parser, optparser.Argument, optparser.Options.o)
     processor.run(optparser.Options.n)
     if optparser.Options.r:
         reportGenerator = pTreeProcessorReportGenerator(processor)
-        reportGenerator.run(optparser.Options.v, not optparser.Options.L)
+        reportGenerator.run(optparser.Options.v, optparser.Options.L)
         if optparser.Options.V:
             reportGenerator.viewReport()
