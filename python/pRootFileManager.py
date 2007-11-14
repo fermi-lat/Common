@@ -43,7 +43,7 @@ class pRootFileManager:
         if self.RootFile.GetFd() == -1:
             sys.exit('Could not open file %s.' % rootFilePath)
         logger.info('Done. %s objects found.\n' %\
-                    self.RootFile.GetListOfKeys().LastIndex())
+                    (self.RootFile.GetListOfKeys().LastIndex() + 1))
 
     ## @brief Close the ROOT file.
     ## @param self
