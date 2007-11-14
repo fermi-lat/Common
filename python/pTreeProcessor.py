@@ -87,6 +87,6 @@ if __name__ == '__main__':
     processor.run(optparser.Options.n)
     if optparser.Options.r:
         reportGenerator = pTreeProcessorReportGenerator(processor)
-        reportGenerator.run(optparser.Options.v, optparser.Options.L)
+        reportGenerator.run(optparser.Options.v)
         if optparser.Options.V:
             reportGenerator.viewReport()

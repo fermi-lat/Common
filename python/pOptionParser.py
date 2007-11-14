@@ -28,8 +28,6 @@ class pOptionParser:
     def resolveOptionClashes(self):
         if self.Options.V and not self.Options.r:
             self.error('cannot use the -V option without -r')
-        if self.Options.L and not self.Options.r:
-            self.error('-L option does not make any sense without -r')
 
     def add_c(self):
         self.Parser.add_option('-c', '--config-file', dest = 'c',
