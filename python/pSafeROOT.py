@@ -59,7 +59,9 @@ def applyGlastStyle():
     ROOT.gStyle.SetLabelSize(0.035, 'xyz')
     ROOT.gStyle.SetGridColor(16)
     ROOT.gStyle.SetLegendBorderSize(0)
-    ROOT.gStyle.SetMarkerStyle(24)
+    # The following line causes problems with TGraphs, take rid of it.
+    # ROOT.gStyle.SetMarkerStyle(24)
+    # End of block (Carmelo, November 13, 2007).
 
 if 'ROOT' not in sys.modules:
     import ROOT
