@@ -175,14 +175,14 @@ class pBaseReportGenerator:
     #  The class instance.
 
     def disableRootGraphicsOutput(self):
-        ROOT.gROOT.SetBatch(1)
+        ROOT.gROOT.SetBatch(True)
 
     ## @brief Set ROOT in normal (graphics) mode.
     ## @param self
     #  The class instance.
         
     def enableRootGraphicsOutput(self):
-        ROOT.gROOT.SetBatch(0)
+        ROOT.gROOT.SetBatch(False)
 
     ## @brief Open the report.
     #
@@ -638,7 +638,7 @@ class pBaseReportGenerator:
     ## @param caption
     #  The image caption.
     ## @param pageLabel
-    #  The page label.
+    #  The page label.print pageTitle
 
     def addHtmlImageBlock(self, gifImagePath, title = '', caption = '',\
                             pageLabel = MAIN_PAGE_LABEL):
@@ -703,7 +703,7 @@ class pBaseReportGenerator:
             self.enableRootTextOutput()
             logger.error('Could not draw %s.' % rootObject.GetName())
             self.disableRootTextOutput()
-        self.AuxRootCanvas.SaveAs(os.path.join(self.LatexDirPath,epsImageName))
+        #self.AuxRootCanvas.SaveAs(os.path.join(self.LatexDirPath,epsImageName))
         self.AuxRootCanvas.SaveAs(os.path.join(self.HtmlDirPath, gifImageName))
         self.addImage(gifImageName, epsImageName, title, caption, pageLabel)
         self.deleteAuxRootCanvas()
@@ -736,12 +736,14 @@ class pBaseReportGenerator:
                 self.enableRootTextOutput()
                 logger.error('Could not draw %s.' % name)
                 self.disableRootTextOutput()
-            self.AuxRootCanvas.SaveAs(os.path.join(self.LatexDirPath,\
-                                                   epsImageName))
+            #self.AuxRootCanvas.SaveAs(os.path.join(self.LatexDirPath,\
+            #                                       epsImageName))
+            
             self.AuxRootCanvas.SaveAs(os.path.join(self.HtmlDirPath,\
                                                    gifImageName))
             self.addImage(gifImageName, epsImageName, '%s (%s)' %\
                           (plotRep.Title, name), plotRep.Caption, pageLabel)
+            
             self.deleteAuxRootCanvas()
         else:
             self.enableRootTextOutput()
@@ -974,11 +976,16 @@ class pBaseReportGenerator:
     def compileReport(self, verbose = False, compileLaTeX = True):
         self.doxygenate(verbose)
         if compileLaTeX:
-            self.compileLaTeX(verbose)
+            logger.warn('LaTeX report not supported anymore.')
+        #    self.compileLaTeX(verbose)
 
     def viewReport(self):
-        os.system('htmlview %s/index.html' % self.HtmlDirPath)
-
+        cmd = 'htmlview %s/index.html' % self.HtmlDirPath
+        logger.info('Starting html viewer (%s)...' % cmd)
+        out = commands.getoutput(cmd) 
+        if out != '':
+            logger.error('Wow... problems viewing the report!')
+            print out
 
 
 if __name__ == '__main__':
@@ -1008,3 +1015,4 @@ if __name__ == '__main__':
     generator.addPage('details', 'Detailed page')
     generator.closeReport()
     generator.compileReport()
+    generator.viewReport()
