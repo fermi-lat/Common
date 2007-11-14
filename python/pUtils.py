@@ -56,12 +56,12 @@ def AddCutPrefix(CutString, prefix = "" ):
 ## @param The cut expression.
 
 def getCutVariables(cut):
-    seeker = re.compile("[a-z_]+", re.IGNORECASE)
+    seeker = re.compile("[a-z_12]+", re.IGNORECASE)
     iterator = seeker.finditer(cut)
     varList = []
     for item in iterator:
         varName = item.group()
-        if varName not in varList:
+        if varName not in varList and not varName.isdigit():
             varList.append(varName)
     return varList
 
@@ -110,4 +110,5 @@ def verbatim(string):
 
 
 if __name__ == '__main__':
-    print getCutVariables("CalTransRms > 14 && CalTransRms < 34 && CalXtalsTrunc > 8 && CalXtalsTrunc < 20") 
+    print getCutVariables("CalTransRms > 12.3 && CalTransRms < 34 && CalXtalsTrunc > 8 && CalXtalsTrunc < 20")
+    print getCutVariables("x:y:z")

@@ -8,6 +8,7 @@ logger = pSafeLogger.getLogger('pBaseTreeProcessor')
 import os
 import time
 import sys
+import pUtils
 
 from pSafeROOT import ROOT
 
@@ -73,9 +74,16 @@ class pBaseTreeProcessor:
     ## @param self
     #  The class instance.
 
-    def createObjects(self, numEntries):
+    def createObjects(self, numEntries, optimize = False):
         for rep in self.XmlParser.EnabledPlotRepsDict.values():
+            if optimize:
+                self.RootTree.SetBranchStatus('*', 0)
+                for branchName in pUtils.getCutVariables(rep.Expression):
+                    self.RootTree.SetBranchStatus(branchName, 1)
+                for branchName in pUtils.getCutVariables(rep.Cut):
+                    self.RootTree.SetBranchStatus(branchName, 1)
             try:
                 rep.createRootObject(self.RootTree, numEntries)
             except:
                 logger.error('Could not create %s.' % rep.Name)
+            
