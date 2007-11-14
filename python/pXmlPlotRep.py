@@ -107,7 +107,7 @@ class pXmlTGraphRep(pXmlBasePlotRep):
             numEntries = rootTree.GetEntriesFast()
         self.RootObject = ROOT.TGraph(numEntries)
         self.RootObject.SetNameTitle(self.Name, self.Title)
-        for i in range(numEntries):
+        for i in xrange(numEntries):
             rootTree.GetEntry(i)
             self.addPoint(i)
         self.formatAxes()
