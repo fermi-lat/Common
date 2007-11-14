@@ -24,8 +24,9 @@ class pXmlBasePlotRep(pXmlElement):
         self.ZLog         = self.evalTagValue('zlog', False)
         self.DrawOptions  = self.getTagValue('drawoptions', '')
         self.Caption      = self.getTagValue('caption', '')
-        self.Caption += '(plotted expression: "%s", cut: "%s")' %\
-                        (self.Expression, self.Cut)
+        self.Caption     += '- <b>Plotted expression</b>: "%s"<br/>' %\
+                            self.Expression
+        self.Caption     += '- <b>Applied cut</b>: "%s"' % self.Cut
         self.RootObject   = None
 
     def draw(self, rootObject):
