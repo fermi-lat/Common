@@ -26,16 +26,15 @@ class pBaseTreeProcessor:
     ## @param outputFilePath
     #  Path to the output ROOT file.
     
-    def __init__(self, xmlParser, inputFilePath, rootTreeName,\
-                 outputFilePath = None):
+    def __init__(self, xmlParser, inputFilePath, rootTreeName, outputFilePath):
         self.XmlParser      = xmlParser
         self.InputFilePath  = inputFilePath
         self.RootTreeName   = rootTreeName
         if outputFilePath is None:
             outputFilePath = inputFilePath.replace('.root', '.processed.root')
-        self.OutputFilePath = outputFilePath
+        self.OutputFilePath = os.path.abspath(outputFilePath)
 
-        outputFileDir = os.path.split(outputFilePath)[0]
+        outputFileDir = os.path.split(self.OutputFilePath)[0]
         if not os.path.exists(outputFileDir):
             os.makedirs(outputFileDir)
             logger.debug('Creating new directory to store output files: %s' %\
