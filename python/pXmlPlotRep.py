@@ -18,6 +18,7 @@ class pXmlBasePlotRep(pXmlElement):
         self.Cut          = self.getTagValue('cut'   , '')
         self.XLabel       = self.getTagValue('xlabel', '')
         self.YLabel       = self.getTagValue('ylabel', '')
+        self.ZLabel       = self.getTagValue('zlabel', '')
         self.XLog         = self.evalTagValue('xlog', False)
         self.YLog         = self.evalTagValue('ylog', False)
         self.ZLog         = self.evalTagValue('zlog', False)
@@ -37,6 +38,7 @@ class pXmlBasePlotRep(pXmlElement):
         self.processLabels()
         self.RootObject.GetXaxis().SetTitle(self.XLabel)
         self.RootObject.GetYaxis().SetTitle(self.YLabel)
+        self.RootObject.GetZaxis().SetTitle(self.ZLabel)
 
     def getBranchType(self, rootTree, branchName):
         try:
@@ -138,3 +140,32 @@ class pXmlTH2FRep(pXmlTH1FRep):
         self.formatAxes()
         self.projectTree(rootTree, numEntries)
 
+
+class pXmlTH3FRep(pXmlTH2FRep):
+
+    def __init__(self, element):
+        pXmlTH2FRep.__init__(self, element)
+        self.NumZBins = self.evalTagValue('zbins', 100)
+        self.ZMin     = self.evalTagValue('zmin', None, True)
+        self.ZMax     = self.evalTagValue('zmax', None, True)
+        
+
+    def processLabels(self):
+        (zExpression, yExpression, xExpression) = self.Expression.split(':')
+        if self.XLabel == '':
+            self.XLabel = xExpression
+        if self.YLabel == '':
+            self.YLabel = yExpression
+        if self.ZLabel == '':
+            self.ZLabel = zExpression
+
+    def createRootObject(self, rootTree, numEntries):
+        logger.debug('Creating TH3F %s' % self.Name)
+        self.RootObject = ROOT.TH3F(self.Name, self.Title, self.NumXBins,\
+                                    self.XMin, self.XMax, self.NumYBins,\
+                                    self.YMin, self.YMax, self.NumZBins,\
+                                    self.ZMin, self.ZMax)
+        self.formatAxes()
+        self.RootObject.SetMarkerColor(ROOT.kRed)
+        self.RootObject.SetMarkerStyle(6)
+        self.projectTree(rootTree, numEntries)
