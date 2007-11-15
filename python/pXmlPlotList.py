@@ -8,15 +8,16 @@ from pSkyMapUtils     import pXmlSkyMapRep
 from pTimeSeriesUtils import pXmlTimeSeriesRep
 
 
-SUPPORTED_PLOT_TYPES = ['TH1F', 'TGraph', 'TH2F', 'TH3F', 'SkyMap', 'TimeSeries']
+SUPPORTED_PLOT_TYPES = ['TH3F', 'TH2F', 'TH1F', 'TGraph', 'SkyMap',\
+                        'TimeSeries']
 
 class pXmlPlotList(pXmlList):   
 
     def __init__(self, element):        
         pXmlList.__init__(self, element)
-        self.EnabledPlotRepsDict = {}
+        self.EnabledPlotRepsList = []
         for plotType in SUPPORTED_PLOT_TYPES:
             for element in self.getElementsByTagName(plotType):
                 plotRep = eval('pXml%sRep(element)' % plotType)
                 if plotRep.Enabled:
-                    self.EnabledPlotRepsDict[plotRep.Name] = plotRep
+                    self.EnabledPlotRepsList.append(plotRep)

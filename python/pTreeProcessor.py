@@ -20,12 +20,12 @@ class pTreeProcessorXmlParser(pXmlBaseParser):
         logger.info('Reading the output lists...')
         self.InputRootTreeName   = self.getInputRootTreeName()
         self.EnabledPlotLists    = self.getEnabledPlotLists()
-        self.EnabledPlotRepsDict = {}
+        self.EnabledPlotRepsList = []
         for list in self.EnabledPlotLists:
-            for (key, value) in list.EnabledPlotRepsDict.items():
-                self.EnabledPlotRepsDict[key] = value
+            for plotRep in list.EnabledPlotRepsList:
+                self.EnabledPlotRepsList.append(plotRep)
         logger.info('%d enabled plots found in the output lists.' %\
-                    len(self.EnabledPlotRepsDict))
+                    len(self.EnabledPlotRepsList))
 
 
 class pTreeProcessorReportGenerator(pBaseReportGenerator):
@@ -67,7 +67,7 @@ class pTreeProcessorReportGenerator(pBaseReportGenerator):
         pageLabel = 'list_%s' % list.Name.replace(' ', '_')
         pageTitle = '%s plots list' % list.Name
         self.addPage(pageLabel, pageTitle)
-        for plotRep in list.EnabledPlotRepsDict.values():
+        for plotRep in list.EnabledPlotRepsList:
             self.addPlot(plotRep, plotRep.Name, pageLabel)
 
 

@@ -75,7 +75,7 @@ class pBaseTreeProcessor:
     #  The class instance.
 
     def createObjects(self, numEntries, optimize = False):
-        for rep in self.XmlParser.EnabledPlotRepsDict.values():
+        for rep in self.XmlParser.EnabledPlotRepsList:
             if optimize:
                 self.RootTree.SetBranchStatus('*', 0)
                 for branchName in pUtils.getCutVariables(rep.Expression):
