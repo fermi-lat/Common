@@ -125,6 +125,8 @@ class pXmlTH2FRep(pXmlTH1FRep):
         self.YMin     = self.evalTagValue('ymin', None, True)
         self.YMax     = self.evalTagValue('ymax', None, True)
         self.ZLog     = self.evalTagValue('zlog', False)
+        self.MarkerStyle = self.evalTagValue('markerstyle', None)
+        self.MarkerColor = self.evalTagValue('markercolor', None)
 
     def processLabels(self):
         (yExpression, xExpression) = self.Expression.split(':')
@@ -139,7 +141,14 @@ class pXmlTH2FRep(pXmlTH1FRep):
                                     self.XMin, self.XMax, self.NumYBins,\
                                     self.YMin, self.YMax)
         self.formatAxes()
+        self.formatMarker()
         self.projectTree(rootTree, numEntries)
+
+    def formatMarker(self):
+        if self.MarkerColor is not None:
+            self.RootObject.SetMarkerColor(self.MarkerColor)
+        if self.MarkerStyle is not None:
+            self.RootObject.SetMarkerStyle(self.MarkerStyle)
 
 
 class pXmlTH3FRep(pXmlTH2FRep):
@@ -167,6 +176,5 @@ class pXmlTH3FRep(pXmlTH2FRep):
                                     self.YMin, self.YMax, self.NumZBins,\
                                     self.ZMin, self.ZMax)
         self.formatAxes()
-        self.RootObject.SetMarkerColor(ROOT.kRed)
-        self.RootObject.SetMarkerStyle(6)
+        self.formatMarker()
         self.projectTree(rootTree, numEntries)
