@@ -6,7 +6,7 @@
 #  The following features are supported:
 #  @li Multiple pages
 #  @li Sections, subsections
-#  @li Images (with the capability of producing gif and eps files
+#  @li Images (with the capability of producing png and eps files
 #  directly from ROOT objects).
 #  @li Tables
 #  @li Formatted representation of python dictionaries.
@@ -145,14 +145,16 @@ class pBaseReportGenerator:
     #  The class instance.
 
     def disableRootTextOutput(self):
-        self.OutRootGuard = ROOT.TRedirectOutputGuard('/dev/null', 'w')
+        pass
+        #self.OutRootGuard = ROOT.TRedirectOutputGuard('/dev/null', 'w')
 
     ## @brief Restore the normal ROOT text output. 
     ## @param self
     #  The class instance.
 
     def enableRootTextOutput(self):
-        self.OutRootGuard  = None
+        pass
+        #self.OutRootGuard  = None
 
     ## @brief Set ROOT in batch mode.
     ## @param self
@@ -462,17 +464,17 @@ class pBaseReportGenerator:
     ## @brief Return the doxygen block for adding a image to the html report.
     ## @param self
     #  The class instance.
-    ## @param gifImagePath
-    #  The path to the actual gif image to be included. 
+    ## @param pngImagePath
+    #  The path to the actual png image to be included. 
     ## @param title
     #  The image title.
     ## @param caption
     #  The image caption.
 
-    def getHtmlImageBlock(self, gifImagePath, title, caption):
+    def getHtmlImageBlock(self, pngImagePath, title, caption):
         block = '@htmlonly\n'                                              +\
                 '<div align="center">\n'                                   +\
-                '<img src="%s" alt="%s">\n' % (gifImagePath, gifImagePath) +\
+                '<img src="%s" alt="%s">\n' % (pngImagePath, pngImagePath) +\
                 '<p><strong>%s.</strong><br/>%s</p>\n' % (title, caption)  +\
                 '</div>\n'                                                 +\
                 '@endhtmlonly'
@@ -481,8 +483,8 @@ class pBaseReportGenerator:
     ## @brief Add to a specific page of the report a html-formatted image.
     ## @param self
     #  The class instance.
-    ## @param gifImagePath
-    #  The path to the actual gif image.
+    ## @param pngImagePath
+    #  The path to the actual png image.
     ## @param title
     #  The image title.
     ## @param caption
@@ -490,17 +492,17 @@ class pBaseReportGenerator:
     ## @param pageLabel
     #  The page label.print pageTitle
 
-    def addHtmlImageBlock(self, gifImagePath, title = '', caption = '',\
+    def addHtmlImageBlock(self, pngImagePath, title = '', caption = '',\
                             pageLabel = MAIN_PAGE_LABEL):
-        self.write(self.getHtmlImageBlock(gifImagePath, title, caption),\
+        self.write(self.getHtmlImageBlock(pngImagePath, title, caption),\
                    pageLabel)
 
     ## @brief Add to a specific page of the report an image (in the html
     #  version).
     ## @param self
     #  The class instance.
-    ## @param gifImagePath
-    #  The path to the actual gif image.
+    ## @param pngImagePath
+    #  The path to the actual png image.
     ## @param title
     #  The image title.
     ## @param caption
@@ -508,9 +510,9 @@ class pBaseReportGenerator:
     ## @param pageLabel
     #  The page label.
 
-    def addImage(self, gifImagePath, title = '', caption = '',\
+    def addImage(self, pngImagePath, title = '', caption = '',\
                  pageLabel = MAIN_PAGE_LABEL):
-        self.addHtmlImageBlock(gifImagePath, title, caption, pageLabel)
+        self.addHtmlImageBlock(pngImagePath, title, caption, pageLabel)
 
     ## @brief Add a ROOT object (either histogram ot graph or whatever)
     #  to the report (html version).
@@ -539,7 +541,7 @@ class pBaseReportGenerator:
                       drawOptions = '', xLog = False, yLog = False,\
                       zLog = False, pageLabel = MAIN_PAGE_LABEL):
         self.createAuxRootCanvas()
-        gifImageName = '%s.gif' % rootObject.GetName()
+        pngImageName = '%s.png' % rootObject.GetName()
         self.AuxRootCanvas.SetLogx(xLog)
         self.AuxRootCanvas.SetLogy(yLog)
         self.AuxRootCanvas.SetLogz(zLog)
@@ -549,8 +551,8 @@ class pBaseReportGenerator:
             self.enableRootTextOutput()
             logger.error('Could not draw %s.' % rootObject.GetName())
             self.disableRootTextOutput()
-        self.AuxRootCanvas.SaveAs(os.path.join(self.HtmlDirPath, gifImageName))
-        self.addImage(gifImageName, title, caption, pageLabel)
+        self.AuxRootCanvas.SaveAs(os.path.join(self.HtmlDirPath, pngImageName))
+        self.addImage(pngImageName, title, caption, pageLabel)
         self.deleteAuxRootCanvas()
 
     ## @brief Add a plot to the doxygen main page file.
@@ -570,7 +572,7 @@ class pBaseReportGenerator:
         rootObject = self.RootFileManager.get(name)
         if rootObject is not None:
             self.createAuxRootCanvas()
-            gifImageName = '%s.gif' % rootObject.GetName()
+            pngImageName = '%s.png' % rootObject.GetName()
             self.AuxRootCanvas.SetLogx(plotRep.XLog)
             self.AuxRootCanvas.SetLogy(plotRep.YLog)
             self.AuxRootCanvas.SetLogz(plotRep.ZLog)
@@ -581,8 +583,8 @@ class pBaseReportGenerator:
                 logger.error('Could not draw %s.' % name)
                 self.disableRootTextOutput()            
             self.AuxRootCanvas.SaveAs(os.path.join(self.HtmlDirPath,\
-                                                   gifImageName))
-            self.addImage(gifImageName, '%s (%s)' % (plotRep.Title, name),\
+                                                   pngImageName))
+            self.addImage(pngImageName, '%s (%s)' % (plotRep.Title, name),\
                           plotRep.Caption, pageLabel)
             self.deleteAuxRootCanvas()
         else:
