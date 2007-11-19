@@ -121,8 +121,6 @@ class pBaseReportGenerator:
     def createAuxRootCanvas(self, batch = True, verbose = False):
         if batch:
             self.disableRootGraphicsOutput()
-        if not verbose:
-            self.disableRootTextOutput()
         if self.AuxRootCanvas is None:
             self.AuxRootCanvas = ROOT.TCanvas('canvas', 'canvas',\
                                               self.AUX_CANVAS_WIDTH,\
@@ -136,25 +134,7 @@ class pBaseReportGenerator:
     def deleteAuxRootCanvas(self):
         if self.AuxRootCanvas is not None:
             self.AuxRootCanvas = None
-        self.enableRootTextOutput()
         self.enableRootGraphicsOutput()
-
-    ## @brief Prevents ROOT from printing informations on the screen while
-    #  saving eps files.
-    ## @param self
-    #  The class instance.
-
-    def disableRootTextOutput(self):
-        pass
-        #self.OutRootGuard = ROOT.TRedirectOutputGuard('/dev/null', 'w')
-
-    ## @brief Restore the normal ROOT text output. 
-    ## @param self
-    #  The class instance.
-
-    def enableRootTextOutput(self):
-        pass
-        #self.OutRootGuard  = None
 
     ## @brief Set ROOT in batch mode.
     ## @param self
@@ -540,6 +520,7 @@ class pBaseReportGenerator:
     def addRootObject(self, rootObject , title = '', caption = '',\
                       drawOptions = '', xLog = False, yLog = False,\
                       zLog = False, pageLabel = MAIN_PAGE_LABEL):
+        logger.debug('Adding %s to the report...' % rootObject.GetName())
         self.createAuxRootCanvas()
         pngImageName = '%s.png' % rootObject.GetName()
         self.AuxRootCanvas.SetLogx(xLog)
@@ -548,9 +529,7 @@ class pBaseReportGenerator:
         try:
             rootObject.Draw(drawOptions)
         except:
-            self.enableRootTextOutput()
             logger.error('Could not draw %s.' % rootObject.GetName())
-            self.disableRootTextOutput()
         self.AuxRootCanvas.SaveAs(os.path.join(self.HtmlDirPath, pngImageName))
         self.addImage(pngImageName, title, caption, pageLabel)
         self.deleteAuxRootCanvas()
@@ -571,6 +550,7 @@ class pBaseReportGenerator:
     def addPlot(self, plotRep, name, pageLabel):
         rootObject = self.RootFileManager.get(name)
         if rootObject is not None:
+            logger.debug('Adding %s to the report...' % rootObject.GetName())
             self.createAuxRootCanvas()
             pngImageName = '%s.png' % rootObject.GetName()
             self.AuxRootCanvas.SetLogx(plotRep.XLog)
@@ -579,18 +559,14 @@ class pBaseReportGenerator:
             try:
                 plotRep.draw(rootObject)
             except:
-                self.enableRootTextOutput()
                 logger.error('Could not draw %s.' % name)
-                self.disableRootTextOutput()            
             self.AuxRootCanvas.SaveAs(os.path.join(self.HtmlDirPath,\
                                                    pngImageName))
             self.addImage(pngImageName, '%s (%s)' % (plotRep.Title, name),\
                           plotRep.Caption, pageLabel)
             self.deleteAuxRootCanvas()
         else:
-            self.enableRootTextOutput()
             logger.error('Could not find %s.' % name)
-            self.disableRootTextOutput()
 
     def addPlotsList(self, list):
         pageLabel = 'list_%s' % list.Name.replace(' ', '_')
