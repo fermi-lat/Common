@@ -17,4 +17,4 @@ NUM_ACD_VETOES            = 128
 #FASTMON special variables
 FASTMON_DIR_VAR_NAME      = 'FAST_MON_DIR'
 XML_CONFIG_DIR_VAR_NAME   = 'XML_CONFIG_DIR'
-FAST_MON_PREFIX           = ''#'FastMon_'
+
