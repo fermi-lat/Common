@@ -66,7 +66,7 @@ class pOptionParser:
         
     def add_L(self):
         logger.warn('The LaTeX report is not supported anymore.')
-        logger.warn('Please do not use the -L command line option.')
+        logger.warn('The -L command line option will be ignored.')
 
     def add_V(self):
         self.Parser.add_option('-V', '--view-report', dest = 'V',
