@@ -520,7 +520,7 @@ class pBaseReportGenerator:
     def addRootObject(self, rootObject , title = '', caption = '',\
                       drawOptions = '', xLog = False, yLog = False,\
                       zLog = False, pageLabel = MAIN_PAGE_LABEL):
-        logger.debug('Adding %s to the report...' % rootObject.GetName())
+        logger.debug('Adding %s...' % rootObject.GetName())
         self.createAuxRootCanvas()
         pngImageName = '%s.png' % rootObject.GetName()
         self.AuxRootCanvas.SetLogx(xLog)
@@ -550,7 +550,7 @@ class pBaseReportGenerator:
     def addPlot(self, plotRep, name, pageLabel):
         rootObject = self.RootFileManager.get(name)
         if rootObject is not None:
-            logger.debug('Adding %s to the report...' % rootObject.GetName())
+            logger.debug('Adding %s...' % rootObject.GetName())
             self.createAuxRootCanvas()
             pngImageName = '%s.png' % rootObject.GetName()
             self.AuxRootCanvas.SetLogx(plotRep.XLog)
