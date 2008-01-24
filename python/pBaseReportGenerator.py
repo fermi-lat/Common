@@ -454,9 +454,10 @@ class pBaseReportGenerator:
     def getHtmlImageBlock(self, pngImagePath, title, caption):
         block = '@htmlonly\n'                                              +\
                 '<div align="center">\n'                                   +\
+                '<p><strong>%s.</strong><br/>\n'  % title                  +\
                 '<img src="%s" alt="%s">\n' % (pngImagePath, pngImagePath) +\
-                '<p><strong>%s.</strong><br/>%s</p>\n' % (title, caption)  +\
-                '</div>\n'                                                 +\
+                '<br/>%s</p>\n' % caption                                  +\
+                '</div><br/><hr size=2 width="70%"><br/>\n'                +\
                 '@endhtmlonly'
         return block
 
@@ -562,8 +563,21 @@ class pBaseReportGenerator:
                 logger.error('Could not draw %s.' % name)
             self.AuxRootCanvas.SaveAs(os.path.join(self.HtmlDirPath,\
                                                    pngImageName))
-            self.addImage(pngImageName, '%s (%s)' % (plotRep.Title, name),\
-                          plotRep.Caption, pageLabel)
+            title = plotRep.Title
+            caption = plotRep.Caption
+            if caption == '':
+                caption = 'Caption not available'
+            expression = plotRep.Expression
+            if expression is None:
+                expression = 'N/A (presumably a custom plot)'
+            cut = plotRep.Cut
+            if cut == '':
+                cut = 'N/A (no cut applied)'
+            caption = '%s.<br>' % caption
+            caption += 'Plot name: <code>%s</code>.<br/>' % name
+            caption += 'Plotted expression: <code>%s</code>.<br/>' % expression
+            caption += 'Applied cut: <code>%s</code>.<br/>' % cut
+            self.addImage(pngImageName, title, caption, pageLabel)
             self.deleteAuxRootCanvas()
         else:
             logger.error('Could not find %s.' % name)
