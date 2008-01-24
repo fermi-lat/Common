@@ -98,36 +98,42 @@
     -->
     <alarmList group="TKR" name="TKR base" enabled="True">
 
-       <alarmSet name="TkrTotalHits_TH1" enabled="False">
-         <alarm function="x_average" enabled="True">
-            <parameter name="min" value="1"/>
-            <parameter name="max" value="9999"/>
-            <warning_limits min="21" max="30"/>
-            <error_limits min="5.0" max="40.0"/>
-         </alarm> 
-         <alarm function="x_rms" enabled="True">
-            <parameter name="min" value="1"/>
-            <parameter name="max" value="9999"/>
-            <warning_limits min="5.5" max="6.5"/>
-            <error_limits min="5.0" max="7.0"/>
-	       </alarm> 
+       	<alarmSet name="TkrTotalHits_TH1" enabled="False">
+            <alarm function="x_average" enabled="True">
+                <parameter name="min" value="1"/>
+                <parameter name="max" value="9999"/>
+                <warning_limits min="21" max="30"/>
+                <error_limits min="5.0" max="40.0"/>
+            </alarm> 
+            <alarm function="x_rms" enabled="True">
+                <parameter name="min" value="1"/>
+                <parameter name="max" value="9999"/>
+                <warning_limits min="5.5" max="6.5"/>
+                <error_limits min="5.0" max="7.0"/>
+	    </alarm> 
        </alarmSet>	 
 
        <alarmSet name="TkrHits_TH1_Tower_*" enabled="True">
-         <alarm function="x_average" enabled="True">
-            <parameter name="min" value="1"/>
-            <parameter name="max" value="9999"/>
-            <warning_limits min="5.0" max="12.0"/>
-            <error_limits min="3.0" max="20.0"/>
-	       </alarm> 
-         <alarm function="x_rms" enabled="True">
-            <parameter name="min" value="1"/>
-            <parameter name="max" value="9999"/>
-            <warning_limits min="17.5" max="46.0"/>
-            <error_limits min="10.0" max="60.0"/>
-	       </alarm> 
+           <alarm function="x_average" enabled="True">
+               <parameter name="min" value="1"/>
+               <parameter name="max" value="9999"/>
+               <warning_limits min="5.0" max="12.0"/>
+               <error_limits min="3.0" max="20.0"/>
+	   </alarm> 
+           <alarm function="x_rms" enabled="True">
+               <parameter name="min" value="1"/>
+               <parameter name="max" value="9999"/>
+               <warning_limits min="17.5" max="46.0"/>
+               <error_limits min="10.0" max="60.0"/>
+	   </alarm>
        </alarmSet>
-
+       
+       <alarmSet name="TkrHitsCounter_PlaneGTFE_TH2_Tower_*" enabled="True">
+           <alarm function="empty_bins" enabled="True">
+	       <warning_limits min="-1" max="3"/>
+               <error_limits min="-1" max="6"/>
+	   </alarm>
+       </alarmSet>
      
 
     </alarmList>
