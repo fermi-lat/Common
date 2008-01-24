@@ -128,16 +128,13 @@ if __name__ == '__main__':
     optparser = pOptionParser('corV',1,1,False)
     if optparser.Options.c is None:
         optparser.error('Please supply an xml configuration file.')
-
     if optparser.Options.V and not optparser.Options.r:
         logger.warning('Without the -r option the -V option will be ignored!')
-    
     alarmHandler = pAlarmHandler(optparser.Argument, optparser.Options.c,\
                                  optparser.Options.o)
-    
     if optparser.Options.r:
         ReportGenerator = pAlarmReportGenerator(alarmHandler)
-        ReportGenerator.run(False, False)
+        ReportGenerator.run(False)
         if optparser.Options.V:
             ReportGenerator.viewReport()
 
