@@ -87,3 +87,8 @@ class pOptionParser:
         self.Parser.add_option('-e', '--error-file', dest = 'e',
                                default = None, type = str,
                                help = 'path to the output error xml file')
+
+    def add_m(self):
+        self.Parser.add_option('-m', '--magic7-file', dest = 'm',
+                               default = None, type = str,
+                               help = 'path to the input magic7 file')
