@@ -133,7 +133,14 @@
 	       <warning_limits min="-1" max="3"/>
                <error_limits min="-1" max="6"/>
 	   </alarm>
+           <alarm function="num_empty_bins" enabled="True">
+	       <warning_limits min="-1" max="1"/>
+               <error_limits min="-1" max="1"/>
+	   </alarm>
        </alarmSet>
+       
+
+ 
      
 
     </alarmList>

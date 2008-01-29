@@ -5,6 +5,22 @@ from math      import sqrt
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
+## @brief Search for (statistically) empty bin(s) into a (1 or 2-d) histogram
+## reportnig detailed information.
+#
+#  This is an attempt to extend the alg__num_empty_bins base algorithm
+#  to handle a more general variety of cases taking into account the
+#  statistics of the histogram.
+#
+#  This is a rough step-by-step description of the algorithm:
+#  @li Loop over all the the bins of an existing histogram (<em>not</em>
+#  including overflow and underflow bins)
+#  @li Whenever an empty bin (if any) is found the average content of the
+#  neighbour bins is evaluated and the significance of the <em>emptiness</em>
+#  is then calculated as the square root of average content itself---poisson
+#  statistics is assumed, here.
+#
+#  @todo Add support for one dimensional histograms, which is still missing.
 
 class alg__empty_bins(pAlarmBaseAlgorithm):
 
@@ -13,6 +29,9 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
     
     def __init__(self, limits, object, paramsDict = {}):
         pAlarmBaseAlgorithm.__init__(self, limits, object, paramsDict)
+
+    def __runTH1(self):
+        print 'Not implemented, yet.'
 
     def __runTH2(self):
         values = [0.0]
