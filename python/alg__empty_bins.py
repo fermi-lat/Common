@@ -63,10 +63,10 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  significance produces an error.
 #  <br/>
 #  @li <tt>warning_bins</tt>: a list of all the bins producing a warning. Each
-#  element of the list is a dictionary which should be self-explaining.
+#  element of the list is a string which should be self-explaining.
 #  <br/>
 #  @li <tt>error_bins</tt>: a list of all the bins producing a warning. Each
-#  element of the list is a dictionary which should be self-explaining.
+#  element of the list is a string which should be self-explaining.
 #  <br/>
 #
 #  @todo Add support for one dimensional histograms, which is still missing.
@@ -116,14 +116,14 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
                                                              outliersHighCut)
                     significance = sqrt(averageCounts)
                     values.append(significance)
-                    dict = {'i': i-1 , 'j': j-1,
-                            'significance': '%.2f' % significance}
+                    binString = 'bin = (%d, %d), significance = %.2f' %\
+                                (i - 1, j - 1, significance)
                     if significance > self.Limits.ErrorMax:
                         self.Output.incrementDictValue('num_error_bins')
-                        self.Output.appendDictValue('error_bins', dict)
+                        self.Output.appendDictValue('error_bins', binString)
                     elif significance > self.Limits.WarningMax:
                         self.Output.incrementDictValue('num_warning_bins')
-                        self.Output.appendDictValue('warning_bins', dict)
+                        self.Output.appendDictValue('warning_bins', binString)
         self.Output.setValue(max(values))
 
     ## @brief Overloaded main function.
