@@ -6,7 +6,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
 ## @brief Search for (statistically) empty bin(s) into a (1 or 2-d) histogram
-## reportnig detailed information.
+## reporting detailed information.
 #
 #  This is an attempt to extend the alg__num_empty_bins base algorithm
 #  to handle a more general variety of cases taking into account the
@@ -26,7 +26,50 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  set by the user. The other thing is that the outliers can be automatically
 #  removed in the evaluation of the average via parameters. See the
 #  documentation of @ref pAlarmBaseAlgorithm.getNeighbourBinsList() and
-#  @ref pAlarmBaseAlgorithm.getNeighbourAverage() for more details.  
+#  @ref pAlarmBaseAlgorithm.getNeighbourAverage() for more details.
+#
+#  <b>Valid parameters</b>:
+#
+#  @li <tt>num_neighbours</tt>: the number of bins on the left and on the right
+#  (as well as those on top and bottom for the 2-dimensional histograms) of
+#  the one under investigation that are considered in the average evaluation.
+#  The bin under investigation is obviously excluded so that the total number
+#  of bins considered (not taking into account possible cuts to remove
+#  outliers) is <tt>2*num_neighbours - 1</tt> for 1-dimensional histograms and
+#  <tt>(2*num_neighbours + 1)**2 - 1</tt> for 2-dimensional histograms---
+#  this is not quite right, actually, for the bins on the edges, which should
+#  be treated properly by @ref @ref pAlarmBaseAlgorithm.getNeighbourBinsList().
+#  <br/>
+#  @li <tt>out_low_cut</tt>: the <em>fraction</em> of bins with the
+#  <em>lowest</em> content which are removed before the average evaluation
+#  ---the list of bins is preliminary sorted based on the number of entries
+#  per bin.
+#  <br/>
+#  @li <tt>out_high_cut</tt>:the <em>fraction</em> of bins with the
+#  <em>highest</em> content which are removed before the average evaluation
+#
+#  <b>Output value</b>:
+#
+#  The statistical significance (number of standard deviations) of the
+#  most significant empty bins---if any. If there are no empty bins, the
+#  output value is zero.
+#
+#  <b>Output details</b>:
+#
+#  @li <tt>num_warning_bins</tt>: the number of empty bins whose statistical
+#  significance produces a warning.
+#  <br/>
+#  @li <tt>num_error_bins</tt>: the number of empty bins whose statistical
+#  significance produces an error.
+#  <br/>
+#  @li <tt>warning_bins</tt>: a list of all the bins producing a warning. Each
+#  element of the list is a 3-elememts tuple of the form
+#  (x-coordinate, y-coordinate, significance).
+#  <br/>
+#  @li <tt>error_bins</tt>: a list of all the bins producing a warning. Each
+#  element of the list is a 3-elememts tuple of the form
+#  (x-coordinate, y-coordinate, significance).
+#  <br/>
 #
 #  @todo Add support for one dimensional histograms, which is still missing.
 
@@ -34,14 +77,18 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 class alg__empty_bins(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH2F']
-    SUPPORTED_PARAMETERS = ['num_neighbours', 'outliers_low_cut',\
-                            'outliers_high_cut']
-    
-    def __init__(self, limits, object, paramsDict = {}):
-        pAlarmBaseAlgorithm.__init__(self, limits, object, paramsDict)
+    SUPPORTED_PARAMETERS = ['num_neighbours', 'out_low_cut', 'out_high_cut']
+
+    ## @brief Basic algorithm evaluation for 1-dimensional histograms.
+    ## @param self
+    #  The class instance.
 
     def __runTH1(self):
         print 'Not implemented, yet.'
+
+    ## @brief Basic algorithm evaluation for 2-dimensional histograms.
+    ## @param self
+    #  The class instance.
 
     def __runTH2(self):
         try:
@@ -49,11 +96,11 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
         except KeyError:
             numNeighbours = 2
         try:
-            outliersLowCut = self.ParamsDict['outliers_low_cut']
+            outliersLowCut = self.ParamsDict['out_low_cut']
         except KeyError:
             outliersLowCut  = 0.0
         try:
-            outliersHighCut = self.ParamsDict['outliers_high_cut']
+            outliersHighCut = self.ParamsDict['out_high_cut']
         except KeyError:
             outliersHighCut = 0.25
         values = [0.0]
@@ -73,6 +120,10 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
                         self.Output.appendDictValue('warning_bins',\
                                                     (i-1, j-1, significance))
         self.Output.setValue(max(values))
+
+    ## @brief Overloaded main function.
+    ## @param self
+    #  The class instance.
         
     def run(self):
         self.Output.setDictValue('num_warning_bins', 0)

@@ -14,18 +14,28 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  reasons---on the histogram statistics, so pay attention to the use you do
 #  of the algorithm.
 #
+#  <b>Output value</b>:
+#
+#  The number of empty bins in the histogram.  
+#
 #  @todo Add support for one dimensional histograms, which is still missing.
+
 
 class alg__num_empty_bins(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH2F']
     SUPPORTED_PARAMETERS = []
-    
-    def __init__(self, limits, object, paramsDict = {}):
-        pAlarmBaseAlgorithm.__init__(self, limits, object, paramsDict)
+
+    ## @brief Basic algorithm evaluation for 1-dimensional histograms.
+    ## @param self
+    #  The class instance.
 
     def __runTH1(self):
         print 'Not implemented, yet.'
+
+    ## @brief Basic algorithm evaluation for 2-dimensional histograms.
+    ## @param self
+    #  The class instance.
 
     def __runTH2(self):
         numEmptyBins = 0
@@ -34,6 +44,10 @@ class alg__num_empty_bins(pAlarmBaseAlgorithm):
                 if self.RootObject.GetBinContent(i, j) == 0:
                     numEmptyBins += 1
         self.Output.setValue(numEmptyBins)
+
+    ## @brief Overloaded main function.
+    ## @param self
+    #  The class instance.
                     
     def run(self):
         self.__runTH2()
