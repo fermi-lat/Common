@@ -169,9 +169,16 @@ class pAlarmBaseAlgorithm:
         self.RootObject.GetXaxis().SetRange(1, 0)
 
     def getAverage(self, list):
-        return sum(list)/float(len(list))
+        try:
+            return sum(list)/float(len(list))
+        except ZeroDivisionError:
+            return 0
 
-    def __getNeighbourBinsList(self, bin, numNeighbours):
+    ## @brief Return the
+    ## @param self
+    #  The class instance.
+
+    def getNeighbourBinsList(self, bin, numNeighbours):
         binsList = []
         if len(bin) == 2:
             (binX, binY) = bin
@@ -190,9 +197,12 @@ class pAlarmBaseAlgorithm:
         logger.info('Returning an empty list.')
         return binsList
 
-    def getNeighbourAverage(self, bin, numNeighbours = 2,\
-                            lowCut = 0.0, highCut = 0.25):
-        binsList = self.__getNeighbourBinsList(bin, numNeighbours)
+    ## @brief Return the
+    ## @param self
+    #  The class instance.
+
+    def getNeighbourAverage(self, bin, numNeighbours, lowCut, highCut):
+        binsList = self.getNeighbourBinsList(bin, numNeighbours)
         binsContent = []
         for (i, j) in binsList:
             binsContent.append(self.RootObject.GetBinContent(i, j))
@@ -200,5 +210,5 @@ class pAlarmBaseAlgorithm:
         numBins = len(binsContent)
         numCutBinsLow = int(numBins*lowCut)
         numCutBinsHigh = int(numBins*highCut)
-        binsContent =  binsContent[numCutBinsLow:-numCutBinsHigh]
+        binsContent =  binsContent[numCutBinsLow:-(numCutBinsHigh + 1)]
         return self.getAverage(binsContent)
