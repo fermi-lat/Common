@@ -63,12 +63,10 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  significance produces an error.
 #  <br/>
 #  @li <tt>warning_bins</tt>: a list of all the bins producing a warning. Each
-#  element of the list is a 3-elememts tuple of the form
-#  (x-coordinate, y-coordinate, significance).
+#  element of the list is a dictionary which should be self-explaining.
 #  <br/>
 #  @li <tt>error_bins</tt>: a list of all the bins producing a warning. Each
-#  element of the list is a 3-elememts tuple of the form
-#  (x-coordinate, y-coordinate, significance).
+#  element of the list is a dictionary which should be self-explaining.
 #  <br/>
 #
 #  @todo Add support for one dimensional histograms, which is still missing.
@@ -78,6 +76,11 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH2F']
     SUPPORTED_PARAMETERS = ['num_neighbours', 'out_low_cut', 'out_high_cut']
+    OUTPUT_DICTIONARY    = {'num_warning_bins': 0,
+                            'num_error_bins'  : 0,
+                            'warning_bins'    : [],
+                            'error_bins'      : []
+                            }
 
     ## @brief Basic algorithm evaluation for 1-dimensional histograms.
     ## @param self
@@ -107,18 +110,20 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             for j in range(1, self.RootObject.GetNbinsY() + 1):
                 if self.RootObject.GetBinContent(i, j) == 0:
-                    averageNeighbourContent = self.getNeighbourAverage((i, j),\
-                        numNeighbours, outliersLowCut, outliersHighCut)
-                    significance = sqrt(averageNeighbourContent)
+                    averageCounts = self.getNeighbourAverage((i, j),\
+                                                             numNeighbours,\
+                                                             outliersLowCut,\
+                                                             outliersHighCut)
+                    significance = sqrt(averageCounts)
                     values.append(significance)
+                    dict = {'i': i-1 , 'j': j-1,
+                            'significance': '%.2f' % significance}
                     if significance > self.Limits.ErrorMax:
                         self.Output.incrementDictValue('num_error_bins')
-                        self.Output.appendDictValue('error_bins',\
-                                                    (i-1, j-1, significance))
+                        self.Output.appendDictValue('error_bins', dict)
                     elif significance > self.Limits.WarningMax:
                         self.Output.incrementDictValue('num_warning_bins')
-                        self.Output.appendDictValue('warning_bins',\
-                                                    (i-1, j-1, significance))
+                        self.Output.appendDictValue('warning_bins', dict)
         self.Output.setValue(max(values))
 
     ## @brief Overloaded main function.
@@ -126,8 +131,4 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
     #  The class instance.
         
     def run(self):
-        self.Output.setDictValue('num_warning_bins', 0)
-        self.Output.setDictValue('num_error_bins'  , 0)
-        self.Output.setDictValue('warning_bins', [])
-        self.Output.setDictValue('error_bins'  , [])
         self.__runTH2()

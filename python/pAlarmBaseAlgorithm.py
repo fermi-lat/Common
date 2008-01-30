@@ -6,6 +6,7 @@ logger = pSafeLogger.getLogger('pAlarmBaseAlgorithm')
 
 import pUtils
 from pAlarmOutput import pAlarmOutput
+from copy         import copy
 
 
 ## @brief Base class for alarm algorithms. Look at the inheritance diagram for
@@ -25,8 +26,12 @@ class pAlarmBaseAlgorithm:
     ## @brief The list of (optional) parameters supported by a given
     #  algorithm.
 
+    ## @var OUTPUT_DICTIONARY
+    ## @brief The initial value of the outpud dictionary for the alarms.
+
     SUPPORTED_TYPES      = []
     SUPPORTED_PARAMETERS = []
+    OUTPUT_DICTIONARY    = {}
 
     ## @brief Basic constructor
     ## @param self
@@ -67,6 +72,7 @@ class pAlarmBaseAlgorithm:
         self.checkObjectType()
         self.checkParameters()
         self.Output = pAlarmOutput(limits)
+        self.Output.DetailedDict = copy(self.OUTPUT_DICTIONARY)
 
     ## @brief Return True if the algorithm is valid (i.e. both the ROOT
     #  object type and the parameters type are supported).

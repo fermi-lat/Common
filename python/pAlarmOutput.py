@@ -130,10 +130,8 @@ class pAlarmOutput:
         except KeyError:
             self.DetailedDict[key] = [value]
             
-
     def getTextSummary(self):
         return 'The algorithm output value is : %s' % self.Value
-   ###     return 'The algorithm alarm limits are : %s' % self.Limits
 
     def __str__(self):
         return self.getTextSummary()
