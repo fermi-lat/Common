@@ -75,7 +75,7 @@ class pXmlList(pXmlElement):
 
 if __name__ == '__main__':
     from xml.dom  import minidom
-    doc = minidom.parse(file('../xml/config.xml'))
+    doc = minidom.parse(file('../xml/alarmconfig.xml'))
     for element in doc.getElementsByTagName('alarmList'):
         list = pXmlList(element)
         print list

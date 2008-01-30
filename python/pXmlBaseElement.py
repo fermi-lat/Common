@@ -181,7 +181,7 @@ class pXmlBaseElement:
 
 if __name__ == '__main__':
     from xml.dom  import minidom
-    doc = minidom.parse(file('../xml/config.xml'))
+    doc = minidom.parse(file('../xml/alarmconfig.xml'))
     for domElement in doc.getElementsByTagName('alarmList'):
         xmlElement = pXmlBaseElement(domElement)
         print 'Printing pXmlBaseElement object...'

@@ -95,7 +95,7 @@ class pXmlAlarmParser:
 
 
 if __name__ == '__main__':
-    parser = pXmlAlarmParser('../xml/config.xml')
+    parser = pXmlAlarmParser('../xml/alarmconfig.xml')
     print 'Printing parser information...'
     print parser
     print 'Printing detailed informations for the alarm sets...'
