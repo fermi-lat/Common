@@ -18,8 +18,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  <b>Output details</b>:
 #
 #  @li <tt>empty_bins</tt>: the list of empty bins.
-#
-#  @todo Add support for one dimensional histograms, which is still missing.
+
 
 
 class alg__empty_bins_simple(pAlarmBaseAlgorithm):

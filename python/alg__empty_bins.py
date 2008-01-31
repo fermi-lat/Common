@@ -68,8 +68,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  @li <tt>error_bins</tt>: a list of all the bins producing a warning. Each
 #  element of the list is a string which should be self-explaining.
 #  <br/>
-#
-#  @todo Add support for one dimensional histograms, which is still missing.
+
 
 
 class alg__empty_bins(pAlarmBaseAlgorithm):
