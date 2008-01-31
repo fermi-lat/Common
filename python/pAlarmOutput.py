@@ -50,6 +50,7 @@ class pAlarmOutput:
         
         self.Limits       = limits
         self.Value        = None
+        self.Label        = None
         self.Status       = STATUS_UNDEFINED
         self.DetailedDict = {}
 
@@ -136,10 +137,10 @@ class pAlarmOutput:
             
     def getTextSummary(self):
         summary = ''
-        summary += 'Limits       : %s\n' % self.Limits
-        summary += 'Output value : %s\n' % self.Value
-        summary += 'Status       : %s\n' % self.Status
-        summary += 'Details      : %s\n' % self.DetailedDict
+        summary += 'Limits  : %s\n' % self.Limits
+        summary += 'Output  : %s (%s)\n' % (self.Value, self.Label)
+        summary += 'Status  : %s\n' % self.Status
+        summary += 'Details : %s\n' % self.DetailedDict
         return summary
 
     ## @brief Class representation.

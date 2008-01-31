@@ -33,6 +33,7 @@ class pAlarmBaseAlgorithm:
     SUPPORTED_TYPES      = []
     SUPPORTED_PARAMETERS = []
     OUTPUT_DICTIONARY    = {}
+    OUTPUT_LABEL         = 'N/A'
 
     ## @brief Basic constructor
     ## @param self
@@ -73,6 +74,7 @@ class pAlarmBaseAlgorithm:
         self.checkObjectType()
         self.checkParameters()
         self.Output = pAlarmOutput(limits)
+        self.Output.Label = self.OUTPUT_LABEL
         self.Output.DetailedDict = copy(self.OUTPUT_DICTIONARY)
 
     ## @brief Return True if the algorithm is valid (i.e. both the ROOT
