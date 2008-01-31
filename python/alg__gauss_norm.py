@@ -3,37 +3,59 @@ from pSafeROOT import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
-## @brief Make sure the norm of a gaussian fit is within limits.
+## @brief Normalization of a gaussian fit.
 #
-#  @todo Implement support for fitting in a subrange (min and max not
-#  used, at the moment).
+#  <b>Valid parameters</b>:
 #
-#  Valid parameters:
-#  @li <tt>min</tt>: the minimum x value for the fit.
-#  @li <tt>max</tt>: the maximum x value for the fit.
+#  @li <tt>min</tt>: the minimum x value for the fit range.
+#  <br/>
+#  @li <tt>max</tt>: the maximum x value for the fit range.
+#
+#  <b>Output value</b>:
+#
+#  The mean value of the gaussian fit in the user-defined sub-range.
+
 
 class alg__gauss_norm(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = ['min', 'max']
-
-    def __init__(self, limits, object, paramsDict = {}):
-        pAlarmBaseAlgorithm.__init__(self, limits, object, paramsDict)
+    OUTPUT_DICTIONARY    = {}
+    OUTPUT_LABEL         = 'Normalization of the gaussian fit'
+    
+    ## @brief Basic algorithm evaluation.
+    ## @param self
+    #  The class instance.
 
     def run(self):
         self.adjustXRange()
-        gaussian = ROOT.TF1('g', 'gaus')
+        gaussian = ROOT.TF1('alg__gaussian', 'gaus')
         self.RootObject.Fit(gaussian, 'QN')
         self.Output.setValue(gaussian.GetParameter(0))
         self.resetXRange()
 
 
+
 if __name__ == '__main__':
     from pAlarmLimits import pAlarmLimits
-    limits = pAlarmLimits(1, 2, 0, 3)
+    limits = pAlarmLimits(30, 50, 10, 70)
+    canvas = ROOT.TCanvas('Test canvas', 'Test canvas', 400, 400)
+
+    print
+    print 'Testing on a 1-dimensional histogram...'
     histogram = ROOT.TH1F('h', 'h', 100, -5, 5)
-    histogram.FillRandom('gaus', 1000)
-    dict = {}
-    algorithm = alg__gauss_norm(limits, histogram, dict)
+    function = ROOT.TF1('f', 'gaus')
+    function.SetParameter(0, 1)
+    function.SetParameter(1, 2)
+    function.SetParameter(2, 1)
+    histogram.FillRandom('f', 1000)
+    function.SetParameter(1, -2)
+    histogram.FillRandom('f', 1000)
+    histogram.Draw()
+    canvas.Update()
+    pardict = {'min': 0, 'max': 4}
+    algorithm = alg__gauss_norm(limits, histogram, pardict)
     algorithm.apply()
+    print 'Parameters: %s\n' % pardict
     print algorithm.Output
+

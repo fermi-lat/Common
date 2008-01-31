@@ -59,4 +59,3 @@ if __name__ == '__main__':
     algorithm.apply()
     print 'Parameters: %s\n' % pardict
     print algorithm.Output
-    canvas.Update()
