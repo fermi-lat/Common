@@ -81,6 +81,7 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
                             'warning_bins'    : [],
                             'error_bins'      : []
                             }
+    OUTPUT_LABEL          = 'Significance of the "most empty" bin'
 
     ## @brief Basic algorithm evaluation for 1-dimensional histograms.
     ## @param self
