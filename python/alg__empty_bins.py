@@ -178,6 +178,7 @@ if __name__ == '__main__':
     pardict1d = {'num_neighbours': 3, 'out_low_cut': 0.0, 'out_high_cut': 0.0}
     algorithm1d = alg__empty_bins(limits, histogram1d, pardict1d)
     algorithm1d.apply()
+    print 'Parameters: %s\n' % pardict1d
     print algorithm1d.Output
 
     print
@@ -194,4 +195,5 @@ if __name__ == '__main__':
     pardict2d = {'num_neighbours': 2, 'out_low_cut': 0.0, 'out_high_cut': 0.25}
     algorithm2d = alg__empty_bins(limits, histogram2d, pardict2d)
     algorithm2d.apply()
+    print 'Parameters: %s\n' % pardict2d
     print algorithm2d.Output
