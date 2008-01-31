@@ -5,6 +5,7 @@ import pSafeLogger
 logger = pSafeLogger.getLogger('pAlarmBaseAlgorithm')
 
 import pUtils
+import types
 from pAlarmOutput import pAlarmOutput
 from copy         import copy
 
@@ -174,19 +175,48 @@ class pAlarmBaseAlgorithm:
             return None
         self.RootObject.GetXaxis().SetRange(1, 0)
 
-    def getAverage(self, list):
-        try:
-            return sum(list)/float(len(list))
-        except ZeroDivisionError:
-            return 0
-
-    ## @brief Return the
+    ## @brief Return the average value of a list of number.
     ## @param self
     #  The class instance.
+    ## @param list
+    #  The list to be averaged.
+    ## @param default
+    #  The default value to be returned in case something goes wrong during the
+    #  average evaluation.
+
+    def getAverage(self, list, default = 0):
+        try:
+            return sum(list)/float(len(list))
+        except:
+            logger.error('Could not evaluate the average of %s.' % list)
+            logger.info('Returning %s.' % default)
+            return default
+
+    ## @brief Return a list of bins close to a given bin.
+    ## @param self
+    #  The class instance.
+    ## @param bin
+    #  The bin we're interested into.
+    #
+    #  If the bin is a simple integer, then is it interpreted as the bin
+    #  ID of a 1-dimensional histogram; a list of integers is returned in this
+    #  case. If it's a list or a tuple of length 2 it is interpreted as the
+    #  (i, j) bin ID of a 2-dimensional histogram and a list of tuples of
+    #  length 2 is returned.
+    ## @param numNeighbours
+    #  The number of bins on the left and right---as well as top and bottom,
+    #  for the 2-dimensional histograms---which are considered neighbours.
 
     def getNeighbourBinsList(self, bin, numNeighbours):
         binsList = []
-        if len(bin) == 2:
+        if type(bin) == types.IntType():
+            numBins = self.RootObject.GetNbinsX()
+            minBin = max(1, bin - numNeighbours)
+            maxBin = min(numBins, bin + numNeighbours)
+            for i in range(minBin, maxBin):
+                if i != bin:
+                    binsList.append(i)
+        elif len(bin) == 2:
             (binX, binY) = bin
             numBinsX = self.RootObject.GetNbinsX()
             numBinsY = self.RootObject.GetNbinsY()
@@ -198,20 +228,41 @@ class pAlarmBaseAlgorithm:
                 for j in range(minBinY, maxBinY + 1):
                     if (i, j) != (binX, binY):
                         binsList.append((i, j))
-            return binsList
-        logger.error('Invalid bin identifier in getNeighbourBinsList().')
-        logger.info('Returning an empty list.')
+        else:
+            logger.error('Invalid bin identifier in getNeighbourBinsList().')
+            logger.info('Returning an empty list.')
         return binsList
 
-    ## @brief Return the
+    ## @brief Return the average content of the histogram bins located close
+    #  to a given bin.
     ## @param self
     #  The class instance.
+    ## @param bin
+    #  The bin we're interested into.
+    #
+    #  If the bin is a simple integer, then is it interpreted as the bin
+    #  ID of a 1-dimensional histogram. If it's a list or a tuple of length 2
+    #  it is interpreted as the (i, j) bin ID of a 2-dimensional histogram.
+    ## @param numNeighbours
+    #  The number of bins on the left and right---as well as top and bottom,
+    #  for the 2-dimensional histograms---which are considered neighbours.
+    ## @param lowCut
+    #  The <em>fraction</em> of bins with the lowest content to be excluded in
+    #  the average evaluation.
+    ## @param highCut
+    #  The <em>fraction</em> of bins with the highest content to be excluded in
+    #  the average evaluation.
 
     def getNeighbourAverage(self, bin, numNeighbours, lowCut, highCut):
-        binsList = self.getNeighbourBinsList(bin, numNeighbours)
         binsContent = []
-        for (i, j) in binsList:
-            binsContent.append(self.RootObject.GetBinContent(i, j))
+        binsList = self.getNeighbourBinsList(bin, numNeighbours)
+        firstBin = binsList[0]
+        if type(firstBin) == types.IntType():
+            for i in binsList:
+                binsContent.append(self.RootObject.GetBinContent(i))
+        elif len(firstBin) == 2:
+            for (i, j) in binsList:
+                binsContent.append(self.RootObject.GetBinContent(i, j))
         binsContent.sort()
         numBins = len(binsContent)
         numCutBinsLow = int(numBins*lowCut)
