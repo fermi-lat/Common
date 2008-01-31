@@ -76,8 +76,8 @@ class pAlarmOutput:
         elif (self.Value > self.Limits.WarningMin)\
                  and (self.Value < self.Limits.WarningMax):
             self.Status = STATUS_CLEAN
-        elif (self.Value < self.Limits.ErrorMin)\
-                 or (self.Value > self.Limits.ErrorMax):	
+        elif (self.Value <= self.Limits.ErrorMin)\
+                 or (self.Value >= self.Limits.ErrorMax):	
             self.Status = STATUS_ERROR
         else:
             self.Status = STATUS_WARNING
