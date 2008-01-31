@@ -28,12 +28,8 @@ class alg__gauss_norm(pAlarmBaseAlgorithm):
     #  The class instance.
 
     def run(self):
-        self.adjustXRange()
         gaussian = ROOT.TF1('alg__gaussian', 'gaus')
-        self.RootObject.Fit(gaussian, 'QN')
-        self.Output.setValue(gaussian.GetParameter(0))
-        self.resetXRange()
-
+        self.Output.setValue(self.getFitParameter(gaussian, 0))
 
 
 if __name__ == '__main__':

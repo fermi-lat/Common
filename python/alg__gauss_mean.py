@@ -29,11 +29,8 @@ class alg__gauss_mean(pAlarmBaseAlgorithm):
     #  The class instance.
 
     def run(self):
-        self.adjustXRange()
         gaussian = ROOT.TF1('alg__gaussian', 'gaus')
-        self.RootObject.Fit(gaussian, 'QN')
-        self.Output.setValue(gaussian.GetParameter(1))
-        self.resetXRange()
+        self.Output.setValue(self.getFitParameter(gaussian, 1))
 
 
 

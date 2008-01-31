@@ -180,6 +180,12 @@ class pAlarmBaseAlgorithm:
             return None
         self.RootObject.GetXaxis().SetRange(1, 0)
 
+    def getFitParameter(self, fitFunction, paramNumber):
+        self.adjustXRange()
+        self.RootObject.Fit(fitFunction, 'QN')
+        self.resetXRange()
+        return fitFunction.GetParameter(paramNumber)
+
     ## @brief Return the average value of a list of number.
     ## @param self
     #  The class instance.
