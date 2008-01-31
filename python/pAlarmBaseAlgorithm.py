@@ -209,11 +209,11 @@ class pAlarmBaseAlgorithm:
 
     def getNeighbourBinsList(self, bin, numNeighbours):
         binsList = []
-        if type(bin) == types.IntType():
+        if type(bin) == types.IntType:
             numBins = self.RootObject.GetNbinsX()
             minBin = max(1, bin - numNeighbours)
             maxBin = min(numBins, bin + numNeighbours)
-            for i in range(minBin, maxBin):
+            for i in range(minBin, maxBin + 1):
                 if i != bin:
                     binsList.append(i)
         elif len(bin) == 2:
@@ -257,7 +257,7 @@ class pAlarmBaseAlgorithm:
         binsContent = []
         binsList = self.getNeighbourBinsList(bin, numNeighbours)
         firstBin = binsList[0]
-        if type(firstBin) == types.IntType():
+        if type(firstBin) == types.IntType:
             for i in binsList:
                 binsContent.append(self.RootObject.GetBinContent(i))
         elif len(firstBin) == 2:
@@ -269,3 +269,25 @@ class pAlarmBaseAlgorithm:
         numCutBinsHigh = int(numBins*highCut)
         binsContent =  binsContent[numCutBinsLow:-(numCutBinsHigh + 1)]
         return self.getAverage(binsContent)
+
+
+if __name__ == '__main__':
+    from pAlarmLimits import pAlarmLimits
+    from pSafeROOT    import ROOT
+    limits = pAlarmLimits(-1, 3, -1, 6)
+
+    print
+    print 'Testing on a 1-dimensional histogram...'
+    histogram1d = ROOT.TH1F('h1d', 'h1d', 10, -5, 5)
+    algorithm1d = pAlarmBaseAlgorithm(limits, histogram1d, {})
+    print algorithm1d.getNeighbourBinsList(3, 1)
+    print algorithm1d.getNeighbourBinsList(3, 2)
+    print algorithm1d.getNeighbourBinsList(3, 3)
+    print algorithm1d.getNeighbourBinsList(3, 10)
+    
+    print
+    print 'Testing on a 2-dimensional histogram...'
+    histogram2d = ROOT.TH2F('h2d', 'h2d', 10, -5, 5, 10, -5, 5)
+    algorithm2d = pAlarmBaseAlgorithm(limits, histogram2d, {})
+    print algorithm2d.getNeighbourBinsList((3, 3), 1)
+    print algorithm2d.getNeighbourBinsList((3, 3), 2)
