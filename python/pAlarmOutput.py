@@ -129,9 +129,22 @@ class pAlarmOutput:
             self.DetailedDict[key].append(value)
         except KeyError:
             self.DetailedDict[key] = [value]
+
+    ## @brief Return a string representation of the alarm output.
+    ## @param self
+    #  The class instance.
             
     def getTextSummary(self):
-        return 'The algorithm output value is : %s' % self.Value
+        summary = ''
+        summary += 'Limits       : %s\n' % self.Limits
+        summary += 'Output value : %s\n' % self.Value
+        summary += 'Status       : %s\n' % self.Status
+        summary += 'Details      : %s\n' % self.DetailedDict
+        return summary
+
+    ## @brief Class representation.
+    ## @param self
+    #  The class instance.    
 
     def __str__(self):
         return self.getTextSummary()
