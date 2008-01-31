@@ -74,7 +74,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 class alg__empty_bins(pAlarmBaseAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH2F']
+    SUPPORTED_TYPES      = ['TH1F', 'TH2F']
     SUPPORTED_PARAMETERS = ['num_neighbours', 'out_low_cut', 'out_high_cut']
     OUTPUT_DICTIONARY    = {'num_warning_bins': 0,
                             'num_error_bins'  : 0,
@@ -87,7 +87,37 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
     #  The class instance.
 
     def __runTH1(self):
-        print 'Not implemented, yet.'
+        try:
+            numNeighbours = self.ParamsDict['num_neighbours']
+        except KeyError:
+            numNeighbours = 3
+        try:
+            outliersLowCut = self.ParamsDict['out_low_cut']
+        except KeyError:
+            outliersLowCut  = 0.0
+        try:
+            outliersHighCut = self.ParamsDict['out_high_cut']
+        except KeyError:
+            outliersHighCut = 0.25
+        values = [0.0]
+        for i in range(1, self.RootObject.GetNbinsX() + 1):
+            if self.RootObject.GetBinContent(i) == 0:
+                averageCounts = self.getNeighbourAverage(i, numNeighbours,\
+                                                         outliersLowCut,\
+                                                         outliersHighCut)
+                significance = sqrt(averageCounts)
+                values.append(significance)
+                x = self.RootObject.GetBinCenter(i)
+                binString = 'bin @ %.2f, significance = %.2f' %\
+                            (x, significance)
+                if significance > self.Limits.ErrorMax:
+                    self.Output.incrementDictValue('num_error_bins')
+                    self.Output.appendDictValue('error_bins', binString)
+                elif significance > self.Limits.WarningMax:
+                    self.Output.incrementDictValue('num_warning_bins')
+                    self.Output.appendDictValue('warning_bins', binString)
+        self.Output.setValue(max(values))
+                
 
     ## @brief Basic algorithm evaluation for 2-dimensional histograms.
     ## @param self
@@ -116,8 +146,10 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
                                                              outliersHighCut)
                     significance = sqrt(averageCounts)
                     values.append(significance)
-                    binString = 'bin = (%d, %d), significance = %.2f' %\
-                                (i - 1, j - 1, significance)
+                    x = self.RootObject.GetXaxis().GetBinCenter(i)
+                    y = self.RootObject.GetYaxis().GetBinCenter(j)
+                    binString = 'bin @ (%.2f, %.2f), significance = %.2f' %\
+                                (x, y, significance)
                     if significance > self.Limits.ErrorMax:
                         self.Output.incrementDictValue('num_error_bins')
                         self.Output.appendDictValue('error_bins', binString)
@@ -131,4 +163,44 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
     #  The class instance.
         
     def run(self):
-        self.__runTH2()
+        objectType = self.RootObject.__class__.__name__
+        if objectType == 'TH1F':
+            self.__runTH1()
+        elif objectType == 'TH2F':
+            self.__runTH2()
+
+
+if __name__ == '__main__':
+    from pAlarmLimits import pAlarmLimits
+    canvas = ROOT.TCanvas('Test canvas', 'Test canvas', 600, 300)
+    canvas.Divide(2, 1)
+    limits = pAlarmLimits(-1, 3, -1, 6)
+
+    print
+    print 'Testing on a 1-dimensional histogram...'
+    canvas.cd(1)
+    histogram1d = ROOT.TH1F('h1d', 'h1d', 10, -5, 5)
+    histogram1d.FillRandom('pol0', 1000)
+    histogram1d.SetBinContent(3, 0)
+    histogram1d.Draw()
+    canvas.Update()
+    pardict1d = {'num_neighbours': 3, 'out_low_cut': 0.0, 'out_high_cut': 0.0}
+    algorithm1d = alg__empty_bins(limits, histogram1d, pardict1d)
+    algorithm1d.apply()
+    print algorithm1d.Output
+
+    print
+    print 'Testing on a 2-dimensional histogram...'
+    canvas.cd(2)
+    histogram2d = ROOT.TH2F('h2d', 'h2d', 10, -5, 5, 10, -5, 5)
+    function2d = ROOT.TF2('f2d', '1 + 0*x + 0*y', -5, 5, -5, 5)
+    function2d.SetParameter(0, 1)
+    histogram2d.FillRandom('f2d', 5000)
+    histogram2d.SetBinContent(2, 2, 0)
+    histogram2d.SetBinContent(4, 4, 0)
+    histogram2d.Draw('colz')
+    canvas.Update()
+    pardict2d = {'num_neighbours': 2, 'out_low_cut': 0.0, 'out_high_cut': 0.25}
+    algorithm2d = alg__empty_bins(limits, histogram2d, pardict2d)
+    algorithm2d.apply()
+    print algorithm2d.Output
