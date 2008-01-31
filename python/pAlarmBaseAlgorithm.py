@@ -28,7 +28,7 @@ class pAlarmBaseAlgorithm:
     #  algorithm.
 
     ## @var OUTPUT_DICTIONARY
-    ## @brief The initial value of the outpud dictionary for the alarms.
+    ## @brief The initial value of the output dictionary for the alarms.
 
     SUPPORTED_TYPES      = []
     SUPPORTED_PARAMETERS = []
