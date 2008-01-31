@@ -4,66 +4,100 @@ from pSafeROOT import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
+
 ## @brief Make sure all the y values are within limits.
 #
 #  The algorithm loops over the contents of each bins and checks that
 #  all the values are within the limits.
-#  In case of an error/warning the content of the FIRST bin out of limits
-#  is returned.
-#  The detailed output dictionary contains the value and the bin center of
-#  all the bins the are out of the limits. 
 #
-#  Valid parameters:
-#  @li normalize: if set to True the alarm limits will be multiplied
-#  by the number of entries in the histogram.
-#  Used to set limits that does not depend on run statistics.
+#  <b>Valid parameters</b>:
+#
+#  @li <tt>normalize</tt>: if this parameter is set, then all the limits are
+#  scaled to (read: multiplied by) the number of entries in the histogram.
+#
+#  <b>Output value</b>:
+#
+#  The value of the bin/point which is "more" out of the limits.
+#
+#  <b>Output details</b>:
+#
+#  @li <tt>num_warning_bins</tt>: the number of empty bins whose statistical
+#  significance produces a warning.
+#  <br/>
+#  @li <tt>num_error_bins</tt>: the number of empty bins whose statistical
+#  significance produces an error.
+#  <br/>
+#  @li <tt>warning_bins</tt>: a list of all the bins producing a warning. Each
+#  element of the list is a string which should be self-explaining.
+#  <br/>
+#  @li <tt>error_bins</tt>: a list of all the bins producing a warning. Each
+#  element of the list is a string which should be self-explaining.
+#  <br/>
+
 
 class alg__y_values(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F', 'TProfile']
     SUPPORTED_PARAMETERS = ['normalize']
-
-    def __init__(self, limits, object, paramsDict = {}):
-        pAlarmBaseAlgorithm.__init__(self, limits, object, paramsDict)
+    OUTPUT_DICTIONARY    = {'num_warning_points': 0,
+                            'num_error_points'  : 0,
+                            'warning_points'    : [],
+                            'error_points'      : []
+                            }
+    OUTPUT_LABEL         = 'Worst y-value'
 
     def run(self):
-        self.Output.setDictValue('num_warning_points', 0)
-        self.Output.setDictValue('num_error_points'  , 0)
-        self.Output.setDictValue('warning_points', [])
-        self.Output.setDictValue('error_points'  , [])
-        if self.ParamsDict.has_key('normalize') and self.ParamsDict['normalize'] == True:
-            nEntries = self.RootObject.GetEntries()
-            self.Limits.ErrorMax   *= nEntries
-            self.Limits.ErrorMin   *= nEntries
-            self.Limits.WarningMin *= nEntries
-            self.Limits.WarningMax *= nEntries
+        deltaDict = {0: 0}
+        if self.ParamsDict.has_key('normalize'):
+            if self.ParamsDict['normalize'] == True:
+                numEntries = self.RootObject.GetEntries()
+                self.Limits.ErrorMax   *= numEntries
+                self.Limits.ErrorMin   *= numEntries
+                self.Limits.WarningMin *= numEntries
+                self.Limits.WarningMax *= numEntries
         for bin in range(self.RootObject.GetXaxis().GetFirst(),\
                          self.RootObject.GetXaxis().GetLast()+1):
             value = self.RootObject.GetBinContent(bin)
-            
-            if value < self.Limits.ErrorMin or value > self.Limits.ErrorMax:
-                point = (self.RootObject.GetBinCenter(bin), value)
+            if value < self.Limits.ErrorMin:
+                x = self.RootObject.GetBinCenter(bin)
+                binString = 'bin/point @ %.2f, value = %.2f' % (x, value) 
                 self.Output.incrementDictValue('num_error_points')
-                self.Output.appendDictValue('error_points', point)
-            elif value < self.Limits.WarningMin or value > self.Limits.WarningMax:
-                point = (self.RootObject.GetBinCenter(bin), value)
+                self.Output.appendDictValue('error_points', binString)
+                deltaDict[(self.Limits.ErrorMin - value)*100] = value
+            elif value > self.Limits.ErrorMax:
+                x = self.RootObject.GetBinCenter(bin)
+                binString = 'bin/point @ %.2f, value = %.2f' % (x, value) 
+                self.Output.incrementDictValue('num_error_points')
+                self.Output.appendDictValue('error_points', binString)
+                deltaDict[(value - self.Limits.ErrorMax)*100] = value
+            elif value < self.Limits.WarningMin:
+                x = self.RootObject.GetBinCenter(bin)
+                binString = 'bin/point @ %.2f, value = %.2f' % (x, value) 
                 self.Output.incrementDictValue('num_warning_points')
-                self.Output.appendDictValue('warning_points', point)
-        if self.Output.getDictValue('num_error_points'):
-            self.Output.setValue(self.Output.getDictValue('error_points')[0][1])
-        elif self.Output.getDictValue('num_warning_points'):
-            self.Output.setValue(self.Output.getDictValue('warning_points')[0][1])
-        else:
-            bin = self.RootObject.GetXaxis().GetFirst()
-            self.Output.setValue(self.RootObject.GetBinContent(bin))
+                self.Output.appendDictValue('warning_points', binString)
+                deltaDict[self.Limits.WarningMin - value] = value
+            elif value > self.Limits.WarningMax:
+                x = self.RootObject.GetBinCenter(bin)
+                binString = 'bin/point @ %.2f, value = %.2f' % (x, value) 
+                self.Output.incrementDictValue('num_warning_points')
+                self.Output.appendDictValue('warning_points', binString)
+                deltaDict[value - self.Limits.WarningMax] = value
+        deltas = deltaDict.keys()
+        deltas.sort()
+        self.Output.setValue(deltaDict[deltas[-1]])
+
+
 
 if __name__ == '__main__':
     from pAlarmLimits import pAlarmLimits
     limits = pAlarmLimits(4, 16, 2, 24)
+    canvas = ROOT.TCanvas('Test canvas', 'Test canvas', 400, 400)
+    
     histogram = ROOT.TH1F('h', 'h', 100, -5, 5)
     histogram.FillRandom('pol0', 1000)
-    algorithm = alg__y_values(limits, histogram)
+    histogram.Draw()
+    canvas.Update()
+    algorithm = alg__y_values(limits, histogram, {})
     algorithm.apply()
     print algorithm.Output
-    print algorithm.Output.DetailedDict
     histogram.Draw()
