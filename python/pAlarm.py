@@ -131,7 +131,7 @@ class pAlarm(pXmlBaseElement):
     ## @param self
     #  The class instance.
 
-    def getStatus(self):
+    def getOutputStatus(self):
         return self.Algorithm.Output.Status['label']
 
     def isClean(self):
@@ -141,10 +141,13 @@ class pAlarm(pXmlBaseElement):
     ## @param self
     #  The class instance.
 
-    def getValue(self):
+    def getOutputValue(self):
         return self.Algorithm.Output.Value
 
-    def getDetails(self):
+    def getOutputLabel(self):
+        return self.Algorithm.Output.Label
+
+    def getOutputDetails(self):
         return self.Algorithm.Output.DetailedDict
     
     ## @brief Return a formatted representation of the alarm limits.

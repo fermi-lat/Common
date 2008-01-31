@@ -147,7 +147,7 @@ class pAlarmBaseAlgorithm:
     #  The class instance.
 
     def run(self):
-        logger.warn('Method run() not implemented.')
+        logger.warn('Method run() not implemented for %s.' % self.getName())
 
     ## @brief Adjust the range of the x axis of a ROOT object according
     #  to the dictionary of optional parameters.

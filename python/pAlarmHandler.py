@@ -118,7 +118,7 @@ class pAlarmHandler:
                     "clean"     : 0,
                     "undefined" : 0}
         for alarm in self.XmlParser.getEnabledAlarms():
-            StatDict[alarm.getStatus().lower()] +=1
+            StatDict[alarm.getOutputStatus().lower()] +=1
         return StatDict
 
 
