@@ -87,7 +87,7 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
     ## @param self
     #  The class instance.
 
-    def __runTH1(self):
+    def runTH1F(self):
         try:
             numNeighbours = self.ParamsDict['num_neighbours']
         except KeyError:
@@ -124,7 +124,7 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
     ## @param self
     #  The class instance.
 
-    def __runTH2(self):
+    def runTH2F(self):
         try:
             numNeighbours = self.ParamsDict['num_neighbours']
         except KeyError:
@@ -159,16 +159,6 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
                         self.Output.appendDictValue('warning_bins', binString)
         self.Output.setValue(max(values))
 
-    ## @brief Overloaded main function.
-    ## @param self
-    #  The class instance.
-        
-    def run(self):
-        objectType = self.RootObject.__class__.__name__
-        if objectType == 'TH1F':
-            self.__runTH1()
-        elif objectType == 'TH2F':
-            self.__runTH2()
 
 
 if __name__ == '__main__':

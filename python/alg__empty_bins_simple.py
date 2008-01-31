@@ -33,7 +33,7 @@ class alg__empty_bins_simple(pAlarmBaseAlgorithm):
     ## @param self
     #  The class instance.
 
-    def __runTH1(self):
+    def runTH1F(self):
         numEmptyBins = 0
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             if self.RootObject.GetBinContent(i) == 0:
@@ -47,7 +47,7 @@ class alg__empty_bins_simple(pAlarmBaseAlgorithm):
     ## @param self
     #  The class instance.
 
-    def __runTH2(self):
+    def runTH2F(self):
         numEmptyBins = 0
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             for j in range(1, self.RootObject.GetNbinsY() + 1):
@@ -59,16 +59,7 @@ class alg__empty_bins_simple(pAlarmBaseAlgorithm):
                     self.Output.appendDictValue('empty_bins', binString)
         self.Output.setValue(numEmptyBins)
 
-    ## @brief Overloaded main function.
-    ## @param self
-    #  The class instance.
 
-    def run(self):
-        objectType = self.RootObject.__class__.__name__
-        if objectType == 'TH1F':
-            self.__runTH1()
-        elif objectType == 'TH2F':
-            self.__runTH2()
 
 if __name__ == '__main__':
     from pAlarmLimits import pAlarmLimits

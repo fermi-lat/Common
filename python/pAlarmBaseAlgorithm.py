@@ -136,7 +136,10 @@ class pAlarmBaseAlgorithm:
             logger.warn('Invalid parameter(s), %s will not be applied.' %\
                          self.getName())
         else:
-            self.run()
+            try:
+                exec('self.run%s()' % self.getObjectType())
+            except AttributeError:
+                self.run()
 
     ## @brief Actual algorithm implementation ("virtual" function to be
     #  overridden by the derived classes).
