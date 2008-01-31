@@ -33,10 +33,6 @@ class alg__num_entries(pAlarmBaseAlgorithm):
     OUTPUT_DICTIONARY    = {}
     OUTPUT_LABEL         = 'Number of entries in the specified range'
 
-    ## @brief Basic algorithm evaluation for 1-dimensional histograms.
-    ## @param self
-    #  The class instance.
-
     def run(self):
         self.adjustXRange()
         self.Output.setValue(self.RootObject.GetEffectiveEntries())

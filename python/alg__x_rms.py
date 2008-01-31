@@ -4,28 +4,30 @@ from pSafeROOT import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
-## @brief Return the RMS on the x axis.
+
+## @brief RMS (on the x-axis) of a 1-dimensional histogram.
 #
-#  The average value is retrieved through the ROOT TH1::GetRMS() method.
-#  In case the <tt>min</tt> or <tt>max</tt> parameters are specified,
-#  the range is properly set, first. At the end the range is reset anyway.
+#  The RMS is retrieved trhough the ROOT method TH1::GetRMS().
+#  The RMS calculation is restricted to a subrange, if required.
 #
-#  Valid parameters:
-#  @li <tt>min</tt>: the minimum x value for the rms calculation.
-#  @li <tt>max</tt>: the maximum x value for the rms calculation.
+#  <b>Valid parameters</b>:
 #
-## @param plot
-#  The ROOT object.
-## @param paramsDict
-#  The (optional) dictionary of parameters.
+#  @li <tt>min</tt>: the minimum x value for the subrange.
+#  <br/>
+#  @li <tt>max</tt>: the maximum x value for the subrange.
+#
+#  <b>Output value</b>:
+#
+#  The RMS of the histogram.
+
+
 
 class alg__x_rms(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = ['min', 'max']
-
-    def __init__(self, limits, object, paramsDict = {}):
-        pAlarmBaseAlgorithm.__init__(self, limits, object, paramsDict)
+    OUTPUT_DICTIONARY    = {}
+    OUTPUT_LABEL         = 'Histogram RMS'
 
     def run(self):
         self.adjustXRange()
@@ -36,9 +38,14 @@ class alg__x_rms(pAlarmBaseAlgorithm):
 if __name__ == '__main__':
     from pAlarmLimits import pAlarmLimits
     limits = pAlarmLimits(1, 2, 0, 3)
+    canvas = ROOT.TCanvas('Test canvas', 'Test canvas', 400, 400)
+    
     histogram = ROOT.TH1F('h', 'h', 100, -5, 5)
     histogram.FillRandom('gaus', 1000)
-    dict = {'min': -2, 'max': 2}
-    algorithm = alg__x_rms(limits, histogram, dict)
+    histogram.Draw()
+    canvas.Update()
+    pardict = {'min': -2, 'max': 2}
+    algorithm = alg__x_rms(limits, histogram, pardict)
     algorithm.apply()
+    print 'Parameters: %s\n' % pardict
     print algorithm.Output

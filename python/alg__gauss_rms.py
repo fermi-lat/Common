@@ -24,10 +24,6 @@ class alg__gauss_rms(pAlarmBaseAlgorithm):
     OUTPUT_DICTIONARY    = {}
     OUTPUT_LABEL         = 'RMS of the gaussian fit'
 
-    ## @brief Basic algorithm evaluation.
-    ## @param self
-    #  The class instance.
-
     def run(self):
         gaussian = ROOT.TF1('alg__gaussian', 'gaus')
         self.Output.setValue(self.getFitParameter(gaussian, 2))        

@@ -22,10 +22,6 @@ class alg__gauss_norm(pAlarmBaseAlgorithm):
     SUPPORTED_PARAMETERS = ['min', 'max']
     OUTPUT_DICTIONARY    = {}
     OUTPUT_LABEL         = 'Normalization of the gaussian fit'
-    
-    ## @brief Basic algorithm evaluation.
-    ## @param self
-    #  The class instance.
 
     def run(self):
         gaussian = ROOT.TF1('alg__gaussian', 'gaus')
