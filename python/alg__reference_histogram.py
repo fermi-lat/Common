@@ -1,19 +1,58 @@
 
-from pSafeROOT import ROOT
+import pUtils
 
+from pSafeROOT           import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 from math                import sqrt
 
 
-## @brief 
+## @brief Comparison against a reference histogram.
+#
+#  It's a variant of the chisquare test in which the comparison is made
+#  bin per bin, after the histogram under study has been scaled (in terms
+#  of the number of entries) to the reference histogram---we are assuming here
+#  that the reference histogram does not have less entries that the object
+#  the alarm is set on (so that the scaling factor is typically greater than 1).
+#
+#  More precisely the scaling factor f is given, in terms of the total number
+#  of entries in the histograms, by:
+#  @f[
+#  f = \frac{N_{\rm ref}}{N_{\rm test}}
+#  @f]
+#  The, for a fixed bin, the number of entries for the reference histogram:
+#  @f[
+#  n_{\rm ref} \pm \sqrt{n_{\rm ref}}
+#  @f]
+#  is compared with the scaled number of entries in the corresponding bin of the
+#  histogram under test:
+#  @f[
+#  f \cdot n_{\rm test} \pm f \cdot \sqrt{n_{\rm test}}
+#  @f]
+#  and the significance s of the difference is given by:
+#  @f[ 
+#  s = \frac{\left| n_{\rm ref} - f \cdot n_{\rm test} \right|}
+#  {\sqrt{n_{\rm ref} + f^2 \cdot n_{\rm test}}}
+#  @f]
 #
 #  <b>Output value</b>:
 #
-#  
+#  The significance of the <em>worst</em> bin (the one with the most
+#  significance difference).
 #
 #  <b>Output details</b>:
 #
-#  @li <tt></tt>:
+#  @li <tt>num_warning_bins</tt>: the number of bins for which the statistical
+#  significance of the difference produces a warning.
+#  <br/>
+#  @li <tt>num_error_bins</tt>: the number of bins for which the statistical
+#  significance of the difference produces an error.
+#  <br/>
+#  @li <tt>warning_bins</tt>: a list of all the bins producing a warning. Each
+#  element of the list is a string which should be self-explaining.
+#  <br/>
+#  @li <tt>error_bins</tt>: a list of all the bins producing a warning. Each
+#  element of the list is a string which should be self-explaining.
+#  <br/>
 
 
 
@@ -57,8 +96,8 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
                 pass
             deltas.append(delta)
             x = self.RootObject.GetBinCenter(i)
-            binString = 'bin @ %.2f, significance = %.2f' %\
-                        (x, delta)
+            binString = 'bin @ %s, significance = %s' %\
+                (pUtils.formatNumber(x), pUtils.formatNumber(delta))
             if delta > self.Limits.ErrorMax:
                 self.Output.incrementDictValue('num_error_bins')
                 self.Output.appendDictValue('error_bins', binString)

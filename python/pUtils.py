@@ -2,6 +2,9 @@
 ## @brief Package containing utilities of general interest.
 
 import re
+import types
+
+from math import log10
 
 ## @brief Convert a ROOT cut string to a string
 #  representing a python valid line 
@@ -98,6 +101,30 @@ def expandNumber(number, targetLength):
         return '%s%s' % (string, ' '*requiredSpaces)
     else:
         return '%s' % string[:targetLength]
+
+## @brief Format a number in such a way it gets nicely printed on the
+#  terminal or in the reports.
+#
+#  Depending on the type and magnitude different formatting strings are
+#  used. At least three significant digits are guranteed.
+#
+## @param number
+#  The number to be formatted.
+
+def formatNumber(number):
+    if type(number) == types.IntType:
+        return '%d' % number
+    elif type(number) == types.FloatType:
+        if abs(number) > 0.001 and number < 100:
+            numDecFigures = int(3 - log10(abs(number)))
+            formatString = '%' + '.%df' % numDecFigures
+            return formatString % number
+        elif abs(number) > 100 and number < 10000:
+            return '%.1f' % number
+        else:
+            return '%.2e' % number
+    else:
+        return number
 
 ## @brief Format a string to appear with monospace (typesetter) font in the
 #  test report

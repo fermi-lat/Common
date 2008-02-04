@@ -1,6 +1,7 @@
 
-from pSafeROOT import ROOT
+import pUtils
 
+from pSafeROOT           import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
@@ -38,7 +39,7 @@ class alg__empty_bins_simple(pAlarmBaseAlgorithm):
             if self.RootObject.GetBinContent(i) == 0:
                 numEmptyBins += 1
                 x = self.RootObject.GetBinCenter(i)
-                binString = 'bin @ %.2f' % x
+                binString = 'bin @ %s' % pUtils.formatNumber(x)
                 self.Output.appendDictValue('empty_bins', binString)
         self.Output.setValue(numEmptyBins)
 
@@ -54,7 +55,8 @@ class alg__empty_bins_simple(pAlarmBaseAlgorithm):
                     numEmptyBins += 1
                     x = self.RootObject.GetXaxis().GetBinCenter(i)
                     y = self.RootObject.GetYaxis().GetBinCenter(j)
-                    binString = 'bin @ (%.2f, %.2f)' % (x, y)
+                    binString = 'bin @ (%s, %s)' %\
+                        (pUtils.formatNumber(x), pUtils.formatNumber(y))
                     self.Output.appendDictValue('empty_bins', binString)
         self.Output.setValue(numEmptyBins)
 

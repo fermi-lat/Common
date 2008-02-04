@@ -144,6 +144,9 @@ class pAlarm(pXmlBaseElement):
     def getOutputValue(self):
         return self.Algorithm.Output.Value
 
+    def getFormattedOutputValue(self):
+        return self.Algorithm.Output.getFormattedValue()
+
     def getOutputLabel(self):
         return self.Algorithm.Output.Label
 

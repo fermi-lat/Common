@@ -16,6 +16,22 @@ from copy         import copy, deepcopy
 #  Provides a general structure for the implementation of the algorithms,
 #  along with some ROOT-related useful functions (like setting histogram
 #  range etc...).
+#
+#  The derived classes inheriting from pAlarmBaseAlgorithm have the following
+#  responsibilities:
+#  
+#  @li Define the base variables @ref SUPPORTED_TYPES,
+#  @ref SUPPORTED_PARAMETERS, @ref OUTPUT_DICTIONARY and @ref OUTPUT_LABEL.
+#
+#  @li Implement the core of the actual algorithm in such a way it gets
+#  executed when the base function apply() is called. Depending on the
+#  algorithm itself it may be embedded into an overloaded run() method or
+#  (if different ROOT objects must be treated in diffent ways) runROOTTYPE()
+#  method (i. e. runTH1F(), runTH2F() etc.)
+#  The implementation of apply() first check whether a function of this last
+#  form exists for execution and, if that's not the case, just call the run()
+#  method.
+
 
 class pAlarmBaseAlgorithm:
 
@@ -28,7 +44,12 @@ class pAlarmBaseAlgorithm:
     #  algorithm.
 
     ## @var OUTPUT_DICTIONARY
-    ## @brief The initial value of the output dictionary for the alarms.
+    ## @brief The initial value of the output dictionary containing the
+    #  details for the alarms.
+
+    ## @var OUTPUT_LABEL
+    ## @brief A brief string representing what the output value actually
+    #  represents.
 
     SUPPORTED_TYPES      = []
     SUPPORTED_PARAMETERS = []
@@ -108,9 +129,9 @@ class pAlarmBaseAlgorithm:
     def checkObjectType(self):
         if self.getObjectType() not in self.SUPPORTED_TYPES:
             self.__RootObjectOK = False
-            logger.error('Invalid object type (%s) for %s. '    %\
-                          (self.getObjectType(), self.getName()) +\
-                          'The alarm will be ignored.')
+            logger.error('Invalid object type (%s) for %s. '        %\
+                             (self.getObjectType(), self.getName()) +\
+                             'The alarm will be ignored.')
 
     ## @brief Make sure all the optional parameters are supported.
     ## @param self
@@ -121,8 +142,8 @@ class pAlarmBaseAlgorithm:
             if paramName not in self.SUPPORTED_PARAMETERS:
                 self.__ParametersOK = False
                 logger.error('Invalid parameter (%s) for %s.' %\
-                              (paramName, self.getName())      +\
-                              'The alarm will be ignored.')
+                                 (paramName, self.getName())  +\
+                                 'The alarm will be ignored.')
 
     ## @brief Apply the algorithm on the ROOT object.
     ## @param self
@@ -147,10 +168,22 @@ class pAlarmBaseAlgorithm:
     #  The class instance.
 
     def run(self):
-        logger.warn('Method run() not implemented for %s.' % self.getName())
+        logger.error('Method run() not implemented for %s.' % self.getName())
 
     ## @brief Adjust the range of the x axis of a ROOT object according
     #  to the dictionary of optional parameters.
+    #
+    #  If the self.ParamsDict variable does not contain neither 'min' nor
+    #  'max' key, then there's nothing to do. Otherwise the range on the
+    #  x-axis is set properly, using the SetRangeUser() ROOT function.
+    #  Note that the minimum and maximum values can be specified separately
+    #  (there's no need to specify both). If one of the two is not set,
+    #  the function behaves as expected (namely it leaves that end of the range
+    #  untouched).
+    #
+    #  @todo Extend the implementation to ROOT objects other than TH1
+    #  (the only supported type at the moment).
+    #
     ## @param self
     #  The class instance.
 
@@ -158,6 +191,9 @@ class pAlarmBaseAlgorithm:
         if self.getObjectType() not in ['TH1F']:
             logger.warn('Cannot use setRangeX() on a %s object.' %\
                          self.getObjectType())
+            return None
+        if ('min' not in self.ParamsDict.keys())\
+                and ('max' not in self.ParamsDict.keys()):
             return None
         try:
             min = self.ParamsDict['min']
@@ -170,6 +206,9 @@ class pAlarmBaseAlgorithm:
         self.RootObject.GetXaxis().SetRangeUser(min, max)
 
     ## @brief Restore the original x axis range for a ROOT object.
+    #
+    #  This is done via a call to the SetRange(1, 0) ROOT function.
+    #
     ## @param self
     #  The class instance.
 
@@ -179,6 +218,20 @@ class pAlarmBaseAlgorithm:
                          self.getObjectType())
             return None
         self.RootObject.GetXaxis().SetRange(1, 0)
+
+    ## @brief Perform a fit with a user defined function and return
+    #  a given fit parameter.
+    #
+    #  Note that the fit execution is embedded in the body the method so that
+    #  in case more than one fit parameters are required this may not be the
+    #  optimal approach.
+    #
+    ## @param self
+    #  The class instance.
+    ## @param fitFunction
+    #  The fitting function (a ROOT TF1 object).
+    ## @param paramNumber
+    #  The index identifying the required parameter.
 
     def getFitParameter(self, fitFunction, paramNumber):
         self.adjustXRange()
@@ -208,7 +261,6 @@ class pAlarmBaseAlgorithm:
     #  The class instance.
     ## @param bin
     #  The bin we're interested into.
-    #
     #  If the bin is a simple integer, then is it interpreted as the bin
     #  ID of a 1-dimensional histogram; a list of integers is returned in this
     #  case. If it's a list or a tuple of length 2 it is interpreted as the
@@ -218,7 +270,7 @@ class pAlarmBaseAlgorithm:
     #  The number of bins on the left and right---as well as top and bottom,
     #  for the 2-dimensional histograms---which are considered neighbours.
 
-    def getNeighbourBinsList(self, bin, numNeighbours):
+    def getNeighbouringBinsList(self, bin, numNeighbours):
         binsList = []
         if type(bin) == types.IntType:
             numBins = self.RootObject.GetNbinsX()
@@ -240,7 +292,7 @@ class pAlarmBaseAlgorithm:
                     if (i, j) != (binX, binY):
                         binsList.append((i, j))
         else:
-            logger.error('Invalid bin identifier in getNeighbourBinsList().')
+            logger.error('Invalid bin identifier in getNeighbouringBinsList().')
             logger.info('Returning an empty list.')
         return binsList
 
@@ -250,7 +302,6 @@ class pAlarmBaseAlgorithm:
     #  The class instance.
     ## @param bin
     #  The bin we're interested into.
-    #
     #  If the bin is a simple integer, then is it interpreted as the bin
     #  ID of a 1-dimensional histogram. If it's a list or a tuple of length 2
     #  it is interpreted as the (i, j) bin ID of a 2-dimensional histogram.
@@ -264,9 +315,9 @@ class pAlarmBaseAlgorithm:
     #  The <em>fraction</em> of bins with the highest content to be excluded in
     #  the average evaluation.
 
-    def getNeighbourAverage(self, bin, numNeighbours, lowCut, highCut):
+    def getNeighbouringAverage(self, bin, numNeighbours, lowCut, highCut):
         binsContent = []
-        binsList = self.getNeighbourBinsList(bin, numNeighbours)
+        binsList = self.getNeighbouringBinsList(bin, numNeighbours)
         firstBin = binsList[0]
         if type(firstBin) == types.IntType:
             for i in binsList:
@@ -282,6 +333,7 @@ class pAlarmBaseAlgorithm:
         return self.getAverage(binsContent)
 
 
+
 if __name__ == '__main__':
     from pAlarmLimits import pAlarmLimits
     from pSafeROOT    import ROOT
@@ -291,14 +343,14 @@ if __name__ == '__main__':
     print 'Testing on a 1-dimensional histogram...'
     histogram1d = ROOT.TH1F('h1d', 'h1d', 10, -5, 5)
     algorithm1d = pAlarmBaseAlgorithm(limits, histogram1d, {})
-    print algorithm1d.getNeighbourBinsList(3, 1)
-    print algorithm1d.getNeighbourBinsList(3, 2)
-    print algorithm1d.getNeighbourBinsList(3, 3)
-    print algorithm1d.getNeighbourBinsList(3, 10)
+    print algorithm1d.getNeighbouringBinsList(3, 1)
+    print algorithm1d.getNeighbouringBinsList(3, 2)
+    print algorithm1d.getNeighbouringBinsList(3, 3)
+    print algorithm1d.getNeighbouringBinsList(3, 10)
     
     print
     print 'Testing on a 2-dimensional histogram...'
     histogram2d = ROOT.TH2F('h2d', 'h2d', 10, -5, 5, 10, -5, 5)
     algorithm2d = pAlarmBaseAlgorithm(limits, histogram2d, {})
-    print algorithm2d.getNeighbourBinsList((3, 3), 1)
-    print algorithm2d.getNeighbourBinsList((3, 3), 2)
+    print algorithm2d.getNeighbouringBinsList((3, 3), 1)
+    print algorithm2d.getNeighbouringBinsList((3, 3), 2)

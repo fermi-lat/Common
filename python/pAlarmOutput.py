@@ -7,7 +7,6 @@ logger = pSafeLogger.getLogger('pAlarmOutput')
 import pUtils
 import pAlarm
 
-
 STATUS_CLEAN     = {'level': 1, 'label': 'CLEAN'}
 STATUS_WARNING   = {'level': 2, 'label': 'WARNING'}
 STATUS_ERROR     = {'level': 3, 'label': 'ERROR'}
@@ -131,6 +130,9 @@ class pAlarmOutput:
         except KeyError:
             self.DetailedDict[key] = [value]
 
+    def getFormattedValue(self):
+        return pUtils.formatNumber(self.Value)
+
     ## @brief Return a string representation of the alarm output.
     ## @param self
     #  The class instance.
@@ -138,7 +140,8 @@ class pAlarmOutput:
     def getTextSummary(self):
         summary = ''
         summary += 'Limits  : %s\n' % self.Limits
-        summary += 'Output  : %s (%s)\n' % (self.Value, self.Label)
+        summary += 'Output  : %s (%s)\n' %\
+            (self.getFormattedValue(), self.Label)
         summary += 'Status  : %s\n' % self.Status
         summary += 'Details : %s\n' % self.DetailedDict
         return summary
@@ -152,5 +155,14 @@ class pAlarmOutput:
 
     
 if __name__ == '__main__':
-    AlarmOutput = pAlarmOutput()
+    from pAlarmLimits import pAlarmLimits
+    limits = pAlarmLimits(-1, 3, -1, 6)
+    AlarmOutput = pAlarmOutput(limits)
     print AlarmOutput
+    print AlarmOutput.formatNumber(0.000768787)
+    print AlarmOutput.formatNumber(0.023787095)
+    print AlarmOutput.formatNumber(0.126986985)
+    print AlarmOutput.formatNumber(2.456776764)
+    print AlarmOutput.formatNumber(124.7598986)
+    print AlarmOutput.formatNumber(23536276.76)
+

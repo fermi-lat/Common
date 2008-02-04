@@ -91,7 +91,7 @@ class pAlarmReportGenerator(pBaseReportGenerator):
                                              alarm.PlotName)
             row = [alarm.RootObject.GetName(), alarm.FunctionName,\
                    alarm.getOutputStatus(), '%.2f (%s)'\
-                   % (alarm.getOutputValue(), alarm.getOutputLabel()),\
+                   % (alarm.getFormattedOutputValue(), alarm.getOutputLabel()),\
                    alarm.getLimits(), link]
             self.SummaryTablesDict[alarm.getOutputStatus()].append(row)
 

@@ -1,7 +1,8 @@
 
-from pSafeROOT import ROOT
-from math      import sqrt
+import pUtils
 
+from pSafeROOT           import ROOT
+from math                import sqrt
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
@@ -25,8 +26,8 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  2-dimensional histograms) that are considered <em>neighbour</em> can be
 #  set by the user. The other thing is that the outliers can be automatically
 #  removed in the evaluation of the average via parameters. See the
-#  documentation of @ref pAlarmBaseAlgorithm.getNeighbourBinsList() and
-#  @ref pAlarmBaseAlgorithm.getNeighbourAverage() for more details.
+#  documentation of @ref pAlarmBaseAlgorithm.getNeighbouringBinsList() and
+#  @ref pAlarmBaseAlgorithm.getNeighbouringAverage() for more details.
 #
 #  <b>Valid parameters</b>:
 #
@@ -35,10 +36,17 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  the one under investigation that are considered in the average evaluation.
 #  The bin under investigation is obviously excluded so that the total number
 #  of bins considered (not taking into account possible cuts to remove
-#  outliers) is <tt>2*num_neighbours - 1</tt> for 1-dimensional histograms and
-#  <tt>(2*num_neighbours + 1)**2 - 1</tt> for 2-dimensional histograms---
-#  this is not quite right, actually, for the bins on the edges, which should
-#  be treated properly by @ref @ref pAlarmBaseAlgorithm.getNeighbourBinsList().
+#  outliers) is
+#  @f[
+#  2 \cdot {\tt num\_neighbours} - 1
+#  @f]
+#  for 1-dimensional histograms and
+#  @f[
+#  (2 \cdot {\tt num\_neighbours} + 1)^2 - 1
+#  @f]
+#  for 2-dimensional histograms---
+#  this is not quite right, actually, for the bins on the edges, which are
+#  treated properly by @ref @ref pAlarmBaseAlgorithm.getNeighbouringBinsList().
 #  <br/>
 #  @li <tt>out_low_cut</tt>: the <em>fraction</em> of bins with the
 #  <em>lowest</em> content which are removed before the average evaluation
@@ -46,7 +54,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  per bin.
 #  <br/>
 #  @li <tt>out_high_cut</tt>:the <em>fraction</em> of bins with the
-#  <em>highest</em> content which are removed before the average evaluation
+#  <em>highest</em> content which are removed before the average evaluation.
 #
 #  <b>Output value</b>:
 #
@@ -102,14 +110,14 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
         values = [0.0]
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             if self.RootObject.GetBinContent(i) == 0:
-                averageCounts = self.getNeighbourAverage(i, numNeighbours,\
-                                                         outliersLowCut,\
-                                                         outliersHighCut)
+                averageCounts = self.getNeighbouringAverage(i, numNeighbours,\
+                                                                outliersLowCut,\
+                                                                outliersHighCut)
                 significance = sqrt(averageCounts)
                 values.append(significance)
                 x = self.RootObject.GetBinCenter(i)
-                binString = 'bin @ %.2f, significance = %.2f' %\
-                            (x, significance)
+                binString = 'bin @ %s, significance = %s' %\
+                    (pUtils.formatNumber(x), pUtils.formatNumber(significance))
                 if significance > self.Limits.ErrorMax:
                     self.Output.incrementDictValue('num_error_bins')
                     self.Output.appendDictValue('error_bins', binString)
@@ -140,16 +148,17 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             for j in range(1, self.RootObject.GetNbinsY() + 1):
                 if self.RootObject.GetBinContent(i, j) == 0:
-                    averageCounts = self.getNeighbourAverage((i, j),\
-                                                             numNeighbours,\
-                                                             outliersLowCut,\
-                                                             outliersHighCut)
+                    averageCounts = self.getNeighbouringAverage((i, j),\
+                                                        numNeighbours,\
+                                                        outliersLowCut,\
+                                                        outliersHighCut)
                     significance = sqrt(averageCounts)
                     values.append(significance)
                     x = self.RootObject.GetXaxis().GetBinCenter(i)
                     y = self.RootObject.GetYaxis().GetBinCenter(j)
-                    binString = 'bin @ (%.2f, %.2f), significance = %.2f' %\
-                                (x, y, significance)
+                    binString = 'bin @ (%s, %s), significance = %s' %\
+                        (pUtils.formatNumber(x), pUtils.formatNumber(y),\
+                             pUtils.formatNumber(significance))
                     if significance > self.Limits.ErrorMax:
                         self.Output.incrementDictValue('num_error_bins')
                         self.Output.appendDictValue('error_bins', binString)

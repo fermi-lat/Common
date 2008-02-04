@@ -4,6 +4,7 @@
 import pSafeLogger
 logger = pSafeLogger.getLogger('pAlarmLimits')
 
+import pUtils
 
 ## @brief Class describing alarm limits.
 #
@@ -68,8 +69,10 @@ class pAlarmLimits:
     #  The class instance.
 
     def getSummary(self):
-        return '[%.2f / %.2f --- %.2f / %.2f]'%(self.ErrorMin, self.WarningMin,
-                                                self.WarningMax, self.ErrorMax)
+        return '[%s / %s --- %s / %s]'% (pUtils.formatNumber(self.ErrorMin),\
+                                         pUtils.formatNumber(self.WarningMin),\
+                                         pUtils.formatNumber(self.WarningMax),\
+                                         pUtils.formatNumber(self.ErrorMax))
 
     ## @brief Class representation.
     ## @param self

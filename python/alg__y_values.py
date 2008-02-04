@@ -1,6 +1,7 @@
 
-from pSafeROOT import ROOT
+import pUtils
 
+from pSafeROOT           import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
@@ -58,27 +59,22 @@ class alg__y_values(pAlarmBaseAlgorithm):
         for bin in range(self.RootObject.GetXaxis().GetFirst(),\
                          self.RootObject.GetXaxis().GetLast()+1):
             value = self.RootObject.GetBinContent(bin)
+            x = self.RootObject.GetBinCenter(bin)
+            binString = 'bin/point @ %s, value = %s' %\
+                (pUtils.formatNumber(x), pUtils.formatNumber(value)) 
             if value < self.Limits.ErrorMin:
-                x = self.RootObject.GetBinCenter(bin)
-                binString = 'bin/point @ %.2f, value = %.2f' % (x, value) 
                 self.Output.incrementDictValue('num_error_points')
                 self.Output.appendDictValue('error_points', binString)
                 deltaDict[(self.Limits.ErrorMin - value)*100] = value
             elif value > self.Limits.ErrorMax:
-                x = self.RootObject.GetBinCenter(bin)
-                binString = 'bin/point @ %.2f, value = %.2f' % (x, value) 
                 self.Output.incrementDictValue('num_error_points')
                 self.Output.appendDictValue('error_points', binString)
                 deltaDict[(value - self.Limits.ErrorMax)*100] = value
             elif value < self.Limits.WarningMin:
-                x = self.RootObject.GetBinCenter(bin)
-                binString = 'bin/point @ %.2f, value = %.2f' % (x, value) 
                 self.Output.incrementDictValue('num_warning_points')
                 self.Output.appendDictValue('warning_points', binString)
                 deltaDict[self.Limits.WarningMin - value] = value
             elif value > self.Limits.WarningMax:
-                x = self.RootObject.GetBinCenter(bin)
-                binString = 'bin/point @ %.2f, value = %.2f' % (x, value) 
                 self.Output.incrementDictValue('num_warning_points')
                 self.Output.appendDictValue('warning_points', binString)
                 deltaDict[value - self.Limits.WarningMax] = value
