@@ -15,7 +15,9 @@ NUM_CAL_COLUMNS_PER_TOWER = 12
 NUM_ACD_CABLES            = 12
 NUM_ACD_VETOES            = 128
 
-#FASTMON special variables
+# FASTMON special variables
 FASTMON_DIR_VAR_NAME      = 'FAST_MON_DIR'
 XML_CONFIG_DIR_VAR_NAME   = 'XML_CONFIG_DIR'
 
+# ROOT related variables.
+ROOT_BASKET_SIZE          = 1000000 

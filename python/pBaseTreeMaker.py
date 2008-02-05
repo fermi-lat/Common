@@ -4,6 +4,8 @@
 
 from pSafeROOT import ROOT
 
+import pGlobals
+
 ## @brief Implementation of the ROOT tree maker.
 #
 #  The things it needs as an input are:
@@ -75,7 +77,7 @@ class pBaseTreeMaker:
     def __createTreeBranch(self, variable):
         self.RootTree.Branch(variable.getName(),\
                              self.VariablesDictionary[variable.getName()],\
-                             variable.LeafList)
+                             variable.LeafList, pGlobals.ROOT_BASKET_SIZE)
 
     ## @brief Fill the ROOT tree.
     ## @param self
