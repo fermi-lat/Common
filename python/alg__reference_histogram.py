@@ -21,18 +21,21 @@ from math                import sqrt
 #  @f]
 #  The, for a fixed bin, the number of entries for the reference histogram:
 #  @f[
-#  n_{\rm ref} \pm \sqrt{n_{\rm ref}}
+#  n_{\rm ref} \pm \Delta n_{\rm ref}
 #  @f]
 #  is compared with the scaled number of entries in the corresponding bin of the
 #  histogram under test:
 #  @f[
-#  f \cdot n_{\rm test} \pm f \cdot \sqrt{n_{\rm test}}
+#  f \cdot n_{\rm test} \pm f \cdot \Delta n_{\rm test}
 #  @f]
 #  and the significance s of the difference is given by:
 #  @f[ 
 #  s = \frac{\left| n_{\rm ref} - f \cdot n_{\rm test} \right|}
-#  {\sqrt{n_{\rm ref} + f^2 \cdot n_{\rm test}}}
+#  {\sqrt{ (\Delta n_{\rm ref})^2 +  (f \cdot \Delta n_{\rm test})^2 }}
 #  @f]
+#  In both cases the bin error is retrieved through the ROOT
+#  TH1::GetBinError(binNumber) function so that each time the bin error is
+#  properly set at creation time, the algorithm should in principle work.
 #
 #  <b>Output value</b>:
 #
@@ -79,21 +82,16 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
         numEntriesRef = referenceObject.GetEntries()
         numEntriesObj = self.RootObject.GetEntries()
         scaleFactor = float(numEntriesRef)/numEntriesObj
-        binsContentRef = []
-        binsContentObj = []
-        for i in range(numBins + 2):
-            binsContentRef.append(referenceObject.GetBinContent(i))
-            binsContentObj.append(self.RootObject.GetBinContent(i))
-        referenceFile.Close()
         deltas = [0.0]
         for i in range(numBins + 2):
-            expected = binsContentRef[i]
-            observed = binsContentObj[i]
-            delta = abs(expected - observed*scaleFactor)
+            numExp = referenceObject.GetBinContent(i)
+            errExp = referenceObject.GetBinError(i)
+            numObs = self.RootObject.GetBinContent(i)*scaleFactor
+            errObs = self.RootObject.GetBinError(i)*scaleFactor
             try:
-                delta /= sqrt(expected + observed*scaleFactor*scaleFactor)
+                delta = abs(numExp - numObs)/sqrt(errExp**2 + errObs**2)
             except ZeroDivisionError:
-                pass
+                delta = 0
             deltas.append(delta)
             x = self.RootObject.GetBinCenter(i)
             binString = 'bin @ %s, significance = %s' %\
@@ -105,7 +103,7 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
                 self.Output.incrementDictValue('num_warning_bins')
                 self.Output.appendDictValue('warning_bins', binString)
         self.Output.setValue(max(deltas))
-
+        referenceFile.Close()
         
 
 
