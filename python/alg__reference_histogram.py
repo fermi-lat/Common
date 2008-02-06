@@ -56,6 +56,12 @@ from math                import sqrt
 #  @li <tt>error_bins</tt>: a list of all the bins producing a warning. Each
 #  element of the list is a string which should be self-explaining.
 #  <br/>
+#  @li <tt>chisquare</tt>: the chisquare of the fit to the residuals with 
+#  a constant (null) function.
+#  <br/>
+#  @li <tt>reduced_chisquare</tt>: the reduced chisquare of the fit to the
+#  residuals with a constant (null) function. 
+#  <br/>
 
 
 
@@ -63,10 +69,12 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = ['reference_path', 'reference_name']
-    OUTPUT_DICTIONARY    = {'num_warning_bins': 0,
-                            'num_error_bins'  : 0,
-                            'warning_bins'    : [],
-                            'error_bins'      : []
+    OUTPUT_DICTIONARY    = {'num_warning_bins' : 0,
+                            'num_error_bins'   : 0,
+                            'warning_bins'     : [],
+                            'error_bins'       : [],
+                            'chisquare'        : 0,
+                            'reduced_chisquare': 0
                             }
     OUTPUT_LABEL         = 'Significance of the maximum bin difference'
 
@@ -93,6 +101,7 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
             except ZeroDivisionError:
                 delta = 0
             deltas.append(delta)
+            self.Output.incrementDictValue('chisquare', delta)
             x = self.RootObject.GetBinCenter(i)
             binString = 'bin @ %s, significance = %s' %\
                 (pUtils.formatNumber(x), pUtils.formatNumber(delta))
@@ -102,6 +111,8 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
             elif delta > self.Limits.WarningMax:
                 self.Output.incrementDictValue('num_warning_bins')
                 self.Output.appendDictValue('warning_bins', binString)
+        self.Output.setDictValue('reduced_chisquare',\
+                    self.Output.getDictValue('chisquare')/numBins)
         self.Output.setValue(max(deltas))
         referenceFile.Close()
         
