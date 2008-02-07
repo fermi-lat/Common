@@ -112,7 +112,9 @@ def expandNumber(number, targetLength):
 #  The number to be formatted.
 
 def formatNumber(number):
-    if type(number) == types.IntType:
+    if number == 0:
+        return '0'
+    elif type(number) == types.IntType:
         return '%d' % number
     elif type(number) == types.FloatType:
         if abs(number) > 0.001 and number < 100:
