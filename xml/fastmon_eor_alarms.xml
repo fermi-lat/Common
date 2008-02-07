@@ -129,6 +129,7 @@
     
     <alarmSet name="TkrHitsCounter_PlaneGTFE_TH2_Tower_*" enabled="True">
       <alarm function="empty_bins" enabled="True">
+      	<condition name="min_entries" value="50000"/>
 	<parameter name="num_neighbours" value="2"/>
 	<parameter name="out_low_cut" value="0.0"/>
 	<parameter name="out_high_cut" value="0.25"/>
