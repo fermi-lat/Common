@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+
+<alarms>
+  <alarmList group="TKR" name="TKR base" enabled="True">
+    <alarmSet name="TkrPlanesHit_TH1_Tower_*" enabled="True">
+      <alarm function="x_average" enabled="True">
+	<warning_limits min="3.0" max="4.0"/>
+	<error_limits min="1.0" max="6.0"/>
+      </alarm>
+    </alarmSet>
+  </alarmList>
+</alarms>
+  
