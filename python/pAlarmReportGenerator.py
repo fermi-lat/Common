@@ -90,8 +90,9 @@ class pAlarmReportGenerator(pBaseReportGenerator):
                                              'alarms_details.html#%s' %\
                                              alarm.PlotName)
             row = [alarm.RootObject.GetName(), alarm.FunctionName,\
-                   alarm.getOutputStatus(), '%.2f (%s)'\
-                   % (alarm.getFormattedOutputValue(), alarm.getOutputLabel()),\
+                   alarm.getOutputStatus(), '%s (%s)'\
+                   % (alarm.getFormattedOutputValue(),
+                      alarm.getOutputLabel()),\
                    alarm.getLimits(), link]
             self.SummaryTablesDict[alarm.getOutputStatus()].append(row)
 
