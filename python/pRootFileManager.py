@@ -83,7 +83,10 @@ class pRootFileManager:
     #  only).
 
     def __match(self, name, pattern):
-        return name.replace(pattern.replace('*', ''), '').isdigit()
+        patternPieces = pattern.split('*')
+        for piece in patternPieces:
+            name = name.replace(piece, '')
+        return name.isdigit()
 
     ## @brief Find ROOT objects whose name matches a certain pattern in a
     #  ROOT file.
@@ -112,7 +115,7 @@ class pRootFileManager:
     def findObjects(self, pattern):
         objects = []
         for i in range(self.RootFile.GetListOfKeys().LastIndex() + 1):
-	    key    = self.RootFile.GetListOfKeys().At(i).GetName()
+	    key = self.RootFile.GetListOfKeys().At(i).GetName()
             if key == pattern or self.__match(key, pattern):
                 objects.append(self.RootFile.FindObjectAny(key))
         return objects
