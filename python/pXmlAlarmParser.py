@@ -41,7 +41,7 @@ class pXmlAlarmParser:
             self.XmlDoc = minidom.parse(file(xmlConfigFilePath))
         else:
             sys.exit('Input configuration file %s not found. Exiting...' %\
-        	     filePath)
+        	     xmlConfigFilePath)
         self.__populateAlarmLists()
 
     ## @brief Populate the alarm lists and the dictionary of the enabled
