@@ -66,7 +66,7 @@ class pAlarmBaseAlgorithm:
     ## @param paramsDict
     #  The dictionary of optional algorithm parameters.
 
-    def __init__(self, limits, object, paramsDict):
+    def __init__(self, limits, object, paramsDict, conditionsDict):
 
         ## @var Limits
         ## @brief The alarm limits.
@@ -90,6 +90,7 @@ class pAlarmBaseAlgorithm:
         self.Limits = limits
         self.RootObject = object
         self.ParamsDict = paramsDict
+        self.ConditionsDict = conditionsDict
         self.__RootObjectOK = True
         self.__ParametersOK = True
         self.checkObjectType()
@@ -121,6 +122,9 @@ class pAlarmBaseAlgorithm:
     def getObjectType(self):
         return self.RootObject.Class().GetName()
 
+    def getObjectName(self):
+        return self.RootObject.GetName()
+
     ## @brief Make sure the algorithm supports the ROOT object it has
     #  to operate on.
     ## @param self
@@ -145,6 +149,24 @@ class pAlarmBaseAlgorithm:
                                  (paramName, self.getName())  +\
                                  'The alarm will be ignored.')
 
+    def min_entries(self, requiredEntries):
+        numEntries = self.RootObject.GetEntries()
+        if numEntries < requiredEntries:
+            self.Output.setDictValue('UNDEFINED status reason',\
+                 'Not enough entries (%d, %d required)' %\
+                                         (numEntries, requiredEntries))
+            return False
+        return True
+
+    def checkConditions(self):
+        for (condition, value) in self.ConditionsDict.items():
+            if not eval('self.%s(%s)' % (condition, value)):
+                logger.info('Condition %s not satisfied for %s on %s.' %\
+                                (condition, self.getName(),\
+                                     self.getObjectName()))
+                return False
+        return True
+
     ## @brief Apply the algorithm on the ROOT object.
     ## @param self
     #  The class instance.
@@ -157,10 +179,11 @@ class pAlarmBaseAlgorithm:
             logger.warn('Invalid parameter(s), %s will not be applied.' %\
                          self.getName())
         else:
-            try:
-                exec('self.run%s()' % self.getObjectType())
-            except AttributeError:
-                self.run()
+            if self.checkConditions():
+                try:
+                    exec('self.run%s()' % self.getObjectType())
+                except AttributeError:
+                    self.run()
 
     ## @brief Actual algorithm implementation ("virtual" function to be
     #  overridden by the derived classes).

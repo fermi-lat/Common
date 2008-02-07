@@ -47,16 +47,16 @@ class pAlarm(pXmlBaseElement):
         ## @brief The actual algorithm the alarm is applying. 
  
         pXmlBaseElement.__init__(self, domElement)
-	self.RootObject   = rootObject
-        self.PlotName     = self.RootObject.GetName()
-        self.Limits       = self.__extractLimits()
-	self.ParamsDict   = self.__extractParametersDict()
+	self.RootObject = rootObject
+        self.PlotName = self.RootObject.GetName()
+        self.Limits = self.__extractLimits()
+	self.ParamsDict = self.__extractParametersDict()
+	self.ConditionsDict = self.__extractConditionsDict()
         self.FunctionName = self.getAttribute('function')
         try:
             exec('from alg__%s import alg__%s' % (self.FunctionName,\
                                                   self.FunctionName))
-            self.Algorithm = eval('alg__%s(self.Limits, self.RootObject, ' %\
-                                  self.FunctionName + 'self.ParamsDict)' )
+            self.Algorithm = eval('alg__%s(self.Limits, self.RootObject, self.ParamsDict, self.ConditionsDict)' % self.FunctionName)
         except ImportError:
             logger.error('Could not import alg__%s. ' % self.FunctionName +\
                           'The alarm will be ignored.')
@@ -123,8 +123,16 @@ class pAlarm(pXmlBaseElement):
         for domElement in self.getElementsByTagName('parameter'):
             xmlElement = pXmlBaseElement(domElement)
             parametersDict[xmlElement.getAttribute('name')] =\
-                           xmlElement.evalAttribute('value')
+                xmlElement.evalAttribute('value')
         return parametersDict
+
+    def __extractConditionsDict(self):
+        conditionsDict = {}
+        for domElement in self.getElementsByTagName('condition'):
+            xmlElement = pXmlBaseElement(domElement)
+            conditionsDict[xmlElement.getAttribute('name')] =\
+                xmlElement.evalAttribute('value')
+        return conditionsDict
 
     ## @brief Return the status label (i.e. CLEAN, WARNING, ERROR, UNDEFINED)
     #  of the algorithm output.
