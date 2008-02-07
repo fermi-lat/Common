@@ -2,12 +2,21 @@
 
 <alarms>
   <alarmList group="CAL" name="CAL base" enabled="True">
+  
     <alarmSet name="ReconEnergy_VeryLowEnergy_TH1_TowerCalLayer_*_*" enabled="True">
       <alarm function="x_min_bin" enabled="True">
 	<warning_limits min="2.0" max="4.0"/>
 	<error_limits min="1.0" max="6.0"/>
       </alarm>
     </alarmSet>
+
+    <alarmSet name="ReconEnergy_VeryLowEnergy_TH1_TowerCalLayerCalColumn_*_*_*" enabled="True">
+      <alarm function="x_min_bin" enabled="True">
+	<warning_limits min="2.0" max="4.0"/>
+	<error_limits min="1.0" max="6.0"/>
+      </alarm>
+    </alarmSet>
+
   </alarmList>
 </alarms>
   
