@@ -16,7 +16,7 @@ class alg__x_min_bin(pAlarmBaseAlgorithm):
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = []
     OUTPUT_DICTIONARY    = {}
-    OUTPUT_LABEL         = 'Center of the righmost populated bin'
+    OUTPUT_LABEL         = 'Center of the leftmost populated bin'
 
     def run(self):
         for bin in range(self.RootObject.GetXaxis().GetFirst(),\
