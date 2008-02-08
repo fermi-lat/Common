@@ -9,8 +9,8 @@ import re
 import pUtils
 
 from pXmlBaseElement import pXmlBaseElement
-from pAlarmLimits import pAlarmLimits
-
+from pAlarmLimits    import pAlarmLimits
+from pGlobals        import MINUS_INFINITY, PLUS_INFINITY, NAN
 
 
 ## @brief Class describing an alarm to be activated on a plot.
@@ -56,7 +56,9 @@ class pAlarm(pXmlBaseElement):
         try:
             exec('from alg__%s import alg__%s' % (self.FunctionName,\
                                                   self.FunctionName))
-            self.Algorithm = eval('alg__%s(self.Limits, self.RootObject, self.ParamsDict, self.ConditionsDict)' % self.FunctionName)
+            self.Algorithm = eval(('alg__%s' % self.FunctionName)       +\
+                                      '(self.Limits, self.RootObject, ' +\
+                                      'self.ParamsDict, self.ConditionsDict)')
         except ImportError:
             logger.error('Could not import alg__%s. ' % self.FunctionName +\
                           'The alarm will be ignored.')
@@ -73,40 +75,11 @@ class pAlarm(pXmlBaseElement):
 
     def __extractLimits(self):
         warnLims = pXmlBaseElement(self.getElementByTagName('warning_limits'))
-        warnMin  = warnLims.getAttribute('min')
-        warnMax  = warnLims.getAttribute('max')
+        warnMin  = warnLims.evalAttribute('min', MINUS_INFINITY)
+        warnMax  = warnLims.evalAttribute('max', PLUS_INFINITY)
         errLims  = pXmlBaseElement(self.getElementByTagName('error_limits'))
-        errMin   = errLims.getAttribute('min')
-        errMax   = errLims.getAttribute('max')
-        strLims  = '%s%s%s%s' % (warnMin, warnMax, errMin, errMax)
-        if 'MEAN' in strLims:
-            mean = str(self.RootObject.GetMean())
-        else:
-            mean = ''
-        if 'RMS' in strLims:
-            rms = str(self.RootObject.GetRMS())
-        else:
-            rms = ''
-        if 'ENTRIES' in strLims:
-            entries = str(self.RootObject.GetEntries())
-        else:
-            entries = ''
-        warnMin  = warnMin.upper().replace('MEAN', mean)
-        warnMin  = warnMin.upper().replace('RMS', rms)
-        warnMin  = warnMin.upper().replace('ENTRIES', entries)
-        warnMin  = eval(warnMin)
-        warnMax  = warnMax.upper().replace('MEAN', mean)
-        warnMax  = warnMax.upper().replace('RMS', rms)
-        warnMax  = warnMax.upper().replace('ENTRIES', entries)
-        warnMax  = eval(warnMax)
-        errMin   = errMin.upper().replace('MEAN', mean)
-        errMin   = errMin.upper().replace('RMS', rms)
-        errMin   = errMin.upper().replace('ENTRIES', entries)
-        errMin   = eval(errMin)
-        errMax   = errMax.upper().replace('MEAN', mean)
-        errMax   = errMax.upper().replace('RMS', rms)
-        errMax   = errMax.upper().replace('ENTRIES', entries)
-        errMax   = eval(errMax)
+        errMin   = errLims.evalAttribute('min', MINUS_INFINITY)
+        errMax   = errLims.evalAttribute('max', PLUS_INFINITY)
         try:
             return pAlarmLimits(warnMin, warnMax, errMin, errMax)
         except:
