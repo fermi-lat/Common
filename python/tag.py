@@ -31,11 +31,13 @@ def tag(module, tag):
     modulePath = os.path.join(DATA_MONITORING_DIR, module)
     updateDoxygenCfgFile(module, tag)
     print 'Committing the doxygen config file to cvs...'
-    os.system('cvs commit -m "updated version number" %s/python/doxygen.cfg' %\
-              modulePath)
+    cmd = 'cvs commit -m "updated version number" %s/python/doxygen.cfg' %\
+          modulePath
+    os.system(cmd)
     print 'Done.'
     print 'Tagging version %s...' % tag
-    os.system('cvs tag %s %s' % (tag, modulePath))
+    cmd = 'cvs tag %s %s' % (tag, modulePath)
+    os.system(cmd)
     print 'Done'
 
 
@@ -45,13 +47,13 @@ if __name__ == '__main__':
     parser.add_option('-i', '--info', dest = 'i',
                       default = False, action = 'store_true',
                       help='show the last tag for a specific module')
-    parser.add_option('-d', '--update-doxygen', dest = 'u',
+    parser.add_option('-d', '--update-doxygen', dest = 'd',
                       default = False, action = 'store_true',
                       help='update the dosygen configuration file')
-    parser.add_option('-t', '--tag', dest = 'u',
+    parser.add_option('-t', '--tag', dest = 't',
                       default = False, action = 'store_true',
                       help='tag the module')
-    parser.add_option('-v', '--version', dest = 't',
+    parser.add_option('-v', '--version', dest = 'v',
                       default = None, type = str,
                       help = 'new version number')
     (opts, args) = parser.parse_args()
@@ -65,10 +67,10 @@ if __name__ == '__main__':
         if opts.v is None:
             parser.print_help()
             parser.error('Please specify a tag number.')
-        updateDoxygenCfgFile(arg, opts.t)
+        updateDoxygenCfgFile(arg, opts.v)
     elif opts.t:
         if opts.v is None:
             parser.print_help()
             parser.error('Please specify a tag number.')
-        tag(arg, opts.t)
+        tag(arg, opts.v)
     
