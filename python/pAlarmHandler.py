@@ -39,8 +39,6 @@ class pAlarmHandler:
     #  The path to the input xml configuration file.
     ## @param xmlSummaryFilePath
     #  The path to the output xml summary path.
-    ## @param reportDir
-    #  The path to directory containing the final report.
     
     def __init__(self, rootFilePath, xmlConfigFilePath,\
                  xmlSummaryFilePath = None):
@@ -59,6 +57,8 @@ class pAlarmHandler:
         ## @brief A pRootFileManager object providing the facilities for
         #  managing the input ROOT file.
 
+        ## @var AlarmStats
+        ## @brief Basic alarm handler statistics.
         
         self.XmlParser = pXmlAlarmParser(xmlConfigFilePath)
         if xmlSummaryFilePath == None:
@@ -68,8 +68,8 @@ class pAlarmHandler:
         outputDirPath = os.path.dirname(self.XmlSummaryFilePath)
         if not os.path.exists(outputDirPath):
             os.makedirs(outputDirPath)
-            logger.debug('Creating new directory to store output files: %s' % outputDirPath )
-        
+            logger.debug('Creating new directory to store output files: %s' %\
+                             outputDirPath )
         self.ReportDir = xmlSummaryFilePath.replace('.xml','')
         self.RootFileManager = pRootFileManager(rootFilePath)
         self.setAlarmSetsPlotLists()

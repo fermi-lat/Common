@@ -65,6 +65,8 @@ class pAlarmBaseAlgorithm:
     #  The ROOT object the alarm is set on.
     ## @param paramsDict
     #  The dictionary of optional algorithm parameters.
+    ## @param conditionsDict
+    #  The dictionary of algorithm conditions.
 
     def __init__(self, limits, object, paramsDict, conditionsDict):
 
@@ -76,6 +78,10 @@ class pAlarmBaseAlgorithm:
         
         ## @var ParamsDict
         ## @brief The dictionary of optional algorithm parameters.
+
+        ## @var ConditionsDict
+        ## @brief The dictionary of optional conditions which the application
+        ## of the alarm is subjected to.
 
         ## @var __RootObjectOK
         ## @brief Flag.
@@ -122,6 +128,11 @@ class pAlarmBaseAlgorithm:
     def getObjectType(self):
         return self.RootObject.Class().GetName()
 
+    ## @brief Return the name of the underlying ROOT object the alarm is
+    #  set on.
+    ## @param self
+    #  The class instance.
+
     def getObjectName(self):
         return self.RootObject.GetName()
 
@@ -149,6 +160,13 @@ class pAlarmBaseAlgorithm:
                                  (paramName, self.getName())  +\
                                  'The alarm will be ignored.')
 
+    ## @brief Make sure the ROOT object has more then the minimum number
+    #  of entries required.
+    ## @param self
+    #  The class instance.
+    ## @param requiredEntries
+    #  The minimum number of entries required.
+
     def min_entries(self, requiredEntries):
         numEntries = self.RootObject.GetEntries()
         if numEntries < requiredEntries:
@@ -157,6 +175,11 @@ class pAlarmBaseAlgorithm:
                                          (numEntries, requiredEntries))
             return False
         return True
+
+    ## @brief Make sure the condition for running the alarm algorithm on
+    #  the ROOT objects are satisfied (return False if not).
+    ## @param self
+    #  The class instance.
 
     def checkConditions(self):
         for (condition, value) in self.ConditionsDict.items():

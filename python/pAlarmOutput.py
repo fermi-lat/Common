@@ -41,6 +41,9 @@ class pAlarmOutput:
         ## @var Value
         ## @brief The algorithm output value.
 
+        ## @var Label
+        ## @brief A brief string representing the meaning of the output value.
+
         ## @var Status
         ## @brief The status label.
 
@@ -52,6 +55,10 @@ class pAlarmOutput:
         self.Label        = None
         self.Status       = STATUS_UNDEFINED
         self.DetailedDict = {}
+
+    ## @brief Return whether the status is clean or not.
+    ## @param self
+    #  The class instance.        
 
     def isClean(self):
         return self.Status['level'] == STATUS_CLEAN['level']
@@ -129,6 +136,10 @@ class pAlarmOutput:
             self.DetailedDict[key].append(value)
         except KeyError:
             self.DetailedDict[key] = [value]
+
+    ## @brief Return the output value, nicely formatted as a string.
+    ## @param self
+    #  The class instance. 
 
     def getFormattedValue(self):
         return pUtils.formatNumber(self.Value)

@@ -56,7 +56,8 @@ def AddCutPrefix(CutString, prefix = "" ):
 ## @brief Return a list of the variables involved in a cut.
 #
 #  Used for disabling the branches of a ROOT tree if necessary for speed.
-## @param The cut expression.
+## @param cut
+#  The cut expression.
 
 def getCutVariables(cut):
     seeker = re.compile("[a-z_12]+", re.IGNORECASE)

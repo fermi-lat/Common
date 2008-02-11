@@ -23,8 +23,6 @@ class pAlarmXmlSummaryGenerator(pXmlWriter):
         self.AlarmHandler = alarmHandler
         pXmlWriter.__init__(self, self.AlarmHandler.XmlSummaryFilePath)
 
-
-
     ## @brief Implementation of the summary generation.
     ## @param self
     #  The class instance.
@@ -40,21 +38,20 @@ class pAlarmXmlSummaryGenerator(pXmlWriter):
             self.indent()
             for (key, value) in alarm.ParamsDict.items():
                 self.writeTag('parameter', {'name': key, 'value': value})
+            for (key, value) in alarm.ConditionsDict.items():
+                self.writeTag('condition', {'name': key, 'value': value})
             self.writeTag('warning_limits', {'min': alarm.Limits.WarningMin,\
                                              'max': alarm.Limits.WarningMax})
             self.writeTag('error_limits', {'min': alarm.Limits.ErrorMin,\
                                            'max': alarm.Limits.ErrorMax})
             self.writeTag('output', {}, alarm.getFormattedOutputValue())
             self.writeTag('status', {}, alarm.getOutputStatus())
-            if len(alarm.getOutputDetails())>0 and not alarm.isClean():
-                for (key, value) in alarm.getOutputDetails().items():
-                    self.writeTag('detail', {'name': key, 'value': value })
+            for (key, value) in alarm.getOutputDetails().items():
+                self.writeTag('detail', {'name': key, 'value': value })
             self.backup()
             self.closeTag('alarm')
             self.backup()
             self.closeTag('plot')
-            
-                
         self.closeTag('alarmSummary')
         self.closeFile()
 

@@ -39,6 +39,9 @@ class pAlarm(pXmlBaseElement):
         ## @brief Dictionary of optional parameters to be passed to the
         #  algorithm implementing the alarm.
 
+        ## @var ConditionsDict
+        ## @brief Dictionary of optional conditions the alarm is subjected to.
+
         ## @var FunctionName
         ## @brief The name of the specific algorithm that the alarm is
         #  supposed to apply.
@@ -48,7 +51,6 @@ class pAlarm(pXmlBaseElement):
  
         pXmlBaseElement.__init__(self, domElement)
 	self.RootObject = rootObject
-        self.PlotName = self.RootObject.GetName()
         self.Limits = self.__extractLimits()
 	self.ParamsDict = self.__extractParametersDict()
 	self.ConditionsDict = self.__extractConditionsDict()
@@ -64,8 +66,21 @@ class pAlarm(pXmlBaseElement):
                           'The alarm will be ignored.')
             self.Algorithm = None
 
+    ## @brief Return the name of the ROOT object the alarm is set on.
+    ## @par self
+    #  The class instance.
+
+    def getPlotName(self):
+        return self.RootObject.GetName()
+
+    ## @brief Comparing method.
+    ## @par self
+    #  The class instance.
+    ## @par other
+    #  The other instance---the one to make the comparison against.
+
     def __cmp__(self, other):
-        if self.PlotName > other.PlotName:
+        if self.getPlotName() > other.getPlotName():
             return 1
         return -1
         
@@ -99,6 +114,11 @@ class pAlarm(pXmlBaseElement):
                 xmlElement.evalAttribute('value')
         return parametersDict
 
+    ## @brief Extract the dictionary of conditions from the underlying
+    #  dom element.
+    ## @param self
+    #  The class instance.
+
     def __extractConditionsDict(self):
         conditionsDict = {}
         for domElement in self.getElementsByTagName('condition'):
@@ -115,6 +135,10 @@ class pAlarm(pXmlBaseElement):
     def getOutputStatus(self):
         return self.Algorithm.Output.Status['label']
 
+    ## @brief Return whether the alarm output is clean or not.
+    ## @param self
+    #  The class instance.
+    
     def isClean(self):
         return self.Algorithm.Output.isClean()
 
@@ -125,11 +149,23 @@ class pAlarm(pXmlBaseElement):
     def getOutputValue(self):
         return self.Algorithm.Output.Value
 
+    ## @brief Return the algorithm output value nicely formatted as a string.
+    ## @param self
+    #  The class instance.
+
     def getFormattedOutputValue(self):
         return self.Algorithm.Output.getFormattedValue()
 
+    ## @brief Return the algorithm output label.
+    ## @param self
+    #  The class instance.
+
     def getOutputLabel(self):
         return self.Algorithm.Output.Label
+
+    ## @brief Return the alarm algorithm detailed output dictionary.
+    ## @param self
+    #  The class instance.
 
     def getOutputDetails(self):
         return self.Algorithm.Output.DetailedDict

@@ -110,8 +110,11 @@ class pXmlBaseElement:
     ## @param default
     #  The value to be returned in case there are no tags corresponding to a
     #  given tag name.
+    ## @param required
+    #  If true the xml elemnt is required and an error is raised if it's
+    #  missing in the xml file.
 
-    def getElementByTagName(self, tagName, default=None, required=False):
+    def getElementByTagName(self, tagName, default = None, required = False):
         elementsList = self.getElementsByTagName(tagName)
         if elementsList == []:
             if required:
@@ -132,8 +135,11 @@ class pXmlBaseElement:
     ## @param default
     #  The value to be returned in case there are no tags corresponding to a
     #  given tag name or the tag has no value.
+    ## @param required
+    #  If true the xml elemnt is required and an error is raised if it's
+    #  missing in the xml file.
     
-    def getTagValue(self, tagName, default=None, required=False):
+    def getTagValue(self, tagName, default = None, required = False):
         element = self.getElementByTagName(tagName, default, required)
         if element == default:
             return default
@@ -152,8 +158,11 @@ class pXmlBaseElement:
     #  The value to be returned in case there are no tags corresponding to a
     #  given tag name or the tag has no value or the eval statement fails
     #  for some reason.
+    ## @param required
+    #  If true the xml elemnt is required and an error is raised if it's
+    #  missing in the xml file.
 
-    def evalTagValue(self, tagName, default=None, required=False):
+    def evalTagValue(self, tagName, default = None, required = False):
         value = self.getTagValue(tagName, default, required)
         if value == default:
             return default
