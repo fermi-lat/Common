@@ -3,7 +3,6 @@ all:
 	echo "Targets are: builddoc, clean, cleandoc, cleanall, viewdoc"
 
 builddoc:
-	python updateDoxCfg.py
 	doxygen doxygen.cfg
 
 clean:
