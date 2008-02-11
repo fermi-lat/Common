@@ -46,13 +46,13 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  @f]
 #  for 2-dimensional histograms---
 #  this is not quite right, actually, for the bins on the edges, which are
-#  treated properly by @ref @ref pAlarmBaseAlgorithm.getNeighbouringBinsList().
-#  <br/>
+#  treated properly by @ref pAlarmBaseAlgorithm.getNeighbouringBinsList().
+#  <br>
 #  @li <tt>out_low_cut</tt>: the <em>fraction</em> of bins with the
 #  <em>lowest</em> content which are removed before the average evaluation
 #  ---the list of bins is preliminary sorted based on the number of entries
 #  per bin.
-#  <br/>
+#  <br>
 #  @li <tt>out_high_cut</tt>:the <em>fraction</em> of bins with the
 #  <em>highest</em> content which are removed before the average evaluation.
 #
@@ -66,16 +66,16 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #
 #  @li <tt>num_warning_bins</tt>: the number of empty bins whose statistical
 #  significance produces a warning.
-#  <br/>
+#  <br>
 #  @li <tt>num_error_bins</tt>: the number of empty bins whose statistical
 #  significance produces an error.
-#  <br/>
+#  <br>
 #  @li <tt>warning_bins</tt>: a list of all the bins producing a warning. Each
 #  element of the list is a string which should be self-explaining.
-#  <br/>
+#  <br>
 #  @li <tt>error_bins</tt>: a list of all the bins producing a warning. Each
 #  element of the list is a string which should be self-explaining.
-#  <br/>
+#  <br>
 
 
 
@@ -111,8 +111,7 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             if self.RootObject.GetBinContent(i) == 0:
                 averageCounts = self.getNeighbouringAverage(i, numNeighbours,\
-                                                                outliersLowCut,\
-                                                                outliersHighCut)
+                                     outliersLowCut, outliersHighCut)
                 significance = sqrt(averageCounts)
                 values.append(significance)
                 x = self.RootObject.GetBinCenter(i)

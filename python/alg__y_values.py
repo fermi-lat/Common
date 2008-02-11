@@ -24,16 +24,16 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #
 #  @li <tt>num_warning_bins</tt>: the number of empty bins whose statistical
 #  significance produces a warning.
-#  <br/>
+#  <br>
 #  @li <tt>num_error_bins</tt>: the number of empty bins whose statistical
 #  significance produces an error.
-#  <br/>
+#  <br>
 #  @li <tt>warning_bins</tt>: a list of all the bins producing a warning. Each
 #  element of the list is a string which should be self-explaining.
-#  <br/>
+#  <br>
 #  @li <tt>error_bins</tt>: a list of all the bins producing a warning. Each
 #  element of the list is a string which should be self-explaining.
-#  <br/>
+#  <br>
 
 
 class alg__y_values(pAlarmBaseAlgorithm):

@@ -13,7 +13,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  <b>Valid parameters</b>:
 #
 #  @li <tt>min</tt>: the minimum x value for the subrange.
-#  <br/>
+#  <br>
 #  @li <tt>max</tt>: the maximum x value for the subrange.
 #
 #  <b>Output value</b>:

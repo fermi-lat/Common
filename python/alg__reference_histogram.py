@@ -46,22 +46,22 @@ from math                import sqrt
 #
 #  @li <tt>num_warning_bins</tt>: the number of bins for which the statistical
 #  significance of the difference produces a warning.
-#  <br/>
+#  <br>
 #  @li <tt>num_error_bins</tt>: the number of bins for which the statistical
 #  significance of the difference produces an error.
-#  <br/>
+#  <br>
 #  @li <tt>warning_bins</tt>: a list of all the bins producing a warning. Each
 #  element of the list is a string which should be self-explaining.
-#  <br/>
+#  <br>
 #  @li <tt>error_bins</tt>: a list of all the bins producing a warning. Each
 #  element of the list is a string which should be self-explaining.
-#  <br/>
+#  <br>
 #  @li <tt>chisquare</tt>: the chisquare of the fit to the residuals with 
 #  a constant (null) function.
-#  <br/>
+#  <br>
 #  @li <tt>reduced_chisquare</tt>: the reduced chisquare of the fit to the
 #  residuals with a constant (null) function. 
-#  <br/>
+#  <br>
 
 
 

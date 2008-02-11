@@ -8,7 +8,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  <b>Valid parameters</b>:
 #
 #  @li <tt>min</tt>: the minimum x value for the fit range.
-#  <br/>
+#  <br>
 #  @li <tt>max</tt>: the maximum x value for the fit range.
 #
 #  <b>Output value</b>:

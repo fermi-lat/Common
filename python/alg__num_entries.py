@@ -15,7 +15,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  <b>Valid parameters</b>:
 #
 #  @li <tt>min</tt>: the minimum value on the x-axis when setting the range.
-#  <br/>
+#  <br>
 #  @li <tt>max</tt>: the minimum value on the x-axis when setting the range.
 #
 #  Note that in case only <tt>min</tt> or <tt>max</tt> is passed, the other
