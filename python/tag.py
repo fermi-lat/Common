@@ -2,14 +2,22 @@
 
 import os
 
-DATA_MONITORING_DIR = os.path.abspath('../../')
+DATA_MONITORING_DIR = '../../'
 DOXYGEN_CFG_FILE_NAME = 'doxygen.cfg'
 
 
+def updateChangeLog(module):
+    print 'Updating ChangeLog for %s' % module
+    modulePath = os.path.join(DATA_MONITORING_DIR, module)
+    cmd = 'cvs update %s/ChangeLog' % modulePath
+    os.system(cmd)
+    print 'Done'
+
 def findLastTag(module):
+    updateChangeLog(module)
+    modulePath = os.path.join(DATA_MONITORING_DIR, module)
     print 'Searchin for last tag for %s...' % module
-    os.system('grep -A 2 TAG %s/%s/ChangeLog | head -n 4' %\
-              (DATA_MONITORING_DIR, module))
+    os.system('grep -A 2 TAG %s/ChangeLog | head -n 4' % modulePath)
 
 def updateDoxygenCfgFile(module, tag):
     print 'Updating doxygen configuration file for %s to version %s...' %\
@@ -28,6 +36,7 @@ def updateDoxygenCfgFile(module, tag):
     print 'Done.'
 
 def tag(module, tag):
+    updateChangeLog(module)
     modulePath = os.path.join(DATA_MONITORING_DIR, module)
     updateDoxygenCfgFile(module, tag)
     print 'Committing the doxygen config file to cvs...'
