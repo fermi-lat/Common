@@ -1,18 +1,18 @@
 
 all:	
-	echo "Targets are: doxygen, clean, cleandoc, cleanall, viewdoc"
+	echo "Targets are: builddoc, clean, cleandoc, cleanall, viewdoc"
 
-doxygen:
+builddoc:
 	python updateDoxCfg.py
 	doxygen doxygen.cfg
-
-cleandoc:
-	rm -rf doc
 
 clean:
 	rm -f *~ .*~ *.pyc *.pyo
 	rm -rf testreport
 	rm -rf *_test.*
+
+cleandoc:
+	rm -rf doc
 
 cleanall:
 	make clean
