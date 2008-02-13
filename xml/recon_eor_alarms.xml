@@ -2,18 +2,36 @@
 
 <alarms>
   <alarmList group="CAL" name="CAL base" enabled="True">
-  
+
     <alarmSet name="ReconEnergy_VeryLowEnergy_TH1_TowerCalLayer_*_*" enabled="True">
       <alarm function="x_min_bin" enabled="True">
-	<warning_limits min="2.0" max="4.0"/>
-	<error_limits min="1.0" max="6.0"/>
+	<warning_limits min="2.0" max="3.8"/>
+	<error_limits min="1.0" max="4.5"/>
       </alarm>
     </alarmSet>
 
     <alarmSet name="ReconEnergy_VeryLowEnergy_TH1_TowerCalLayerCalColumn_*_*_*" enabled="True">
       <alarm function="x_min_bin" enabled="True">
-	<warning_limits min="2.0" max="4.0"/>
-	<error_limits min="1.0" max="6.0"/>
+	<warning_limits min="2.0" max="3.8"/>
+	<error_limits min="1.0" max="4.5"/>
+      </alarm>
+    </alarmSet>
+  </alarmList>
+
+  <alarmList group="ACD" name="ACD base" enabled="True">
+    <alarmSet name="ReconAcdPhaMips_PMTA_Zoom_TH1_AcdTile_*" enabled="True">
+      <alarm function="x_min_bin" enabled="True">
+	<parameter name="num_adjacent_bins" value="2"/>
+	<warning_limits min="0.2" max="0.4"/>
+	<error_limits min="0.1" max="0.7"/>
+      </alarm>
+    </alarmSet>
+
+    <alarmSet name="ReconAcdPhaMips_PMTB_Zoom_TH1_AcdTile_*" enabled="True">
+      <alarm function="x_min_bin" enabled="True">
+	<parameter name="num_adjacent_bins" value="2"/>
+	<warning_limits min="0.2" max="0.4"/>
+	<error_limits min="0.1" max="0.7"/>
       </alarm>
     </alarmSet>
 
