@@ -25,6 +25,7 @@ class alg__gauss_rms(pAlarmBaseAlgorithm):
     OUTPUT_LABEL         = 'RMS of the gaussian fit'
 
     def run(self):
+        # Adjust and reset x range is done just before fitting
         gaussian = ROOT.TF1('alg__gaussian', 'gaus')
         self.Output.setValue(self.getFitParameter(gaussian, 2))        
 
