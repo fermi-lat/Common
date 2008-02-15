@@ -68,7 +68,7 @@ class pAlarmBaseAlgorithm:
     ## @param conditionsDict
     #  The dictionary of algorithm conditions.
 
-    def __init__(self, limits, object, paramsDict, conditionsDict):
+    def __init__(self, limits, object, paramsDict, conditionsDict = {}):
 
         ## @var Limits
         ## @brief The alarm limits.
