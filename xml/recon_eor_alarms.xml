@@ -118,6 +118,23 @@
 	<error_limits min="1.0" max="4.5"/>
       </alarm>
     </alarmSet>
+
+    <alarmSet name="SuspCalLo_Highest0_EnergyDistribution_TH1" enabled="True">
+      <alarm function="leftmost_edge" enabled="True">
+	<warning_limits min="120.0" max="170.0"/>
+	<error_limits min="100.0" max="200.0"/>
+      </alarm>
+    </alarmSet>
+
+    <alarmSet name="SuspCalHi_Highest0_EnergyDistribution_TH1" enabled="True">
+      <alarm function="leftmost_edge" enabled="True">
+	<warning_limits min="1200.0" max="1700.0"/>
+	<error_limits min="1000.0" max="2000.0"/>
+      </alarm>
+    </alarmSet>
+
+
+
   </alarmList>
 
 
