@@ -86,8 +86,11 @@ class alg__leftmost_edge(pAlarmBaseAlgorithm):
             leftSum += self.RootObject.GetBinContent(j)
         for j in range(bin + 1, bin + self.WindowHalfWidth + 1):
             rightSum += self.RootObject.GetBinContent(j)
-        return sqrt(self.WindowHalfWidth)*abs(rightSum - leftSum)/\
-               sqrt(rightSum + leftSum)
+        try:
+	    return sqrt(self.WindowHalfWidth)*abs(rightSum - leftSum)/\
+              		   sqrt(rightSum + leftSum)
+        except ZeroDivisionError:
+	    return 0
 
     def refineEdge(self, startBin, startSignificance):
         maxSignificance = startSignificance
