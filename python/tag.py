@@ -58,7 +58,7 @@ if __name__ == '__main__':
                       help='show the last tag for a specific module')
     parser.add_option('-d', '--update-doxygen', dest = 'd',
                       default = False, action = 'store_true',
-                      help='update the dosygen configuration file')
+                      help='update the doxygen configuration file')
     parser.add_option('-t', '--tag', dest = 't',
                       default = False, action = 'store_true',
                       help='tag the module')
