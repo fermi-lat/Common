@@ -106,7 +106,7 @@
     </alarmSet>
 
     <alarmSet name="ReconEnergy_VeryLowEnergy_TH1_TowerCalLayer_*_*" enabled="True">
-      <alarm function="x_min_bin" enabled="True">
+      <alarm function="leftmost_edge" enabled="True">
 	<warning_limits min="2.0" max="3.8"/>
 	<error_limits min="1.0" max="4.5"/>
       </alarm>
@@ -114,6 +114,7 @@
 
     <alarmSet name="ReconEnergy_VeryLowEnergy_TH1_TowerCalLayerCalColumn_*_*_*" enabled="True">
       <alarm function="x_min_bin" enabled="True">
+ 	<parameter name="num_adjacent_bins" value="2"/>     
 	<warning_limits min="2.0" max="3.8"/>
 	<error_limits min="1.0" max="4.5"/>
       </alarm>
@@ -130,6 +131,15 @@
       <alarm function="leftmost_edge" enabled="True">
 	<warning_limits min="1200.0" max="1700.0"/>
 	<error_limits min="1000.0" max="2000.0"/>
+      </alarm>
+    </alarmSet>
+
+    <alarmSet name="SuspCalLo_Highest0_TH2" enabled="True">
+      <alarm function="x_min_bin_slices" enabled="True">
+ 	<parameter name="num_adjacent_bins" value="2"/>     
+	<parameter name="slice_width" value="24"/>
+	<warning_limits min="120.0" max="170.0"/>
+	<error_limits min="100.0" max="200.0"/>
       </alarm>
     </alarmSet>
 
@@ -166,16 +176,14 @@
 
 
     <alarmSet name="ReconAcdPhaMips_PMTA_Zoom_TH1_AcdTile_*" enabled="True">
-      <alarm function="x_min_bin" enabled="True">
-	<parameter name="num_adjacent_bins" value="2"/>
+      <alarm function="leftmost_edge" enabled="True">
 	<warning_limits min="0.2" max="0.4"/>
 	<error_limits min="0.1" max="0.7"/>
       </alarm>
     </alarmSet>
 
     <alarmSet name="ReconAcdPhaMips_PMTB_Zoom_TH1_AcdTile_*" enabled="True">
-      <alarm function="x_min_bin" enabled="True">
-	<parameter name="num_adjacent_bins" value="2"/>
+      <alarm function="leftmost_edge" enabled="True">
 	<warning_limits min="0.2" max="0.4"/>
 	<error_limits min="0.1" max="0.7"/>
       </alarm>
@@ -232,7 +240,158 @@
       </alarm>
     </alarmSet>
 
+    <alarmSet name="ReconAcdGlobalPosONLYMatchedTracks_RibbonYOriented_TH1_Pos_0" enabled="True">
+      <alarm function="gauss_mean" enabled="True">
+	<parameter name="min" value="-1000"/>
+	<parameter name="max" value="-250"/>
+	<warning_limits min="-510" max="-490"/>
+	<error_limits min="-520" max="-480"/>
+      </alarm>
+      <alarm function="gauss_mean" enabled="True">
+	<parameter name="min" value="-400"/>
+	<parameter name="max" value="100"/>
+	<warning_limits min="-175" max="-155"/>
+	<error_limits min="-185" max="-145"/>
+      </alarm>
+      <alarm function="gauss_mean" enabled="True">
+	<parameter name="min" value="-100"/>
+	<parameter name="max" value="400"/>
+	<warning_limits min="155" max="175"/>
+	<error_limits min="145" max="185"/>
+      </alarm>
+      <alarm function="gauss_mean" enabled="True">
+	<parameter name="min" value="250"/>
+	<parameter name="max" value="1000"/>
+	<warning_limits min="490" max="510"/>
+	<error_limits min="480" max="520"/>
+      </alarm>
+      <alarm function="gauss_rms" enabled="True">
+	<parameter name="min" value="-1000"/>
+	<parameter name="max" value="-250"/>
+	<warning_limits min="3.0" max="6.0"/>
+	<error_limits min="2.0" max="10.0"/>
+      </alarm>
+      <alarm function="gauss_rms" enabled="True">
+	<parameter name="min" value="-400"/>
+	<parameter name="max" value="100"/>
+	<warning_limits min="3.0" max="6.0"/>
+	<error_limits min="2.0" max="10.0"/>
+      </alarm>
+      <alarm function="gauss_rms" enabled="True">
+	<parameter name="min" value="-100"/>
+	<parameter name="max" value="400"/>
+	<warning_limits min="3.0" max="6.0"/>
+	<error_limits min="2.0" max="10.0"/>
+      </alarm>
+      <alarm function="gauss_rms" enabled="True">
+	<parameter name="min" value="250"/>
+	<parameter name="max" value="1000"/>
+	<warning_limits min="3.0" max="6.0"/>
+	<error_limits min="2.0" max="10.0"/>
+      </alarm>
+    </alarmSet>
 
+    <alarmSet name="ReconAcdGlobalPosNotMatchedTracks_RibbonXOriented_TH1_Pos_1" enabled="True">
+      <alarm function="gauss_mean" enabled="True">
+	<parameter name="min" value="-1000"/>
+	<parameter name="max" value="-250"/>
+	<warning_limits min="-510" max="-490"/>
+	<error_limits min="-520" max="-480"/>
+      </alarm>
+      <alarm function="gauss_mean" enabled="True">
+	<parameter name="min" value="-400"/>
+	<parameter name="max" value="100"/>
+	<warning_limits min="-175" max="-155"/>
+	<error_limits min="-185" max="-145"/>
+      </alarm>
+      <alarm function="gauss_mean" enabled="True">
+	<parameter name="min" value="-100"/>
+	<parameter name="max" value="400"/>
+	<warning_limits min="155" max="175"/>
+	<error_limits min="145" max="185"/>
+      </alarm>
+      <alarm function="gauss_mean" enabled="True">
+	<parameter name="min" value="250"/>
+	<parameter name="max" value="1000"/>
+	<warning_limits min="490" max="510"/>
+	<error_limits min="480" max="520"/>
+      </alarm>
+      <alarm function="gauss_rms" enabled="True">
+	<parameter name="min" value="-1000"/>
+	<parameter name="max" value="-250"/>
+	<warning_limits min="3.0" max="6.0"/>
+	<error_limits min="2.0" max="10.0"/>
+      </alarm>
+      <alarm function="gauss_rms" enabled="True">
+	<parameter name="min" value="-400"/>
+	<parameter name="max" value="100"/>
+	<warning_limits min="3.0" max="6.0"/>
+	<error_limits min="2.0" max="10.0"/>
+      </alarm>
+      <alarm function="gauss_rms" enabled="True">
+	<parameter name="min" value="-100"/>
+	<parameter name="max" value="400"/>
+	<warning_limits min="3.0" max="6.0"/>
+	<error_limits min="2.0" max="10.0"/>
+      </alarm>
+      <alarm function="gauss_rms" enabled="True">
+	<parameter name="min" value="250"/>
+	<parameter name="max" value="1000"/>
+	<warning_limits min="3.0" max="6.0"/>
+	<error_limits min="2.0" max="10.0"/>
+      </alarm>
+    </alarmSet>
+
+    <alarmSet name="ReconAcdGlobalPosNotMatchedTracks_RibbonYOriented_TH1_Pos_0" enabled="True">
+      <alarm function="gauss_mean" enabled="True">
+	<parameter name="min" value="-1000"/>
+	<parameter name="max" value="-250"/>
+	<warning_limits min="-510" max="-490"/>
+	<error_limits min="-520" max="-480"/>
+      </alarm>
+      <alarm function="gauss_mean" enabled="True">
+	<parameter name="min" value="-400"/>
+	<parameter name="max" value="100"/>
+	<warning_limits min="-175" max="-155"/>
+	<error_limits min="-185" max="-145"/>
+      </alarm>
+      <alarm function="gauss_mean" enabled="True">
+	<parameter name="min" value="-100"/>
+	<parameter name="max" value="400"/>
+	<warning_limits min="155" max="175"/>
+	<error_limits min="145" max="185"/>
+      </alarm>
+      <alarm function="gauss_mean" enabled="True">
+	<parameter name="min" value="250"/>
+	<parameter name="max" value="1000"/>
+	<warning_limits min="490" max="510"/>
+	<error_limits min="480" max="520"/>
+      </alarm>
+      <alarm function="gauss_rms" enabled="True">
+	<parameter name="min" value="-1000"/>
+	<parameter name="max" value="-250"/>
+	<warning_limits min="3.0" max="6.0"/>
+	<error_limits min="2.0" max="10.0"/>
+      </alarm>
+      <alarm function="gauss_rms" enabled="True">
+	<parameter name="min" value="-400"/>
+	<parameter name="max" value="100"/>
+	<warning_limits min="3.0" max="6.0"/>
+	<error_limits min="2.0" max="10.0"/>
+      </alarm>
+      <alarm function="gauss_rms" enabled="True">
+	<parameter name="min" value="-100"/>
+	<parameter name="max" value="400"/>
+	<warning_limits min="3.0" max="6.0"/>
+	<error_limits min="2.0" max="10.0"/>
+      </alarm>
+      <alarm function="gauss_rms" enabled="True">
+	<parameter name="min" value="250"/>
+	<parameter name="max" value="1000"/>
+	<warning_limits min="3.0" max="6.0"/>
+	<error_limits min="2.0" max="10.0"/>
+      </alarm>
+    </alarmSet>
 
   </alarmList>
 </alarms>
