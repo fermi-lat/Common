@@ -35,11 +35,13 @@ class alg__x_min_bin_slices(alg__x_min_bin):
             if self.Output.Status['level'] == 2:
                 self.Output.incrementDictValue('num_warning_slices')
                 sliceCenter = th2.GetXaxis().GetBinCenter(currentbin + sliceWidth/2)
-                self.Output.appendDictValue('warning_slices', 'slice centered @ %s' % sliceCenter)
+                self.Output.appendDictValue('warning_slices', 'slice centered @ %s (min = %s)' %\
+                                            (sliceCenter, self.Output.Value))
             elif self.Output.Status['level'] == 3:
                 self.Output.incrementDictValue('num_error_slices')
                 sliceCenter = th2.GetXaxis().GetBinCenter(currentbin + sliceWidth/2)
-                self.Output.appendDictValue('error_slices', 'slice centered @ %s' % sliceCenter)
+                self.Output.appendDictValue('error_slices', 'slice centered @ %s (min = %s)' %\
+                                            (sliceCenter, self.Output.Value))
             currentbin += sliceWidth
         self.RootObject = th2
         if self.Output.getDictValue('num_error_slices'):
