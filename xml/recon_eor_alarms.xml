@@ -143,6 +143,14 @@
       </alarm>
     </alarmSet>
 
+    <alarmSet name="SuspCalHi_Highest0_TH2" enabled="True">
+      <alarm function="x_min_bin_slices" enabled="True">
+ 	<parameter name="num_adjacent_bins" value="2"/>     
+	<parameter name="slice_width" value="24"/>
+	<warning_limits min="1200.0" max="1700.0"/>
+	<error_limits min="1000.0" max="2000.0"/>
+      </alarm>
+    </alarmSet>
 
 
   </alarmList>
