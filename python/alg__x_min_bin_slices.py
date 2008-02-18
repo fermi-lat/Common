@@ -1,10 +1,10 @@
 
 from pSafeROOT import ROOT
-from copy import deepcopy
-from alg__x_min_bin import alg__x_min_bin
 
+from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
+from alg__x_min_bin import alg__x_min_bin 
 
-class alg__x_min_bin_slices(alg__x_min_bin):
+class alg__x_min_bin_slices(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH2F']
     SUPPORTED_PARAMETERS = ['num_adjacent_bins', 'slice_width']
@@ -14,42 +14,46 @@ class alg__x_min_bin_slices(alg__x_min_bin):
                             'error_slices'      : []}
     OUTPUT_LABEL         = ''
 
-
-    def __init__(self, limits, object, paramsDict, conditionsDict = {}):
-        alg__x_min_bin.__init__(self, limits, object, paramsDict,\
-                                conditionsDict = {})
-        self.Output.DetailedDict = deepcopy(self.OUTPUT_DICTIONARY)
-
     def run(self):
+        try:
+            numAdjacentBins = self.ParamsDict['num_adjacent_bins']
+        except KeyError:
+            numAdjacentBins = 1
+
         try:
             sliceWidth = self.ParamsDict['slice_width']
         except KeyError:
             sliceWidth = 1
-
-        th2 =   self.RootObject
-        currentbin = th2.GetXaxis().GetFirst()
-        lastbin    = th2.GetXaxis().GetLast() - sliceWidth
-        while(currentbin < lastbin):   
-            self.RootObject = th2.ProjectionY("hslice",currentbin,currentbin+sliceWidth)            
-            alg__x_min_bin.run(self)
-            if self.Output.Status['level'] == 2:
-                self.Output.incrementDictValue('num_warning_slices')
-                sliceCenter = th2.GetXaxis().GetBinCenter(currentbin + sliceWidth/2)
-                self.Output.appendDictValue('warning_slices', 'slice centered @ %s (min = %s)' %\
-                                            (sliceCenter, self.Output.Value))
-            elif self.Output.Status['level'] == 3:
-                self.Output.incrementDictValue('num_error_slices')
-                sliceCenter = th2.GetXaxis().GetBinCenter(currentbin + sliceWidth/2)
+	singleSliceParamsDict = {'num_adjacent_bins': numAdjacentBins}
+        currentbin = self.RootObject.GetXaxis().GetFirst()
+        lastbin    = self.RootObject.GetXaxis().GetLast() - sliceWidth
+	errorValues = []
+	warningValues = []
+	values = []
+        while(currentbin < lastbin):
+            hslice = self.RootObject.ProjectionY("hslice",currentbin,currentbin+sliceWidth)            
+            singleSliceAlarm = alg__x_min_bin(self.Limits, hslice, singleSliceParamsDict)
+            singleSliceAlarm.apply()
+            sliceCenter = self.RootObject.GetXaxis().GetBinCenter(currentbin + sliceWidth/2)
+	    values.append(singleSliceAlarm.Output.Value)
+	    if singleSliceAlarm.Output.isError():
+	        self.Output.incrementDictValue('num_error_slices')
                 self.Output.appendDictValue('error_slices', 'slice centered @ %s (min = %s)' %\
-                                            (sliceCenter, self.Output.Value))
+                                            (sliceCenter, singleSliceAlarm.Output.Value))
+		errorValues.append(singleSliceAlarm.Output.Value)
+	    elif singleSliceAlarm.Output.isWarning():
+	        self.Output.incrementDictValue('num_warning_slices')
+                self.Output.appendDictValue('warning_slices', 'slice centered @ %s (min = %s)' %\
+                                            (sliceCenter, singleSliceAlarm.Output.Value))
+                warningValues.append(singleSliceAlarm.Output.Value)
             currentbin += sliceWidth
-        self.RootObject = th2
-        if self.Output.getDictValue('num_error_slices'):
-            self.Output.setStatusError()
-            self.Output.setValue(self.Output.getDictValue('error_slices')[0])
-        elif self.Output.getDictValue('num_warning_slices'):
-            self.Output.setStatusWarning()
-            self.Output.setValue(self.Output.getDictValue('warning_slices')[0])
+	if self.Output.getDictValue('num_error_slices'):
+	    self.Output.setValue(min(errorValues))
+	elif self.Output.getDictValue('num_warning_slices'):
+	    self.Output.setValue(min(warningValues))
+	else:
+	    self.Output.setValue(min(values))
+	    
 
 
 if __name__ == '__main__':
@@ -66,6 +70,6 @@ if __name__ == '__main__':
     histogram.SetBinContent(10,12, 23)
     histogram.Draw("colz")
     canvas.Update()
-    algorithm = alg__x_min_bin_slices(limits, histogram, {})
+    algorithm = alg__x_min_bin_slices(limits, histogram, {'slice_width': 12})
     algorithm.apply()
     print algorithm.Output

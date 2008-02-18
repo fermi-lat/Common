@@ -56,12 +56,33 @@ class pAlarmOutput:
         self.Status       = STATUS_UNDEFINED
         self.DetailedDict = {}
 
+    ## @brief Return whether the status is undefined or not.
+    ## @param self
+    #  The class instance.        
+
+    def isUndefined(self):
+        return self.Status == STATUS_UNDEFINED
+
     ## @brief Return whether the status is clean or not.
     ## @param self
     #  The class instance.        
 
     def isClean(self):
-        return self.Status['level'] == STATUS_CLEAN['level']
+        return self.Status == STATUS_CLEAN
+
+    ## @brief Return whether the status is warning or not.
+    ## @param self
+    #  The class instance.        
+
+    def isWarning(self):
+        return self.Status == STATUS_WARNING
+
+    ## @brief Return whether the status is error or not.
+    ## @param self
+    #  The class instance.        
+
+    def isError(self):
+        return self.Status == STATUS_ERROR
 
     ## @brief Set the output value and check it against the alarm limits.
     ## @param self
