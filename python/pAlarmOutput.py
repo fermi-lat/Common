@@ -73,21 +73,33 @@ class pAlarmOutput:
         self.Value = value
         self.__processValue()
 
+    def setStatusUndefined(self):
+        self.Status = STATUS_UNDEFINED
+
+    def setStatusClean(self):
+        self.Status = STATUS_CLEAN
+
+    def setStatusWarning(self):
+        self.Status = STATUS_WARNING
+
+    def setStatusError(self):
+        self.Status = STATUS_ERROR
+
     ## @brief Check the output value against the limits.
     ## @param self
     #  The class instance.
     
     def __processValue(self):
         if self.Value is None:
-	    self.Status = STATUS_UNDEFINED
+            self.setStatusUndefined()
         elif (self.Value > self.Limits.WarningMin)\
                  and (self.Value < self.Limits.WarningMax):
-            self.Status = STATUS_CLEAN
+            self.setStatusClean()
         elif (self.Value <= self.Limits.ErrorMin)\
                  or (self.Value >= self.Limits.ErrorMax):	
-            self.Status = STATUS_ERROR
+            self.setStatusError()
         else:
-            self.Status = STATUS_WARNING
+            self.setStatusWarning()
 
     ## @brief Get the value corresponding to a particular key of the
     #  detailed dictionary.
