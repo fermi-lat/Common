@@ -47,6 +47,7 @@ class alg__x_min_bin_slices(pAlarmBaseAlgorithm):
                                             (sliceCenter, singleSliceAlarm.Output.Value))
                 warningValues.append(singleSliceAlarm.Output.Value)
             currentbin += sliceWidth
+            hslice.Delete()
 	if self.Output.getDictValue('num_error_slices'):
 	    self.Output.setValue(min(errorValues))
 	elif self.Output.getDictValue('num_warning_slices'):
