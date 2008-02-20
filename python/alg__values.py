@@ -2,7 +2,7 @@
 from pSafeROOT import ROOT
 
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
-
+import pUtils
 
 ## @brief Make sure all the entries of a branch are within limits.
 #
@@ -33,6 +33,7 @@ class alg__values(pAlarmBaseAlgorithm):
 
     def run(self):
         for entry in range(self.RootObject.GetEntries()):
+            self.RootTree.GetEntry(entry)
             for index in range (self.RootLeaf.GetLen()):
                 indices = self.indexlist(index)
                 if(indices!=[]):
@@ -43,18 +44,21 @@ class alg__values(pAlarmBaseAlgorithm):
                         if self.matchindex(indices , self.ParamsDict["Exclude"]):
                             continue
                 value = self.getBranchContent(entry,index)
+                timestamp = self.RootTree.TimeStampFirstEvt
+                
                 if value < self.Limits.ErrorMin or value > self.Limits.ErrorMax:
                     if indices==[]:
-                        point = (entry, value)
+                        point = 'Time bin starting @ %f, value = %s'  % (timestamp, pUtils.formatNumber(value))
                     else:
-                        point = (entry,indices,value)
+                        point =  'Time bin starting @ %f, index = %s, value = %s'  % (timestamp,indices,pUtils.formatNumber(value))
                     self.Output.incrementDictValue('num_error_entries')
                     self.Output.appendDictValue('error_entries', point)
                 elif value < self.Limits.WarningMin or value > self.Limits.WarningMax:
                     if indices==[]:
-                        point = (entry, value)
+                        point = 'Time bin starting @ %f, value = %s'  % (timestamp, pUtils.formatNumber(value))
                     else:
-                        point = (entry,indices,value)
+                        point =  'Time bin starting @ %f, index = %s, value = %s'  % (timestamp,indices,pUtils.formatNumber(value))
+
                     self.Output.incrementDictValue('num_warning_entries')
                     self.Output.appendDictValue('warning_entries', point)
                 if self.Output.getDictValue('num_error_entries'):
