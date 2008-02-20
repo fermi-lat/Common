@@ -22,8 +22,8 @@ class alg__values(pAlarmBaseAlgorithm):
                             }
     OUTPUT_LABEL          = ''
 
-    def __init__(self, limits, object, paramsDict):
-        pAlarmBaseAlgorithm.__init__(self, limits, object, paramsDict)
+    def __init__(self, limits, object, paramsDict, conditionsDict):
+        pAlarmBaseAlgorithm.__init__(self, limits, object, paramsDict, conditionsDict)
         self.RootTree = self.RootObject.GetTree()
         self.RootLeaf = self.RootTree.GetLeaf(self.RootObject.GetName())
 
