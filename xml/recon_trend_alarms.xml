@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+
+<alarms>
+
+<!-- TKR
+ -->
+  <alarmList group="Global" name="Global base" enabled="True">
+
+    <alarmSet name="Time/Mean_ReconEnergy" enabled="True">
+      <alarm function="values" enabled="True">
+	<warning_limits min="2000.0" max="3000.0"/>
+	<error_limits   min="1800.0"  max="5000.0"/>
+      </alarm> 
+    </alarmSet>
+
+  </alarmList>
+
+</alarms>
+  
