@@ -99,7 +99,7 @@ class alg__values(pAlarmBaseAlgorithm):
         return position
 
     def run(self):
-        deltaDict = {0: 0}
+        deltaDict = {}
         self.__createArrays()
         for i in range(self.RootObject.GetEntries()):
             self.RootTree.GetEntry(i)
@@ -109,22 +109,26 @@ class alg__values(pAlarmBaseAlgorithm):
                     label = self.getOutputDictLabel(value, j)
                     self.Output.incrementDictValue('num_error_entries')
                     self.Output.appendDictValue('error_entries', label)
-                    deltaDict[(self.Limits.ErrorMin - value)*100] = value
+                    delta = (self.Limits.ErrorMin - value)*100
                 elif value > self.Limits.ErrorMax:
                     label = self.getOutputDictLabel(value, j)
                     self.Output.incrementDictValue('num_error_entries')
                     self.Output.appendDictValue('error_entries', label)
-                    deltaDict[(value - self.Limits.ErrorMax)*100] = value
+                    delta = (value - self.Limits.ErrorMax)*100
                 elif value < self.Limits.WarningMin:
                     label = self.getOutputDictLabel(value, j)
                     self.Output.incrementDictValue('num_warning_entries')
                     self.Output.appendDictValue('warning_entries', label)
-                    deltaDict[self.Limits.WarningMin - value] = value
+                    delta = (self.Limits.WarningMin - value)*10
                 elif value > self.Limits.WarningMax:
                     label = self.getOutputDictLabel(value, j)
                     self.Output.incrementDictValue('num_warning_entries')
                     self.Output.appendDictValue('warning_entries', label)
-                    deltaDict[value - self.Limits.WarningMax] = value
+                    delta = (value - self.Limits.WarningMax)*10
+                else:
+                    delta = max((self.Limits.WarningMax - value),\
+                                (value - self.Limits.WarningMin))
+                deltaDict[delta] = value
                 j += 1
         deltas = deltaDict.keys()
         deltas.sort()
