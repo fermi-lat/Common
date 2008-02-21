@@ -13,6 +13,12 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  If the histogram is empty, then the alarm output is an error and the value
 #  returned is the histogram overflow bin (last bin + 1).
 #
+#  <b>Valid parameters</b>:
+#
+#  @li <tt>num_adjacent_bins</tt>: number of required bins adjacent to the
+#  leftmost one (knob to make the algorithm roboust against isolated bins).
+#  <br>
+#
 #  <b>Output value</b>:
 #
 #  The center of the leftmost populated bin.
@@ -24,27 +30,24 @@ class alg__x_min_bin(pAlarmBaseAlgorithm):
     OUTPUT_DICTIONARY    = {}
     OUTPUT_LABEL         = 'Center of the leftmost populated bin'
 
-    ## @brief Basic algorithm evaluation for 1-dimensional histograms.
-    ## @param self
-    #  The class instance.
-
     def run(self):
         try:
             numAdjacentBins = self.ParamsDict['num_adjacent_bins']
         except KeyError:
             numAdjacentBins = 1
-
-        currentbin = self.RootObject.GetXaxis().GetFirst()        
-        while(currentbin < (self.RootObject.GetXaxis().GetLast() - numAdjacentBins)):   
+        currentBin = self.RootObject.GetXaxis().GetFirst()        
+        while(currentBin < (self.RootObject.GetXaxis().GetLast() -\
+                            numAdjacentBins)):   
             binList = []
-	    for bin in range(currentbin, currentbin+numAdjacentBins):                
-		if self.RootObject.GetBinContent(bin) > 0:
-		    binList.append(bin)
-	    if len(binList) ==  numAdjacentBins:
+	    for bin in range(currentBin, currentBin + numAdjacentBins):
+                binList.append(bin)
+            if len(binList) ==  numAdjacentBins:
 	        self.Output.setValue(self.RootObject.GetBinCenter(binList[0]))
                 return None
-            currentbin += numAdjacentBins
-	self.Output.setValue(self.RootObject.GetBinCenter(self.RootObject.GetXaxis().GetLast()+1))
+            currentBin += numAdjacentBins
+        lastBin = self.RootObject.GetXaxis().GetLast() + 1
+        lastBinCenter = self.RootObject.GetBinCenter(lastBin)
+	self.Output.setValue(lastBinCenter)
 
 
 

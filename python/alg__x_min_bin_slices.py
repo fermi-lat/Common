@@ -5,6 +5,25 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 from alg__x_min_bin import alg__x_min_bin
 
 
+## @brief This is an attempt to generalize the @ref alg__x_min_bin algorithm
+#  to a 2-dimensional histogram. The histogram itself is first sliced
+#  along the y axis (the width of the slice can be optionally set) and
+#  the base alg__x_min_bin algorithm is then applied on each slice.
+#
+#  <b>Valid parameters</b>:
+#
+#  @li <tt>num_adjacent_bins</tt>: number of required bins adjacent to the
+#  leftmost one (knob to make the algorithm roboust against isolated bins).
+#  <br>
+#
+#  @li <tt>slice_width</tt>: the width of each slice (number of bins) of the
+#  2-dimensional histogram.
+#  <br>
+#
+#  <b>Output value</b>:
+#
+#  The center of the leftmost populated bin for the worst (i.e. the most "out
+#  of limits" slice).
 
 class alg__x_min_bin_slices(pAlarmBaseAlgorithm):
 
