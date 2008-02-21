@@ -103,6 +103,16 @@ def expandNumber(number, targetLength):
     else:
         return '%s' % string[:targetLength]
 
+def formatFloat(number):
+    if abs(number) > 0.001 and number < 100:
+        numDecFigures = int(3 - log10(abs(number)))
+        formatString = '%' + '.%df' % numDecFigures
+        return formatString % number
+    elif abs(number) > 100 and number < 10000:
+        return '%.1f' % number
+    else:
+        return '%.2e' % number
+
 ## @brief Format a number in such a way it gets nicely printed on the
 #  terminal or in the reports.
 #
@@ -118,16 +128,12 @@ def formatNumber(number):
     elif type(number) == types.IntType:
         return '%d' % number
     elif type(number) == types.FloatType:
-        if abs(number) > 0.001 and number < 100:
-            numDecFigures = int(3 - log10(abs(number)))
-            formatString = '%' + '.%df' % numDecFigures
-            return formatString % number
-        elif abs(number) > 100 and number < 10000:
-            return '%.1f' % number
-        else:
-            return '%.2e' % number
+        return formatFloat(number)
     else:
-        return number
+        try:
+            return formatFloat(float(number))
+        except:
+            return number
 
 ## @brief Format a string to appear with monospace (typesetter) font in the
 #  test report
