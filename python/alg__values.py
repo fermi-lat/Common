@@ -22,7 +22,7 @@ class alg__values(pAlarmBaseAlgorithm):
                             }
     OUTPUT_LABEL          = ''
 
-    def __init__(self, limits, object, paramsDict, conditionsDict):
+    def __init__(self, limits, object, paramsDict, conditionsDict = {}):
         pAlarmBaseAlgorithm.__init__(self, limits, object, paramsDict, conditionsDict)
         self.RootTree = self.RootObject.GetTree()
         self.RootLeaf = self.RootTree.GetLeaf(self.RootObject.GetName())
@@ -105,5 +105,30 @@ class alg__values(pAlarmBaseAlgorithm):
             
 
 if __name__ == '__main__':
-    pass
-
+    from pAlarmLimits import pAlarmLimits
+    limits = pAlarmLimits(-2, 2, -3, 3)   
+    import array
+    import random
+    testFilePath = './test.root'
+    testTreeName = 'testTree'
+    timeBranchName = 'TimeStampFirstEvt'
+    testBranchName = 'testBranch'
+    testFile = ROOT.TFile(testFilePath, 'RECREATE')
+    testTree = ROOT.TTree(testTreeName, testTreeName)
+    timeArray = array.array('f', [0.0])
+    testArray = array.array('f', [0.0])
+    testTree.Branch(timeBranchName, timeArray, '%s/F' % timeBranchName)
+    testTree.Branch(testBranchName, testArray, '%s/F' % testBranchName)
+    for i in range(100):
+        timeArray[0] = i
+        testArray[0] = random.gauss(0, 1)
+        testTree.Fill()
+    testFile.Write()
+    testBranch = testTree.GetBranch(testBranchName)
+    pardict = {}
+    algorithm = alg__values(limits, testBranch, pardict)
+    algorithm.apply()
+    print algorithm.Output
+    testFile.Close()
+    import os
+    os.system('rm -f %s' % testFilePath)
