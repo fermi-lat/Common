@@ -142,7 +142,11 @@ class pAlarmBaseAlgorithm:
     #  The class instance.
 
     def checkObjectType(self):
-        if self.getObjectType() not in self.SUPPORTED_TYPES:
+        if self.RootObject is None:
+            self.__RootObjectOK = False
+            logger.error('Could not find a ROOT object. ' +\
+                         'The corresponding alarm will be ignored.')
+        elif self.getObjectType() not in self.SUPPORTED_TYPES:
             self.__RootObjectOK = False
             logger.error('Invalid object type (%s) for %s. '        %\
                              (self.getObjectType(), self.getName()) +\
