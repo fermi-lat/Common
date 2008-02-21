@@ -85,7 +85,8 @@ class pAlarmReportGenerator(pBaseReportGenerator):
             if details != {} and not alarm.isClean():
                 self.addDictionary('%s---%s details' %\
                                    (alarm.getPlotName(), alarm.FunctionName),\
-                                   details, 'alarms_details', alarm.getPlotName())
+                                   details, 'alarms_details',\
+                                   alarm.getPlotName())
                 link = self.getHtmlLinkBlock('details',\
                                              'alarms_details.html#%s' %\
                                              alarm.getPlotName())

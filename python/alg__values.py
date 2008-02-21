@@ -109,22 +109,22 @@ class alg__values(pAlarmBaseAlgorithm):
                     label = self.getOutputDictLabel(value, j)
                     self.Output.incrementDictValue('num_error_entries')
                     self.Output.appendDictValue('error_entries', label)
-                    delta = (self.Limits.ErrorMin - value)*100
+                    delta = (self.Limits.ErrorMin - value)*10000
                 elif value > self.Limits.ErrorMax:
                     label = self.getOutputDictLabel(value, j)
                     self.Output.incrementDictValue('num_error_entries')
                     self.Output.appendDictValue('error_entries', label)
-                    delta = (value - self.Limits.ErrorMax)*100
+                    delta = (value - self.Limits.ErrorMax)*10000
                 elif value < self.Limits.WarningMin:
                     label = self.getOutputDictLabel(value, j)
                     self.Output.incrementDictValue('num_warning_entries')
                     self.Output.appendDictValue('warning_entries', label)
-                    delta = (self.Limits.WarningMin - value)*10
+                    delta = (self.Limits.WarningMin - value)*100
                 elif value > self.Limits.WarningMax:
                     label = self.getOutputDictLabel(value, j)
                     self.Output.incrementDictValue('num_warning_entries')
                     self.Output.appendDictValue('warning_entries', label)
-                    delta = (value - self.Limits.WarningMax)*10
+                    delta = (value - self.Limits.WarningMax)*100
                 else:
                     delta = max((self.Limits.WarningMax - value),\
                                 (value - self.Limits.WarningMin))
