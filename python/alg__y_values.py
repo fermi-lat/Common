@@ -22,17 +22,13 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #
 #  <b>Output details</b>:
 #
-#  @li <tt>num_warning_bins</tt>: the number of empty bins whose statistical
-#  significance produces a warning.
+#  @li <tt>num_warning_bins</tt>: number of bins/poins causing a warning.
 #  <br>
-#  @li <tt>num_error_bins</tt>: the number of empty bins whose statistical
-#  significance produces an error.
+#  @li <tt>num_error_bins</tt>: number of bins/poins causing an error.
 #  <br>
-#  @li <tt>warning_bins</tt>: a list of all the bins producing a warning. Each
-#  element of the list is a string which should be self-explaining.
+#  @li <tt>warning_bins</tt>: detailed list of bins/poins causing a warning.
 #  <br>
-#  @li <tt>error_bins</tt>: a list of all the bins producing a warning. Each
-#  element of the list is a string which should be self-explaining.
+#  @li <tt>error_bins</tt>: detailed list of bins/poins causing an error.
 #  <br>
 
 
@@ -45,7 +41,7 @@ class alg__y_values(pAlarmBaseAlgorithm):
                             'warning_points'    : [],
                             'error_points'      : []
                             }
-    OUTPUT_LABEL         = 'Worst y-value'
+    OUTPUT_LABEL         = 'The most "out of range" y-value'
 
     def run(self):
         deltaDict = {0: 0}
