@@ -44,7 +44,7 @@ class alg__y_values(pAlarmBaseAlgorithm):
     OUTPUT_LABEL         = 'The most "out of range" y-value'
 
     def run(self):
-        deltaDict = {0: 0}
+        deltaDict = {}
         if self.ParamsDict.has_key('normalize'):
             if self.ParamsDict['normalize'] == True:
                 numEntries = self.RootObject.GetEntries()
@@ -61,19 +61,23 @@ class alg__y_values(pAlarmBaseAlgorithm):
             if value < self.Limits.ErrorMin:
                 self.Output.incrementDictValue('num_error_points')
                 self.Output.appendDictValue('error_points', binString)
-                deltaDict[(self.Limits.ErrorMin - value)*100] = value
+                delta = (self.Limits.ErrorMin - value)*10000
             elif value > self.Limits.ErrorMax:
                 self.Output.incrementDictValue('num_error_points')
                 self.Output.appendDictValue('error_points', binString)
-                deltaDict[(value - self.Limits.ErrorMax)*100] = value
+                delta = (value - self.Limits.ErrorMax)*10000
             elif value < self.Limits.WarningMin:
                 self.Output.incrementDictValue('num_warning_points')
                 self.Output.appendDictValue('warning_points', binString)
-                deltaDict[self.Limits.WarningMin - value] = value
+                delta = (self.Limits.WarningMin - value)*100
             elif value > self.Limits.WarningMax:
                 self.Output.incrementDictValue('num_warning_points')
                 self.Output.appendDictValue('warning_points', binString)
-                deltaDict[value - self.Limits.WarningMax] = value
+                delta = (value - self.Limits.WarningMax)*100
+            else:
+                delta = max((self.Limits.WarningMax - value),\
+                            (value - self.Limits.WarningMin))
+            deltaDict[delta] = value
         deltas = deltaDict.keys()
         deltas.sort()
         self.Output.setValue(deltaDict[deltas[-1]])
