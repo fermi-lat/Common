@@ -4,19 +4,19 @@
 
   <alarmList group="TKR" name="TKR base" enabled="True">
 
-    <alarmSet name="Time/Mean_TkrTotalHitsPerEvt" enabled="True">
+    <alarmSet name="Time::Mean_TkrTotalHitsPerEvt" enabled="True">
       <alarm function="values" enabled="True">
 	<warning_limits min="100.0" max="130.0"/>
 	<error_limits   min="80.0"  max="150.0"/>
       </alarm> 
     </alarmSet>
-    <alarmSet name="Time/Mean_TkrHitsPerEvt_Tower" enabled="True">
+    <alarmSet name="Time::Mean_TkrHitsPerEvt_Tower" enabled="True">
       <alarm function="values" enabled="True">
 	<warning_limits min="5.0" max="10.0"/>
 	<error_limits   min="3.0"  max="15.0"/>
       </alarm> 
     </alarmSet>
-    <alarmSet name="Time/Mean_TkrHitsPerEvt_TowerPlane" enabled="True">
+    <alarmSet name="Time::Mean_TkrHitsPerEvt_TowerPlane" enabled="True">
       <alarm function="values" enabled="True">
 	<warning_limits min="0.07" max="0.7"/>
 	<error_limits   min="0.03"  max="1.0"/>
@@ -28,14 +28,14 @@
   
   <alarmList group="CAL" name="CAL base" enabled="True">
 
-    <alarmSet name="Time/Mean_Cal_NHit" enabled="True">
+    <alarmSet name="Time::Mean_Cal_NHit" enabled="True">
       <alarm function="values" enabled="True">
 	<warning_limits min="8.0" max="16.0"/>
 	<error_limits   min="5.0"  max="20.0"/>
       </alarm> 
     </alarmSet>
 
-    <alarmSet name="Time/Mean_CalXHit_MHit_TowerCalLayer" enabled="True">
+    <alarmSet name="Time::Mean_CalXHit_MHit_TowerCalLayer" enabled="True">
       <alarm function="values" enabled="True">
 	<warning_limits min="0.04" max="0.18"/>
 	<error_limits   min="0.02"  max="0.25"/>

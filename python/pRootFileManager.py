@@ -10,6 +10,10 @@ import time
 
 from pSafeROOT import ROOT
 
+
+
+TREE_BRANCH_SEPARATOR = '::'
+
 ## @brief Class for ROOT file handling.
 
 class pRootFileManager:
@@ -100,7 +104,7 @@ class pRootFileManager:
     #  The name pattern.
 
     def find(self, pattern):
-        if '/' in pattern:
+        if TREE_BRANCH_SEPARATOR in pattern:
             return self.findTreeBranches(pattern)
         else:
             return self.findObjects(pattern)
@@ -132,7 +136,12 @@ class pRootFileManager:
     #  The name pattern.
 
     def findTreeBranches(self, pattern):
-        (treeName, branchName) = pattern.split('/')
+        try:
+            (treeName, branchName) = pattern.split(TREE_BRANCH_SEPARATOR)
+        except ValueError:
+            logger.error('"%s" does not seem like a tree-branch pattern.' %\
+                         pattern)
+            return []
         try:
             tree = self.RootFile.FindObjectAny(treeName)
         except:
