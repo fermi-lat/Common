@@ -99,41 +99,54 @@ class alg__values(pAlarmBaseAlgorithm):
             index -= index/fact*fact
         return position
 
+    ## @brief Check that a particular branch values lies within limits and
+    #  take the necessary actions if not (i.e. fill the output detailed
+    #  dictionary).
+    ## @param self
+    #  The class instance.
+    ## @param value
+    #  The branch value.
+    ## @param index
+    #  The index of the flattened numpy array.
+
+    def checkValue(self, value, index):
+        if value < self.Limits.ErrorMin:
+            label = self.getOutputDictLabel(value, index)
+            self.Output.incrementDictValue('num_error_entries')
+            self.Output.appendDictValue('error_entries', label)
+            delta = (self.Limits.ErrorMin - value)*10000
+        elif value > self.Limits.ErrorMax:
+            label = self.getOutputDictLabel(value, index)
+            self.Output.incrementDictValue('num_error_entries')
+            self.Output.appendDictValue('error_entries', label)
+            delta = (value - self.Limits.ErrorMax)*10000
+        elif value < self.Limits.WarningMin:
+            label = self.getOutputDictLabel(value, index)
+            self.Output.incrementDictValue('num_warning_entries')
+            self.Output.appendDictValue('warning_entries', label)
+            delta = (self.Limits.WarningMin - value)*100
+        elif value > self.Limits.WarningMax:
+            label = self.getOutputDictLabel(value, index)
+            self.Output.incrementDictValue('num_warning_entries')
+            self.Output.appendDictValue('warning_entries', label)
+            delta = (value - self.Limits.WarningMax)*100
+        else:
+            delta = max((self.Limits.WarningMax - value),\
+                        (value - self.Limits.WarningMin))
+        self.DeltaDict[delta] = value        
+
     def run(self):
-        deltaDict = {}
+        self.DeltaDict = {}
         self.__createArrays()
+        indexList = range(self.BranchArray.size)
         for i in range(self.RootObject.GetEntries()):
             self.RootTree.GetEntry(i)
-            j = 0
-            for value in self.BranchArray.flat:
-                if value < self.Limits.ErrorMin:
-                    label = self.getOutputDictLabel(value, j)
-                    self.Output.incrementDictValue('num_error_entries')
-                    self.Output.appendDictValue('error_entries', label)
-                    delta = (self.Limits.ErrorMin - value)*10000
-                elif value > self.Limits.ErrorMax:
-                    label = self.getOutputDictLabel(value, j)
-                    self.Output.incrementDictValue('num_error_entries')
-                    self.Output.appendDictValue('error_entries', label)
-                    delta = (value - self.Limits.ErrorMax)*10000
-                elif value < self.Limits.WarningMin:
-                    label = self.getOutputDictLabel(value, j)
-                    self.Output.incrementDictValue('num_warning_entries')
-                    self.Output.appendDictValue('warning_entries', label)
-                    delta = (self.Limits.WarningMin - value)*100
-                elif value > self.Limits.WarningMax:
-                    label = self.getOutputDictLabel(value, j)
-                    self.Output.incrementDictValue('num_warning_entries')
-                    self.Output.appendDictValue('warning_entries', label)
-                    delta = (value - self.Limits.WarningMax)*100
-                else:
-                    delta = max((self.Limits.WarningMax - value),\
-                                (value - self.Limits.WarningMin))
-                deltaDict[delta] = value
-                j += 1
-        deltas = deltaDict.keys()
+            flatArray = self.BranchArray.flatten()
+            for j in indexList:
+                self.checkValue(flatArray[j], j)
+        deltas = self.DeltaDict.keys()
         deltas.sort()
-        self.Output.setValue(deltaDict[deltas[-1]])
+        self.Output.setValue(self.DeltaDict[deltas[-1]])
         
             
 
