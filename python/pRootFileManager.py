@@ -54,9 +54,11 @@ class pRootFileManager:
     #  The class instance.
 
     def closeFile(self):
+        logger.info('Closing ROOT file...')
         if self.RootFile is not None:
             self.RootFile.Close()
             self.RootFile = None
+        logger.info('Done.')
 
     ## @brief Get a ROOT object from the ROOT File (by object name).
     ## @param self

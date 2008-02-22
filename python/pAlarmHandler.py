@@ -64,7 +64,6 @@ class pAlarmHandler:
         if xmlSummaryFilePath == None:
             xmlSummaryFilePath = rootFilePath.replace('.root', '.alarms.xml')
         self.XmlSummaryFilePath = xmlSummaryFilePath
-
         outputDirPath = os.path.dirname(self.XmlSummaryFilePath)
         if not os.path.exists(outputDirPath):
             os.makedirs(outputDirPath)
@@ -76,7 +75,6 @@ class pAlarmHandler:
         self.activateAlarms()
         self.AlarmStats = self.evalStatistics()
         pAlarmXmlSummaryGenerator(self).run()
-        
 
     ## @brief Assing the ROOT objects to the alarm sets.
     #
@@ -137,5 +135,5 @@ if __name__ == '__main__':
         ReportGenerator.run(False)
         if optparser.Options.V:
             ReportGenerator.viewReport()
-
+    alarmHandler.RootFileManager.closeFile()
         
