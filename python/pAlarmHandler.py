@@ -101,7 +101,8 @@ class pAlarmHandler:
     def activateAlarms(self):
         logger.info('Activating the alarms...')
         for alarm in self.XmlParser.getEnabledAlarms():
-            alarm.activate()
+            logger.debug('Activating alarm on plot : %s' % alarm.getPlotName())
+	    alarm.activate()
         logger.info('Done. %d enabled alarm(s) found.\n' %\
                      len(self.XmlParser.getEnabledAlarms()))
         
