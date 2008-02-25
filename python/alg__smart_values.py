@@ -10,6 +10,8 @@ import numpy
 
 class alg__smart_values(alg__values):
 
+    SUPPORTED_TYPES      = ['TTree']
+
     def __createArrays(self, timestampBranchName = 'TimeStampFirstEvt'):
         self.RootTree = self.RootObject.GetTree()
         self.RootLeaf = self.RootTree.GetLeaf(self.RootObject.GetName())
