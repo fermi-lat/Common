@@ -48,7 +48,6 @@ class alg__values(pAlarmBaseAlgorithm):
 
     def __createArrays(self, timestampBranchName = 'TimeStampFirstEvt'):
         self.RootTree = self.RootObject.GetTree()
-        self.RootLeaf = self.RootTree.GetLeaf(self.RootObject.GetName())
         self.TimestampArray = numpy.zeros((1), 'd')
         self.RootTree.SetBranchAddress(timestampBranchName,\
                                        self.TimestampArray)
