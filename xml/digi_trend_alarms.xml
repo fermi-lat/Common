@@ -275,6 +275,7 @@
 
     <alarmSet name="Time::Rate_AnyAcdVeto_AcdTile" enabled="True">
       <alarm function="values" enabled="True">
+	<parameter name="exclude" value="range(89, 96) + range(104, 128)"/>
 	<warning_limits min="1.0" max="30.0"/>
 	<error_limits   min="0.5"  max="50.0"/>
       </alarm> 
@@ -282,6 +283,7 @@
     
     <alarmSet name="Time::Rate_AcdVetoA_AcdTile" enabled="True">
       <alarm function="values" enabled="True">
+	<parameter name="exclude" value="range(89, 96) + range(104, 128)"/>
 	<warning_limits min="1.0" max="30.0"/>
 	<error_limits   min="0.5"  max="50.0"/>
       </alarm> 
@@ -289,6 +291,7 @@
     
     <alarmSet name="Time::Rate_AcdPmtA_OverThreshold_AcdTile" enabled="True">
       <alarm function="values" enabled="True">
+	<parameter name="exclude" value="range(89, 96) + range(104, 128)"/>
 	<warning_limits min="1.0" max="30.0"/>
 	<error_limits   min="0.5"  max="50.0"/>
       </alarm> 
@@ -296,6 +299,7 @@
     
     <alarmSet name="Time::Rate_AcdPmtB_OverThreshold_AcdTile" enabled="True">
       <alarm function="values" enabled="True">
+	<parameter name="exclude" value="range(89, 96) + range(104, 128)"/>
 	<warning_limits min="1.0" max="30.0"/>
 	<error_limits   min="0.5"  max="50.0"/>
       </alarm> 
@@ -317,6 +321,7 @@
       
     <alarmSet name="Time::Rate_SingleAcdPmt_OverThreshold_AcdTile" enabled="True">
       <alarm function="values" enabled="True">
+	<parameter name="exclude" value="range(89, 96) + range(104, 128)"/>
 	<warning_limits min="0.2" max="5.0"/>
 	<error_limits   min="0.1" max="10.0"/>
       </alarm> 
@@ -324,6 +329,7 @@
     
     <alarmSet name="Time::Rate_AnyAcdPmt_OverThreshold_AcdTile" enabled="True">
       <alarm function="values" enabled="True">
+	<parameter name="exclude" value="range(89, 96) + range(104, 128)"/>
 	<warning_limits min="1.0" max="30.0"/>
 	<error_limits   min="0.5"  max="50.0"/>
       </alarm> 
@@ -331,6 +337,7 @@
     
     <alarmSet name="Time::Rate_AcdGemVeto_AcdTile" enabled="True">
       <alarm function="values" enabled="True">
+	<parameter name="exclude" value="range(89, 96) + range(104, 128)"/>
 	<warning_limits min="1.0" max="30.0"/>
 	<error_limits   min="0.5"  max="50.0"/>
       </alarm> 
@@ -338,6 +345,7 @@
     
     <alarmSet name="Time::Rate_AcdHit_AcdTile" enabled="True">
       <alarm function="values" enabled="True">
+	<parameter name="exclude" value="range(89, 96) + range(104, 128)"/>
 	<warning_limits min="1.0" max="30.0"/>
 	<error_limits   min="0.5"  max="50.0"/>
       </alarm> 
@@ -352,6 +360,7 @@
     
     <alarmSet name="Time::Rate_SingleAcdVeto_AcdTile" enabled="True">
       <alarm function="values" enabled="True">
+	<parameter name="exclude" value="range(89, 96) + range(104, 128)"/>
 	<warning_limits min="0.0" max="5.0"/>
 	<error_limits   min="0.0"  max="10.0"/>
       </alarm> 
@@ -359,6 +368,7 @@
     
     <alarmSet name="Time::OutF_Normalized_AcdHit_AcdTile" enabled="True">
       <alarm function="values" enabled="True">
+	<parameter name="exclude" value="range(89, 96) + range(104, 128)"/>
 	<warning_limits min="0.002" max="0.1"/>
 	<error_limits   min="0.001"  max="0.5"/>
       </alarm> 
@@ -374,13 +384,15 @@
 
     <alarmSet name="Time::Mean_AcdPha_PmtA_AcdTile" enabled="True">
       <alarm function="values" enabled="True">
+	<parameter name="exclude" value="range(89, 96) + range(104, 128)"/>
 	<warning_limits min="0.0" max="100.0"/>
 	<error_limits   min="0.0" max="200.0"/>
       </alarm> 
     </alarmSet>
     
-    <alarmSet name="Time::Mean_AcdPha_PmtA_AcdTile" enabled="True">
+    <alarmSet name="Time::Mean_AcdPha_PmtB_AcdTile" enabled="True">
       <alarm function="values" enabled="True">
+	<parameter name="exclude" value="range(89, 96) + range(104, 128)"/>
 	<warning_limits min="0.0" max="100.0"/>
 	<error_limits   min="0.0" max="200.0"/>
       </alarm> 
