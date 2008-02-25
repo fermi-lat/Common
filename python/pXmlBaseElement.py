@@ -78,9 +78,9 @@ class pXmlBaseElement:
         try:
             return eval(attribute)
         except:
-            logger.error('Could not eval attribute %s for node %s. ' %\
-                          (attributeName, self.NodeName)             +\
-                          'Returning %s...' % default)
+            logger.error('Could not eval attribute "%s" for node "%s". ' %\
+                             (attributeName, self.NodeName)              +\
+                             'Returning %s...' % default)
             return default
 
     ## @brief Return a list of dom elements corrisponding to a given tag

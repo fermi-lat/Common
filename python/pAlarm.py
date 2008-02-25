@@ -110,8 +110,9 @@ class pAlarm(pXmlBaseElement):
         parametersDict = {}
         for domElement in self.getElementsByTagName('parameter'):
             xmlElement = pXmlBaseElement(domElement)
-            parametersDict[xmlElement.getAttribute('name')] =\
-                xmlElement.evalAttribute('value')
+            paramName = xmlElement.getAttribute('name')
+            paramValue = xmlElement.evalAttribute('value')
+            parametersDict[paramName] = paramValue
         return parametersDict
 
     ## @brief Extract the dictionary of conditions from the underlying

@@ -89,7 +89,7 @@ class pAlarmHandler:
             PlotList = self.RootFileManager.find(alarmSet.Name)
             alarmSet.setPlotsList(PlotList)
             if PlotList == []:
-                logger.error('Alarm set %s has no associated alarms.' %\
+                logger.error('Alarm set "%s" has no associated alarms.' %\
                              alarmSet.Name)
         logger.info('Done. %d enabled alarm set(s) found.\n' %\
                     len(self.XmlParser.getEnabledAlarmSets()))
