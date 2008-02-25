@@ -5,6 +5,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 import pUtils
 import numpy
+import types
 
 ## @brief Make sure all the entries of a branch are within limits.
 #
@@ -30,7 +31,7 @@ import numpy
 class alg__values(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TBranch']
-    SUPPORTED_PARAMETERS = []
+    SUPPORTED_PARAMETERS = ['exclude', 'only']
     OUTPUT_DICTIONARY    = {'num_warning_entries': 0,
                             'num_error_entries'  : 0,
                             'warning_entries'    : [],
@@ -76,28 +77,31 @@ class alg__values(pAlarmBaseAlgorithm):
         value = pUtils.formatNumber(value)
         if self.BranchArray.size == 1:
             return 'Time bin starting @ %f, value = %s'  %\
-                   (self.TimestampArray[0], value)
-        position = self.getArrayPosition(index)
+                (self.TimestampArray[0], value)
+        position = self.flat2tuple(index)
+        if len(position) == 1:
+            position = '[%d]' % position[0]
+        else:
+            position = str(position).replace('(', '[').replace(')', ']')        
         return 'Time bin starting @ %f, array index = %s,  value = %s'  %\
-               (self.TimestampArray[0], position, value)
+            (self.TimestampArray[0], position, value)
 
-    ## @brief Go back from the index of the flattened array to the position
-    #  in the original multidimensional array.
-    ## @param self
-    #  The class instance.
-    ## @param index
-    #  The index of the flattened numpy array.
+    def flat2tuple(self, flatIndex):
+        return numpy.unravel_index(flatIndex, self.BranchArray.shape)
 
-    def getArrayPosition(self, index):
-        position = []
-        for i in range(self.BranchArray.ndim):
-            fact = 1
-            for j in range(i + 1, self.BranchArray.ndim):
-                fact *= int(self.BranchArray.shape[j])
-            position.append(index/fact)
-            index -= index/fact*fact
-        return position
-
+    def tuple2flat(self, tupleIndex):
+        if type(tupleIndex) == types.IntType:
+            tupleIndex = (tupleIndex,)
+        index = 0
+        shape = self.BranchArray.shape
+        numDimensions = len(shape)
+        for i in range(numDimensions):
+            factor = 1
+            for j in shape[(i+1):]:
+                factor *= j
+            index += factor*tupleIndex[i]
+        return index
+            
     ## @brief Check that a particular branch values lies within limits and
     #  take the necessary actions if not (i.e. fill the output detailed
     #  dictionary).
@@ -137,7 +141,17 @@ class alg__values(pAlarmBaseAlgorithm):
     def run(self):
         self.DeltaDict = {}
         self.__createArrays()
-        indexList = range(self.BranchArray.size)
+        try:
+            indexList = []
+            for tupleIndex in self.ParamsDict['only']:
+                indexList.append(self.tuple2flat(tupleIndex))
+        except KeyError:
+            indexList = range(self.BranchArray.size)
+            try:
+                for tupleIndex in self.ParamsDict['exclude']:
+                    indexList.remove(self.tuple2flat(tupleIndex))
+            except KeyError:
+                pass
         for i in range(self.RootObject.GetEntries()):
             self.RootTree.GetEntry(i)
             flatArray = self.BranchArray.flatten()
