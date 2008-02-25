@@ -108,7 +108,7 @@ def formatFloat(number):
         numDecFigures = int(3 - log10(abs(number)))
         formatString = '%' + '.%df' % numDecFigures
         return formatString % number
-    elif abs(number) > 100 and number < 10000:
+    elif abs(number) >= 100 and number < 10000:
         return '%.1f' % number
     else:
         return '%.2e' % number
