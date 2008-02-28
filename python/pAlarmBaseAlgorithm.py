@@ -9,7 +9,19 @@ import types
 from pAlarmOutput import pAlarmOutput
 from copy         import copy, deepcopy
 
-
+ROOT2NUMPYDICT = {'C' : 'c',      #a character string terminated by the 0 character
+                  'B' : 'int8',   #an 8 bit signed integer (Char_t)
+                  'b' : 'uint8',  #an 8 bit unsigned integer (UChar_t)
+                  'S' : 'int16',  #a 16 bit signed integer (Short_t)
+                  's' : 'uint16', #a 16 bit unsigned integer (UShort_t)
+                  'I' : 'int32',  #a 32 bit signed integer (Int_t)
+                  'i' : 'uint32', #a 32 bit unsigned integer (UInt_t)
+                  'F' : 'float32',#a 32 bit floating point (Float_t)
+                  'D' : 'float64',#a 64 bit floating point (Double_t)
+                  'L' : 'int64',  #a 64 bit signed integer (Long64_t)
+                  'l' : 'uint64'  #a 64 bit unsigned integer (ULong64_t)
+		  }
+	    
 ## @brief Base class for alarm algorithms. Look at the inheritance diagram for
 #  the list of implemented algorithms.
 #
