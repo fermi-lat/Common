@@ -1,7 +1,7 @@
 
 from pSafeROOT import ROOT
 
-from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
+from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm, ROOT2NUMPYDICT
 
 import pUtils
 import numpy
@@ -52,7 +52,7 @@ class alg__values(pAlarmBaseAlgorithm):
         self.TimestampArray = numpy.zeros((1), 'd')
         self.RootTree.SetBranchAddress(timestampBranchName,\
                                        self.TimestampArray)
-        (name, type) = self.RootObject.GetTitle().split('/')
+        (name, atype) = self.RootObject.GetTitle().split('/')
         if '[' not in name:
             shape = (1)
         else:
@@ -60,7 +60,8 @@ class alg__values(pAlarmBaseAlgorithm):
             shape = shape.replace('][', ',')
             shape = shape.replace('[', '(').replace(']', ')')
             shape = eval(shape)
-        self.BranchArray = numpy.zeros(shape, type.lower())
+	# Get the correct type when defining the array : convert from ROOT types to Numpy types
+	self.BranchArray = numpy.zeros(shape, ROOT2NUMPYDICT[atype])
         self.RootTree.SetBranchAddress(self.RootObject.GetName(),\
                                        self.BranchArray)
 
@@ -77,7 +78,7 @@ class alg__values(pAlarmBaseAlgorithm):
         value = pUtils.formatNumber(value)
         if self.BranchArray.size == 1:
             return 'Time bin starting @ %f, value = %s'  %\
-                (self.TimestampArray[0], value)
+	        (self.TimestampArray[0], value)
         position = self.flat2tuple(index)
         if len(position) == 1:
             position = '[%d]' % position[0]
@@ -88,6 +89,7 @@ class alg__values(pAlarmBaseAlgorithm):
 
     def flat2tuple(self, flatIndex):
         return numpy.unravel_index(flatIndex, self.BranchArray.shape)
+         
 
     def tuple2flat(self, tupleIndex):
         if type(tupleIndex) == types.IntType:
@@ -113,7 +115,7 @@ class alg__values(pAlarmBaseAlgorithm):
     #  The index of the flattened numpy array.
 
     def checkValue(self, value, index):
-        if value < self.Limits.ErrorMin:
+	if value < self.Limits.ErrorMin:
             label = self.getOutputDictLabel(value, index)
             self.Output.incrementDictValue('num_error_entries')
             self.Output.appendDictValue('error_entries', label)
@@ -141,7 +143,7 @@ class alg__values(pAlarmBaseAlgorithm):
     def run(self):
         self.DeltaDict = {}
         self.__createArrays()
-        try:
+	try:
             indexList = []
             for tupleIndex in self.ParamsDict['only']:
                 indexList.append(self.tuple2flat(tupleIndex))
