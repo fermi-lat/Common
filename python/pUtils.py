@@ -3,6 +3,7 @@
 
 import re
 import types
+import logging
 
 from math import log10
 
@@ -103,10 +104,14 @@ def expandNumber(number, targetLength):
     else:
         return '%s' % string[:targetLength]
 
-def formatFloat(number):
-    if abs(number) > 0.001 and number < 100:
-        numDecFigures = int(3 - log10(abs(number)))
-        formatString = '%' + '.%df' % numDecFigures
+def formatFloat(number):    
+    if abs(number) > 0.001 and abs(number) < 100:
+        try:
+	    numDecFigures = int(3 - log10(abs(number)))
+        except OverflowError:
+	    logging.error('OverflowError for number %s' % number)
+	    numDecFigures = 2	
+	formatString = '%' + '.%df' % numDecFigures
         return formatString % number
     elif abs(number) >= 100 and number < 10000:
         return '%.1f' % number
