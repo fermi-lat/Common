@@ -38,10 +38,10 @@
       </alarm> 
     </alarmSet>
 
-    <alarmSet name="Time::FastMon_CalLogEndRangeHit" enabled="True">
+    <alarmSet name="Time::Mean_FastMon_CalLogEndRangeHit" enabled="True">
       <alarm function="values" enabled="True">
-	<warning_limits min="0.0" max="0.02"/>
-	<error_limits   min="0.0" max="0.03"/>
+	<warning_limits max="0.02"/>
+	<error_limits   max="0.03"/>
       </alarm> 
     </alarmSet>
         
