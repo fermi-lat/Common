@@ -37,6 +37,13 @@
 	<error_limits   min="5.0"  max="20.0"/>
       </alarm> 
     </alarmSet>
+
+    <alarmSet name="Time::FastMon_CalLogEndRangeHit" enabled="True">
+      <alarm function="values" enabled="True">
+	<warning_limits min="0.0" max="0.02"/>
+	<error_limits   min="0.0" max="0.03"/>
+      </alarm> 
+    </alarmSet>
         
   </alarmList>  
 
