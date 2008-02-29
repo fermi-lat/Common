@@ -39,8 +39,8 @@ class pXmlBaseParser:
     def getEnabledPlotLists(self):
         lists = []
         for element in self.XmlDoc.getElementsByTagName('outputList'):
-            list = pXmlPlotList(element)
-            if list.Enabled:
-                lists.append(list)
+            alist = pXmlPlotList(element)
+            if alist.Enabled:
+                lists.append(alist)
         return lists
     
