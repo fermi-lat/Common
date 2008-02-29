@@ -279,6 +279,11 @@
 	<warning_limits min="1.0" max="30.0"/>
 	<error_limits   min="0.5"  max="50.0"/>
       </alarm> 
+      <alarm function="values" enabled="True">
+	<parameter name="only" value="range(89, 96) + range(104, 128)"/>
+	<warning_limits min="-0.01" max="0.01"/>
+	<error_limits   min="-0.01"  max="0.01"/>
+      </alarm> 
     </alarmSet>
     
     <alarmSet name="Time::Rate_AcdVetoA_AcdTile" enabled="True">
