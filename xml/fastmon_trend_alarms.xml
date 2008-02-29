@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+
+<alarms>
+
+<!-- Environment quantities -->
+  <alarmList group="SpaceCraft" name="SpaceCraft base" enabled="True">
+    <alarmSet name="Time::Mean_FastMon_SpaceCraft_Altitude" enabled="True">
+      <alarm function="values" enabled="True">
+	<warning_limits min="500" max="600"/>
+	<error_limits   min="500"  max="600"/>
+      </alarm> 
+    </alarmSet>    
+  </alarmList>
+
+
+<!-- TKR
+  -->
+
+  <alarmList group="TKR" name="TKR base" enabled="True">
+    <alarmSet name="Time::Mean_FastMon_TkrHits" enabled="True">
+      <alarm function="values" enabled="True">
+	<warning_limits min="0.07" max="0.7"/>
+	<error_limits   min="0.03"  max="1.0"/>
+      </alarm> 
+    </alarmSet>
+   
+  </alarmList>
+  
+<!-- CAL
+  -->
+  
+  <alarmList group="CAL" name="CAL base" enabled="True">
+
+    <alarmSet name="Time::Mean_FastMon_CalTowerCount" enabled="True">
+      <alarm function="values" enabled="True">
+	<warning_limits min="8.0" max="16.0"/>
+	<error_limits   min="5.0"  max="20.0"/>
+      </alarm> 
+    </alarmSet>
+        
+  </alarmList>  
+
+
+</alarms>
+  
