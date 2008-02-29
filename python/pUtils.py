@@ -3,7 +3,8 @@
 
 import re
 import types
-import logging
+import pSafeLogger
+logger = pSafeLogger.getLogger('pUtils')
 
 from math import log10
 
@@ -109,7 +110,7 @@ def formatFloat(number):
         try:
 	    numDecFigures = int(3 - log10(abs(number)))
         except OverflowError:
-	    logging.error('OverflowError for number %s' % number)
+	    logger.error('OverflowError for number %s' % number)
 	    numDecFigures = 2	
 	formatString = '%' + '.%df' % numDecFigures
         return formatString % number
