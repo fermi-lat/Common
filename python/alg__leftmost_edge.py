@@ -72,10 +72,9 @@ class alg__leftmost_edge(pAlarmBaseAlgorithm):
         except:
             threshold = 7
         numBins = self.RootObject.GetNbinsX()
-        for i in range(1 + self.WindowHalfWidth,\
-                       numBins + 1 - self.WindowHalfWidth):
-            significance = self.getEdgeSignificance(i)
-            if significance > threshold:
+        for i in range(1 + self.WindowHalfWidth, numBins + 1 - self.WindowHalfWidth):
+	    significance = self.getEdgeSignificance(i)
+	    if significance > threshold:
                 self.refineEdge(i, significance)
                 return
 
@@ -86,6 +85,8 @@ class alg__leftmost_edge(pAlarmBaseAlgorithm):
             leftSum += self.RootObject.GetBinContent(j)
         for j in range(bin + 1, bin + self.WindowHalfWidth + 1):
             rightSum += self.RootObject.GetBinContent(j)
+	if leftSum > rightSum:
+	    return 0
         try:
 	    return sqrt(self.WindowHalfWidth)*abs(rightSum - leftSum)/\
               		   sqrt(rightSum + leftSum)
@@ -94,6 +95,8 @@ class alg__leftmost_edge(pAlarmBaseAlgorithm):
 
     def refineEdge(self, startBin, startSignificance):
         maxSignificance = startSignificance
+        self.Output.setDictValue('significance', startSignificance)
+        self.Output.setValue(self.RootObject.GetBinCenter(startBin))
         for k in range(startBin + 1, startBin + self.WindowHalfWidth + 1):
             significance = self.getEdgeSignificance(k)
             if significance > maxSignificance:
@@ -109,6 +112,8 @@ if __name__ == '__main__':
     canvas = ROOT.TCanvas('Test canvas', 'Test canvas', 600, 300)
     limits = pAlarmLimits(30, 40, 20, 60)
 
+#    f = ROOT.TFile("/data37/users/ISOCdata/OpsSim2/258160000/AcdPmt.root")
+#    histogram = f.Get('ReconAcdPhaMips_PMTA_Zoom_TH1_AcdTile_0')
     histogram = ROOT.TH1F('h1', 'h1', 100, 0, 100)
     for i in range(1, 43):
         histogram.SetBinContent(i, random.gauss(5, sqrt(5)))
