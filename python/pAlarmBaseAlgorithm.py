@@ -6,10 +6,13 @@ logger = pSafeLogger.getLogger('pAlarmBaseAlgorithm')
 
 import pUtils
 import types
+import numpy
+
 from pAlarmOutput import pAlarmOutput
+from pAlarmOutput import STATUS_CLEAN, STATUS_WARNING, STATUS_ERROR
 from copy         import copy, deepcopy
 
-ROOT2NUMPYDICT = {'C' : 'c',      #a character string terminated by the 0 character
+ROOT2NUMPYDICT = {'C' : 'c',      #a character string terminated by the 0 char
                   'B' : 'int8',   #an 8 bit signed integer (Char_t)
                   'b' : 'uint8',  #an 8 bit unsigned integer (UChar_t)
                   'S' : 'int16',  #a 16 bit signed integer (Short_t)
@@ -21,6 +24,10 @@ ROOT2NUMPYDICT = {'C' : 'c',      #a character string terminated by the 0 charac
                   'L' : 'int64',  #a 64 bit signed integer (Long64_t)
                   'l' : 'uint64'  #a 64 bit unsigned integer (ULong64_t)
 		  }
+
+ERROR_BADNESS_FACTOR   = 1.0e6
+WARNING_BADNESS_FACTOR = 1.0e3
+CLEAN_BADNESS_FACTOR   = 1.0
 	    
 ## @brief Base class for alarm algorithms. Look at the inheritance diagram for
 #  the list of implemented algorithms.
@@ -232,6 +239,95 @@ class pAlarmBaseAlgorithm:
     def run(self):
         logger.error('Method run() not implemented for %s.' % self.getName())
 
+    ## @brief Return the "badness" of a given value.
+    #
+    #  The badness is a measure of the distance of a given points from the
+    #  alarm bounds, weighted with the status (CLEAN, WARNING, ERROR) of the
+    #  point itself---according to fixed weight factors.
+    ## @param self
+    #  The class instance.
+    ## @param value
+    #  The value.
+    
+    def getBadness(self, value):
+        if value < self.Limits.ErrorMin:
+            badness = (self.Limits.ErrorMin - value)*ERROR_BADNESS_FACTOR
+        elif value > self.Limits.ErrorMax:
+            badness = (value - self.Limits.ErrorMax)*ERROR_BADNESS_FACTOR
+        elif value < self.Limits.WarningMin:
+            badness = (self.Limits.WarningMin - value)*WARNING_BADNESS_FACTOR
+        elif value > self.Limits.WarningMax:
+            badness = (value - self.Limits.WarningMax)*WARNING_BADNESS_FACTOR
+        else:
+            highBadness = (self.Limits.WarningMax - value)*CLEAN_BADNESS_FACTOR
+            lowBadness  = (value - self.Limits.WarningMin)*CLEAN_BADNESS_FACTOR
+            badness = max(lowBadness, highBadness)
+        return badness
+
+    ## @brief Return the "status" (i.e. CLEAN, WARNING, ERROR) of a given
+    #  value, when checked against the alarm limits.
+    ## @param self
+    #  The class instance.
+    ## @param value
+    #  The value.
+
+    def getStatus(self, value):
+        if value < self.Limits.ErrorMin or value > self.Limits.ErrorMax:
+            return STATUS_ERROR
+        elif value < self.Limits.WarningMin or value > self.Limits.WarningMax:
+            return STATUS_WARNING
+        return STATUS_CLEAN
+
+    ## @brief Convert a flat index to a multi-dimensional array position.
+    ## @param self
+    #  The class instance.
+    ## @param index
+    #  The flat index.
+    ## @param shape
+    #  The array shape---in the numpy sense.
+    
+    def index2Tuple(self, index, shape):
+        return numpy.unravel_index(index, shape)
+
+    ## @brief Convert a multi-dimensional array position to a flat index.
+    ## @param self
+    #  The class instance.
+    ## @param tuple
+    #  The flat the position in the arary.
+    ## @param shape
+    #  The array shape---in the numpy sense.
+
+    def tuple2Index(self, tuple, shape):
+        if type(tuple) == types.IntType:
+            return tuple
+        index = 0
+        for i in range(len(shape)):
+            factor = 1
+            for j in shape[(i+1):]:
+                factor *= j
+            index += factor*tuple[i]
+        return index
+
+    ## @brief Return a suitable label to be put into the output detailed
+    #  dictionary of an alarm when a given value exceeds the limits.
+    ## @param self
+    #  The class instance.
+    ## @param position
+    #  The position in the ROOT object (i.e. tree branch or histogram).
+    ## @param value
+    #  The value.
+    
+    def getDetailedLabel(self, position, value):
+        objectType = self.getObjectType()
+        if objectType == 'TBranch':
+            return 'position = %s, value = %s' % (position, value)
+        elif 'TH1' in objectType:
+            return 'position = %s, value = %s' % (position, value)
+        elif 'TH2' in objectType:
+            return 'position = %s, value = %s' % (position, value)
+        else:
+            return 'position = %s, value = %s' % (position, value)
+        
     ## @brief Adjust the range of the x axis of a ROOT object according
     #  to the dictionary of optional parameters.
     #
@@ -354,7 +450,7 @@ class pAlarmBaseAlgorithm:
                     if (i, j) != (binX, binY):
                         binsList.append((i, j))
         else:
-            logger.error('Invalid bin identifier in getNeighbouringBinsList().')
+            logger.error('Invalid bin identifier in getNeighbouringBinsList.')
             logger.info('Returning an empty list.')
         return binsList
 
