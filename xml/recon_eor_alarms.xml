@@ -8,12 +8,12 @@
 
     <alarmSet name="ReconNumTracks_TH1" enabled="True">
       <alarm function="x_average" enabled="True">
-	<warning_limits min="1.0" max="1.6"/>
+	<warning_limits min="1.2" max="1.6"/>
 	<error_limits min="0.8" max="2.0"/>
       </alarm> 
       <alarm function="x_rms" enabled="True">
-	<warning_limits min="1.1" max="1.7"/>
-	<error_limits min="0.8" max="2.0"/>
+	<warning_limits min="1.5" max="2.0"/>
+	<error_limits min="1.2" max="2.5"/>
       </alarm> 				  			 
     </alarmSet>
 
@@ -30,8 +30,8 @@
     
     <alarmSet name="ReconVertex_YPos_TH1" enabled="True">
       <alarm function="x_average" enabled="True">
-	<warning_limits min="-20.0" max="20.0"/>
-	<error_limits min="-40.0" max="40.0"/>
+	<warning_limits min="-40.0" max="0.0"/>
+	<error_limits min="-60.0" max="20.0"/>
       </alarm> 
       <alarm function="x_rms" enabled="True">
 	<warning_limits min="400" max="500"/>
@@ -100,37 +100,37 @@
       <alarm function="x_rms" enabled="True">
 	<parameter name="min" value="1"/>
 	<parameter name="max" value="9999"/>
-	<warning_limits min="120" max="170.0"/>
-	<error_limits min="80" max="200.0"/>
+	<warning_limits min="160" max="250.0"/>
+	<error_limits min="100" max="300.0"/>
       </alarm> 				  			 
     </alarmSet>
 
     <alarmSet name="ReconEnergy_VeryLowEnergy_TH1_TowerCalLayer_*_*" enabled="True">
       <alarm function="leftmost_edge" enabled="True">
-	<warning_limits min="2.0" max="3.8"/>
-	<error_limits min="1.0" max="4.5"/>
+	<warning_limits min="1.0" max="2.5"/>
+	<error_limits min="0.5" max="4."/>
       </alarm>
     </alarmSet>
 
     <alarmSet name="ReconEnergy_VeryLowEnergy_TH1_TowerCalLayerCalColumn_*_*_*" enabled="True">
       <alarm function="x_min_bin" enabled="True">
  	<parameter name="num_adjacent_bins" value="2"/>     
-	<warning_limits min="2.0" max="3.8"/>
-	<error_limits min="1.0" max="4.5"/>
+	<warning_limits min="1.0" max="2.5"/>
+	<error_limits min="0.5" max="4."/>
       </alarm>
     </alarmSet>
 
     <alarmSet name="SuspCalLo_Highest0_EnergyDistribution_TH1" enabled="True">
       <alarm function="leftmost_edge" enabled="True">
-	<warning_limits min="120.0" max="170.0"/>
-	<error_limits min="100.0" max="200.0"/>
+	<warning_limits min="80.0" max="120.0"/>
+	<error_limits min="50.0"   max="150.0"/>
       </alarm>
     </alarmSet>
 
     <alarmSet name="SuspCalHi_Highest0_EnergyDistribution_TH1" enabled="True">
       <alarm function="leftmost_edge" enabled="True">
-	<warning_limits min="1200.0" max="1700.0"/>
-	<error_limits min="1000.0" max="2000.0"/>
+	<warning_limits min="800.0" max="1200.0"/>
+	<error_limits min="500.0" max="1500.0"/>
       </alarm>
     </alarmSet>
 
@@ -138,17 +138,17 @@
       <alarm function="x_min_bin_slices" enabled="True">
  	<parameter name="num_adjacent_bins" value="2"/>     
 	<parameter name="slice_width" value="12"/>
-	<warning_limits min="120.0" max="170.0"/>
-	<error_limits min="100.0" max="200.0"/>
+	<warning_limits min="80.0" max="120.0"/>
+	<error_limits min="50.0"   max="150.0"/>
       </alarm>
     </alarmSet>
 
     <alarmSet name="SuspCalHi_Highest0_TH2" enabled="True">
       <alarm function="x_min_bin_slices" enabled="True">
- 	<parameter name="num_adjacent_bins" value="2"/>     
+ 	<parameter name="num_adjacent_bins" value="5"/>     
 	<parameter name="slice_width" value="12"/>
-	<warning_limits min="1200.0" max="1700.0"/>
-	<error_limits min="1000.0" max="2000.0"/>
+	<warning_limits min="800.0" max="1200.0"/>
+	<error_limits min="500.0" max="1500.0"/>
       </alarm>
     </alarmSet>
 
@@ -162,37 +162,41 @@
   <alarmList group="ACD" name="ACD base" enabled="True">
     <alarmSet name="ReconAcdPhaMips_PMTA_TH1_AcdTile_*" exclude="range(89, 96) + range(104, 128)" enabled="True">
       <alarm function="x_average" enabled="True">
-	<warning_limits min="1.5" max="4.0"/>
-	<error_limits min="1.0" max="5.0"/>
+	<warning_limits min="1.0" max="3.0"/>
+	<error_limits min="0.5" max="5.0"/>
       </alarm> 
       <alarm function="x_rms" enabled="True">
-	<warning_limits min="1.0" max="6.0"/>
-	<error_limits min="0.8" max="10.0"/>
+	<warning_limits min="0.8" max="8.0"/>
+	<error_limits min="0.5" max="12.0"/>
       </alarm> 				  			 
     </alarmSet>
 
     <alarmSet name="ReconAcdPhaMips_PMTB_TH1_AcdTile_*" exclude="range(89, 96) + range(104, 128)" enabled="True">
       <alarm function="x_average" enabled="True">
-	<warning_limits min="1.5" max="4.0"/>
-	<error_limits min="1.0" max="5.0"/>
+	<warning_limits min="1.0" max="3.5"/>
+	<error_limits min="0.5" max="5.0"/>
       </alarm> 
       <alarm function="x_rms" enabled="True">
-	<warning_limits min="1.0" max="6.0"/>
-	<error_limits min="0.8" max="10.0"/>
+	<warning_limits min="0.8" max="8.0"/>
+	<error_limits min="0.5" max="12.0"/>
       </alarm> 				  			 
     </alarmSet>
 
 
     <alarmSet name="ReconAcdPhaMips_PMTA_Zoom_TH1_AcdTile_*" exclude="range(89, 96) + range(104, 128)" enabled="True">
       <alarm function="leftmost_edge" enabled="True">
-	<warning_limits min="0.2" max="0.4"/>
+        <parameter name="window_half_width" value="10"/>
+        <parameter name="threshold" value="20"/>
+	<warning_limits min="0.3" max="0.5"/>
 	<error_limits min="0.1" max="0.7"/>
       </alarm>
     </alarmSet>
 
     <alarmSet name="ReconAcdPhaMips_PMTB_Zoom_TH1_AcdTile_*" exclude="range(89, 96) + range(104, 128)" enabled="True">
       <alarm function="leftmost_edge" enabled="True">
-	<warning_limits min="0.2" max="0.4"/>
+        <parameter name="window_half_width" value="10"/>
+        <parameter name="threshold" value="20"/>
+	<warning_limits min="0.3" max="0.5"/>
 	<error_limits min="0.1" max="0.7"/>
       </alarm>
     </alarmSet>
@@ -225,26 +229,26 @@
       <alarm function="gauss_rms" enabled="True">
 	<parameter name="min" value="-1000"/>
 	<parameter name="max" value="-250"/>
-	<warning_limits min="3.0" max="6.0"/>
-	<error_limits min="2.0" max="10.0"/>
+	<warning_limits min="4.0" max="8.0"/>
+	<error_limits min="2.0" max="12.0"/>
       </alarm>
       <alarm function="gauss_rms" enabled="True">
 	<parameter name="min" value="-400"/>
 	<parameter name="max" value="100"/>
-	<warning_limits min="3.0" max="6.0"/>
-	<error_limits min="2.0" max="10.0"/>
+	<warning_limits min="4.0" max="8.0"/>
+	<error_limits min="2.0" max="12.0"/>
       </alarm>
       <alarm function="gauss_rms" enabled="True">
 	<parameter name="min" value="-100"/>
 	<parameter name="max" value="400"/>
-	<warning_limits min="3.0" max="6.0"/>
-	<error_limits min="2.0" max="10.0"/>
+	<warning_limits min="4.0" max="8.0"/>
+	<error_limits min="2.0" max="12.0"/>
       </alarm>
       <alarm function="gauss_rms" enabled="True">
 	<parameter name="min" value="250"/>
 	<parameter name="max" value="1000"/>
-	<warning_limits min="3.0" max="6.0"/>
-	<error_limits min="2.0" max="10.0"/>
+	<warning_limits min="4.0" max="8.0"/>
+	<error_limits min="2.0" max="12.0"/>
       </alarm>
     </alarmSet>
 
@@ -276,26 +280,26 @@
       <alarm function="gauss_rms" enabled="True">
 	<parameter name="min" value="-1000"/>
 	<parameter name="max" value="-250"/>
-	<warning_limits min="3.0" max="6.0"/>
-	<error_limits min="2.0" max="10.0"/>
+	<warning_limits min="4.0" max="10.0"/>
+	<error_limits min="2.0" max="14.0"/>
       </alarm>
       <alarm function="gauss_rms" enabled="True">
 	<parameter name="min" value="-400"/>
 	<parameter name="max" value="100"/>
-	<warning_limits min="3.0" max="6.0"/>
-	<error_limits min="2.0" max="10.0"/>
+	<warning_limits min="4.0" max="10.0"/>
+	<error_limits min="2.0" max="14.0"/>
       </alarm>
       <alarm function="gauss_rms" enabled="True">
 	<parameter name="min" value="-100"/>
 	<parameter name="max" value="400"/>
-	<warning_limits min="3.0" max="6.0"/>
-	<error_limits min="2.0" max="10.0"/>
+	<warning_limits min="4.0" max="10.0"/>
+	<error_limits min="2.0" max="14.0"/>
       </alarm>
       <alarm function="gauss_rms" enabled="True">
 	<parameter name="min" value="250"/>
 	<parameter name="max" value="1000"/>
-	<warning_limits min="3.0" max="6.0"/>
-	<error_limits min="2.0" max="10.0"/>
+	<warning_limits min="4.0" max="10.0"/>
+	<error_limits min="2.0" max="14.0"/>
       </alarm>
     </alarmSet>
 
@@ -327,26 +331,26 @@
       <alarm function="gauss_rms" enabled="True">
 	<parameter name="min" value="-1000"/>
 	<parameter name="max" value="-250"/>
-	<warning_limits min="3.0" max="6.0"/>
-	<error_limits min="2.0" max="10.0"/>
+	<warning_limits min="4.0" max="8.0"/>
+	<error_limits min="2.0" max="12.0"/>
       </alarm>
       <alarm function="gauss_rms" enabled="True">
 	<parameter name="min" value="-400"/>
 	<parameter name="max" value="100"/>
-	<warning_limits min="3.0" max="6.0"/>
-	<error_limits min="2.0" max="10.0"/>
+	<warning_limits min="4.0" max="8.0"/>
+	<error_limits min="2.0" max="12.0"/>
       </alarm>
       <alarm function="gauss_rms" enabled="True">
 	<parameter name="min" value="-100"/>
 	<parameter name="max" value="400"/>
-	<warning_limits min="3.0" max="6.0"/>
-	<error_limits min="2.0" max="10.0"/>
+	<warning_limits min="4.0" max="8.0"/>
+	<error_limits min="2.0" max="12.0"/>
       </alarm>
       <alarm function="gauss_rms" enabled="True">
 	<parameter name="min" value="250"/>
 	<parameter name="max" value="1000"/>
-	<warning_limits min="3.0" max="6.0"/>
-	<error_limits min="2.0" max="10.0"/>
+	<warning_limits min="4.0" max="8.0"/>
+	<error_limits min="2.0" max="12.0"/>
       </alarm>
     </alarmSet>
 
@@ -378,26 +382,26 @@
       <alarm function="gauss_rms" enabled="True">
 	<parameter name="min" value="-1000"/>
 	<parameter name="max" value="-250"/>
-	<warning_limits min="3.0" max="6.0"/>
-	<error_limits min="2.0" max="10.0"/>
+	<warning_limits min="8.0" max="14.0"/>
+	<error_limits min="4.0" max="18.0"/>
       </alarm>
       <alarm function="gauss_rms" enabled="True">
 	<parameter name="min" value="-400"/>
 	<parameter name="max" value="100"/>
-	<warning_limits min="3.0" max="6.0"/>
-	<error_limits min="2.0" max="10.0"/>
+	<warning_limits min="8.0" max="14.0"/>
+	<error_limits min="4.0" max="18.0"/>
       </alarm>
       <alarm function="gauss_rms" enabled="True">
 	<parameter name="min" value="-100"/>
 	<parameter name="max" value="400"/>
-	<warning_limits min="3.0" max="6.0"/>
-	<error_limits min="2.0" max="10.0"/>
+	<warning_limits min="8.0" max="14.0"/>
+	<error_limits min="4.0" max="18.0"/>
       </alarm>
       <alarm function="gauss_rms" enabled="True">
 	<parameter name="min" value="250"/>
 	<parameter name="max" value="1000"/>
-	<warning_limits min="3.0" max="6.0"/>
-	<error_limits min="2.0" max="10.0"/>
+	<warning_limits min="8.0" max="14.0"/>
+	<error_limits min="4.0" max="18.0"/>
       </alarm>
     </alarmSet>
 
