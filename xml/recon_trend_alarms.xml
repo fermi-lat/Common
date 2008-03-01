@@ -6,26 +6,32 @@
 
     <alarmSet name="Time::Mean_ReconEnergy" enabled="True">
       <alarm function="values" enabled="True">
-	<warning_limits min="1000.0" max="4000.0"/>
-	<error_limits   min="500.0"  max="5000.0"/>
+	<warning_limits min="1000.0" max="5000.0"/>
+	<error_limits   min="500.0"  max="7000.0"/>
+      </alarm> 
+    </alarmSet>
+    <alarmSet name="Time::Mean_ReconEnergy_Tower" enabled="True">
+      <alarm function="values" enabled="True">
+	<warning_limits min="1000.0" max="2500.0"/>
+	<error_limits   min="500.0"  max="4000.0"/>
       </alarm> 
     </alarmSet>
     <alarmSet name="Time::Mean_ReconEnergy_TowerCalLayer" enabled="True">
       <alarm function="values" enabled="True">
-	<warning_limits min="50.0" max="1500.0"/>
-	<error_limits   min="20.0"  max="2000.0"/>
+	<warning_limits min="100.0" max="800.0"/>
+	<error_limits   min="50.0"  max="1500.0"/>
       </alarm> 
     </alarmSet>
     <alarmSet name="Time::Mean_ReconEnergy_TowerCalLayerCalColumn" enabled="True">
       <alarm function="values" enabled="True">
-	<warning_limits min="15.0" max="1500.0"/>
-	<error_limits   min="10.0"  max="2000.0"/>
+	<warning_limits min="20.0" max="200.0"/>
+	<error_limits   min="10.0"  max="300.0"/>
       </alarm> 
     </alarmSet>
     <alarmSet name="Time::Mean_RecEnergy_TowerCalLayerCalColumnCalXFace" enabled="True">
       <alarm function="values" enabled="True">
-	<warning_limits min="0.04" max="10.0"/>
-	<error_limits   min="0.02"  max="15.0"/>
+	<warning_limits min="20.0" max="200.0"/>
+	<error_limits   min="10.0"  max="300.0"/>
       </alarm> 
     </alarmSet>
     <alarmSet name="Time::OutF_ReconZeroEnergy_Fraction_TowerCalLayer" enabled="True">
@@ -42,8 +48,8 @@
 
     <alarmSet name="Time::Mean_ReconTracks" enabled="True">
       <alarm function="values" enabled="True">
-	<warning_limits min="1.2" max="1.5"/>
-	<error_limits   min="1.0"  max="2.0"/>
+	<warning_limits min="1.2" max="1.8"/>
+	<error_limits   min="1.0"  max="2.5"/>
       </alarm> 
     </alarmSet>
 
