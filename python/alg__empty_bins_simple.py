@@ -38,9 +38,8 @@ class alg__empty_bins_simple(pAlarmBaseAlgorithm):
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             if self.RootObject.GetBinContent(i) == 0:
                 numEmptyBins += 1
-                x = self.RootObject.GetBinCenter(i)
-                binString = 'bin @ %s' % pUtils.formatNumber(x)
-                self.Output.appendDictValue('empty_bins', binString)
+                self.Output.appendDictValue('empty_bins',\
+                            self.getDetailedLabel(i, 0))
         self.Output.setValue(numEmptyBins)
 
     ## @brief Basic algorithm evaluation for 2-dimensional histograms.
@@ -53,11 +52,8 @@ class alg__empty_bins_simple(pAlarmBaseAlgorithm):
             for j in range(1, self.RootObject.GetNbinsY() + 1):
                 if self.RootObject.GetBinContent(i, j) == 0:
                     numEmptyBins += 1
-                    x = self.RootObject.GetXaxis().GetBinCenter(i)
-                    y = self.RootObject.GetYaxis().GetBinCenter(j)
-                    binString = 'bin @ (%s, %s)' %\
-                        (pUtils.formatNumber(x), pUtils.formatNumber(y))
-                    self.Output.appendDictValue('empty_bins', binString)
+                    self.Output.appendDictValue('empty_bins',\
+                                self.getDetailedLabel((i, j), 0))
         self.Output.setValue(numEmptyBins)
 
 
