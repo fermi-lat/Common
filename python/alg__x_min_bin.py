@@ -40,9 +40,11 @@ class alg__x_min_bin(pAlarmBaseAlgorithm):
                             numAdjacentBins)):   
             binList = []
 	    for bin in range(currentBin, currentBin + numAdjacentBins):
-                binList.append(bin)
+                if self.RootObject.GetBinContent(bin):
+		    binList.append(bin)
+		
             if len(binList) ==  numAdjacentBins:
-	        self.Output.setValue(self.RootObject.GetBinCenter(binList[0]))
+		self.Output.setValue(self.RootObject.GetBinCenter(binList[0]))
                 return None
             currentBin += numAdjacentBins
         lastBin = self.RootObject.GetXaxis().GetLast() + 1
