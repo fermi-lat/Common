@@ -317,11 +317,11 @@ class pAlarmBaseAlgorithm:
     ## @param value
     #  The value.
     
-    def getDetailedLabel(self, position, value):
+    def getDetailedLabel(self, position, value, valueLabel = 'value'):
         objectType = self.getObjectType()
         value = pUtils.formatNumber(value)
         if objectType == 'TBranch':
-            label = 'Time bin starting at %f, ' % self.TimestampArray[0]
+            label = 'time = %f, ' % self.TimestampArray[0]
             if self.BranchArray.size > 1:
                 position = self.index2Tuple(position, self.BranchArray.shape)
                 if len(position) == 1:
@@ -330,13 +330,17 @@ class pAlarmBaseAlgorithm:
                     position = str(position)
                     position = position.replace('(', '[').replace(')', ']')
                 label += 'array index = %s, ' % position
-            label += 'value = %s' % value
+            label += '%s = %s' % (valueLabel, value)
         elif 'TH1' in objectType:
-            binCenter = self.RootObject.GetBinCenter(position)
-            binCenter = pUtils.formatNumber(binCenter)
-            label = 'x = %s, value = %s' % (binCenter, value)
+            x = self.RootObject.GetBinCenter(position)
+            label = 'x = %s, %s = %s' % (pUtils.formatNumber(x), valueLabel,\
+                                         value)
         elif 'TH2' in objectType:
-            label = 'position = %s, value = %s' % (position, value)
+            x = self.RootObject.GetXaxis().GetBinCenter(position[0])
+            y = self.RootObject.GetYaxis().GetBinCenter(position[1])
+            label = 'x = %s, y = %s, %s = %s' % (pUtils.formatNumber(x),\
+                                                 pUtils.formatNumber(x),\
+                                                 valueLabel, value)
         else:
             label = 'position = %s, value = %s' % (position, value)
         return label

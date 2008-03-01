@@ -88,7 +88,7 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
                             'warning_bins'    : [],
                             'error_bins'      : []
                             }
-    OUTPUT_LABEL          = 'Significance of the "most empty" bin'
+    OUTPUT_LABEL          = 'Significance for the worst bin'
 
     ## @brief Basic algorithm evaluation for 1-dimensional histograms.
     ## @param self
@@ -114,15 +114,14 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
                                      outliersLowCut, outliersHighCut)
                 significance = sqrt(averageCounts)
                 values.append(significance)
-                x = self.RootObject.GetBinCenter(i)
-                binString = 'bin @ %s, significance = %s' %\
-                    (pUtils.formatNumber(x), pUtils.formatNumber(significance))
                 if significance > self.Limits.ErrorMax:
                     self.Output.incrementDictValue('num_error_bins')
-                    self.Output.appendDictValue('error_bins', binString)
+                    self.Output.appendDictValue('error_bins',\
+                        self.getDetailedLabel(i, significance, 'significance'))
                 elif significance > self.Limits.WarningMax:
                     self.Output.incrementDictValue('num_warning_bins')
-                    self.Output.appendDictValue('warning_bins', binString)
+                    self.Output.appendDictValue('warning_bins',\
+                        self.getDetailedLabel(i, significance, 'significance'))
         self.Output.setValue(max(values))
                 
 
@@ -153,17 +152,16 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
                                                         outliersHighCut)
                     significance = sqrt(averageCounts)
                     values.append(significance)
-                    x = self.RootObject.GetXaxis().GetBinCenter(i)
-                    y = self.RootObject.GetYaxis().GetBinCenter(j)
-                    binString = 'bin @ (%s, %s), significance = %s' %\
-                        (pUtils.formatNumber(x), pUtils.formatNumber(y),\
-                             pUtils.formatNumber(significance))
                     if significance > self.Limits.ErrorMax:
                         self.Output.incrementDictValue('num_error_bins')
-                        self.Output.appendDictValue('error_bins', binString)
+                        self.Output.appendDictValue('error_bins',\
+                             self.getDetailedLabel((i, j), significance,\
+                                                   'significance'))
                     elif significance > self.Limits.WarningMax:
                         self.Output.incrementDictValue('num_warning_bins')
-                        self.Output.appendDictValue('warning_bins', binString)
+                        self.Output.appendDictValue('warning_bins',\
+                             self.getDetailedLabel((i, j), significance,\
+                                                   'significance'))
         self.Output.setValue(max(values))
 
 
