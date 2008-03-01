@@ -30,6 +30,14 @@ class pAlarmSet(pXmlElement):
         ## @brief The list of enabled alarms within the set.
         
         pXmlElement.__init__(self, domElement)
+        excludeList = self.evalAttribute('exclude')
+        selectList = self.evalAttribute('only')
+        if excludeList is not None:
+            self.Selection = ('exclude', excludeList)
+        elif selectList is not None:
+            self.Selection = ('only', selectList)
+        else:
+            selection = None
 	self.PlotsList         = []
 	self.EnabledAlarmsList = []
 

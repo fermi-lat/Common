@@ -86,7 +86,8 @@ class pAlarmHandler:
     def setAlarmSetsPlotLists(self):
         logger.info('Assigning the plots to the alarm sets...')
         for alarmSet in self.XmlParser.getEnabledAlarmSets():
-            PlotList = self.RootFileManager.find(alarmSet.Name)
+            PlotList = self.RootFileManager.find(alarmSet.Name,\
+                                                 alarmSet.Selection)
             alarmSet.setPlotsList(PlotList)
             if PlotList == []:
                 logger.error('Alarm set "%s" has no associated alarms.' %\

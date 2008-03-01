@@ -88,11 +88,25 @@ class pRootFileManager:
     #  from the pattern by numbers only (i.e. wildcards stand for numbers
     #  only).
 
-    def __match(self, name, pattern):
+    def __match(self, name, pattern, selection):
         patternPieces = pattern.split('*')
         for piece in patternPieces:
             name = name.replace(piece, '')
-        return name.isdigit()
+        if not name.isdigit():
+            return False
+        else:
+            if selection is None:
+                return True
+            name = int(name)
+            (mode, list) = selection
+            if mode == 'exclude':
+                return name not in list
+            elif mode == 'only':
+                return name in list
+            else:
+                logger.error('Wrong selection mode (%s) to match objects.' %\
+                             mode)
+                return False
 
     ## @brief Find ROOT objects whose name matches a certain pattern in a
     #  ROOT file.
@@ -105,11 +119,11 @@ class pRootFileManager:
     ## @param pattern
     #  The name pattern.
 
-    def find(self, pattern):
+    def find(self, pattern, selection = None):
         if TREE_BRANCH_SEPARATOR in pattern:
             return self.findTreeBranches(pattern)
         else:
-            return self.findObjects(pattern)
+            return self.findObjects(pattern, selection)
 
     ## @brief Find ROOT objects whose name matches a certain pattern in a
     #  ROOT file.
@@ -118,11 +132,11 @@ class pRootFileManager:
     ## @param pattern
     #  The name pattern.
 
-    def findObjects(self, pattern):
+    def findObjects(self, pattern, selection):
         objects = []
         for i in range(self.RootFile.GetListOfKeys().LastIndex() + 1):
 	    key = self.RootFile.GetListOfKeys().At(i).GetName()
-            if key == pattern or self.__match(key, pattern):
+            if key == pattern or self.__match(key, pattern, selection):
                 objects.append(self.RootFile.FindObjectAny(key))
         return objects
 
