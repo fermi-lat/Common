@@ -37,7 +37,7 @@ class pAlarmSet(pXmlElement):
         elif selectList is not None:
             self.Selection = ('only', selectList)
         else:
-            selection = None
+            self.Selection = None
 	self.PlotsList         = []
 	self.EnabledAlarmsList = []
 
