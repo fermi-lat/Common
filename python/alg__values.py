@@ -37,7 +37,7 @@ class alg__values(pAlarmBaseAlgorithm):
                             'warning_entries'    : [],
                             'error_entries'      : []
                             }
-    OUTPUT_LABEL          = 'The most "out of range" entry of the branch'
+    OUTPUT_LABEL          = 'The worst entry of the branch'
 
     ## @brief Create all the necessary arrays for the loop over the
     #  TBranch entries.
@@ -52,16 +52,15 @@ class alg__values(pAlarmBaseAlgorithm):
         self.TimestampArray = numpy.zeros((1), 'd')
         self.RootTree.SetBranchAddress(timestampBranchName,\
                                        self.TimestampArray)
-        (name, atype) = self.RootObject.GetTitle().split('/')
-        if '[' not in name:
+        (branchName, branchType) = self.RootObject.GetTitle().split('/')
+        if '[' not in branchName:
             shape = (1)
         else:
-            shape = name.replace(self.RootObject.GetName(), '')
+            shape = branchName.replace(self.RootObject.GetName(), '')
             shape = shape.replace('][', ',')
             shape = shape.replace('[', '(').replace(']', ')')
             shape = eval(shape)
-	# Get the correct type when defining the array : convert from ROOT types to Numpy types
-	self.BranchArray = numpy.zeros(shape, ROOT2NUMPYDICT[atype])
+	self.BranchArray = numpy.zeros(shape, ROOT2NUMPYDICT[branchType])
         self.RootTree.SetBranchAddress(self.RootObject.GetName(),\
                                        self.BranchArray)
 
@@ -83,7 +82,7 @@ class alg__values(pAlarmBaseAlgorithm):
         if len(position) == 1:
             position = '[%d]' % position[0]
         else:
-            position = str(position).replace('(', '[').replace(')', ']')        
+            position = str(position).replace('(', '[').replace(')', ']')
         return 'Time bin starting @ %f, array index = %s,  value = %s'  %\
             (self.TimestampArray[0], position, value)
 
@@ -167,7 +166,7 @@ class alg__values(pAlarmBaseAlgorithm):
 
 if __name__ == '__main__':
     from pAlarmLimits import pAlarmLimits
-    limits = pAlarmLimits(-2, 2, -3, 3)   
+    limits = pAlarmLimits(-2, 2, -2.5, 2.5)   
     import array
     import numpy
     import random
@@ -177,15 +176,16 @@ if __name__ == '__main__':
     testBranchName = 'testBranch'
     testFile = ROOT.TFile(testFilePath, 'RECREATE')
     testTree = ROOT.TTree(testTreeName, testTreeName)
-    timeArray = array.array('f', [0.0])
-    testArray = array.array('f', [0.0])
-    testTree.Branch(timeBranchName, timeArray, '%s/F' % timeBranchName)
-    testTree.Branch(testBranchName, testArray, '%s/F' % testBranchName)
+    timeArray = array.array('d', [0.0])
+    testArray = array.array('d', [0.0])
+    testTree.Branch(timeBranchName, timeArray, '%s/D' % timeBranchName)
+    testTree.Branch(testBranchName, testArray, '%s/D' % testBranchName)
     for i in range(100):
         timeArray[0] = i
         testArray[0] = random.gauss(0, 1)
         testTree.Fill()
     testFile.Write()
+    testTree.Draw('testBranch:TimeStampFirstEvt', '', '*')
     testBranch = testTree.GetBranch(testBranchName)
     pardict = {}
     algorithm = alg__values(limits, testBranch, pardict)
