@@ -1,7 +1,9 @@
 
 from pSafeROOT import ROOT
 
-from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm, ROOT2NUMPYDICT
+from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
+from pAlarmBaseAlgorithm import ROOT2NUMPYDICT
+from pAlarmOutput import STATUS_CLEAN, STATUS_WARNING, STATUS_ERROR
 
 import pUtils
 import numpy
@@ -64,103 +66,49 @@ class alg__values(pAlarmBaseAlgorithm):
         self.RootTree.SetBranchAddress(self.RootObject.GetName(),\
                                        self.BranchArray)
 
-    ## @brief Get the label for the output detailed dictionary when an entry
-    #  causes a warning or an error.
+    ## @brief Setup the list of indexes to loop over, taking into account
+    #  the optional "exclude" and "only" parameters.
     ## @param self
     #  The class instance.
-    ## @param value
-    #  The value which is out of range.
-    ## @param index
-    #  The index of the flattened numpy array corresponding to the bad value.
 
-    def getOutputDictLabel(self, value, index):
-        value = pUtils.formatNumber(value)
-        if self.BranchArray.size == 1:
-            return 'Time bin starting @ %f, value = %s'  %\
-	        (self.TimestampArray[0], value)
-        position = self.flat2tuple(index)
-        if len(position) == 1:
-            position = '[%d]' % position[0]
+    def __setupIndexList(self):
+        if 'only' in self.ParamsDict.keys():
+            self.IndexList = []
+            for position in self.ParamsDict['only']:
+                index = self.tuple2Index(position, self.BranchArray.shape)
+                self.IndexList.append(index)
         else:
-            position = str(position).replace('(', '[').replace(')', ']')
-        return 'Time bin starting @ %f, array index = %s,  value = %s'  %\
-            (self.TimestampArray[0], position, value)
-
-    def flat2tuple(self, flatIndex):
-        return numpy.unravel_index(flatIndex, self.BranchArray.shape)
-         
-
-    def tuple2flat(self, tupleIndex):
-        if type(tupleIndex) == types.IntType:
-            tupleIndex = (tupleIndex,)
-        index = 0
-        shape = self.BranchArray.shape
-        numDimensions = len(shape)
-        for i in range(numDimensions):
-            factor = 1
-            for j in shape[(i+1):]:
-                factor *= j
-            index += factor*tupleIndex[i]
-        return index
-            
-    ## @brief Check that a particular branch values lies within limits and
-    #  take the necessary actions if not (i.e. fill the output detailed
-    #  dictionary).
-    ## @param self
-    #  The class instance.
-    ## @param value
-    #  The branch value.
-    ## @param index
-    #  The index of the flattened numpy array.
-
-    def checkValue(self, value, index):
-	if value < self.Limits.ErrorMin:
-            label = self.getOutputDictLabel(value, index)
-            self.Output.incrementDictValue('num_error_entries')
-            self.Output.appendDictValue('error_entries', label)
-            delta = (self.Limits.ErrorMin - value)*10000
-        elif value > self.Limits.ErrorMax:
-            label = self.getOutputDictLabel(value, index)
-            self.Output.incrementDictValue('num_error_entries')
-            self.Output.appendDictValue('error_entries', label)
-            delta = (value - self.Limits.ErrorMax)*10000
-        elif value < self.Limits.WarningMin:
-            label = self.getOutputDictLabel(value, index)
-            self.Output.incrementDictValue('num_warning_entries')
-            self.Output.appendDictValue('warning_entries', label)
-            delta = (self.Limits.WarningMin - value)*100
-        elif value > self.Limits.WarningMax:
-            label = self.getOutputDictLabel(value, index)
-            self.Output.incrementDictValue('num_warning_entries')
-            self.Output.appendDictValue('warning_entries', label)
-            delta = (value - self.Limits.WarningMax)*100
-        else:
-            delta = max((self.Limits.WarningMax - value),\
-                        (value - self.Limits.WarningMin))
-        self.DeltaDict[delta] = value        
-
-    def run(self):
-        self.DeltaDict = {}
-        self.__createArrays()
-	try:
-            indexList = []
-            for tupleIndex in self.ParamsDict['only']:
-                indexList.append(self.tuple2flat(tupleIndex))
-        except KeyError:
-            indexList = range(self.BranchArray.size)
+            self.IndexList = range(self.BranchArray.size)
             try:
-                for tupleIndex in self.ParamsDict['exclude']:
-                    indexList.remove(self.tuple2flat(tupleIndex))
+                for position in self.ParamsDict['exclude']:
+                    index = self.tuple2Index(position, self.BranchArray.shape)
+                    self.IndexList.remove(index)
             except KeyError:
                 pass
+
+    def run(self):
+        badnessDict = {}
+        self.__createArrays()
+        self.__setupIndexList()
         for i in range(self.RootObject.GetEntries()):
             self.RootTree.GetEntry(i)
             flatArray = self.BranchArray.flatten()
-            for j in indexList:
-                self.checkValue(flatArray[j], j)
-        deltas = self.DeltaDict.keys()
-        deltas.sort()
-        self.Output.setValue(self.DeltaDict[deltas[-1]])
+            for index in self.IndexList:
+                value = flatArray[index]
+                status = self.getStatus(value)
+                badnessDict[self.getBadness(value)] = value
+                if status == STATUS_ERROR:
+                    self.Output.incrementDictValue('num_error_entries')
+                    self.Output.appendDictValue('error_entries',\
+                                self.getDetailedLabel(index, value))
+                elif status == STATUS_WARNING:
+                    self.Output.incrementDictValue('num_warning_entries')
+                    self.Output.appendDictValue('warning_entries',\
+                                self.getDetailedLabel(index, value))
+        badnessList = badnessDict.keys()
+        badnessList.sort()
+        maxBadness = badnessList[-1]
+        self.Output.setValue(badnessDict[maxBadness])
         
             
 
