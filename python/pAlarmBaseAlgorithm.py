@@ -320,13 +320,23 @@ class pAlarmBaseAlgorithm:
     def getDetailedLabel(self, position, value):
         objectType = self.getObjectType()
         if objectType == 'TBranch':
-            return 'position = %s, value = %s' % (position, value)
+            label = 'Time bin starting at %f, ' % self.TimestampArray[0]
+            if self.BranchArray.size > 1:
+                position = self.index2Tuple(position, self.BranchArray.shape)
+                if len(position) == 1:
+                    position = '[%d]' % position[0]
+                else:
+                    position = str(position)
+                    position = position.replace('(', '[').replace(')', ']')
+                label += 'array index = %s, ' % position
+            label += 'value = %s' % pUtils.formatNumber(value)            
         elif 'TH1' in objectType:
-            return 'position = %s, value = %s' % (position, value)
+            label = 'position = %s, value = %s' % (position, value)
         elif 'TH2' in objectType:
-            return 'position = %s, value = %s' % (position, value)
+            label = 'position = %s, value = %s' % (position, value)
         else:
-            return 'position = %s, value = %s' % (position, value)
+            label = 'position = %s, value = %s' % (position, value)
+        return label
         
     ## @brief Adjust the range of the x axis of a ROOT object according
     #  to the dictionary of optional parameters.
