@@ -3,7 +3,7 @@ import pUtils
 
 from pSafeROOT           import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
-
+from pAlarmOutput        import STATUS_CLEAN, STATUS_WARNING, STATUS_ERROR
 
 
 ## @brief Make sure all the y values are within limits.
@@ -22,13 +22,13 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #
 #  <b>Output details</b>:
 #
-#  @li <tt>num_warning_bins</tt>: number of bins/poins causing a warning.
+#  @li <tt>num_warning_entries</tt>: number of bins/poins causing a warning.
 #  <br>
-#  @li <tt>num_error_bins</tt>: number of bins/poins causing an error.
+#  @li <tt>num_error_entries</tt>: number of bins/poins causing an error.
 #  <br>
-#  @li <tt>warning_bins</tt>: detailed list of bins/poins causing a warning.
+#  @li <tt>warning_entries</tt>: detailed list of bins/poins causing a warning.
 #  <br>
-#  @li <tt>error_bins</tt>: detailed list of bins/poins causing an error.
+#  @li <tt>error_entries</tt>: detailed list of bins/poins causing an error.
 #  <br>
 
 
@@ -36,15 +36,14 @@ class alg__y_values(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F', 'TProfile']
     SUPPORTED_PARAMETERS = ['normalize']
-    OUTPUT_DICTIONARY    = {'num_warning_points': 0,
-                            'num_error_points'  : 0,
-                            'warning_points'    : [],
-                            'error_points'      : []
+    OUTPUT_DICTIONARY    = {'num_warning_entries': 0,
+                            'num_error_entries'  : 0,
+                            'warning_entries'    : [],
+                            'error_entries'      : []
                             }
-    OUTPUT_LABEL         = 'The most "out of range" y-value'
+    OUTPUT_LABEL         = 'The worst y-value'
 
     def run(self):
-        deltaDict = {}
         if self.ParamsDict.has_key('normalize'):
             if self.ParamsDict['normalize'] == True:
                 numEntries = self.RootObject.GetEntries()
@@ -52,36 +51,25 @@ class alg__y_values(pAlarmBaseAlgorithm):
                 self.Limits.ErrorMin   *= numEntries
                 self.Limits.WarningMin *= numEntries
                 self.Limits.WarningMax *= numEntries
+        badnessDict = {}
         for bin in range(self.RootObject.GetXaxis().GetFirst(),\
-                         self.RootObject.GetXaxis().GetLast()+1):
+                         self.RootObject.GetXaxis().GetLast() + 1):
             value = self.RootObject.GetBinContent(bin)
-            x = self.RootObject.GetBinCenter(bin)
-            binString = 'bin/point @ %s, value = %s' %\
-                (pUtils.formatNumber(x), pUtils.formatNumber(value)) 
-            if value < self.Limits.ErrorMin:
-                self.Output.incrementDictValue('num_error_points')
-                self.Output.appendDictValue('error_points', binString)
-                delta = (self.Limits.ErrorMin - value)*10000
-            elif value > self.Limits.ErrorMax:
-                self.Output.incrementDictValue('num_error_points')
-                self.Output.appendDictValue('error_points', binString)
-                delta = (value - self.Limits.ErrorMax)*10000
-            elif value < self.Limits.WarningMin:
-                self.Output.incrementDictValue('num_warning_points')
-                self.Output.appendDictValue('warning_points', binString)
-                delta = (self.Limits.WarningMin - value)*100
-            elif value > self.Limits.WarningMax:
-                self.Output.incrementDictValue('num_warning_points')
-                self.Output.appendDictValue('warning_points', binString)
-                delta = (value - self.Limits.WarningMax)*100
-            else:
-                delta = max((self.Limits.WarningMax - value),\
-                            (value - self.Limits.WarningMin))
-            deltaDict[delta] = value
-        deltas = deltaDict.keys()
-        deltas.sort()
-        self.Output.setValue(deltaDict[deltas[-1]])
-
+            status = self.getStatus(value)
+            badnessDict[self.getBadness(value)] = value
+            if status == STATUS_ERROR:
+                self.Output.incrementDictValue('num_error_entries')
+                self.Output.appendDictValue('error_entries',\
+                            self.getDetailedLabel(bin, value))
+            elif status == STATUS_WARNING:
+                self.Output.incrementDictValue('num_warning_entries')
+                self.Output.appendDictValue('warning_entries',\
+                            self.getDetailedLabel(bin, value))
+        badnessList = badnessDict.keys()
+        badnessList.sort()
+        maxBadness = badnessList[-1]
+        self.Output.setValue(badnessDict[maxBadness])
+        
 
 
 if __name__ == '__main__':

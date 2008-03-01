@@ -319,6 +319,7 @@ class pAlarmBaseAlgorithm:
     
     def getDetailedLabel(self, position, value):
         objectType = self.getObjectType()
+        value = pUtils.formatNumber(value)
         if objectType == 'TBranch':
             label = 'Time bin starting at %f, ' % self.TimestampArray[0]
             if self.BranchArray.size > 1:
@@ -329,9 +330,11 @@ class pAlarmBaseAlgorithm:
                     position = str(position)
                     position = position.replace('(', '[').replace(')', ']')
                 label += 'array index = %s, ' % position
-            label += 'value = %s' % pUtils.formatNumber(value)            
+            label += 'value = %s' % value
         elif 'TH1' in objectType:
-            label = 'position = %s, value = %s' % (position, value)
+            binCenter = self.RootObject.GetBinCenter(position)
+            binCenter = pUtils.formatNumber(binCenter)
+            label = 'x = %s, value = %s' % (binCenter, value)
         elif 'TH2' in objectType:
             label = 'position = %s, value = %s' % (position, value)
         else:
