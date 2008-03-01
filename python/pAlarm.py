@@ -12,6 +12,10 @@ from pXmlBaseElement import pXmlBaseElement
 from pAlarmLimits    import pAlarmLimits
 from pGlobals        import MINUS_INFINITY, PLUS_INFINITY, NAN
 
+MIN_SEVERITY = 0
+MAX_SEVERITY = 10
+DEF_SEVERITY = 5
+
 
 ## @brief Class describing an alarm to be activated on a plot.
 
@@ -55,6 +59,7 @@ class pAlarm(pXmlBaseElement):
 	self.ParamsDict = self.__extractParametersDict()
 	self.ConditionsDict = self.__extractConditionsDict()
         self.FunctionName = self.getAttribute('function')
+        self.Severity = self.__extractSeverity()
         try:
             exec('from alg__%s import alg__%s' % (self.FunctionName,\
                                                   self.FunctionName))
@@ -114,6 +119,30 @@ class pAlarm(pXmlBaseElement):
             paramValue = xmlElement.evalAttribute('value')
             parametersDict[paramName] = paramValue
         return parametersDict
+
+    ## @brief Extract the alarm severity of parameters from the underlying
+    #  dom element.
+    #
+    #  The severity is intended to be used by the web interface for sorting
+    #  the alarms in the output table in a reasonable way. It's supposed
+    #  to be an integer between @ref MIN_SEVERITY and @ref MAX_SEVERITY,
+    #  by default @DEF_SEVERITY.
+    ## @param self
+    #  The class instance.
+
+    def __extractSeverity(self):
+        severity = int(self.getTagValue('severity', DEF_SEVERITY))
+        if severity > MAX_SEVERITY:
+            logger.warn('Severity (%d) for alarm %s %s exceeds maximum.' %\
+                        (severity, self.getPlotName(), self.FunctionName))
+            logger.info('Setting it to %d...' % MAX_SEVERITY)
+            severity = MAX_SEVERITY
+        elif severity < MIN_SEVERITY:
+            logger.warn('Severity (%d) for alarm %s %s lower than minimum.' %\
+                        (severity, self.getPlotName(), self.FunctionName))
+            logger.info('Setting it to %d...' % MIN_SEVERITY)
+            severity = MIN_SEVERITY
+        return severity
 
     ## @brief Extract the dictionary of conditions from the underlying
     #  dom element.
