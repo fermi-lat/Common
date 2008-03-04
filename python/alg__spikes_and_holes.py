@@ -165,6 +165,7 @@ if __name__ == '__main__':
     print 'Testing on a 1-dimensional histogram...'
     canvas.cd(1)
     histogram1d = ROOT.TH1F('h1d', 'h1d', 10, -5, 5)
+    histogram1d.GetXaxis().SetTitle('Pulse height (ADC)')
     histogram1d.FillRandom('pol0', 1000)
     histogram1d.SetBinContent(3, 10)
     histogram1d.SetBinContent(9, 250)
@@ -180,6 +181,8 @@ if __name__ == '__main__':
     print 'Testing on a 2-dimensional histogram...'
     canvas.cd(2)
     histogram2d = ROOT.TH2F('h2d', 'h2d', 10, -5, 5, 10, -5, 5)
+    histogram2d.GetXaxis().SetTitle('GTFE')
+    histogram2d.GetYaxis().SetTitle('Tower number')
     function2d = ROOT.TF2('f2d', '1 + 0*x + 0*y', -5, 5, -5, 5)
     function2d.SetParameter(0, 1)
     histogram2d.FillRandom('f2d', 5000)
