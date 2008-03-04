@@ -361,7 +361,7 @@ class pAlarmBaseAlgorithm:
             y = self.RootObject.GetYaxis().GetBinCenter(position[1])
             label = '%s = %s, %s = %s, %s = %s' % (self.getAxisLabel('x'),\
                     pUtils.formatNumber(x), self.getAxisLabel('y'),\
-                    pUtils.formatNumber(x), valueLabel, value)
+                    pUtils.formatNumber(y), valueLabel, value)
         else:
             label = 'position = %s, value = %s' % (position, value)
         return label
