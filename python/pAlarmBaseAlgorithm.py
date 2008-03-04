@@ -308,6 +308,27 @@ class pAlarmBaseAlgorithm:
             index += factor*tuple[i]
         return index
 
+    ## @brief Return the axis title, if any, stripped of the units, to be
+    #  used in the label for the detailed dictionary.
+    ## @param self
+    #  The class instance.
+    ## @param axis
+    #  The axis (i.e. 'x' or 'y')
+
+    def getAxisLabel(self, axis = 'x'):
+        try:
+            if axis == 'x':
+                label = self.RootObject.GetXaxis().GetTitle()
+            elif axis == 'y':
+                label = self.RootObject.GetYaxis().GetTitle()
+        except:
+            return axis
+        if '(' in label:
+            label = label.split('(')[0].strip()
+        if label == '':
+            label = axis
+        return label
+
     ## @brief Return a suitable label to be put into the output detailed
     #  dictionary of an alarm when a given value exceeds the limits.
     ## @param self
@@ -333,14 +354,14 @@ class pAlarmBaseAlgorithm:
             label += '%s = %s' % (valueLabel, value)
         elif 'TH1' in objectType:
             x = self.RootObject.GetBinCenter(position)
-            label = 'x = %s, %s = %s' % (pUtils.formatNumber(x), valueLabel,\
-                                         value)
+            label = '%s = %s, %s = %s' % (self.getAxisLabel('x'),\
+                    pUtils.formatNumber(x), valueLabel, value)
         elif 'TH2' in objectType:
             x = self.RootObject.GetXaxis().GetBinCenter(position[0])
             y = self.RootObject.GetYaxis().GetBinCenter(position[1])
-            label = 'x = %s, y = %s, %s = %s' % (pUtils.formatNumber(x),\
-                                                 pUtils.formatNumber(x),\
-                                                 valueLabel, value)
+            label = '%s = %s, %s = %s, %s = %s' % (self.getAxisLabel('x'),\
+                    pUtils.formatNumber(x), self.getAxisLabel('y'),\
+                    pUtils.formatNumber(x), valueLabel, value)
         else:
             label = 'position = %s, value = %s' % (position, value)
         return label
