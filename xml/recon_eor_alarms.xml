@@ -160,6 +160,15 @@
  -->
  
   <alarmList group="ACD" name="ACD base" enabled="True">
+    <alarmSet name="ReconAcdPhaMipsCorrectedAngle_PMTA_TH1_AcdTile_*" exclude="range(89, 96) + range(104, 128)" enabled="True">
+      <alarm function="gauss_mean" enabled="True">
+	<parameter name="min" value="0"/>
+	<parameter name="max" value="1.5"/>
+	<warning_limits min="0.8" max="1.2"/>
+	<error_limits min="0.5" max="1.5"/>
+      </alarm> 
+    </alarmSet>
+
     <alarmSet name="ReconAcdPhaMips_PMTA_TH1_AcdTile_*" exclude="range(89, 96) + range(104, 128)" enabled="True">
       <alarm function="x_average" enabled="True">
 	<warning_limits min="1.0" max="3.0"/>
