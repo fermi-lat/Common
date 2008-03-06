@@ -90,9 +90,10 @@ class pAlarmOutput:
     ## @param value
     #  The output value.
         
-    def setValue(self, value):
+    def setValue(self, value, compress = True):
         self.Value = value
         self.__processValue()
+        self.compress()
 
     def setStatusUndefined(self):
         self.Status = STATUS_UNDEFINED
@@ -212,6 +213,6 @@ if __name__ == '__main__':
     for i in range(1000):
         AlarmOutput.appendDictValue('test key', 'test string')
     print AlarmOutput
-    AlarmOutput.compress()
+    AlarmOutput.setValue(100)
     print AlarmOutput
 
