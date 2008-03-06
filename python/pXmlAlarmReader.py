@@ -28,23 +28,24 @@ class pXmlAlarmReader:
                     if alarm.getAttribute('function') == self.AlgorithmName:
                         alarm = pXmlElement(alarm)
                         outputValue = alarm.evalTagValue('output')
-                        print 'Output value for %s, %s: %.2f' %\
-                            (plotName, self.AlgorithmName, outputValue)
                         self.OutputList.append(outputValue)
 
-    def createHistogram(self, numBins = 10):
-        xMin = min(self.OutputList)
-        xMax = max(self.OutputList)
-        xMin = 1
-        xMax = 2
+    def createHistogram(self, numBins = 20):
+        minValue = min(self.OutputList)
+        maxValue = max(self.OutputList)
+        valuesRange = maxValue - minValue
+        minValue -= 2*valuesRange/float(numBins)
+        maxValue += 2*valuesRange/float(numBins)
         histogramName = self.PlotNamePattern.replace('*', '')
         histogramTitle = self.PlotNamePattern.replace('*', '')
         self.Histogram = ROOT.TH1F(histogramName, histogramTitle,\
-                                       numBins, xMin, xMax)
+                                       numBins, minValue, maxValue)
         self.Histogram.GetXaxis().SetTitle('Algorithm output value')
         self.Histogram.GetYaxis().SetTitle('Entries per bin')
         for value in self.OutputList:
             self.Histogram.Fill(value)
+
+    def drawHistogram(self):
         self.Histogram.Draw()
 
     def matchPattern(self, plotName, pattern):
@@ -58,13 +59,27 @@ class pXmlAlarmReader:
 
 
 if __name__ == '__main__':
-    #filePath = '/data/work/isoc/opssim2/r0257835904_v000_reconEor.xml'
-    filePath = '/data/work/isoc/opssim2/r0258175744_v000_reconEor.xml'
-    #plotPattern = 'ReconAcdPhaMips_PMTA_Zoom_TH1_AcdTile_*'
-    plotPattern = 'ReconEnergy_VeryLowEnergy_TH1_TowerCalLayerCalColumn_*_*_*'
-    #algorithm = 'leftmost_edge'
-    algorithm = 'x_min_bin'
-    reader = pXmlAlarmReader(filePath, plotPattern, algorithm)
+    from optparse import OptionParser 
+    parser = OptionParser()
+    parser.add_option('-p', '--pattern', dest = 'p',
+                      default = None, type = str,
+                      help = 'the patter matching the plot name')
+    parser.add_option('-a', '--algorithm', dest = 'a',
+                      default = None, type = str,
+                      help = 'the name of the required algorithm')
+    (opts, args) = parser.parse_args()
+    if len(args) != 1:
+        parser.print_help()
+        parser.error('Exactly one argument required.')
+    arg = args[0]
+    if opts.p is None:
+        parser.print_help()
+        parser.error('Pattern to match plot names missing. Abort.')
+    if opts.a is None:
+        parser.print_help()
+        parser.error('Algorithm name missing. Abort.')
+    reader = pXmlAlarmReader(arg, opts.p, opts.a)
     reader.parseFile()
     reader.createHistogram()
+    reader.drawHistogram()
     raw_input('Press enter to exit')
