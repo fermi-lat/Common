@@ -54,6 +54,7 @@ class pAlarmOutput:
         self.Value        = None
         self.Label        = None
         self.Status       = STATUS_UNDEFINED
+        self.Compressed   = False
         self.DetailedDict = {}
 
     ## @brief Return whether the status is undefined or not.
@@ -62,6 +63,14 @@ class pAlarmOutput:
 
     def isUndefined(self):
         return self.Status == STATUS_UNDEFINED
+
+    ## @brief Return whether the detailed output dictionary has been compressed
+    #  or not.
+    ## @param self
+    #  The class instance. 
+
+    def isCompressed(self):
+        return self.Compressed
 
     ## @brief Return whether the status is clean or not.
     ## @param self
@@ -178,9 +187,15 @@ class pAlarmOutput:
     def getFormattedValue(self):
         return pUtils.formatNumber(self.Value)
 
+    ## @brief Compress the output detailed dictionary in order to avoid too
+    #  much verbosity in the output xml file.
+    ## @param self
+    #  The class instance. 
+
     def compress(self):
         for (key, value) in self.DetailedDict.items():
             if len(str(value)) > MAX_DETAIL_SIZE:
+                self.Compressed = True
                 self.DetailedDict[key] = '%s... too much garbage following' %\
                     str(value)[:MAX_DETAIL_SIZE]
 
