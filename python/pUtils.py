@@ -109,9 +109,8 @@ def formatFloat(number):
     if abs(number) > 0.001 and abs(number) < 100:
         try:
 	    numDecFigures = int(3 - log10(abs(number)))
-        except OverflowError:
-	    logger.error('OverflowError for number %s' % number)
-	    numDecFigures = 2	
+        except:
+	    numDecFigures = 3	
 	formatString = '%' + '.%df' % numDecFigures
         return formatString % number
     elif abs(number) >= 100 and number < 10000:
