@@ -125,6 +125,9 @@ class pAlarmBaseAlgorithm:
         self.Output.DetailedDict = deepcopy(self.OUTPUT_DICTIONARY)
         self.ExceptionIds = []
 
+    def hasDetails(self):
+        return self.Output.DetailedDict != self.OUTPUT_DICTIONARY
+
     ## @brief Return True if the algorithm is valid (i.e. both the ROOT
     #  object type and the parameters type are supported).
     ## @param self

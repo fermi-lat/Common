@@ -80,16 +80,17 @@ class pAlarmReportGenerator(pBaseReportGenerator):
 
     def fillSummaryTables(self):
         for alarm in self.AlarmHandler.XmlParser.getEnabledAlarms():
-            details = alarm.getOutputDetails()
-            link = '-'
-            if details != {}:
+            if alarm.Algorithm.hasDetails():
+                details = alarm.getOutputDetails()
                 self.addDictionary('%s---%s details' %\
                                    (alarm.getPlotName(), alarm.FunctionName),\
                                    details, 'alarms_details',\
                                    alarm.getPlotName())
                 link = self.getHtmlLinkBlock('details',\
                                              'alarms_details.html#%s' %\
-                                             alarm.getPlotName())
+                                                 alarm.getPlotName())
+            else:
+                link = '-'
             row = [alarm.RootObject.GetName(), alarm.FunctionName,\
                    alarm.getOutputStatus(), '%s (%s)'\
                    % (alarm.getFormattedOutputValue(),
