@@ -5,6 +5,7 @@ from pSafeROOT           import ROOT
 from math                import sqrt
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
+from pAlarmOutput import STATUS_CLEAN, STATUS_WARNING, STATUS_ERROR
 
 ## @brief Search for (statistically) empty bin(s) into a (1 or 2-d) histogram
 ## reporting detailed information.
@@ -114,11 +115,11 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
                                      outliersLowCut, outliersHighCut)
                 significance = sqrt(averageCounts)
                 values.append(significance)
-                if significance > self.Limits.ErrorMax:
+                if self.getStatus(significance) == STATUS_ERROR:
                     self.Output.incrementDictValue('num_error_bins')
                     self.Output.appendDictValue('error_bins',\
                         self.getDetailedLabel(i, significance, 'significance'))
-                elif significance > self.Limits.WarningMax:
+                elif self.getStatus(significance) == STATUS_WARNING:
                     self.Output.incrementDictValue('num_warning_bins')
                     self.Output.appendDictValue('warning_bins',\
                         self.getDetailedLabel(i, significance, 'significance'))
@@ -152,12 +153,12 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
                                                         outliersHighCut)
                     significance = sqrt(averageCounts)
                     values.append(significance)
-                    if significance > self.Limits.ErrorMax:
+                    if self.getStatus(significance) == STATUS_ERROR:
                         self.Output.incrementDictValue('num_error_bins')
                         self.Output.appendDictValue('error_bins',\
                              self.getDetailedLabel((i, j), significance,\
                                                    'significance'))
-                    elif significance > self.Limits.WarningMax:
+                    elif self.getStatus(significance) == STATUS_WARNING:
                         self.Output.incrementDictValue('num_warning_bins')
                         self.Output.appendDictValue('warning_bins',\
                              self.getDetailedLabel((i, j), significance,\
