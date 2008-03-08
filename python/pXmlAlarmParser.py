@@ -1,6 +1,9 @@
 ## @package pXmlAlarmParser
 ## @brief Specific xml parser for the alarm handler.
 
+import pSafeLogger
+logger = pSafeLogger.getLogger('pXmlAlarmParser')
+
 import os
 import sys
 from xml.dom import minidom
@@ -33,12 +36,14 @@ class pXmlAlarmParser:
 
         ## @var XmlDoc
         ## @brief The xml document representation from the minidom module.
-        
+   
         self.AlarmListsDict       = {}
         self.EnabledAlarmSetsDict = {}
         self.XmlConfigFilePath    = xmlConfigFilePath
         if os.path.exists(self.XmlConfigFilePath):
+            logger.info('Parsing %s...' % xmlConfigFilePath)     
             self.XmlDoc = minidom.parse(file(xmlConfigFilePath))
+            logger.info('Done.')
         else:
             sys.exit('Input configuration file %s not found. Exiting...' %\
         	     xmlConfigFilePath)

@@ -1,6 +1,9 @@
 ## @package pXmlExceptionParser
 ## @brief Specific xml parser for the alarm handler exceptions.
 
+import pSafeLogger
+logger = pSafeLogger.getLogger('pXmlExceptionParser')
+
 import os
 import sys
 from xml.dom import minidom
@@ -13,7 +16,9 @@ class pXmlExceptionParser:
     def __init__(self, xmlExceptionFilePath):
         self.XmlExceptionFilePath = xmlExceptionFilePath
         if os.path.exists(self.XmlExceptionFilePath):
+            logger.info('Parsing %s...' % xmlExceptionFilePath)
             self.XmlDoc = minidom.parse(file(xmlExceptionFilePath))
+            logger.info('Done.')
         else:
             sys.exit('Input exception file %s not found. Exiting...' %\
         	     xmlExceptionFilePath)
