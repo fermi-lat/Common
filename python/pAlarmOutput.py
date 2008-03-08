@@ -11,7 +11,7 @@ STATUS_CLEAN     = {'level': 1, 'label': 'CLEAN'}
 STATUS_WARNING   = {'level': 2, 'label': 'WARNING'}
 STATUS_ERROR     = {'level': 3, 'label': 'ERROR'}
 STATUS_UNDEFINED = {'level': 4, 'label': 'UNDEFINED'}
-MAX_DETAIL_SIZE  = 200
+MAX_DETAIL_SIZE  = 500
 
 ## @brief Class describing the output of an alarm.
 #
