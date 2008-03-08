@@ -146,23 +146,32 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
         values = [0.0]
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             for j in range(1, self.RootObject.GetNbinsY() + 1):
-                if self.RootObject.GetBinContent(i, j) == 0:
+                position = (self.RootObject.GetBinCenter(i),\
+                                self.RootObject.GetBinCenter(j))
+                if self.RootObject.GetBinContent(i, j) != 0:
+                    if position in self.ExceptionIds:
+                        self.handleException((i, j), 0, 'significance')
+                else:
                     averageCounts = self.getNeighbouringAverage((i, j),\
                                                         numNeighbours,\
                                                         outliersLowCut,\
                                                         outliersHighCut)
                     significance = sqrt(averageCounts)
-                    values.append(significance)
-                    if self.getStatus(significance) == STATUS_ERROR:
-                        self.Output.incrementDictValue('num_error_bins')
-                        self.Output.appendDictValue('error_bins',\
-                             self.getDetailedLabel((i, j), significance,\
-                                                   'significance'))
-                    elif self.getStatus(significance) == STATUS_WARNING:
-                        self.Output.incrementDictValue('num_warning_bins')
-                        self.Output.appendDictValue('warning_bins',\
-                             self.getDetailedLabel((i, j), significance,\
-                                                   'significance'))
+                    if position in self.ExceptionIds:
+                        self.handleException((i, j), significance,\
+                                                 'significance')
+                    else:
+                        values.append(significance)
+                        if self.getStatus(significance) == STATUS_ERROR:
+                            self.Output.incrementDictValue('num_error_bins')
+                            self.Output.appendDictValue('error_bins',\
+                                 self.getDetailedLabel((i, j), significance,\
+                                                           'significance'))
+                        elif self.getStatus(significance) == STATUS_WARNING:
+                            self.Output.incrementDictValue('num_warning_bins')
+                            self.Output.appendDictValue('warning_bins',\
+                                 self.getDetailedLabel((i, j), significance,\
+                                                           'significance'))
         self.Output.setValue(max(values))
 
 

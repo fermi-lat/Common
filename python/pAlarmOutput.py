@@ -56,6 +56,7 @@ class pAlarmOutput:
         self.Status       = STATUS_UNDEFINED
         self.Compressed   = False
         self.DetailedDict = {}
+        self.ForceError   = False
 
     ## @brief Return whether the status is undefined or not.
     ## @param self
@@ -121,7 +122,9 @@ class pAlarmOutput:
     #  The class instance.
     
     def __processValue(self):
-        if self.Value is None:
+        if self.ForceError:
+            self.setStatusError()
+        elif self.Value is None:
             self.setStatusUndefined()
         elif (self.Value > self.Limits.WarningMin)\
                  and (self.Value < self.Limits.WarningMax):

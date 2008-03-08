@@ -279,6 +279,15 @@ class pAlarmBaseAlgorithm:
             return STATUS_WARNING
         return STATUS_CLEAN
 
+    def handleException(self, position, value, valueLabel):
+        if self.getStatus(value) == STATUS_CLEAN:
+            self.Output.appendDictValue('exception violations',\
+                 self.getDetailedLabel(position, value, valueLabel))
+            self.Output.ForceError = True
+        else:
+            self.Output.appendDictValue('known issues',\
+                 self.getDetailedLabel(position, value, valueLabel))
+
     ## @brief Convert a flat index to a multi-dimensional array position.
     ## @param self
     #  The class instance.

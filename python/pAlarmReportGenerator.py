@@ -82,7 +82,7 @@ class pAlarmReportGenerator(pBaseReportGenerator):
         for alarm in self.AlarmHandler.XmlParser.getEnabledAlarms():
             details = alarm.getOutputDetails()
             link = '-'
-            if details != {} and not alarm.isClean():
+            if details != {}:
                 self.addDictionary('%s---%s details' %\
                                    (alarm.getPlotName(), alarm.FunctionName),\
                                    details, 'alarms_details',\
