@@ -47,8 +47,9 @@ class pAlarmXmlSummaryGenerator(pXmlWriter):
             self.writeTag('severity', {}, alarm.Severity)
             self.writeTag('output', {}, alarm.getFormattedOutputValue())
             self.writeTag('status', {}, alarm.getOutputStatus())
-            for (key, value) in alarm.getOutputDetails().items():
-                self.writeTag('detail', {'name': key, 'value': value })
+            if alarm.Algorithm.hasDetails():
+                for (key, value) in alarm.getOutputDetails().items():
+                    self.writeTag('detail', {'name': key, 'value': value })
             self.backup()
             self.closeTag('alarm')
             self.backup()
