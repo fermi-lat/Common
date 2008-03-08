@@ -124,6 +124,7 @@ class pAlarmOutput:
     def __processValue(self):
         if self.ForceError:
             self.setStatusError()
+            self.Value = None
         elif self.Value is None:
             self.setStatusUndefined()
         elif (self.Value > self.Limits.WarningMin)\
