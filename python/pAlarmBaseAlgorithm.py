@@ -123,6 +123,7 @@ class pAlarmBaseAlgorithm:
         self.Output = pAlarmOutput(limits)
         self.Output.Label = copy(self.OUTPUT_LABEL)
         self.Output.DetailedDict = deepcopy(self.OUTPUT_DICTIONARY)
+        self.Exception = None
 
     ## @brief Return True if the algorithm is valid (i.e. both the ROOT
     #  object type and the parameters type are supported).

@@ -13,6 +13,7 @@ import time
 
 from pXmlElement               import pXmlElement
 from pXmlAlarmParser           import pXmlAlarmParser
+from pXmlExceptionParser       import pXmlExceptionParser
 from pAlarm                    import pAlarm
 from pAlarmReportGenerator     import pAlarmReportGenerator
 from pAlarmXmlSummaryGenerator import pAlarmXmlSummaryGenerator
@@ -40,8 +41,8 @@ class pAlarmHandler:
     ## @param xmlSummaryFilePath
     #  The path to the output xml summary path.
     
-    def __init__(self, rootFilePath, xmlConfigFilePath,\
-                 xmlSummaryFilePath = None):
+    def __init__(self, rootFilePath, xmlConfigFilePath, xmlExceptionsFilePath,\
+                     xmlSummaryFilePath):
 
         ## @var XmlParser
         ## @brief The pXmlAlarmParser object responsible for parsing the
@@ -60,6 +61,10 @@ class pAlarmHandler:
         ## @var AlarmStats
         ## @brief Basic alarm handler statistics.
         
+        self.ExceptionsDict = {}
+        if xmlExceptionsFilePath is not None:
+            xmlExceptionParser = pXmlExceptionParser(xmlExceptionsFilePath)
+            self.ExceptionsDict = xmlExceptionParser.ExceptionsDict
         self.XmlParser = pXmlAlarmParser(xmlConfigFilePath)
         if xmlSummaryFilePath == None:
             xmlSummaryFilePath = rootFilePath.replace('.root', '.alarms.xml')
@@ -105,6 +110,10 @@ class pAlarmHandler:
         logger.info('Activating the alarms...')
         for alarm in self.XmlParser.getEnabledAlarms():
             logger.debug('Activating alarm on plot : %s' % alarm.getPlotName())
+            alarmTuple = (alarm.getPlotName(), alarm.FunctionName)
+            if alarmTuple in self.ExceptionsDict.keys():
+                logger.info('Setting exception(s) on %s %s...' % alarmTuple)
+                alarm.Exception = self.ExceptionsDict[alarmTuple]
 	    alarm.activate()
         logger.info('Done. %d enabled alarm(s) found.\n' %\
                      len(self.XmlParser.getEnabledAlarms()))
@@ -127,13 +136,13 @@ class pAlarmHandler:
 
 if __name__ == '__main__':
     from pOptionParser import pOptionParser
-    optparser = pOptionParser('corV',1,1,False)
+    optparser = pOptionParser('corVx',1,1,False)
     if optparser.Options.c is None:
         optparser.error('Please supply an xml configuration file.')
     if optparser.Options.V and not optparser.Options.r:
         logger.warning('Without the -r option the -V option will be ignored!')
     alarmHandler = pAlarmHandler(optparser.Argument, optparser.Options.c,\
-                                 optparser.Options.o)
+                                 optparser.Options.x, optparser.Options.o)
     if optparser.Options.r:
         ReportGenerator = pAlarmReportGenerator(alarmHandler)
         ReportGenerator.run(False)

@@ -18,12 +18,12 @@ class pXmlExceptionParser:
         if os.path.exists(self.XmlExceptionFilePath):
             logger.info('Parsing %s...' % xmlExceptionFilePath)
             self.XmlDoc = minidom.parse(file(xmlExceptionFilePath))
-            logger.info('Done.')
         else:
             sys.exit('Input exception file %s not found. Exiting...' %\
         	     xmlExceptionFilePath)
         self.ExceptionsDict = {}
         self.__populateExceptionsDict()
+        logger.info('Done. %d exceptions found.' % len(self.ExceptionsDict))
 
     def __populateExceptionsDict(self):
         for element in self.XmlDoc.getElementsByTagName('exception'):
