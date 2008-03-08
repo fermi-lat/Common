@@ -105,7 +105,12 @@ def expandNumber(number, targetLength):
     else:
         return '%s' % string[:targetLength]
 
-def formatFloat(number):    
+def formatFloat(number):
+    try:
+        if int(number) == number:
+            return '%d' % int(number)
+    except OverflowError:
+        pass
     if abs(number) > 0.001 and abs(number) < 100:
         try:
 	    numDecFigures = int(3 - log10(abs(number)))
