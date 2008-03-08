@@ -65,6 +65,8 @@ class pAlarmHandler:
             xmlSummaryFilePath = rootFilePath.replace('.root', '.alarms.xml')
         self.XmlSummaryFilePath = xmlSummaryFilePath
         outputDirPath = os.path.dirname(self.XmlSummaryFilePath)
+        if outputDirPath == '':
+            outputDirPath = os.path.curdir
         if not os.path.exists(outputDirPath):
             os.makedirs(outputDirPath)
             logger.debug('Creating new directory to store output files: %s' %\
