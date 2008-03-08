@@ -34,6 +34,11 @@ class pOptionParser:
                                default = None, type = str,
                                help = 'path to the input xml config file')
 
+    def add_x(self):
+        self.Parser.add_option('-x', '--exceptions-file', dest = 'x',
+                               default = None, type = str,
+                               help = 'path to the xml exceptions file')
+
     def add_o(self):
         self.Parser.add_option('-o', '--output-file', dest = 'o',
                                default = None, type = str,
