@@ -78,22 +78,26 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
                             }
     OUTPUT_LABEL         = 'Significance of the maximum bin difference'
 
-    def run(self):
+    def __init__(self, limits, object, paramsDict, conditionsDict = {}):
+        pAlarmBaseAlgorithm.__init__(self, limits, object, paramsDict,\
+                                         conditionsDict)
         referenceFilePath = self.ParamsDict['reference_path']
         referenceName = self.ParamsDict['reference_name']
-        referenceFile = ROOT.TFile(referenceFilePath)
-        referenceObject = referenceFile.Get(referenceName)
-        numBins = referenceObject.GetNbinsX()
+        self.ReferenceFile = ROOT.TFile(referenceFilePath)
+        self.ReferenceObject = self.ReferenceFile.Get(referenceName)
+
+    def run(self):
+        numBins = self.ReferenceObject.GetNbinsX()
         if self.RootObject.GetNbinsX() != numBins:
             logging.error('Mismatch in bins while comparing histograms.')
             return
-        numEntriesRef = referenceObject.GetEntries()
+        numEntriesRef = self.ReferenceObject.GetEntries()
         numEntriesObj = self.RootObject.GetEntries()
         scaleFactor = float(numEntriesRef)/numEntriesObj
         deltas = [0.0]
         for i in range(numBins + 2):
-            numExp = referenceObject.GetBinContent(i)
-            errExp = referenceObject.GetBinError(i)
+            numExp = self.ReferenceObject.GetBinContent(i)
+            errExp = self.ReferenceObject.GetBinError(i)
             numObs = self.RootObject.GetBinContent(i)*scaleFactor
             errObs = self.RootObject.GetBinError(i)*scaleFactor
             try:
@@ -114,7 +118,7 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
         self.Output.setDictValue('reduced_chisquare',\
                     self.Output.getDictValue('chisquare')/numBins)
         self.Output.setValue(max(deltas))
-        referenceFile.Close()
+        self.ReferenceFile.Close()
         
 
 
