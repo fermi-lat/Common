@@ -93,18 +93,18 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
             return
         numEntriesRef = self.ReferenceObject.GetEntries()
         numEntriesObj = self.RootObject.GetEntries()
-        scaleFactor = float(numEntriesRef)/numEntriesObj
+        scaleFactor = numEntriesObj/float(numEntriesRef)
         deltas = [0.0]
         for i in range(numBins + 2):
-            numExp = self.ReferenceObject.GetBinContent(i)
-            errExp = self.ReferenceObject.GetBinError(i)
-            numObs = self.RootObject.GetBinContent(i)*scaleFactor
-            errObs = self.RootObject.GetBinError(i)*scaleFactor
+            numExp = self.ReferenceObject.GetBinContent(i)*scaleFactor
+            numObs = self.RootObject.GetBinContent(i)
+            errObs = self.RootObject.GetBinError(i)
             try:
-                delta = abs(numExp - numObs)/sqrt(errExp**2 + errObs**2)
+                delta = abs(numExp - numObs)/errObs
             except ZeroDivisionError:
                 delta = 0
             deltas.append(delta)
+            print delta
             self.Output.incrementDictValue('chisquare', delta)
             x = self.RootObject.GetBinCenter(i)
             binString = 'bin @ %s, significance = %s' %\
@@ -118,8 +118,10 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
         self.Output.setDictValue('reduced_chisquare',\
                     self.Output.getDictValue('chisquare')/numBins)
         self.Output.setValue(max(deltas))
-        self.ReferenceFile.Close()
-        
+        try:
+            self.ReferenceFile.Close()
+        except:
+            pass
 
 
 
