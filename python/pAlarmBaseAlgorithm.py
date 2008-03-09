@@ -297,6 +297,17 @@ class pAlarmBaseAlgorithm:
             return STATUS_WARNING
         return STATUS_CLEAN
 
+    def checkStatus(self, position, value, label):
+        if value < self.Limits.ErrorMin or value > self.Limits.ErrorMax:
+            label = self.getDetailedLabel(position, value, label)
+            self.Output.incrementDictValue('num_error_entries')
+            self.Output.appendDictValue('error_entries', label)
+        elif value < self.Limits.WarningMin or value > self.Limits.WarningMax:
+            label = self.getDetailedLabel(position, value, label)
+            self.Output.incrementDictValue('num_warning_entries')
+            self.Output.appendDictValue('warning_entries', label)
+        return STATUS_CLEAN
+
     def handleException(self, position, value, valueLabel):
         if self.getStatus(value) == STATUS_CLEAN:
             self.Output.appendDictValue('exception violations',\
