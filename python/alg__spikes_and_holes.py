@@ -83,18 +83,9 @@ class alg__spikes_and_holes(pAlarmBaseAlgorithm):
     #  The class instance.
 
     def runTH1F(self):
-        try:
-            numNeighbours = self.ParamsDict['num_neighbours']
-        except KeyError:
-            numNeighbours = 4
-        try:
-            outliersLowCut = self.ParamsDict['out_low_cut']
-        except KeyError:
-            outliersLowCut  = 0.3
-        try:
-            outliersHighCut = self.ParamsDict['out_high_cut']
-        except KeyError:
-            outliersHighCut = 0.3
+        numNeighbours = self.getParameter('num_neighbours', 4)
+        outliersLowCut = self.getParameter('out_low_cut', 0.3)
+        outliersHighCut = self.getParameter('out_high_cut', 0.3)
         values = [0.0]
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             observed = self.RootObject.GetBinContent(i)
@@ -119,18 +110,9 @@ class alg__spikes_and_holes(pAlarmBaseAlgorithm):
     #  The class instance.
 
     def runTH2F(self):
-        try:
-            numNeighbours = self.ParamsDict['num_neighbours']
-        except KeyError:
-            numNeighbours = 2
-        try:
-            outliersLowCut = self.ParamsDict['out_low_cut']
-        except KeyError:
-            outliersLowCut  = 0.25
-        try:
-            outliersHighCut = self.ParamsDict['out_high_cut']
-        except KeyError:
-            outliersHighCut = 0.25
+        numNeighbours = self.getParameter('num_neighbours', 2)
+        outliersLowCut = self.getParameter('out_low_cut', 0.25)
+        outliersHighCut = self.getParameter('out_high_cut', 0.25)
         values = [0.0]
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             for j in range(1, self.RootObject.GetNbinsY() + 1):
@@ -171,7 +153,7 @@ if __name__ == '__main__':
     histogram1d.SetBinContent(9, 250)
     histogram1d.Draw()
     canvas.Update()
-    pardict1d = {'num_neighbours': 4, 'out_low_cut': 0.3, 'out_high_cut': 0.3}
+    pardict1d = {}
     algorithm1d = alg__spikes_and_holes(limits, histogram1d, pardict1d)
     algorithm1d.apply()
     print 'Parameters: %s\n' % pardict1d
@@ -190,7 +172,7 @@ if __name__ == '__main__':
     histogram2d.SetBinContent(8, 8, 100)
     histogram2d.Draw('colz')
     canvas.Update()
-    pardict2d = {'num_neighbours': 2, 'out_low_cut': 0.25, 'out_high_cut': 0.25}
+    pardict2d = {}
     algorithm2d = alg__spikes_and_holes(limits, histogram2d, pardict2d)
     algorithm2d.apply()
     print 'Parameters: %s\n' % pardict2d

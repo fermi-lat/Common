@@ -44,13 +44,12 @@ class alg__y_values(pAlarmBaseAlgorithm):
     OUTPUT_LABEL         = 'The worst y-value'
 
     def run(self):
-        if self.ParamsDict.has_key('normalize'):
-            if self.ParamsDict['normalize'] == True:
-                numEntries = self.RootObject.GetEntries()
-                self.Limits.ErrorMax   *= numEntries
-                self.Limits.ErrorMin   *= numEntries
-                self.Limits.WarningMin *= numEntries
-                self.Limits.WarningMax *= numEntries
+        if self.getParameter('normalize', False):
+            numEntries = self.RootObject.GetEntries()
+            self.Limits.ErrorMax   *= numEntries
+            self.Limits.ErrorMin   *= numEntries
+            self.Limits.WarningMin *= numEntries
+            self.Limits.WarningMax *= numEntries
         badnessDict = {}
         for bin in range(self.RootObject.GetXaxis().GetFirst(),\
                          self.RootObject.GetXaxis().GetLast() + 1):

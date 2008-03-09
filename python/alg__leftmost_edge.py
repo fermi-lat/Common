@@ -63,16 +63,11 @@ class alg__leftmost_edge(pAlarmBaseAlgorithm):
 
 
     def run(self):
-        try:
-            self.WindowHalfWidth = int(self.ParamsDict['window_half_width'])
-        except:
-            self.WindowHalfWidth = 5
-        try:
-            threshold = self.ParamsDict['threshold']
-        except:
-            threshold = 7
+        self.WindowHalfWidth = int(self.getParameter('window_half_width', 5))
+        threshold = self.getParameter('threshold', 7)
         numBins = self.RootObject.GetNbinsX()
-        for i in range(1 + self.WindowHalfWidth, numBins + 1 - self.WindowHalfWidth):
+        for i in range(1 + self.WindowHalfWidth,\
+                           numBins + 1 - self.WindowHalfWidth):
 	    significance = self.getEdgeSignificance(i)
 	    if significance > threshold:
                 self.refineEdge(i, significance)
@@ -112,8 +107,6 @@ if __name__ == '__main__':
     canvas = ROOT.TCanvas('Test canvas', 'Test canvas', 600, 300)
     limits = pAlarmLimits(30, 40, 20, 60)
 
-#    f = ROOT.TFile("/data37/users/ISOCdata/OpsSim2/258160000/AcdPmt.root")
-#    histogram = f.Get('ReconAcdPhaMips_PMTA_Zoom_TH1_AcdTile_0')
     histogram = ROOT.TH1F('h1', 'h1', 100, 0, 100)
     for i in range(1, 43):
         histogram.SetBinContent(i, random.gauss(5, sqrt(5)))
@@ -121,7 +114,7 @@ if __name__ == '__main__':
         histogram.SetBinContent(i, random.gauss(50, sqrt(50)))
     histogram.Draw()
     canvas.Update()
-    pardict = {'window_half_width': 5, 'threshold': 10}
+    pardict = {}
     algorithm = alg__leftmost_edge(limits, histogram, pardict)
     algorithm.apply()
     print 'Parameters: %s\n' % pardict

@@ -31,10 +31,7 @@ class alg__x_min_bin(pAlarmBaseAlgorithm):
     OUTPUT_LABEL         = 'Center of the leftmost populated bin'
 
     def run(self):
-        try:
-            numAdjacentBins = self.ParamsDict['num_adjacent_bins']
-        except KeyError:
-            numAdjacentBins = 1
+        numAdjacentBins = self.getParameter('num_adjacent_bins', 1)
         currentBin = self.RootObject.GetXaxis().GetFirst()        
         while(currentBin < (self.RootObject.GetXaxis().GetLast() -\
                             numAdjacentBins)):   

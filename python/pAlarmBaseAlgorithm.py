@@ -159,6 +159,21 @@ class pAlarmBaseAlgorithm:
     def getObjectName(self):
         return self.RootObject.GetName()
 
+    ## @brief Return the value of an algorithm parameter.
+    ## @param self
+    #  The class instance.    
+    ## @param paramName
+    #  The name of the parameter, i.e. the corresponding key in the parameters
+    #  dictionary.
+    ## @param defaultValue
+    #  The default value in case the parameter is not explicitely defined.
+
+    def getParameter(self, paramName, defaultValue):
+        try:
+            return self.ParamsDict[paramName]
+        except KeyError:
+            return defaultValue
+
     ## @brief Make sure the algorithm supports the ROOT object it has
     #  to operate on.
     ## @param self

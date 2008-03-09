@@ -36,14 +36,8 @@ class alg__x_min_bin_slices(pAlarmBaseAlgorithm):
     OUTPUT_LABEL         = 'Bin center of the leftmost bin for the worst slice'
 
     def run(self):
-        try:
-            numAdjacentBins = self.ParamsDict['num_adjacent_bins']
-        except KeyError:
-            numAdjacentBins = 1
-        try:
-            sliceWidth = self.ParamsDict['slice_width']
-        except KeyError:
-            sliceWidth = 1
+        numAdjacentBins = self.getParameter('num_adjacent_bins', 1)
+        sliceWidth = self.getParameter('slice_width', 1)
 	sliceParamsDict = {'num_adjacent_bins': numAdjacentBins}
         currentBin = self.RootObject.GetXaxis().GetFirst()
         lastBin = self.RootObject.GetXaxis().GetLast() - sliceWidth

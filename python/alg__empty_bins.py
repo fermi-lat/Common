@@ -96,18 +96,9 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
     #  The class instance.
 
     def runTH1F(self):
-        try:
-            numNeighbours = self.ParamsDict['num_neighbours']
-        except KeyError:
-            numNeighbours = 3
-        try:
-            outliersLowCut = self.ParamsDict['out_low_cut']
-        except KeyError:
-            outliersLowCut  = 0.0
-        try:
-            outliersHighCut = self.ParamsDict['out_high_cut']
-        except KeyError:
-            outliersHighCut = 0.25
+        numNeighbours = self.getParameter('num_neighbours', 3)
+        outliersLowCut = self.getParameter('out_low_cut', 0.0)
+        outliersHighCut = self.getParameter('out_high_cut', 0.25)
         values = [0.0]
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             if self.RootObject.GetBinContent(i) == 0:
@@ -131,18 +122,9 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
     #  The class instance.
 
     def runTH2F(self):
-        try:
-            numNeighbours = self.ParamsDict['num_neighbours']
-        except KeyError:
-            numNeighbours = 2
-        try:
-            outliersLowCut = self.ParamsDict['out_low_cut']
-        except KeyError:
-            outliersLowCut  = 0.0
-        try:
-            outliersHighCut = self.ParamsDict['out_high_cut']
-        except KeyError:
-            outliersHighCut = 0.25
+        numNeighbours = self.getParameter('num_neighbours', 2)
+        outliersLowCut = self.getParameter('out_low_cut', 0.0)
+        outliersHighCut = self.getParameter('out_high_cut', 0.25)
         values = [0.0]
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             for j in range(1, self.RootObject.GetNbinsY() + 1):
@@ -190,7 +172,7 @@ if __name__ == '__main__':
     histogram1d.SetBinContent(3, 0)
     histogram1d.Draw()
     canvas.Update()
-    pardict1d = {'num_neighbours': 3, 'out_low_cut': 0.0, 'out_high_cut': 0.0}
+    pardict1d = {}
     algorithm1d = alg__empty_bins(limits, histogram1d, pardict1d)
     algorithm1d.apply()
     print 'Parameters: %s\n' % pardict1d
@@ -207,7 +189,7 @@ if __name__ == '__main__':
     histogram2d.SetBinContent(4, 4, 0)
     histogram2d.Draw('colz')
     canvas.Update()
-    pardict2d = {'num_neighbours': 2, 'out_low_cut': 0.0, 'out_high_cut': 0.25}
+    pardict2d = {}
     algorithm2d = alg__empty_bins(limits, histogram2d, pardict2d)
     algorithm2d.apply()
     print 'Parameters: %s\n' % pardict2d
