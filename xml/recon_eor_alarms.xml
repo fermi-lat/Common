@@ -122,6 +122,7 @@
 
     <alarmSet name="SuspCalLo_Highest0_EnergyDistribution_TH1" enabled="True">
       <alarm function="leftmost_edge" enabled="True">
+	<parameter name="threshold" value="50"/>
 	<warning_limits min="80.0" max="120.0"/>
 	<error_limits min="50.0"   max="150.0"/>
       </alarm>
@@ -129,6 +130,7 @@
 
     <alarmSet name="SuspCalHi_Highest0_EnergyDistribution_TH1" enabled="True">
       <alarm function="leftmost_edge" enabled="True">
+	<parameter name="threshold" value="50"/>
 	<warning_limits min="800.0" max="1200.0"/>
 	<error_limits min="500.0" max="1500.0"/>
       </alarm>
