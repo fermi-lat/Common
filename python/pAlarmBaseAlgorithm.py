@@ -123,7 +123,7 @@ class pAlarmBaseAlgorithm:
         self.Output = pAlarmOutput(limits)
         self.Output.Label = copy(self.OUTPUT_LABEL)
         self.Output.DetailedDict = deepcopy(self.OUTPUT_DICTIONARY)
-        self.ExceptionIds = []
+        self.Exception = None
 
     def hasDetails(self):
         return self.Output.DetailedDict != self.OUTPUT_DICTIONARY

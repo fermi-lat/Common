@@ -13,14 +13,18 @@ class pAlarmException(pXmlElement):
     def __init__(self, domElement):
         pXmlElement.__init__(self, domElement)
         self.AlgorithmName = self.getAttribute('algorithm')
-        self.IdsList = []
-        for element in self.getElementsByTagName('identifier'):
-            self.IdsList.append(eval(str(element.childNodes[0].data).strip()))
+        if self.getElementByTagName('out_status') is None:
+            self.FlippedStatus = False
+        else:
+            self.FlippedStatus = True
+        element = pXmlElement(self.getElementByTagName('out_details'))
+        self.FlippedDetails = element.evalAttribute('identifiers')
     
     def getTextSummary(self):
-        summary =  'Name       : %s\n' % self.Name
-        summary += 'Algorithm  : %s\n' % self.AlgorithmName
-        summary += 'List of Ids: %s\n' % self.IdsList
+        summary =  'Name           : %s\n' % self.Name
+        summary += 'Algorithm      : %s\n' % self.AlgorithmName
+        summary += 'Flipped status : %s\n' % self.FlippedStatus
+        summary += 'Flipped details: %s\n' % self.FlippedDetails
         return summary
 
     def __str__(self):
