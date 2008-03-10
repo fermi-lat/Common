@@ -5,8 +5,6 @@ from pSafeROOT           import ROOT
 from math                import sqrt
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
-from pAlarmOutput import STATUS_CLEAN, STATUS_WARNING, STATUS_ERROR
-
 ## @brief Search for (statistically) empty bin(s) into a (1 or 2-d) histogram
 ## reporting detailed information.
 #
