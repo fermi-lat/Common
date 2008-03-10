@@ -114,39 +114,21 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
     #  The class instance.
 
     def runTH2F(self):
-        numNeighbours = self.getParameter('num_neighbours', 2)
-        outliersLowCut = self.getParameter('out_low_cut', 0.0)
-        outliersHighCut = self.getParameter('out_high_cut', 0.25)
-        values = [0.0]
+        numNeigh = self.getParameter('num_neighbours', 2)
+        outLoCut = self.getParameter('out_low_cut', 0.0)
+        outHiCut = self.getParameter('out_high_cut', 0.25)
+        significances = [0.0]
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             for j in range(1, self.RootObject.GetNbinsY() + 1):
-                position = (self.RootObject.GetBinCenter(i),\
-                                self.RootObject.GetBinCenter(j))
                 if self.RootObject.GetBinContent(i, j) != 0:
-                    if position in self.ExceptionIds:
-                        self.handleException((i, j), 0, 'significance')
+                    significance = 0
                 else:
-                    averageCounts = self.getNeighbouringAverage((i, j),\
-                                                        numNeighbours,\
-                                                        outliersLowCut,\
-                                                        outliersHighCut)
-                    significance = sqrt(averageCounts)
-                    if position in self.ExceptionIds:
-                        self.handleException((i, j), significance,\
-                                                 'significance')
-                    else:
-                        values.append(significance)
-                        if self.getStatus(significance) == STATUS_ERROR:
-                            self.Output.incrementDictValue('num_error_entries')
-                            self.Output.appendDictValue('error_entries',\
-                                 self.getDetailedLabel((i, j), significance,\
-                                                           'significance'))
-                        elif self.getStatus(significance) == STATUS_WARNING:
-                            self.Output.incrementDictValue('num_warning_entries')
-                            self.Output.appendDictValue('warning_entries',\
-                                 self.getDetailedLabel((i, j), significance,\
-                                                           'significance'))
-        self.Output.setValue(max(values))
+                    exp = self.getNeighbouringAverage((i, j), numNeigh,\
+                                                          outLoCut, outHiCut)
+                    significance = sqrt(exp)
+                    self.checkStatus((i, j), significance, 'significance')
+                    significances.append(significance)
+        self.Output.setValue(max(significances))
 
 
 
