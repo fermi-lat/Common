@@ -24,7 +24,7 @@ class pAlarmException(pXmlElement):
         summary =  'Name           : %s\n' % self.Name
         summary += 'Algorithm      : %s\n' % self.AlgorithmName
         summary += 'Flipped status : %s\n' % self.FlippedStatus
-        summary += 'Flipped details: %s\n' % self.FlippedDetails
+        summary += 'Flipped details: %s'   % self.FlippedDetails
         return summary
 
     def __str__(self):

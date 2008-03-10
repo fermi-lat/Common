@@ -113,7 +113,7 @@ class pAlarmHandler:
             alarmTuple = (alarm.getPlotName(), alarm.FunctionName)
             if alarmTuple in self.ExceptionsDict.keys():
                 logger.info('Setting exception(s) on %s %s...' % alarmTuple)
-                logger.info('Details: %s' % self.ExceptionsDict[alarmTuple])
+                logger.info('Details:\n%s' % self.ExceptionsDict[alarmTuple])
                 alarm.Algorithm.Exception = self.ExceptionsDict[alarmTuple]
 	    alarm.activate()
         logger.info('Done. %d enabled alarm(s) found.\n' %\
