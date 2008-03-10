@@ -3,11 +3,11 @@
 <alarm_exceptions>
 
   <exception name="TkrHitsCounter_PlaneGTFE_TH2_Tower_0" algorithm="empty_bins">
-    <identifier>(3 , 7)</identifier>
-    <identifier>(10, 8)</identifier>
-    <identifier>(11, 8)</identifier>
-    <identifier>(20, 2)</identifier>
-    <identifier>(21, 2)</identifier>
+    <out_details identifiers="[(3, 7), (10, 8), (11, 8), (20, 2), (21, 2)]"/>
   </exception>
+
+  <!--exception name="" algorithm="">
+    <out_status/>
+  </exception-->
 
 </alarm_exceptions>
