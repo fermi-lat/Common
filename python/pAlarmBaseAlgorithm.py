@@ -283,21 +283,6 @@ class pAlarmBaseAlgorithm:
             badness = max(lowBadness, highBadness)
         return badness
 
-    ## @brief Return the "status" (i.e. CLEAN, WARNING, ERROR) of a given
-    #  value, when checked against the alarm limits.
-    ## @param self
-    #  The class instance.
-    ## @param value
-    #  The value.
-
-    def getStatus(self, value):
-        ## TO BE REMOVED.
-        if value < self.Limits.ErrorMin or value > self.Limits.ErrorMax:
-            return STATUS_ERROR
-        elif value < self.Limits.WarningMin or value > self.Limits.WarningMax:
-            return STATUS_WARNING
-        return STATUS_CLEAN
-
     ## @brief Return the bin center for a given bin index on the x axis.
     ## @param self
     #  The class instance.
@@ -305,7 +290,17 @@ class pAlarmBaseAlgorithm:
     #  The bin index.
     
     def getX(self, bin):
-        return pUtils.formatNumber(self.RootObject.GetXaxis().GetBinCenter(bin))
+        return self.RootObject.GetXaxis().GetBinCenter(bin)
+
+    ## @brief Return the (formatted) bin center for a given bin index on the
+    #  x axis.
+    ## @param self
+    #  The class instance.
+    ## @param bin
+    #  The bin index.
+
+    def getFormattedX(self, bin):
+        return pUtils.formatNumber(self.getX(bin))
 
     ## @brief Return the bin center for a given bin index on the y axis.
     ## @param self
@@ -314,7 +309,17 @@ class pAlarmBaseAlgorithm:
     #  The bin index.
 
     def getY(self, bin):
-        return pUtils.formatNumber(self.RootObject.GetYaxis().GetBinCenter(bin))
+        return self.RootObject.GetYaxis().GetBinCenter(bin)
+
+    ## @brief Return the (formatted) bin center for a given bin index on the
+    #  y axis.
+    ## @param self
+    #  The class instance.
+    ## @param bin
+    #  The bin index.
+
+    def getFormattedY(self, bin):
+        return pUtils.formatNumber(self.getY(bin))
 
     ## @brief Return the position (in physical coordinates)
     #  corresponding to a given bin index(es).
@@ -330,7 +335,23 @@ class pAlarmBaseAlgorithm:
         elif 'TH2' in objectType:
             return (self.getX(index[0]), self.getY(index[1]))
         else:
-            return None
+            return index
+
+    ## @brief Return the formatted position (in physical coordinates)
+    #  corresponding to a given bin index(es).
+    ## @param self
+    #  The class instance.
+    ## @param bins
+    #  The bin (i) or the bins tuple (i, j).
+
+    def getFormattedPosition(self, index):
+        objectType = self.getObjectType()        
+        if 'TH1' in objectType:
+            return self.getFormattedX(index)
+        elif 'TH2' in objectType:
+            return (self.getFormattedX(index[0]), self.getFormattedY(index[1]))
+        else:
+            return index
 
     ## @brief Return the axis title, if any, stripped of the units, to be
     #  used in the label for the detailed dictionary.
@@ -365,7 +386,7 @@ class pAlarmBaseAlgorithm:
     def getDetailedLabel(self, index, value, valueLabel = 'value'):
         objectType = self.getObjectType()
         value = pUtils.formatNumber(value)
-        position = self.getPosition(index)
+        position = self.getFormattedPosition(index)
         if objectType == 'TBranch':
             label = 'time = %f, ' % self.TimestampArray[0]
             if self.BranchArray.size > 1:
@@ -388,32 +409,88 @@ class pAlarmBaseAlgorithm:
             label = 'index = %s, value = %s' % (index, value)
         return label
 
+    ## @brief Return the "status" (i.e. CLEAN, WARNING, ERROR) of a given
+    #  value, when checked against the alarm limits.
+    ## @param self
+    #  The class instance.
+    ## @param value
+    #  The value.
+
+    def getStatus(self, value):
+        if value < self.Limits.ErrorMin or value > self.Limits.ErrorMax:
+            return STATUS_ERROR
+        elif value < self.Limits.WarningMin or value > self.Limits.WarningMax:
+            return STATUS_WARNING
+        return STATUS_CLEAN
+
     ## @brief Check the status for a given step (bin index or array index)
     #  in the execution of a given algorithm and fill the output detailed
     #  dictionaries if needed.
+    #  
+    #  This is a quite complicated function that might deserve some more
+    #  explanation.
+    #  At the beginning we check whether the particulat histogram bin or
+    #  array index is in the list of exception, in which case the logic
+    #  of the whole thing must be flipped. At this point there are actually
+    #  three different possible cases (with relative sub-cases) in the
+    #  "decision tree":
+    #
+    #  @li Case 1: ERROR.
+    #  <br>
+    #  In case of exception fill the list of known issues, otherwise the
+    #  list of errors.
+    #
+    #  @li Case 2: WARNING.
+    #  <br>
+    #  In case of exception fill the list of known issues, otherwise the
+    #  list of warning.
+    #
+    #  @li Case 3: CLEAN.
+    #  <br>
+    #  In case of exception fill the list of exception violations, otherwise
+    #  just pass by.
+    #
+    #  There's a basic design issue, here, on whether it's better to use
+    #  histogram bin indexes of physical locations on the histogram (i.e. bin
+    #  centers) as function parameters. The first approach has the advantage
+    #  that you put physical quantities (i.e. GTFE number or ACD tile number)
+    #  in the exception file, but not sure how we can handle the case
+    #  in which the bin center is not integer, since the algorithm involves
+    #  a comparison between numbers. We stick to this first implementation,
+    #  for the moment.
+    #
+    #  Also note that the function returns a boolean telling whether the
+    #  particular index is in the list of exceptions (meaning whether the logic
+    #  has been flipped or not). This value may be used in the calling function
+    #  to differenciate its behaviour.
+    #  
     ## @param self
     #  The class instance
 
     def checkStatus(self, index, value, valueLabel):
+        position = self.getPosition(index)
+        if self.Exception is None:
+            flip = False
+        else:
+            flip = (position in self.Exception.FlippedDetails)
         if value < self.Limits.ErrorMin or value > self.Limits.ErrorMax:
             label = self.getDetailedLabel(index, value, valueLabel)
-            self.Output.incrementDictValue('num_error_entries')
-            self.Output.appendDictValue('error_entries', label)
+            if flip:
+                self.Output.appendDictValue('known_issues', label)
+            else:
+                self.Output.incrementDictValue('num_error_entries')
+                self.Output.appendDictValue('error_entries', label)
         elif value < self.Limits.WarningMin or value > self.Limits.WarningMax:
             label = self.getDetailedLabel(index, value, valueLabel)
-            self.Output.incrementDictValue('num_warning_entries')
-            self.Output.appendDictValue('warning_entries', label)
-        return STATUS_CLEAN
-
-    def handleException(self, position, value, valueLabel):
-        ## TO BE REMOVED.
-        if self.getStatus(value) == STATUS_CLEAN:
-            self.Output.appendDictValue('exception violations',\
-                 self.getDetailedLabel(position, value, valueLabel))
-            self.Output.ForceError = True
+            if flip:
+                self.Output.appendDictValue('known_issues', label)
+            else:
+                self.Output.incrementDictValue('num_warning_entries')
+                self.Output.appendDictValue('warning_entries', label)
         else:
-            self.Output.appendDictValue('known issues',\
-                 self.getDetailedLabel(position, value, valueLabel))
+            if flip:
+                self.Output.appendDictValue('exception violations', label)
+        return flip
 
     ## @brief Convert a flat index to a multi-dimensional array position.
     ## @param self
