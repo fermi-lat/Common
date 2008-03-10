@@ -17,8 +17,12 @@ class pAlarmException(pXmlElement):
             self.FlippedStatus = False
         else:
             self.FlippedStatus = True
-        element = pXmlElement(self.getElementByTagName('out_details'))
-        self.FlippedDetails = element.evalAttribute('identifiers')
+        element = self.getElementByTagName('out_details')
+        if element is None:
+            self.FlippedDetails = []
+        else:
+            element = pXmlElement(element)
+            self.FlippedDetails = element.evalAttribute('identifiers')
     
     def getTextSummary(self):
         summary =  'Name           : %s\n' % self.Name
