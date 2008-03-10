@@ -51,19 +51,12 @@ class alg__y_values(pAlarmBaseAlgorithm):
             self.Limits.WarningMin *= numEntries
             self.Limits.WarningMax *= numEntries
         badnessDict = {}
-        for bin in range(self.RootObject.GetXaxis().GetFirst(),\
+        for i in range(self.RootObject.GetXaxis().GetFirst(),\
                          self.RootObject.GetXaxis().GetLast() + 1):
-            value = self.RootObject.GetBinContent(bin)
+            value = self.RootObject.GetBinContent(i)
             status = self.getStatus(value)
             badnessDict[self.getBadness(value)] = value
-            if status == STATUS_ERROR:
-                self.Output.incrementDictValue('num_error_entries')
-                self.Output.appendDictValue('error_entries',\
-                            self.getDetailedLabel(bin, value))
-            elif status == STATUS_WARNING:
-                self.Output.incrementDictValue('num_warning_entries')
-                self.Output.appendDictValue('warning_entries',\
-                            self.getDetailedLabel(bin, value))
+            self.checkStatus(i, value, 'y-value')
         badnessList = badnessDict.keys()
         badnessList.sort()
         maxBadness = badnessList[-1]

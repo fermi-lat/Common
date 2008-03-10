@@ -97,14 +97,7 @@ class alg__values(pAlarmBaseAlgorithm):
                 value = flatArray[index]
                 status = self.getStatus(value)
                 badnessDict[self.getBadness(value)] = value
-                if status == STATUS_ERROR:
-                    self.Output.incrementDictValue('num_error_entries')
-                    self.Output.appendDictValue('error_entries',\
-                                self.getDetailedLabel(index, value))
-                elif status == STATUS_WARNING:
-                    self.Output.incrementDictValue('num_warning_entries')
-                    self.Output.appendDictValue('warning_entries',\
-                                self.getDetailedLabel(index, value))
+                self.checkStatus(i, value, 'value')
         badnessList = badnessDict.keys()
         badnessList.sort()
         maxBadness = badnessList[-1]
