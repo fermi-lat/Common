@@ -3,7 +3,6 @@ from pSafeROOT import ROOT
 
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 from pAlarmBaseAlgorithm import ROOT2NUMPYDICT
-from pAlarmOutput import STATUS_CLEAN, STATUS_WARNING, STATUS_ERROR
 
 import pUtils
 import numpy
@@ -95,7 +94,6 @@ class alg__values(pAlarmBaseAlgorithm):
             flatArray = self.BranchArray.flatten()
             for index in self.IndexList:
                 value = flatArray[index]
-                status = self.getStatus(value)
                 badnessDict[self.getBadness(value)] = value
                 self.checkStatus(i, value, 'value')
         badnessList = badnessDict.keys()

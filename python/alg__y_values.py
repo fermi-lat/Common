@@ -3,7 +3,6 @@ import pUtils
 
 from pSafeROOT           import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
-from pAlarmOutput        import STATUS_CLEAN, STATUS_WARNING, STATUS_ERROR
 
 
 ## @brief Make sure all the y values are within limits.
@@ -54,7 +53,6 @@ class alg__y_values(pAlarmBaseAlgorithm):
         for i in range(self.RootObject.GetXaxis().GetFirst(),\
                          self.RootObject.GetXaxis().GetLast() + 1):
             value = self.RootObject.GetBinContent(i)
-            status = self.getStatus(value)
             badnessDict[self.getBadness(value)] = value
             self.checkStatus(i, value, 'y-value')
         badnessList = badnessDict.keys()
