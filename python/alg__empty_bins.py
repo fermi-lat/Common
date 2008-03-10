@@ -65,16 +65,16 @@ from pAlarmOutput import STATUS_CLEAN, STATUS_WARNING, STATUS_ERROR
 #
 #  <b>Output details</b>:
 #
-#  @li <tt>num_warning_bins</tt>: the number of empty bins whose statistical
+#  @li <tt>num_warning_entries</tt>: the number of empty bins whose statistical
 #  significance produces a warning.
 #  <br>
-#  @li <tt>num_error_bins</tt>: the number of empty bins whose statistical
+#  @li <tt>num_error_entries</tt>: the number of empty bins whose statistical
 #  significance produces an error.
 #  <br>
-#  @li <tt>warning_bins</tt>: a list of all the bins producing a warning. Each
-#  element of the list is a string which should be self-explaining.
+#  @li <tt>warning_entries</tt>: a list of all the bins producing a warning.
+#  Each element of the list is a string which should be self-explaining.
 #  <br>
-#  @li <tt>error_bins</tt>: a list of all the bins producing a warning. Each
+#  @li <tt>error_entries</tt>: a list of all the bins producing a warning. Each
 #  element of the list is a string which should be self-explaining.
 #  <br>
 
@@ -84,10 +84,10 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F', 'TH2F']
     SUPPORTED_PARAMETERS = ['num_neighbours', 'out_low_cut', 'out_high_cut']
-    OUTPUT_DICTIONARY    = {'num_warning_bins': 0,
-                            'num_error_bins'  : 0,
-                            'warning_bins'    : [],
-                            'error_bins'      : []
+    OUTPUT_DICTIONARY    = {'num_warning_entries': 0,
+                            'num_error_entries'  : 0,
+                            'warning_entries'    : [],
+                            'error_entries'      : []
                             }
     OUTPUT_LABEL          = 'Significance for the worst bin'
 
@@ -96,27 +96,19 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
     #  The class instance.
 
     def runTH1F(self):
-        numNeighbours = self.getParameter('num_neighbours', 3)
-        outliersLowCut = self.getParameter('out_low_cut', 0.0)
-        outliersHighCut = self.getParameter('out_high_cut', 0.25)
-        values = [0.0]
+        numNeigh = self.getParameter('num_neighbours', 3)
+        outLoCut = self.getParameter('out_low_cut', 0.0)
+        outHiCut = self.getParameter('out_high_cut', 0.25)
+        significances = [0.0]
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             if self.RootObject.GetBinContent(i) == 0:
-                averageCounts = self.getNeighbouringAverage(i, numNeighbours,\
-                                     outliersLowCut, outliersHighCut)
-                significance = sqrt(averageCounts)
-                values.append(significance)
-                if self.getStatus(significance) == STATUS_ERROR:
-                    self.Output.incrementDictValue('num_error_bins')
-                    self.Output.appendDictValue('error_bins',\
-                        self.getDetailedLabel(i, significance, 'significance'))
-                elif self.getStatus(significance) == STATUS_WARNING:
-                    self.Output.incrementDictValue('num_warning_bins')
-                    self.Output.appendDictValue('warning_bins',\
-                        self.getDetailedLabel(i, significance, 'significance'))
-        self.Output.setValue(max(values))
+                exp =\
+                    self.getNeighbouringAverage(i, numNeigh, outLoCut, outHiCut)
+                significance = sqrt(exp)
+                significances.append(significance)
+                self.checkStatus(i, significance, 'significance')
+        self.Output.setValue(max(significances))
                 
-
     ## @brief Basic algorithm evaluation for 2-dimensional histograms.
     ## @param self
     #  The class instance.
@@ -145,13 +137,13 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
                     else:
                         values.append(significance)
                         if self.getStatus(significance) == STATUS_ERROR:
-                            self.Output.incrementDictValue('num_error_bins')
-                            self.Output.appendDictValue('error_bins',\
+                            self.Output.incrementDictValue('num_error_entries')
+                            self.Output.appendDictValue('error_entries',\
                                  self.getDetailedLabel((i, j), significance,\
                                                            'significance'))
                         elif self.getStatus(significance) == STATUS_WARNING:
-                            self.Output.incrementDictValue('num_warning_bins')
-                            self.Output.appendDictValue('warning_bins',\
+                            self.Output.incrementDictValue('num_warning_entries')
+                            self.Output.appendDictValue('warning_entries',\
                                  self.getDetailedLabel((i, j), significance,\
                                                            'significance'))
         self.Output.setValue(max(values))
