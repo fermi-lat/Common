@@ -51,18 +51,19 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #
 #  <b>Output details</b>:
 #
-#  @li <tt>num_warning_bins</tt>: the number spikes/holes whose statistical
+#  @li <tt>num_warning_entries</tt>: the number spikes/holes whose statistical
 #  significance produces a warning.
 #  <br>
-#  @li <tt>num_error_bins</tt>: the number of spikes/holes whose statistical
+#  @li <tt>num_error_entries</tt>: the number of spikes/holes whose statistical
 #  significance produces an error.
 #  <br>
-#  @li <tt>warning_bins</tt>: a list of all the spikes/holes producing a
+#  @li <tt>warning_entries</tt>: a list of all the spikes/holes producing a
 #  warning.
 #  Each element of the list is a string which should be self-explaining.
 #  <br>
-#  @li <tt>error_bins</tt>: a list of all the spikes/holes producing a warning.
-#   Each element of the list is a string which should be self-explaining.
+#  @li <tt>error_entries</tt>: a list of all the spikes/holes producing a
+#  warning.
+#  Each element of the list is a string which should be self-explaining.
 #  <br>
 
 
@@ -71,10 +72,10 @@ class alg__spikes_and_holes(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F', 'TH2F']
     SUPPORTED_PARAMETERS = ['num_neighbours', 'out_low_cut', 'out_high_cut']
-    OUTPUT_DICTIONARY    = {'num_warning_bins': 0,
-                            'num_error_bins'  : 0,
-                            'warning_bins'    : [],
-                            'error_bins'      : []
+    OUTPUT_DICTIONARY    = {'num_warning_entries': 0,
+                            'num_error_entries'  : 0,
+                            'warning_entries'    : [],
+                            'error_entries'      : []
                             }
     OUTPUT_LABEL          = 'Significance of the worst spike/hole'
 
@@ -83,57 +84,36 @@ class alg__spikes_and_holes(pAlarmBaseAlgorithm):
     #  The class instance.
 
     def runTH1F(self):
-        numNeighbours = self.getParameter('num_neighbours', 4)
-        outliersLowCut = self.getParameter('out_low_cut', 0.3)
-        outliersHighCut = self.getParameter('out_high_cut', 0.3)
-        values = [0.0]
+        numNeigh = self.getParameter('num_neighbours', 4)
+        outLoCut = self.getParameter('out_low_cut', 0.3)
+        outHiCut = self.getParameter('out_high_cut', 0.3)
+        significances = [0.0]
         for i in range(1, self.RootObject.GetNbinsX() + 1):
-            observed = self.RootObject.GetBinContent(i)
-            expected = self.getNeighbouringAverage(i, numNeighbours,\
-                                                       outliersLowCut,\
-                                                       outliersHighCut)
-            significance = float(abs(observed - expected))/sqrt(expected)
-            values.append(significance)
-            if significance > self.Limits.ErrorMax:
-                self.Output.incrementDictValue('num_error_bins')
-                self.Output.appendDictValue('error_bins',\
-                     self.getDetailedLabel(i, significance, 'significance'))
-            elif significance > self.Limits.WarningMax:
-                self.Output.incrementDictValue('num_warning_bins')
-                self.Output.appendDictValue('warning_bins',\
-                     self.getDetailedLabel(i, significance, 'significance'))
-        self.Output.setValue(max(values))
-                
+            obs = self.RootObject.GetBinContent(i)
+            exp = self.getNeighbouringAverage(i, numNeigh, outLoCut, outHiCut)
+            significance = float(abs(obs - exp))/sqrt(exp)
+            significances.append(significance)
+            self.checkStatus(i, significance, 'significance')
+        self.Output.setValue(max(significances))  
 
     ## @brief Basic algorithm evaluation for 2-dimensional histograms.
     ## @param self
     #  The class instance.
 
     def runTH2F(self):
-        numNeighbours = self.getParameter('num_neighbours', 2)
-        outliersLowCut = self.getParameter('out_low_cut', 0.25)
-        outliersHighCut = self.getParameter('out_high_cut', 0.25)
-        values = [0.0]
+        numNeigh = self.getParameter('num_neighbours', 2)
+        outLoCut = self.getParameter('out_low_cut', 0.25)
+        outHiCut = self.getParameter('out_high_cut', 0.25)
+        significances = [0.0]
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             for j in range(1, self.RootObject.GetNbinsY() + 1):
-                observed = self.RootObject.GetBinContent(i, j)
-                expected = self.getNeighbouringAverage((i, j),\
-                                                           numNeighbours,\
-                                                           outliersLowCut,\
-                                                           outliersHighCut)
-                significance = float(abs(observed - expected))/sqrt(expected)
-                values.append(significance)
-                if significance > self.Limits.ErrorMax:
-                    self.Output.incrementDictValue('num_error_bins')
-                    self.Output.appendDictValue('error_bins',\
-                         self.getDetailedLabel((i, j), significance,\
-                                                   'significance'))
-                elif significance > self.Limits.WarningMax:
-                    self.Output.incrementDictValue('num_warning_bins')
-                    self.Output.appendDictValue('warning_bins',\
-                         self.getDetailedLabel((i, j), significance,\
-                                                   'significance'))
-        self.Output.setValue(max(values))
+                obs = self.RootObject.GetBinContent(i, j)
+                exp = self.getNeighbouringAverage((i, j), numNeigh, outLoCut,\
+                                                      outHiCut)
+                significance = float(abs(obs - exp))/sqrt(exp)
+                significances.append(significance)
+                self.checkStatus((i, j), significance, 'significance')
+        self.Output.setValue(max(significances))
 
 
 
