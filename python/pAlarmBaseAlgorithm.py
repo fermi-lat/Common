@@ -324,10 +324,9 @@ class pAlarmBaseAlgorithm:
     #  The bin (i) or the bins tuple (i, j).
 
     def getPosition(self, index):
-        objectType = self.getObjectType()
-        if 'TH1' in objectType:
+        if type(index) == types.IntType:
             return self.getX(index)
-        elif 'TH2' in objectType:
+        elif len(index) == 2:
             return (self.getX(index[0]), self.getY(index[1]))
         else:
             return None
