@@ -44,16 +44,16 @@ from math                import sqrt
 #
 #  <b>Output details</b>:
 #
-#  @li <tt>num_warning_bins</tt>: the number of bins for which the statistical
-#  significance of the difference produces a warning.
+#  @li <tt>num_warning_entries</tt>: the number of bins for which the
+#  statistical significance of the difference produces a warning.
 #  <br>
-#  @li <tt>num_error_bins</tt>: the number of bins for which the statistical
+#  @li <tt>num_error_entries</tt>: the number of bins for which the statistical
 #  significance of the difference produces an error.
 #  <br>
-#  @li <tt>warning_bins</tt>: a list of all the bins producing a warning. Each
-#  element of the list is a string which should be self-explaining.
+#  @li <tt>warning_entries</tt>: a list of all the bins producing a warning.
+#  Each element of the list is a string which should be self-explaining.
 #  <br>
-#  @li <tt>error_bins</tt>: a list of all the bins producing a warning. Each
+#  @li <tt>error_entries</tt>: a list of all the bins producing a warning. Each
 #  element of the list is a string which should be self-explaining.
 #  <br>
 #  @li <tt>chisquare</tt>: the chisquare of the fit to the residuals with 
@@ -62,6 +62,8 @@ from math                import sqrt
 #  @li <tt>reduced_chisquare</tt>: the reduced chisquare of the fit to the
 #  residuals with a constant (null) function. 
 #  <br>
+# 
+## @todo Update documentations.
 
 
 
@@ -69,12 +71,12 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = ['reference_path', 'reference_name']
-    OUTPUT_DICTIONARY    = {'num_warning_bins' : 0,
-                            'num_error_bins'   : 0,
-                            'warning_bins'     : [],
-                            'error_bins'       : [],
-                            'chisquare'        : 0,
-                            'reduced_chisquare': 0
+    OUTPUT_DICTIONARY    = {'num_warning_entries' : 0,
+                            'num_error_entries'   : 0,
+                            'warning_entries'     : [],
+                            'error_entries'       : [],
+                            'chisquare'           : 0,
+                            'red_chisquare'       : 0
                             }
     OUTPUT_LABEL         = 'Significance of the maximum bin difference'
 
@@ -96,27 +98,19 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
         scaleFactor = numEntriesObj/float(numEntriesRef)
         deltas = [0.0]
         for i in range(numBins + 2):
-            numExp = self.ReferenceObject.GetBinContent(i)*scaleFactor
-            numObs = self.RootObject.GetBinContent(i)
-            errObs = self.RootObject.GetBinError(i)
+            exp = self.ReferenceObject.GetBinContent(i)*scaleFactor
+            obs = self.RootObject.GetBinContent(i)
+            dobs = self.RootObject.GetBinError(i)
             try:
-                delta = abs(numExp - numObs)/errObs
+                delta = abs(exp - obs)/dobs
             except ZeroDivisionError:
                 delta = 0
             deltas.append(delta)
-            print delta
-            self.Output.incrementDictValue('chisquare', delta)
-            x = self.RootObject.GetBinCenter(i)
-            binString = 'bin @ %s, significance = %s' %\
-                (pUtils.formatNumber(x), pUtils.formatNumber(delta))
-            if delta > self.Limits.ErrorMax:
-                self.Output.incrementDictValue('num_error_bins')
-                self.Output.appendDictValue('error_bins', binString)
-            elif delta > self.Limits.WarningMax:
-                self.Output.incrementDictValue('num_warning_bins')
-                self.Output.appendDictValue('warning_bins', binString)
-        self.Output.setDictValue('reduced_chisquare',\
-                    self.Output.getDictValue('chisquare')/numBins)
+            self.checkStatus(i, delta, 'difference significance')
+        chi = sum(deltas)
+        redChi = chi/numBins
+        self.Output.setDictValue('chisquare', pUtils.formatNumber(chi))
+        self.Output.setDictValue('red_chisquare', pUtils.formatNumber(redChi))
         self.Output.setValue(max(deltas))
         try:
             self.ReferenceFile.Close()
