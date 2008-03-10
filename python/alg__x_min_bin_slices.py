@@ -37,7 +37,7 @@ class alg__x_min_bin_slices(pAlarmBaseAlgorithm):
 
     def getDetailedLabel(self, i, value):
         return 'slice centered at %s = %s, minimum bin center = %s' %\
-            (self.getAxisLabel('x'), self.getX(i), value)
+            (self.getAxisLabel('x'), self.getFormattedX(i), value)
 
     def run(self):
         numAdjBins = self.getParameter('num_adjacent_bins', 1)
