@@ -291,24 +291,122 @@ class pAlarmBaseAlgorithm:
     #  The value.
 
     def getStatus(self, value):
+        ## TO BE REMOVED.
         if value < self.Limits.ErrorMin or value > self.Limits.ErrorMax:
             return STATUS_ERROR
         elif value < self.Limits.WarningMin or value > self.Limits.WarningMax:
             return STATUS_WARNING
         return STATUS_CLEAN
 
-    def checkStatus(self, position, value, label):
+    ## @brief Return the bin center for a given bin index on the x axis.
+    ## @param self
+    #  The class instance.
+    ## @param bin
+    #  The bin index.
+    
+    def getX(self, bin):
+        return pUtils.formatNumber(self.RootObject.GetXaxis().GetBinCenter(bin))
+
+    ## @brief Return the bin center for a given bin index on the y axis.
+    ## @param self
+    #  The class instance.
+    ## @param bin
+    #  The bin index.
+
+    def getY(self, bin):
+        return pUtils.formatNumber(self.RootObject.GetYaxis().GetBinCenter(bin))
+
+    ## @brief Return the position (in physical coordinates)
+    #  corresponding to a given bin index(es).
+    ## @param self
+    #  The class instance.
+    ## @param bins
+    #  The bin (i) or the bins tuple (i, j).
+
+    def getPosition(self, index):
+        objectType = self.getObjectType()
+        if 'TH1' in objectType:
+            return self.getX(index)
+        elif 'TH2' in objectType:
+            return (self.getX(index[0]), self.getY(index[1]))
+        else:
+            return None
+
+    ## @brief Return the axis title, if any, stripped of the units, to be
+    #  used in the label for the detailed dictionary.
+    ## @param self
+    #  The class instance.
+    ## @param axis
+    #  The axis (i.e. 'x' or 'y')
+
+    def getAxisLabel(self, axis = 'x'):
+        try:
+            if axis == 'x':
+                label = self.RootObject.GetXaxis().GetTitle()
+            elif axis == 'y':
+                label = self.RootObject.GetYaxis().GetTitle()
+        except:
+            return axis
+        if '(' in label:
+            label = label.split('(')[0].strip()
+        if label == '':
+            label = axis
+        return label
+
+    ## @brief Return a suitable label to be put into the output detailed
+    #  dictionary of an alarm when a given value exceeds the limits.
+    ## @param self
+    #  The class instance.
+    ## @param position
+    #  The position in the ROOT object (i.e. tree branch or histogram).
+    ## @param value
+    #  The value.
+    
+    def getDetailedLabel(self, index, value, valueLabel = 'value'):
+        objectType = self.getObjectType()
+        value = pUtils.formatNumber(value)
+        position = self.getPosition(index)
+        if objectType == 'TBranch':
+            label = 'time = %f, ' % self.TimestampArray[0]
+            if self.BranchArray.size > 1:
+                index = self.index2Tuple(index, self.BranchArray.shape)
+                if len(index) == 1:
+                    index = '[%d]' % index[0]
+                else:
+                    index = str(index)
+                    index = index.replace('(', '[').replace(')', ']')
+                label += 'array index = %s, ' % index
+            label += '%s = %s' % (valueLabel, value)
+        elif 'TH1' in objectType:
+            label = '%s = %s, %s = %s' % (self.getAxisLabel('x'), position,\
+                                              valueLabel, value)
+        elif 'TH2' in objectType:
+            label = '%s = %s, %s = %s, %s = %s' %\
+                (self.getAxisLabel('x'), position[0], self.getAxisLabel('y'),\
+                     position[1], valueLabel, value)
+        else:
+            label = 'index = %s, value = %s' % (index, value)
+        return label
+
+    ## @brief Check the status for a given step (bin index or array index)
+    #  in the execution of a given algorithm and fill the output detailed
+    #  dictionaries if needed.
+    ## @param self
+    #  The class instance
+
+    def checkStatus(self, index, value, valueLabel):
         if value < self.Limits.ErrorMin or value > self.Limits.ErrorMax:
-            label = self.getDetailedLabel(position, value, label)
+            label = self.getDetailedLabel(index, value, valueLabel)
             self.Output.incrementDictValue('num_error_entries')
             self.Output.appendDictValue('error_entries', label)
         elif value < self.Limits.WarningMin or value > self.Limits.WarningMax:
-            label = self.getDetailedLabel(position, value, label)
+            label = self.getDetailedLabel(index, value, valueLabel)
             self.Output.incrementDictValue('num_warning_entries')
             self.Output.appendDictValue('warning_entries', label)
         return STATUS_CLEAN
 
     def handleException(self, position, value, valueLabel):
+        ## TO BE REMOVED.
         if self.getStatus(value) == STATUS_CLEAN:
             self.Output.appendDictValue('exception violations',\
                  self.getDetailedLabel(position, value, valueLabel))
@@ -347,64 +445,6 @@ class pAlarmBaseAlgorithm:
             index += factor*tuple[i]
         return index
 
-    ## @brief Return the axis title, if any, stripped of the units, to be
-    #  used in the label for the detailed dictionary.
-    ## @param self
-    #  The class instance.
-    ## @param axis
-    #  The axis (i.e. 'x' or 'y')
-
-    def getAxisLabel(self, axis = 'x'):
-        try:
-            if axis == 'x':
-                label = self.RootObject.GetXaxis().GetTitle()
-            elif axis == 'y':
-                label = self.RootObject.GetYaxis().GetTitle()
-        except:
-            return axis
-        if '(' in label:
-            label = label.split('(')[0].strip()
-        if label == '':
-            label = axis
-        return label
-
-    ## @brief Return a suitable label to be put into the output detailed
-    #  dictionary of an alarm when a given value exceeds the limits.
-    ## @param self
-    #  The class instance.
-    ## @param position
-    #  The position in the ROOT object (i.e. tree branch or histogram).
-    ## @param value
-    #  The value.
-    
-    def getDetailedLabel(self, position, value, valueLabel = 'value'):
-        objectType = self.getObjectType()
-        value = pUtils.formatNumber(value)
-        if objectType == 'TBranch':
-            label = 'time = %f, ' % self.TimestampArray[0]
-            if self.BranchArray.size > 1:
-                position = self.index2Tuple(position, self.BranchArray.shape)
-                if len(position) == 1:
-                    position = '[%d]' % position[0]
-                else:
-                    position = str(position)
-                    position = position.replace('(', '[').replace(')', ']')
-                label += 'array index = %s, ' % position
-            label += '%s = %s' % (valueLabel, value)
-        elif 'TH1' in objectType:
-            x = self.RootObject.GetBinCenter(position)
-            label = '%s = %s, %s = %s' % (self.getAxisLabel('x'),\
-                    pUtils.formatNumber(x), valueLabel, value)
-        elif 'TH2' in objectType:
-            x = self.RootObject.GetXaxis().GetBinCenter(position[0])
-            y = self.RootObject.GetYaxis().GetBinCenter(position[1])
-            label = '%s = %s, %s = %s, %s = %s' % (self.getAxisLabel('x'),\
-                    pUtils.formatNumber(x), self.getAxisLabel('y'),\
-                    pUtils.formatNumber(y), valueLabel, value)
-        else:
-            label = 'position = %s, value = %s' % (position, value)
-        return label
-        
     ## @brief Adjust the range of the x axis of a ROOT object according
     #  to the dictionary of optional parameters.
     #
