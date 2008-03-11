@@ -33,7 +33,7 @@ class pAlarmOutput:
     ## @param limits
     #  The alarm limits.
     
-    def __init__(self, limits):
+    def __init__(self, limits, parent):
 
         ## @var Limits
         ## @brief The alarm limits.
@@ -51,6 +51,7 @@ class pAlarmOutput:
         ## @brief The dictionary containing the detailed information.
         
         self.Limits       = limits
+        self.Parent       = parent
         self.Value        = None
         self.Label        = None
         self.Status       = STATUS_UNDEFINED
@@ -103,7 +104,8 @@ class pAlarmOutput:
     def setValue(self, value, compress = True):
         self.Value = value
         self.__processValue()
-        self.compress()
+        if compress:
+            self.compress()
 
     def setStatusUndefined(self):
         self.Status = STATUS_UNDEFINED
@@ -122,6 +124,10 @@ class pAlarmOutput:
     #  The class instance.
     
     def __processValue(self):
+        if self.Parent.Exception is None:
+            flip = False
+        else:
+            flip = self.Parent.Exception.FlippedStatus
         if self.ForceError:
             self.setStatusError()
             self.Value = None
@@ -129,12 +135,24 @@ class pAlarmOutput:
             self.setStatusUndefined()
         elif (self.Value > self.Limits.WarningMin)\
                  and (self.Value < self.Limits.WarningMax):
-            self.setStatusClean()
+            if flip:
+                self.setStatusError()
+                self.appendDictValue('exception violations', 'output_status')
+            else:
+                self.setStatusClean()
         elif (self.Value <= self.Limits.ErrorMin)\
-                 or (self.Value >= self.Limits.ErrorMax):	
-            self.setStatusError()
+                 or (self.Value >= self.Limits.ErrorMax):
+            if flip:
+                self.setStatusClean()
+                self.appendDictValue('known_issues', 'output_status')
+            else:
+                self.setStatusError()
         else:
-            self.setStatusWarning()
+            if flip:
+                self.setStatusClean()
+                self.appendDictValue('known_issues', 'output_status')
+            else:
+                self.setStatusWarning()
 
     ## @brief Get the value corresponding to a particular key of the
     #  detailed dictionary.

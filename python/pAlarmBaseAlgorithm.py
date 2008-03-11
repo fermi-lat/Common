@@ -120,7 +120,7 @@ class pAlarmBaseAlgorithm:
         self.__ParametersOK = True
         self.checkObjectType()
         self.checkParameters()
-        self.Output = pAlarmOutput(limits)
+        self.Output = pAlarmOutput(limits, self)
         self.Output.Label = copy(self.OUTPUT_LABEL)
         self.Output.DetailedDict = deepcopy(self.OUTPUT_DICTIONARY)
         self.Exception = None
