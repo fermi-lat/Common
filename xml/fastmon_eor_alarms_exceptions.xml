@@ -6,7 +6,7 @@
     <out_details identifiers="[(3, 7), (10, 8), (11, 8), (20, 2), (21, 2)]"/>
   </exception>
 
-  <!--exception name="" algorithm="">
+  <!--exception name="AcdChannelsHits" algorithm="x_rms">
     <out_status/>
   </exception-->
 
