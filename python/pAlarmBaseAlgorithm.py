@@ -591,6 +591,23 @@ class pAlarmBaseAlgorithm:
         self.resetXRange()
         return fitFunction.GetParameter(paramNumber)
 
+    ## @brief Perform a fit with a user defined function and return
+    #  the list of fit parameters.
+    #
+    ## @param self
+    #  The class instance.
+    ## @param fitFunction
+    #  The fitting function (a ROOT TF1 object).
+
+    def getFitParameters(self, fitFunction):
+        self.adjustXRange()
+        self.RootObject.Fit(fitFunction, 'QN')
+        self.resetXRange()
+        params = []
+        for i in range(fitFunction.GetNpar()):
+            params.append(fitFunction.GetParameter(i))
+        return params
+
     ## @brief Return the average value of a list of number.
     ## @param self
     #  The class instance.
