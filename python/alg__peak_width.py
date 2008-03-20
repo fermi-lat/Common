@@ -4,7 +4,7 @@ from pSafeROOT import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
-class alg__peak_position(pAlarmBaseAlgorithm):
+class alg__peak_width(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = ['num_iterations', 'fit_range_width', 'min', 'max']
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     histogram.Draw()
     canvas.Update()
     pardict = {'min': 0, 'max': 4}
-    algorithm = alg__peak_position(limits, histogram, pardict)
+    algorithm = alg__peak_width(limits, histogram, pardict)
     algorithm.apply()
     print 'Parameters: %s\n' % pardict
     print algorithm.Output
