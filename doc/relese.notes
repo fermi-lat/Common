@@ -1,3 +1,9 @@
+*** v3r0p3 ***
+
+- New module for normalizing ACD quantities to tile position/area added.
+It gets imported into pXmlBaseElement for being used by the alarm handler xml
+parser, but there's no change in functionality at the moment.
+
 
 *** v3r0p2 ***
 
