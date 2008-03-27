@@ -153,8 +153,24 @@ def formatNumber(number):
 def verbatim(string):
     return '<tt>%s</tt>' % string
 
+## @brief Expand a string of the form 'a, b, c-d' into a pyhton list.
+## @param string
+#  The string to be expanded.
+
+def expandList(string):
+    outputList = []
+    pieces = string.split(',')
+    for piece in pieces:
+        try:
+            (min, max) = piece.split('-')
+            outputList += range(eval(min), eval(max) + 1)
+        except:
+            outputList.append(eval(piece))
+    return outputList
+
 
 
 if __name__ == '__main__':
-    print getCutVariables("CalTransRms > 12.3 && CalTransRms < 34 && CalXtalsTrunc > 8 && CalXtalsTrunc < 20")
-    print getCutVariables("x:y:z")
+    print expandList('0-4, 16-20, 32-36, 48-52')
+    #print getCutVariables("CalTransRms > 12.3 && CalTransRms < 34 && CalXtalsTrunc > 8 && CalXtalsTrunc < 20")
+    #print getCutVariables("x:y:z")
