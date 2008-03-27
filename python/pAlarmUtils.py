@@ -73,7 +73,18 @@ def getAcdTileArea(tileNumber):
 ## @var ACD_TILES_AREA
 ## @brief List of the tiles area, by tile number.
 
+## @var ACD_AVERAGE_TILE_AREA
+## @brief The average (weighted with the number of tiles for each given area)
+#  ACD tile area.
+
+## @var ACD_TILE_NORM_FACTOR
+## @brief The normalization factor (tile area/average area for each acd tile).
+
 ACD_TILES_AREA = [getAcdTileArea(i) for i in range(128)]
+ACD_AVERAGE_TILE_AREA = sum(ACD_TILES_AREA)/128
+ACD_TILE_NORM_FACTOR = [ACD_TILES_AREA[i]/ACD_AVERAGE_TILE_AREA\
+                        for i in range(128)]
+
 
 
 if __name__ == '__main__':
@@ -90,8 +101,10 @@ if __name__ == '__main__':
               ACD_LONG_TILES + ACD_TOP_BENT_TILES + ACD_TOP_MIDDLE_TILES +\
               ACD_RIBBONS + ACD_UNPHYSICAL_TILES)
     print
-    print 'Tile\tArea'
+    print 'ACD_AVERAGE_TILE_AREA: ', ACD_AVERAGE_TILE_AREA
+    print 'ACD_TILE_NORM_FACTOR:', ACD_TILE_NORM_FACTOR
+    print 'Tile\tArea\tnormalization'
     for (tileNumber, area) in  enumerate(ACD_TILES_AREA):
-        print '%s\t%s' % (tileNumber, area)
-
+        print '%s\t%s\t%s' % (tileNumber, area,\
+                              ACD_TILE_NORM_FACTOR[tileNumber])
 
