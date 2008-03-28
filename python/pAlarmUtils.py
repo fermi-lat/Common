@@ -6,8 +6,7 @@ import pUtils
 ## @brief Information from Alex: 0-4, 16-20, 32-36, 48-52 (crown tiles)
 
 ## @var ACD_SIDE_ROW_2_TILES
-## @brief Information from Alex: 5-9, 21-25, 37-41, 53-57 (sides, 2-nd row)
-## @todo I guess 53-57 is really 58-62. Double check that with Alex.
+## @brief Information from Alex: 5-9, 21-25, 37-41, 58-62 (sides, 2-nd row)
 
 ## @var ACD_SIDE_ROW_3_TILES
 ## @brief Information from Alex: 10-14, 26-30, 42-46, 53-57 (sides, 3-rd row)
@@ -138,12 +137,12 @@ ACD_NORM_AREA = ACD_CROWN_TILES_AREA
 #  Used as a multiplicative factor for the alarm limits.
 
 ACD_CROWN_TILES_NORM_FACTOR      = ACD_CROWN_TILES_AREA/ACD_NORM_AREA
-ACD_SIDE_ROW_2_TILES_NORM_FACTOR = ACD_SIDE_ROW_2_TILES_AREA/ACD_NORM_AREA
-ACD_SIDE_ROW_3_TILES_NORM_FACTOR = ACD_SIDE_ROW_3_TILES_AREA/ACD_NORM_AREA
+ACD_SIDE_ROW_2_TILES_NORM_FACTOR = 1.5*ACD_SIDE_ROW_2_TILES_AREA/ACD_NORM_AREA
+ACD_SIDE_ROW_3_TILES_NORM_FACTOR = 2.25*ACD_SIDE_ROW_3_TILES_AREA/ACD_NORM_AREA
 ACD_LONG_TILES_NORM_FACTOR       = ACD_LONG_TILES_AREA/ACD_NORM_AREA
 ACD_TOP_BENT_TILES_NORM_FACTOR   = ACD_TOP_BENT_TILES_AREA/ACD_NORM_AREA
-ACD_TOP_MIDDLE_TILES_NORM_FACTOR = ACD_TOP_MIDDLE_TILES_AREA/ACD_NORM_AREA
-ACD_RIBBONS_NORM_FACTOR          = ACD_RIBBONS_AREA/ACD_NORM_AREA
+ACD_TOP_MIDDLE_TILES_NORM_FACTOR = 1.5*ACD_TOP_MIDDLE_TILES_AREA/ACD_NORM_AREA
+ACD_RIBBONS_NORM_FACTOR          = 1.9*ACD_RIBBONS_AREA/ACD_NORM_AREA
 ACD_UNPHYSICAL_TILES_NORM_FACTOR = ACD_UNPHYSICAL_TILES_AREA/ACD_NORM_AREA
 
 ## @brief Return the area of the tile corresponding to a given tile number.
@@ -167,6 +166,31 @@ def getAcdTileArea(tileNumber):
         return ACD_RIBBONS_AREA
     elif tileNumber in ACD_UNPHYSICAL_TILES:
         return ACD_UNPHYSICAL_TILES_AREA
+    else:
+        sys.exit('Tile number %d out of range. Abort.' % tileNumber)
+
+## @brief Return the rate normalization factor of the tile corresponding to a
+#  given tile number.
+## @param tileNumber
+## The tile number.
+
+def getAcdTileNormFactor(tileNumber):
+    if tileNumber in ACD_CROWN_TILES:
+        return ACD_CROWN_TILES_NORM_FACTOR
+    elif tileNumber in ACD_SIDE_ROW_2_TILES:
+        return ACD_SIDE_ROW_2_TILES_NORM_FACTOR
+    elif tileNumber in ACD_SIDE_ROW_3_TILES:
+        return ACD_SIDE_ROW_3_TILES_NORM_FACTOR
+    elif tileNumber in ACD_LONG_TILES:
+        return ACD_LONG_TILES_NORM_FACTOR
+    elif tileNumber in ACD_TOP_BENT_TILES:
+        return ACD_TOP_BENT_TILES_NORM_FACTOR
+    elif tileNumber in ACD_TOP_MIDDLE_TILES:
+        return ACD_TOP_MIDDLE_TILES_NORM_FACTOR
+    elif tileNumber in ACD_RIBBONS:
+        return ACD_RIBBONS_NORM_FACTOR
+    elif tileNumber in ACD_UNPHYSICAL_TILES:
+        return ACD_UNPHYSICAL_TILES_NORM_FACTOR
     else:
         sys.exit('Tile number %d out of range. Abort.' % tileNumber)
 
