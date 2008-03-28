@@ -133,15 +133,15 @@ class pAlarmOutput:
             self.Value = None
         elif self.Value is None:
             self.setStatusUndefined()
-        elif (self.Value > self.Limits.WarningMin)\
-                 and (self.Value < self.Limits.WarningMax):
+        elif (self.Value >= self.Limits.WarningMin)\
+                 and (self.Value <= self.Limits.WarningMax):
             if flip:
                 self.setStatusError()
                 self.appendDictValue('exception violations', 'output_status')
             else:
                 self.setStatusClean()
-        elif (self.Value <= self.Limits.ErrorMin)\
-                 or (self.Value >= self.Limits.ErrorMax):
+        elif (self.Value < self.Limits.ErrorMin)\
+                 or (self.Value > self.Limits.ErrorMax):
             if flip:
                 self.setStatusClean()
                 self.appendDictValue('known_issues', 'output_status')
