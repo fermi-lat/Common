@@ -38,38 +38,61 @@ ACD_UNPHYSICAL_TILES = pUtils.expandList('89-95, 104-127')
 
 ## @var ACD_CROWN_TILES
 ## @brief Information from Alex: 34 x 38cm = 1,292 cm2
+#
+#  E-mail from Alex on march 28, 2008:
+#  > ACD_CROWN_TILES_AREA      = 1292.0   -> 1205
 
 ## @var ACD_SIDE_ROW_2_TILES
 ## @brief Information from Alex: 34 x 22 cm = 748 cm2
+#
+#  E-mail from Alex on march 28, 2008:
+#  > ACD_SIDE_ROW_2_TILES_AREA = 748.0  -> 726
 
 ## @var ACD_SIDE_ROW_3_TILES
 ## @brief Information from Alex: 34 x 17 cm = 578 cm2
+#
+#  E-mail from Alex on march 28, 2008:
+#  > ACD_SIDE_ROW_3_TILES_AREA = 578.0  -> 561
 
 ## @var ACD_LONG_TILES
 ## @brief Information from Alex: 170 x 17 cm = 2,890 cm2
+#
+#  E-mail from Alex on march 28, 2008:
+#  > ACD_LONG_TILES_AREA       = 2890.0 -> 2650
 
 ## @var ACD_TOP_BENT_TILES
 ## @brief Information from Alex: 40 x 34 cm = 1,360 cm2
+#
+#  E-mail from Alex on march 28, 2008:
+#  > ACD_TOP_BENT_TILES_AREA   = 1360.0 -> 1386
 
 ## @var ACD_TOP_MIDDLE_TILES
 ## @brief Information from Alex: 34 x 34 cm = 1,156 cm2
+#
+#  E-mail from Alex on march 28, 2008:
+#  > ACD_TOP_MIDDLE_TILES_AREA = 1156.0 -> 1122
 
 ## @var ACD_RIBBONS
 ## @brief ~600 cm2 is an educated guess taken from the rates as they appear
 #  in the data quality monitoring products (after all we need it for
 #  normalizing things, so a reasonable "effective area" should be file).
-## @todo Double check area with Alex.
+#
+#  E-mail from Alex on march 28, 2008:
+#  > ACD_RIBBONS_AREA          = 600.0   -> 360
 
 ## @var ACD_UNPHYSICAL_TILES
 ## @brief The unphysical tile ids showing up in the data monitoring quantities.
+#
+#  E-mail from Alex on march 28, 2008:
+#  > ACD_UNPHYSICAL_TILES_AREA = 0.0
 
-ACD_CROWN_TILES_AREA      = 1292.0
-ACD_SIDE_ROW_2_TILES_AREA = 748.0
-ACD_SIDE_ROW_3_TILES_AREA = 578.0
-ACD_LONG_TILES_AREA       = 2890.0
-ACD_TOP_BENT_TILES_AREA   = 1360.0
-ACD_TOP_MIDDLE_TILES_AREA = 1156.0
-ACD_RIBBONS_AREA          = 600.0
+ACD_CROWN_TILES_AREA      = 1205.0
+ACD_SIDE_ROW_2_TILES_AREA = 726.0
+ACD_SIDE_ROW_3_TILES_AREA = 561.0
+ACD_LONG_TILES_AREA       = 2650.0
+ACD_TOP_BENT_TILES_AREA   = 1386.0
+ACD_TOP_MIDDLE_TILES_AREA = 1122.0
+ACD_RIBBONS_AREA          = 360.0
 ACD_UNPHYSICAL_TILES_AREA = 0.0
 
 ## @var ACD_NORM_AREA
