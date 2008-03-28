@@ -1,4 +1,11 @@
 
+*** v3r0p7 ***
+
+- Algorithm running on the trending root trees modified as to disable the
+unused tree branches in each event loop. There's a 2.5 gain in processing time
+on a standard digi file.
+
+
 *** v3r0p6 ***
 
 - doc/relese.notes removed (I know I messed up, here...)
