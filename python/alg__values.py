@@ -50,6 +50,9 @@ class alg__values(pAlarmBaseAlgorithm):
 
     def __createArrays(self, timestampBranchName = 'TimeStampFirstEvt'):
         self.RootTree = self.RootObject.GetTree()
+        self.RootTree.SetBranchStatus('*', 0)
+        self.RootTree.SetBranchStatus(timestampBranchName, 1)
+        self.RootTree.SetBranchStatus(self.RootObject.GetName(), 1)
         self.TimestampArray = numpy.zeros((1), 'd')
         self.RootTree.SetBranchAddress(timestampBranchName,\
                                        self.TimestampArray)
@@ -100,7 +103,7 @@ class alg__values(pAlarmBaseAlgorithm):
         badnessList.sort()
         maxBadness = badnessList[-1]
         self.Output.setValue(badnessDict[maxBadness])
-        
+        self.RootTree.SetBranchStatus('*', 1)
             
 
 if __name__ == '__main__':
