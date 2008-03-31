@@ -60,12 +60,13 @@ class pRootDiffer:
         xmlWriter.openTag('details')
         xmlWriter.indent()
         for (histogramName, diffList) in self.DiffDict.items():
-            xmlWriter.openTag('plot', {'name': histogramName})
-            xmlWriter.indent()
-            for diff in diffList:
-                xmlWriter.writeTag('difference', {'detail': diff})
-            xmlWriter.backup()
-            xmlWriter.closeTag('plot')
+            if len(diffList):
+                xmlWriter.openTag('plot', {'name': histogramName})
+                xmlWriter.indent()
+                for diff in diffList:
+                    xmlWriter.writeTag('difference', {'detail': diff})
+                xmlWriter.backup()
+                xmlWriter.closeTag('plot')
         xmlWriter.backup()
         xmlWriter.closeTag('details')
         xmlWriter.backup()
