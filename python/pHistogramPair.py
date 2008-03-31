@@ -5,7 +5,6 @@ import os
 import sys
 
 from pSafeROOT  import ROOT
-from pXmlWriter import pXmlWriter
 
 
 class pHistogramPair:
@@ -61,30 +60,7 @@ class pHistogramPair:
                 difference = 'Bin %d content is %.3f for %s, %.3f for %s.' %\
                              (i, firstVal, self.FirstLabel, secondVal,\
                               self.SecondLabel)
-                logger.error(difference)
                 self.DiffList.append(difference)
-
-##     def writeXmlSummary(self, filePath):
-##         xmlWriter  = pXmlWriter(filePath)
-##         xmlWriter.openTag('differences')
-##         xmlWriter.indent()
-##         xmlWriter.newLine()
-##         xmlWriter.openTag('summary')
-##         xmlWriter.indent()
-##         xmlWriter.writeTag('numDifferences', {}, self.getNumDifferences())
-##         xmlWriter.backup()
-##         xmlWriter.closeTag('summary')
-##         xmlWriter.backup()
-##         xmlWriter.newLine()
-##         xmlWriter.openTag('details')
-##         xmlWriter.indent()
-##         xmlWriter.writeTag('difference', {})
-##         xmlWriter.backup()
-##         xmlWriter.closeTag('details')
-##         xmlWriter.backup()
-##         xmlWriter.newLine()
-##         xmlWriter.closeTag('differences')
-##         xmlWriter.closeFile()
 
     def createResidualsHistogram(self):
         try:
@@ -96,6 +72,14 @@ class pHistogramPair:
     def draw(self):
         self.FirstHistogram.SetLineColor(ROOT.kBlack)
         self.SecondHistogram.SetLineColor(ROOT.kRed)
+        maxValue = max(self.FirstHistogram.GetMaximum(),\
+                       self.SecondHistogram.GetMaximum())
+        minValue = min(self.FirstHistogram.GetMinimum(),\
+                       self.SecondHistogram.GetMinimum())
+        self.FirstHistogram.SetMaximum(maxValue)
+        self.SecondHistogram.SetMaximum(maxValue)
+        self.FirstHistogram.SetMinimum(minValue)
+        self.SecondHistogram.SetMinimum(minValue)
         self.SecondHistogram.Draw()
         ROOT.gPad.Update()
         statBox = self.SecondHistogram.GetListOfFunctions().FindObject("stats")
