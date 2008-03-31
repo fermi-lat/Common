@@ -1,4 +1,11 @@
 
+*** v3r0p8 ***
+
+- Old script meant for comparing the FastMon plots to the corresponding digi
+ones replaced with a new and better version. It writes an output xml
+summary file.
+
+
 *** v3r0p7 ***
 
 - Algorithm running on the trending root trees modified as to disable the
