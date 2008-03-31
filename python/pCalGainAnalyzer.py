@@ -33,7 +33,7 @@ class pCalGainAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
             for (rIndex, rName) in CAL_RANGE_DICT.items():
                 hname = 'CalXAdcPed%s_%s_TH1' % (type, rName)
                 self.HistogramsDict[type][rIndex] = ROOT.TH1F(hname, hname,\
-                                                              3072, 0, 3072)
+                                                              3072, -0.5, 3071.5)
 
     def getHistogramChannel(self, tower, layer, column, face, range = None):
         if range is None:
