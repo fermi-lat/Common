@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 import pSafeLogger
 logger = pSafeLogger.getLogger('pRootDiffer')
 
@@ -59,5 +61,18 @@ class pRootDiffer:
 
 
 if __name__ == '__main__':
-    differ = pRootDiffer('/data/work/isoc/calgain/Cal_Long_Histos_Luca_2_time.root', '/data/work/isoc/calgain/test.root')
-    differ.run(True)
+    from optparse import OptionParser
+    parser = OptionParser(usage = 'usage: %prog [options] file1 file2')
+    parser.add_option('-i', '--interactive', dest = 'i',
+                      default = False, action = 'store_true',
+                      help = 'run in interactive mode (show the plots)')
+    
+    (opts, args) = parser.parse_args()
+    if len(args) != 2:
+        parser.print_help()
+        parser.error('Exactly two arguments required.')
+    (firstFilePath, secondFilePath) = args        
+    differ = pRootDiffer(firstFilePath, secondFilePath)
+    differ.run(opts.i)
+
+
