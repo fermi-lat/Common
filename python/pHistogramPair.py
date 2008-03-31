@@ -18,15 +18,9 @@ class pHistogramPair:
             self.SecondFileName = os.path.basename(self.SecondFile.GetPath())
             self.FirstHistogram = self.FirstFile.Get(kwargs['histogramName'])
             self.SecondHistogram = self.SecondFile.Get(kwargs['histogramName'])
-            self.FirstLabel = '%s in %s' % (self.FirstHistogram.GetName(),\
-                                            self.FirstFileName)
-            self.SecondLabel = '%s in %s' % (self.SecondHistogram.GetName(),\
-                                             self.SecondFileName)
         elif kwargs.has_key('firstHisto') and kwargs.has_key('secondHisto'):
             self.FirstHistogram = kwargs['firstHisto']
             self.SecondHistogram = kwargs['secondHisto']
-            self.FirstLabel = self.FirstHistogram.GetName()
-            self.SecondLabel = self.SecondHistogram.GetName()
         else:
             sys.exit('Wrong keyword arguments to pHistogramPair. Abort.')
         self.DiffList = []
@@ -47,20 +41,17 @@ class pHistogramPair:
         if numFirstBins == numSecondBins:
             numBins = numFirstBins
         else:
-            difference = '%s has %d bins, %s has %d.' %\
-                         (self.FirstLabel, numFirstBins, self.SecondLabel,\
-                          numSecondBins)
-            logger.error(difference)
-            self.DiffList.append(difference)
+            diff = 'Number of bins (%d vs. %d)' % (numFirstBins, numSecondBins)
+            logger.error(diff)
+            self.DiffList.append(diff)
             return
         for i in range(1, numBins + 1):
             firstVal = self.FirstHistogram.GetBinContent(i)
             secondVal = self.SecondHistogram.GetBinContent(i)
             if firstVal != secondVal:
-                difference = 'Bin %d content is %.3f for %s, %.3f for %s.' %\
-                             (i, firstVal, self.FirstLabel, secondVal,\
-                              self.SecondLabel)
-                self.DiffList.append(difference)
+                diff = 'Content for bin %d (%.3f vs. %.3f)' % (i, firstVal,
+                                                               secondVal)
+                self.DiffList.append(diff)
 
     def createResidualsHistogram(self):
         try:
