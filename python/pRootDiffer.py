@@ -18,6 +18,13 @@ class pRootDiffer:
     def __init__(self, firstFilePath, secondFilePath):
         self.FirstFileManager = pRootFileManager(firstFilePath)
         self.SecondFileManager = pRootFileManager(secondFilePath)
+        self.DiffDict = {}
+
+    def getNumDifferences(self):
+        numDifferences = 0
+        for diffList in self.DiffDict.values():
+            numDifferences += len(diffList)
+        return numDifferences
 
     def run(self, interactive = False):
         if interactive:
@@ -30,6 +37,7 @@ class pRootDiffer:
                 logger.debug('Comparing %s...' % name)
                 pair = pHistogramPair(firstHisto = first, secondHisto = second)
                 pair.compare()
+                self.DiffDict[name] = pair.DiffList
                 if interactive:
                     self.Canvas.cd(1); pair.draw()
                     self.Canvas.cd(2); pair.drawResiduals()
@@ -38,6 +46,7 @@ class pRootDiffer:
                         sys.exit('Done')
 
     def writeXmlSummary(self, filePath):
+        logger.info('Writing summary xml file...')
         xmlWriter  = pXmlWriter(filePath)
         xmlWriter.openTag('differences')
         xmlWriter.indent()
@@ -47,17 +56,23 @@ class pRootDiffer:
         xmlWriter.writeTag('numDifferences', {}, self.getNumDifferences())
         xmlWriter.backup()
         xmlWriter.closeTag('summary')
-        xmlWriter.backup()
         xmlWriter.newLine()
         xmlWriter.openTag('details')
         xmlWriter.indent()
-        xmlWriter.writeTag('difference', {})
+        for (histogramName, diffList) in self.DiffDict.items():
+            xmlWriter.openTag('plot', {'name': histogramName})
+            xmlWriter.indent()
+            for diff in diffList:
+                xmlWriter.writeTag('difference', {'detail': diff})
+            xmlWriter.backup()
+            xmlWriter.closeTag('plot')
         xmlWriter.backup()
         xmlWriter.closeTag('details')
         xmlWriter.backup()
         xmlWriter.newLine()
         xmlWriter.closeTag('differences')
         xmlWriter.closeFile()
+        logger.info('Done.')
 
 
 if __name__ == '__main__':
@@ -66,7 +81,9 @@ if __name__ == '__main__':
     parser.add_option('-i', '--interactive', dest = 'i',
                       default = False, action = 'store_true',
                       help = 'run in interactive mode (show the plots)')
-    
+    parser.add_option('-o', '--output', dest = 'o',
+                      default = None, type = str,
+                      help = 'path to the output xml summary file')    
     (opts, args) = parser.parse_args()
     if len(args) != 2:
         parser.print_help()
@@ -74,5 +91,7 @@ if __name__ == '__main__':
     (firstFilePath, secondFilePath) = args        
     differ = pRootDiffer(firstFilePath, secondFilePath)
     differ.run(opts.i)
+    if opts.o is not None:
+        differ.writeXmlSummary(opts.o)
 
 
