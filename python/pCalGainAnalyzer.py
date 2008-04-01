@@ -13,7 +13,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
 BASE_BRANCH_NAME  = 'CalXAdcPed_TH1_TowerCalLayerCalColumnFR'
-FIT_RANGE_WIDTH   = 1.5
+FIT_RANGE_WIDTH   = 2.5
 CAL_RANGE_DICT    = {0: 'LEX8', 1: 'LEX1', 2: 'HEX8', 3: 'HEX1'}
 HISTOGRAMS_LABELS = ['Mean', 'RMS', 'ChiSquare', 'DOF', 'ReducedChiSquare']
 
@@ -70,6 +70,7 @@ class pCalGainAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         self.fillHistogram('DOF', readoutRange, channel, dof)
         self.fillHistogram('ReducedChiSquare', readoutRange, channel,\
                            reducedChiSquare)
+        self.RootObject.Delete()
         
     def fillHistogram(self, label, readoutRange, channel, value):
         self.HistogramsDict[label][readoutRange].Fill(channel, value)
