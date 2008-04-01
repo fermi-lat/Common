@@ -585,9 +585,9 @@ class pAlarmBaseAlgorithm:
     ## @param paramNumber
     #  The index identifying the required parameter.
 
-    def getFitParameter(self, fitFunction, paramNumber):
+    def getFitParameter(self, fitFunction, paramNumber, fitOptions = 'QN'):
         self.adjustXRange()
-        self.RootObject.Fit(fitFunction, 'QN')
+        self.RootObject.Fit(fitFunction, fitOptions)
         self.resetXRange()
         return fitFunction.GetParameter(paramNumber)
 
@@ -599,9 +599,9 @@ class pAlarmBaseAlgorithm:
     ## @param fitFunction
     #  The fitting function (a ROOT TF1 object).
 
-    def getFitParameters(self, fitFunction):
+    def getFitParameters(self, fitFunction, fitOptions = 'QN'):
         self.adjustXRange()
-        self.RootObject.Fit(fitFunction, 'QN')
+        self.RootObject.Fit(fitFunction, fitOptions)
         self.resetXRange()
         params = []
         for i in range(fitFunction.GetNpar()):
