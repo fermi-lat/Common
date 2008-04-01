@@ -32,8 +32,9 @@ class pCalGainAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         for type in self.HistogramsDict.keys():
             for (rIndex, rName) in CAL_RANGE_DICT.items():
                 hname = 'CalXAdcPed%s_%s_TH1' % (type, rName)
-                self.HistogramsDict[type][rIndex] = ROOT.TH1F(hname, hname,\
-                                                              3072, -0.5, 3071.5)
+                self.HistogramsDict[type][rIndex] =\
+                                                  ROOT.TH1F(hname, hname,\
+                                                            3072, -0.5, 3071.5)
 
     def getHistogramChannel(self, tower, layer, column, face, range = None):
         if range is None:
@@ -96,8 +97,23 @@ class pCalGainAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
 
 
 if __name__ == '__main__':
-    inputFilePath = '/data/work/isoc/calgain/Cal_Long_Histos_Luca_1_time.root'
-    outputFilePath = '/data/work/isoc/calgain/test.root'
+    from optparse import OptionParser
+    parser = OptionParser(usage = 'usage: %prog [options] filePath')
+    parser.add_option('-o', '--output', dest = 'o',
+                      default = None, type = str,
+                      help = 'path to the output file')
+    parser.add_option('-i', '--interactive', dest = 'i',
+                      default = False, action = 'store_true',
+                      help = 'run in interactive mode (show the plots)')
+    (opts, args) = parser.parse_args()
+    if len(args) != 1:
+        parser.print_help()
+        parser.error('Exactly one argument required.')
+    inputFilePath = args[0]
+    outputFilePath = opts.o
+    if outputFilePath is None:
+        outputFilePath = inputFilePath.replace('.root', '_output.root')
     analyzer = pCalGainAnalyzer(inputFilePath, outputFilePath)
     analyzer.run()
-    analyzer.drawHistograms()
+    if opts.i:
+        analyzer.drawHistograms()
