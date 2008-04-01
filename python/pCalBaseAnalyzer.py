@@ -93,23 +93,29 @@ class pCalBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
             self.ParamsDict['max'] = self.Mean + self.FitRangeWidth*self.RMS 
             (self.Normalization, self.Mean, self.RMS) =\
                                  self.getFitParameters(self.Gaussian, 'QNB')
-            if self.Debug:
-                print 'Debug information for %s (%d, %s, %s, %s, %s)' %\
-                      (baseName, tower, layer, column, face, readoutRange)
-                self.RootObject.GetXaxis().SetRangeUser(0, 3)
-                self.RootObject.Draw()
-                self.Gaussian.Draw('same')
-                ROOT.gPad.Update()
-                answer = raw_input('Press enter to exit, q to quit...')
-                if answer == 'q':
-                    sys.exit('Done')
-                    self.RootObject.GetXaxis().SetRange(1, 0)
         self.ChiSquare = self.Gaussian.GetChisquare()
         self.DOF = self.Gaussian.GetNDF()
         try:
             self.ReducedChiSquare = self.ChiSquare/self.DOF
         except ZeroDivisionError:
             self.ReducedChiSquare = 0
+        if self.Debug:
+            self.RootObject.GetXaxis().SetRangeUser(self.Mean - 10*self.RMS,
+                                                    self.Mean + 10*self.RMS)
+            self.RootObject.Draw()
+            self.Gaussian.Draw('same')
+            ROOT.gPad.Update()
+            print '*************************************************'
+            print 'Debug information for %s (%d, %s, %s, %s, %s)' %\
+                  (baseName, tower, layer, column, face, readoutRange)
+            print 'Mean              : %s' % self.Mean
+            print 'RMS               : %s' % self.RMS
+            print 'Reduced Chi Square: %s/%s = %s' %\
+                  (self.ChiSquare, self.DOF, self.ReducedChiSquare)
+            print '*************************************************'
+            answer = raw_input('Press enter to exit, q to quit...')
+            if answer == 'q':
+                sys.exit('Done')
         self.RootObject.Delete()
 
     def writeOutputFile(self):
