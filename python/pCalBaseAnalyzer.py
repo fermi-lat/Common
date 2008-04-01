@@ -16,7 +16,7 @@ HISTOGRAM_GROUPS = ['Mean', 'RMS', 'ChiSquare', 'DOF', 'ReducedChiSquare']
 
 class pCalBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
 
-    def __init__(self, inputFilePath, outputFilePath, debug = False):
+    def __init__(self, inputFilePath, outputFilePath, debug):
         self.InputFilePath = inputFilePath
         self.OutputFilePath = outputFilePath
         self.Debug = debug

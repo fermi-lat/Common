@@ -52,6 +52,9 @@ if __name__ == '__main__':
     parser.add_option('-i', '--interactive', dest = 'i',
                       default = False, action = 'store_true',
                       help = 'run in interactive mode (show the plots)')
+    parser.add_option('-d', '--debug', dest = 'd',
+                      default = False, action = 'store_true',
+                      help = 'run in debug mode (show the single chan. plots)')
     (opts, args) = parser.parse_args()
     if len(args) != 1:
         parser.print_help()
@@ -60,7 +63,7 @@ if __name__ == '__main__':
     outputFilePath = opts.o
     if outputFilePath is None:
         outputFilePath = inputFilePath.replace('.root', '_output.root')
-    analyzer = pCalPedsAnalyzer(inputFilePath, outputFilePath)
+    analyzer = pCalPedsAnalyzer(inputFilePath, outputFilePath, opts.d)
     analyzer.run()
     if opts.i:
         analyzer.drawHistograms()
