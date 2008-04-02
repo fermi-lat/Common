@@ -11,7 +11,12 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
 HISTOGRAM_GROUPS = ['Mean', 'RMS', 'ChiSquare', 'DOF', 'ReducedChiSquare']
-GAUSSIAN = ROOT.TF1('cal_gain_gaussian', 'gaus')
+GAUSSIAN = ROOT.TF1('gaussian', 'gaus')
+HYPER_GAUSSIAN_FORMULA = '[0]*exp(-abs((x - [1])**[3]/(2*[2]**[3])))'
+HYPER_GAUSSIAN_NORM = '(1./(0.665703/([3]**1.7477) + 0.801267))'
+HYPER_GAUSSIAN = ROOT.TF1('hyper_gaussian', HYPER_GAUSSIAN_FORMULA)
+NORM_HYPER_GAUSSIAN = ROOT.TF1('norm_hyper_gaussian', '%s*%s' %\
+                               (HYPER_GAUSSIAN_NORM, HYPER_GAUSSIAN_FORMULA))
 
 
 
@@ -91,7 +96,7 @@ class pCalBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
                                                 self.Mean + 10*self.RMS)
         self.Mean = self.RootObject.GetMean()
         self.RMS = self.RootObject.GetRMS()
-        self.FitFunction.SetParameter(0, 1)
+        self.FitFunction.SetParameter(0, 10)
         self.FitFunction.SetParameter(1, self.Mean)
         self.FitFunction.SetParameter(2, self.RMS)
         self.FitFunction.SetParLimits(1, self.Mean - 0.5*self.RMS,\

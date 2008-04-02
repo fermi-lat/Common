@@ -13,14 +13,16 @@ class pCalGainsAnalyzer(pCalBaseAnalyzer):
 
     def __init__(self, inputFilePath, outputFilePath, debug):
         pCalBaseAnalyzer.__init__(self, inputFilePath, outputFilePath, debug)
-        self.FitFunction = ROOT.TF1('f',\
-                                    '[0]*exp(-abs((x - [1])**[3]/[2]**[3]))')
+        self.FitFunction = HYPER_GAUSSIAN
         
     def createHistograms(self):
         for group in HISTOGRAM_GROUPS:
             for subgroup in self.HISTOGRAM_SUB_GROUPS:
                 name = self.getHistogramName(group, subgroup)
-                self.HistogramsDict[name] = self.getNewHistogram(name, 1536)
+                xlabel = 'channel number'
+                ylabel = '%s (%s)' % (group, subgroup)
+                self.HistogramsDict[name] =\
+                     self.getNewHistogram(name, 1536, xlabel, ylabel)
 
     def getBaseName(self, subgroup):
         return '%s_TH1_TowerCalLayerCalColumn' % subgroup
