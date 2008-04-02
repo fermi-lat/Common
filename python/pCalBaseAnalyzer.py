@@ -86,13 +86,15 @@ class pCalBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
             sys.exit('Could not find %s. Abort.' % name)
         self.Mean = self.RootObject.GetMean()
         self.RMS = self.RootObject.GetRMS()
+        self.Gaussian.SetParameter(1, self.Mean)
+        self.Gaussian.SetParameter(2, self.RMS)
         self.Gaussian.SetParLimits(1, self.Mean-self.RMS, self.Mean+self.RMS)
         self.Gaussian.SetParLimits(2, 0.5*self.RMS, 2*self.RMS)
         for i in range(self.NumFitIterations):
             self.ParamsDict['min'] = self.Mean - self.FitRangeWidth*self.RMS
             self.ParamsDict['max'] = self.Mean + self.FitRangeWidth*self.RMS 
-            (self.Normalization, self.Mean, self.RMS) =\
-                                 self.getFitParameters(self.Gaussian, 'QNB')
+            (self.Mean, self.RMS) =\
+                        self.getFitParameters(self.Gaussian, 'QNB')[1:3]
         self.ChiSquare = self.Gaussian.GetChisquare()
         self.DOF = self.Gaussian.GetNDF()
         try:
