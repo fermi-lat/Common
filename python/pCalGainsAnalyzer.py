@@ -14,6 +14,7 @@ class pCalGainsAnalyzer(pCalBaseAnalyzer):
     def __init__(self, inputFilePath, outputFilePath, debug):
         pCalBaseAnalyzer.__init__(self, inputFilePath, outputFilePath, debug)
         self.FitFunction = HYPER_GAUSSIAN
+        #self.FitFunction = NORM_HYPER_GAUSSIAN
         
     def createHistograms(self):
         for group in HISTOGRAM_GROUPS:
@@ -26,9 +27,6 @@ class pCalGainsAnalyzer(pCalBaseAnalyzer):
 
     def getBaseName(self, subgroup):
         return '%s_TH1_TowerCalLayerCalColumn' % subgroup
-
-    def fixFitExponent(self, exponent):
-        self.FitFunction.FixParameter(3, exponent)
 
     def inspectChannel(self, channel):
         self.openFile(self.InputFilePath)
@@ -44,6 +42,9 @@ class pCalGainsAnalyzer(pCalBaseAnalyzer):
 
     def getHistogramName(self, group, subgroup):
         return '%s_%s_TH1' % (subgroup, group)
+
+    def fixFitExponent(self, exponent):
+        self.FitFunction.FixParameter(3, exponent)
 
     def setupFitParameters(self, subgroup):
         self.RebinningFactor = self.REBIN_FACTORS_DICT[subgroup]

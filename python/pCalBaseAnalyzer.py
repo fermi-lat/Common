@@ -96,6 +96,10 @@ class pCalBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
                                                 self.Mean + 10*self.RMS)
         self.Mean = self.RootObject.GetMean()
         self.RMS = self.RootObject.GetRMS()
+        #binWidth = self.RootObject.GetBinWidth(1)
+        #numEntries = self.RootObject.GetEntries()
+        #normalization = binWidth*numEntries
+        #print binWidth, numEntries, normalization
         self.FitFunction.SetParameter(0, 10)
         self.FitFunction.SetParameter(1, self.Mean)
         self.FitFunction.SetParameter(2, self.RMS)
@@ -154,3 +158,15 @@ class pCalBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
                 self.getHistogram(group, subgroup).Draw()
                 canvas.Update()
                 i+= 1
+
+
+if __name__ == '__main__':
+    f = NORM_HYPER_GAUSSIAN
+    f.SetParameter(0, 1)
+    f.SetParameter(1, 0)
+    f.SetParameter(2, 0.1)
+    for i in range(2, 10):
+        f.SetParameter(3, i)
+        f.Draw()
+        ROOT.gPad.Update()
+        print f.Integral(-10, 10)
