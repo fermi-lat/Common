@@ -1,4 +1,11 @@
 
+*** v3r0p9 ***
+
+- New script for fitting cal pedestals and gain ratios at the end of the run,
+if needed. Should have *no impact at all* on all the other pieces of code
+already running in the pipeline.
+
+
 *** v3r0p8 ***
 
 - Old script meant for comparing the FastMon plots to the corresponding digi
