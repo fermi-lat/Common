@@ -11,6 +11,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
 HISTOGRAM_GROUPS = ['Mean', 'RMS', 'ChiSquare', 'DOF', 'ReducedChiSquare']
+GAUSSIAN = ROOT.TF1('cal_gain_gaussian', 'gaus')
 
 
 
@@ -24,7 +25,7 @@ class pCalBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         self.RebinningFactor = 1
         self.FitRangeWidth = 1.5
         self.NumFitIterations = 1
-        self.Gaussian = ROOT.TF1('cal_gain_gaussian', 'gaus')
+        self.FitFunction = GAUSSIAN
         self.HistogramsDict = {}
         self.createHistograms()
 
@@ -86,17 +87,18 @@ class pCalBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
             sys.exit('Could not find %s. Abort.' % name)
         self.Mean = self.RootObject.GetMean()
         self.RMS = self.RootObject.GetRMS()
-        self.Gaussian.SetParameter(1, self.Mean)
-        self.Gaussian.SetParameter(2, self.RMS)
-        self.Gaussian.SetParLimits(1, self.Mean-self.RMS, self.Mean+self.RMS)
-        self.Gaussian.SetParLimits(2, 0.5*self.RMS, 2*self.RMS)
+        self.FitFunction.SetParameter(1, self.Mean)
+        self.FitFunction.SetParameter(2, self.RMS)
+        self.FitFunction.SetParLimits(1, self.Mean - 0.5*self.RMS,\
+                                      self.Mean + 0.5*self.RMS)
+        self.FitFunction.SetParLimits(2, 0.8*self.RMS, 2.0*self.RMS)
         for i in range(self.NumFitIterations):
             self.ParamsDict['min'] = self.Mean - self.FitRangeWidth*self.RMS
             self.ParamsDict['max'] = self.Mean + self.FitRangeWidth*self.RMS 
-            (self.Mean, self.RMS) =\
-                        self.getFitParameters(self.Gaussian, 'QNB')[1:3]
-        self.ChiSquare = self.Gaussian.GetChisquare()
-        self.DOF = self.Gaussian.GetNDF()
+            fitParameters = self.getFitParameters(self.FitFunction, 'QNB')
+            (self.Mean, self.RMS) = fitParameters[1:3]
+        self.ChiSquare = self.FitFunction.GetChisquare()
+        self.DOF = self.FitFunction.GetNDF()
         try:
             self.ReducedChiSquare = self.ChiSquare/self.DOF
         except ZeroDivisionError:
@@ -105,11 +107,12 @@ class pCalBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
             self.RootObject.GetXaxis().SetRangeUser(self.Mean - 10*self.RMS,
                                                     self.Mean + 10*self.RMS)
             self.RootObject.Draw()
-            self.Gaussian.Draw('same')
+            self.FitFunction.Draw('same')
             ROOT.gPad.Update()
             print '*************************************************'
             print 'Debug information for %s (%d, %s, %s, %s, %s)' %\
                   (baseName, tower, layer, column, face, readoutRange)
+            print 'Fit parameters    : %s' % fitParameters
             print 'Mean              : %s' % self.Mean
             print 'RMS               : %s' % self.RMS
             print 'Reduced Chi Square: %s/%s = %s' %\
