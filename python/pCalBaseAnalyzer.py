@@ -87,6 +87,11 @@ class pCalBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
             sys.exit('Could not find %s. Abort.' % name)
         self.Mean = self.RootObject.GetMean()
         self.RMS = self.RootObject.GetRMS()
+        self.RootObject.GetXaxis().SetRangeUser(self.Mean - 10*self.RMS,
+                                                self.Mean + 10*self.RMS)
+        self.Mean = self.RootObject.GetMean()
+        self.RMS = self.RootObject.GetRMS()
+        self.FitFunction.SetParameter(0, 1)
         self.FitFunction.SetParameter(1, self.Mean)
         self.FitFunction.SetParameter(2, self.RMS)
         self.FitFunction.SetParLimits(1, self.Mean - 0.5*self.RMS,\
