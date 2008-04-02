@@ -7,13 +7,14 @@ from pCalBaseAnalyzer import *
 class pCalGainsAnalyzer(pCalBaseAnalyzer):
 
     HISTOGRAM_SUB_GROUPS = ['RPM', 'RPp', 'RMm']
+    REBIN_FACTORS_DICT = {'RPM': 2, 'RPp': 1, 'RMm': 1}
+    FIT_RANGE_WIDTH_DICT = {'RPM': 3.0, 'RPp': 2.0, 'RMm': 2.0}
+    FIT_EXPONENT_DICT = {'RPM': 8.0, 'RPp': 3.0, 'RMm': 3.0}
 
     def __init__(self, inputFilePath, outputFilePath, debug):
         pCalBaseAnalyzer.__init__(self, inputFilePath, outputFilePath, debug)
-        #self.Gaussian =\
-        #     ROOT.TF1('Square', '[0]*(x>([1]-1.732*[2]))*(x<([1]+1.732*[2]))')
-        self.RebinningFactor = 8
-        self.FitRangeWidth = 3
+        self.FitFunction = ROOT.TF1('f',\
+                                    '[0]*exp(-abs((x - [1])**[3]/[2]**[3]))')
         
     def createHistograms(self):
         for group in HISTOGRAM_GROUPS:
@@ -24,9 +25,32 @@ class pCalGainsAnalyzer(pCalBaseAnalyzer):
     def getBaseName(self, subgroup):
         return '%s_TH1_TowerCalLayerCalColumn' % subgroup
 
+    def fixFitExponent(self, exponent):
+        self.FitFunction.FixParameter(3, exponent)
+
+    def inspectChannel(self, channel):
+        self.openFile(self.InputFilePath)
+        tower = channel/(8*12)
+        layer = (channel - tower*8*12)/12
+        column = channel -tower*8*12 - layer*12
+        self.Debug = True
+        for subgroup in self.HISTOGRAM_SUB_GROUPS:
+            baseName = self.getBaseName(subgroup)
+            self.setupFitParameters(subgroup)
+            self.fitChannel(baseName, tower, layer, column)
+        self.closeFile()
+
     def getHistogramName(self, group, subgroup):
         return '%s_%s_TH1' % (subgroup, group)
 
+    def setupFitParameters(self, subgroup):
+        self.RebinningFactor = self.REBIN_FACTORS_DICT[subgroup]
+        self.FitRangeWidth = self.FIT_RANGE_WIDTH_DICT[subgroup]
+        self.fixFitExponent(self.FIT_EXPONENT_DICT[subgroup])
+
+    def fitChannel(self, baseName, tower, layer, column):
+        pCalBaseAnalyzer.fitChannel(self, baseName, tower, layer, column)
+            
     def run(self):
         logger.info('Starting CAL gains analysis...')
         startTime = time.time()
@@ -37,6 +61,7 @@ class pCalGainsAnalyzer(pCalBaseAnalyzer):
                 for column in range(12):
                     for subgroup in self.HISTOGRAM_SUB_GROUPS:
                         baseName = self.getBaseName(subgroup)
+                        self.setupFitParameters(subgroup)
                         self.fitChannel(baseName, tower, layer, column)
                         chan = self.getChannelNumber(tower, layer, column)
                         self.fillHistograms(subgroup, chan)
@@ -59,6 +84,9 @@ if __name__ == '__main__':
     parser.add_option('-d', '--debug', dest = 'd',
                       default = False, action = 'store_true',
                       help = 'run in debug mode (show the single chan. plots)')
+    parser.add_option('-c', '--inspect-channel', dest = 'c',
+                      default = -1, type = int,
+                      help = 'inspect a single channel')
     (opts, args) = parser.parse_args()
     if len(args) != 1:
         parser.print_help()
@@ -68,6 +96,10 @@ if __name__ == '__main__':
     if outputFilePath is None:
         outputFilePath = inputFilePath.replace('.root', '_output.root')
     analyzer = pCalGainsAnalyzer(inputFilePath, outputFilePath, opts.d)
-    analyzer.run()
-    if opts.i:
-        analyzer.drawHistograms()
+    if opts.c >= 0:
+        print 'About to inspect channel %d...' % opts.c
+        analyzer.inspectChannel(opts.c)
+    else:
+        analyzer.run()
+        if opts.i:
+            analyzer.drawHistograms()
