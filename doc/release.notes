@@ -1,9 +1,15 @@
+*** v3r0p10 ***
+
+- Handling of error bars into the alg__values algorithm.
+* Relevant jira(s): GDQMQ-57
+
 
 *** v3r0p9 ***
 
 - New script for fitting cal pedestals and gain ratios at the end of the run,
 if needed. Should have *no impact at all* on all the other pieces of code
 already running in the pipeline.
+* Relevant jira(s): GDQMQ-65
 
 
 *** v3r0p8 ***
@@ -11,6 +17,7 @@ already running in the pipeline.
 - Old script meant for comparing the FastMon plots to the corresponding digi
 ones replaced with a new and better version. It writes an output xml
 summary file.
+* Relevant jira(s): GDQMQ-46
 
 
 *** v3r0p7 ***
@@ -23,11 +30,13 @@ on a standard digi file.
 *** v3r0p6 ***
 
 - doc/relese.notes removed (I know I messed up, here...)
+* Relevant jira(s): GDQMQ-64
 
 
 *** v3r0p5 ***
 
 - doc/relese.notes moved to doc/release.notes
+* Relevant jira(s): GDQMQ-64
 
 
 *** v3r0p4 ***
@@ -38,6 +47,7 @@ on a standard digi file.
 changed with a > and a < respectively). It affects only the bounduary
 cases where the output value is right on one of the limits.
 - Piece of code for calculating the cal gains added. Not yet used, though.
+* Relevant jira(s): GDQMQ-48, GDQMQ-65
 
 
 *** v3r0p3 ***
@@ -45,16 +55,18 @@ cases where the output value is right on one of the limits.
 - New module for normalizing ACD quantities to tile position/area added.
 It gets imported into pXmlBaseElement for being used by the alarm handler xml
 parser, but there's no change in functionality at the moment.
+* Relevant jira(s): GDQMQ-48
 
 
 *** v3r0p2 ***
 
 - release.notes added.
+* Relevant jira(s): GDQMQ-64
 
 
 *** v3r0p1 ***
 
-- Coulpe of new algorithms for finding peaks added to the alarm handler.
+- Couple of new algorithms for finding peaks added to the alarm handler.
 
 
 *** v3r0p0 ***
