@@ -7,6 +7,7 @@ from pAlarmBaseAlgorithm import ROOT2NUMPYDICT
 import pUtils
 import numpy
 import types
+import math
 
 ## @brief Make sure all the entries of a branch are within limits.
 #
@@ -32,9 +33,11 @@ import types
 #
 #  Three arrays are created at the beginning and initialized to 0: the array
 #  for the timestamps, the array for the actual values and the array for
-#  the errors. Given a branch name, the name of the branch containing the errors
-#  is assumed to be called exactly like the main one, with a "_err" prepended
-#  (and also assumed to be of the same type and shape).
+#  the errors. Given a branch name, the name of the branch containing the
+#  errors is assumed to be called exactly like the main one, with a "_err"
+#  prepended (and also assumed to be of the same type and shape).
+#  The only exception is consitured by the "Counter_" variables, for which
+#  the error is assumed to be the square root of the value.
 #
 #  The way the statistical errors are taken into account, here, is probably
 #  not the optimal one (though perfectly correct) but changing it would
@@ -114,7 +117,6 @@ class alg__values(pAlarmBaseAlgorithm):
             shape = eval(shape)
         self.TimestampArray = numpy.zeros((1), 'd')
 	self.BranchArray = numpy.zeros(shape, ROOT2NUMPYDICT[branchType])
-        self.ErrorArray = numpy.zeros(shape, ROOT2NUMPYDICT[branchType])
         valueBranchName = self.RootObject.GetName()
         errorBranchName = '%s_err' % valueBranchName
         self.RootTree.SetBranchStatus('*', 0)
@@ -122,8 +124,13 @@ class alg__values(pAlarmBaseAlgorithm):
         self.RootTree.SetBranchAddress(timeBranchName, self.TimestampArray)
         self.RootTree.SetBranchStatus(valueBranchName, 1)
         self.RootTree.SetBranchAddress(valueBranchName, self.BranchArray)
-        self.RootTree.SetBranchStatus(errorBranchName, 1)
-        self.RootTree.SetBranchAddress(errorBranchName, self.ErrorArray)
+        if branchName[:8] != 'Counter_':
+            self.__branchIsCounter = False
+            self.ErrorArray = numpy.zeros(shape, ROOT2NUMPYDICT[branchType])
+            self.RootTree.SetBranchStatus(errorBranchName, 1)
+            self.RootTree.SetBranchAddress(errorBranchName, self.ErrorArray)
+        else:
+            self.__branchIsCounter = True
 
     ## @brief Setup the list of indexes to loop over, taking into account
     #  the optional "exclude" and "only" parameters.
@@ -153,10 +160,14 @@ class alg__values(pAlarmBaseAlgorithm):
         for i in range(self.RootObject.GetEntries()):
             self.RootTree.GetEntry(i)
             valueFlatArray = self.BranchArray.flatten()
-            errorFlatArray = self.ErrorArray.flatten()
+            if not self.__branchIsCounter:
+                errorFlatArray = self.ErrorArray.flatten()
             for j in self.IndexList:
                 value = valueFlatArray[j]
-                error = errorFlatArray[j]
+                if not self.__branchIsCounter:
+                    error = errorFlatArray[j]
+                else:
+                    error = math.sqrt(value)
                 minusValue = value - numBoundSigma*error
                 plusValue = value + numBoundSigma*error
                 minusBadness = self.getBadness(minusValue)
