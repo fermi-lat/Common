@@ -7,14 +7,13 @@ from pCalBaseAnalyzer import *
 class pCalGainsAnalyzer(pCalBaseAnalyzer):
 
     HISTOGRAM_SUB_GROUPS = ['RPM', 'RPp', 'RMm']
-    REBIN_FACTORS_DICT = {'RPM': 2, 'RPp': 1, 'RMm': 1}
+    REBIN_FACTORS_DICT   = {'RPM': 2  , 'RPp': 1  , 'RMm': 1  }
     FIT_RANGE_WIDTH_DICT = {'RPM': 3.0, 'RPp': 2.0, 'RMm': 2.0}
-    FIT_EXPONENT_DICT = {'RPM': 8.0, 'RPp': 3.0, 'RMm': 3.0}
+    FIT_EXPONENT_DICT    = {'RPM': 8.0, 'RPp': 3.0, 'RMm': 3.0}
 
     def __init__(self, inputFilePath, outputFilePath, debug):
         pCalBaseAnalyzer.__init__(self, inputFilePath, outputFilePath, debug)
         self.FitFunction = HYPER_GAUSSIAN
-        #self.FitFunction = NORM_HYPER_GAUSSIAN
         
     def createHistograms(self):
         for group in HISTOGRAM_GROUPS:
