@@ -4,6 +4,7 @@ logger = pSafeLogger.getLogger('pCalBaseAnalyzer')
 
 import sys
 import time
+import math
 
 from pSafeROOT           import ROOT
 from pRootFileManager    import pRootFileManager
@@ -12,27 +13,38 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 HISTOGRAM_GROUPS = ['Mean', 'RMS', 'ChiSquare', 'DOF', 'ReducedChiSquare']
 GAUSSIAN = ROOT.TF1('gaussian', 'gaus')
-HYPER_GAUSSIAN_FORMULA = '[0]*exp(-abs((x - [1])**[3]/(2*[2]**[3])))'
-HYPER_GAUSSIAN_NORM = '(1./(0.665703/([3]**1.7477) + 0.801267))'
+HYPER_GAUSSIAN_FORMULA = '%s*[0]*exp(-abs((x - [1])**[3]/(2*[2]**[3])))' %\
+                         (1.0/math.sqrt(2*math.pi))
 HYPER_GAUSSIAN = ROOT.TF1('hyper_gaussian', HYPER_GAUSSIAN_FORMULA)
-NORM_HYPER_GAUSSIAN = ROOT.TF1('norm_hyper_gaussian', '%s*%s' %\
-                               (HYPER_GAUSSIAN_NORM, HYPER_GAUSSIAN_FORMULA))
-HYPER_GAUSSIAN_RMS_DICT =\
-                        {2 : 1.00000000000000000,
-                         3 : 0.77044730829390562,
-                         4 : 0.69190364639062063,
-                         5 : 0.65497337224456775,
-                         6 : 0.63418061567754813,
-                         7 : 0.62090487573780351,
-                         8 : 0.61251533816973947,
-                         9 : 0.60609233201596469,
-                         10: 0.60158429409781700,
-                         11: 0.59830196288474891,
-                         12: 0.59545136457909020,
-                         13: 0.59363253699752849,
-                         14: 0.59191057004935288,
-                         15: 0.59013273872662664
-                         }
+HYPER_GAUSSIAN_RMS_DICT  = {2 : 1.00000000000000000,
+                            3 : 0.77044730829390562,
+                            4 : 0.69190364639062063,
+                            5 : 0.65497337224456775,
+                            6 : 0.63418061567754813,
+                            7 : 0.62090487573780351,
+                            8 : 0.61251533816973947,
+                            9 : 0.60609233201596469,
+                            10: 0.60158429409781700,
+                            11: 0.59830196288474891,
+                            12: 0.59545136457909020,
+                            13: 0.59363253699752849,
+                            14: 0.59191057004935288,
+                            15: 0.59013273872662664}
+HYPER_GAUSSIAN_NORM_DICT = {2 : 1.0000005733034723,
+                            3 : 1.1139741473603271,
+                            4 : 1.162736634038237,
+                            5 : 1.188314606937412,
+                            6 : 1.2035708623129959,
+                            7 : 1.2135029829388491,
+                            8 : 1.2203908047360614,
+                            9 : 1.2254005574337135,
+                            10: 1.2291822069356093,
+                            11: 1.2321229221337506,
+                            12: 1.2344659238262117,
+                            13: 1.236370789101618,
+                            14: 1.2379460724714813,
+                            15: 1.2392679120668064}
+
 
 
 class pCalBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
@@ -47,16 +59,35 @@ class pCalBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         self.NumFitIterations = 1
         self.FitFunction = GAUSSIAN
         self.HistogramsDict = {}
-        self.createHistograms()
+        if self.__class__.__name__ != 'pCalBaseAnalyzer':
+            self.createHistograms()
 
-    def getHyperGaussianRmsCorrectionFactor(self, exponent):
-        try:
-            return HYPER_GAUSSIAN_RMS_DICT[exponent]
-        except KeyError:
-            exponents = HYPER_GAUSSIAN_RMS_DICT.keys()
-            exponents.sort()
-            maxExponent = exponents[-1]
-            return HYPER_GAUSSIAN_RMS_DICT[maxExponent]
+    def getRmsCorrectionFactor(self):
+        if self.FitFunction.GetName() == 'hyper_gaussian':
+            exponent = self.FitFunction.GetParameter(3)
+            try:
+                return HYPER_GAUSSIAN_RMS_DICT[exponent]
+            except KeyError:
+                exponents = HYPER_GAUSSIAN_RMS_DICT.keys()
+                exponents.sort()
+                maxExponent = exponents[-1]
+                return HYPER_GAUSSIAN_RMS_DICT[maxExponent]
+        else:
+            return 1
+
+    def getNormCorrectionFactor(self):
+        if self.FitFunction.GetName() == 'hyper_gaussian':
+            sigma = self.FitFunction.GetParameter(2)
+            exponent = self.FitFunction.GetParameter(3)
+            try:
+                return HYPER_GAUSSIAN_NORM_DICT[exponent]/sigma
+            except KeyError:
+                exponents = HYPER_GAUSSIAN_RMS_DICT.keys()
+                exponents.sort()
+                maxExponent = exponents[-1]
+                return HYPER_GAUSSIAN_RMS_DICT[maxExponent]/sigma
+        else:
+            return 1
 
     def getNewHistogram(self, name, numBins, xlabel = None, ylabel = None):
         histogram = ROOT.TH1F(name, name, numBins, -0.5, numBins - 0.5)
