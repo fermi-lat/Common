@@ -489,6 +489,7 @@ class pAlarmBaseAlgorithm:
                 self.Output.appendDictValue('warning_entries', label)
         else:
             if flip:
+                label = self.getDetailedLabel(index, value, valueLabel)
                 self.Output.appendDictValue('exception violations', label)
         return flip
 
