@@ -1,3 +1,10 @@
+*** v3r0p11 ***
+
+- Bug fix in the alarm handler (a variable in pAlarmBaseAlgorithm was
+referenced before assignment).
+* Relevant jira(s): GDQMQ-78
+
+
 *** v3r0p10 ***
 
 - Handling of error bars into the alg__values algorithm.
