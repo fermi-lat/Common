@@ -1,3 +1,13 @@
+
+*** v3r0p12 ***
+
+- More work done on the fitting tool for the CAL pedestals/gains. Some work
+done on getting the normalization and rms values right for the modified
+gaussian function. Not yet in the pipeline, so no change in the basic
+functionality at the moment.
+* Relevant jira(s): GDQMQ-65
+
+
 *** v3r0p11 ***
 
 - Bug fix in the alarm handler (a variable in pAlarmBaseAlgorithm was
