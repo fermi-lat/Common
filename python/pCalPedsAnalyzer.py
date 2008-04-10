@@ -21,8 +21,10 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
         for group in HISTOGRAM_GROUPS:
             for subgroup in self.HISTOGRAM_SUB_GROUPS:
                 name = self.getHistogramName(group, subgroup)
+                xlabel = 'channel number'
+                ylabel = '%s (%s)' % (group, subgroup)
                 self.HistogramsDict[name] =\
-                     self.getNewHistogram(name, 3072, 'Log id', subgroup)
+                     self.getNewHistogram(name, 3072, xlabel, ylabel)
 
     def getHistogramName(self, group, subgroup):
         return 'CalXAdcPed%s_%s_TH1' % (group, subgroup)

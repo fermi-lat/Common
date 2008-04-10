@@ -18,8 +18,10 @@ class pAcdPedsAnalyzer(pBaseAnalyzer):
         for group in HISTOGRAM_GROUPS:
             for subgroup in self.HISTOGRAM_SUB_GROUPS:
                 name = self.getHistogramName(group, subgroup)
+                xlabel = 'tile number'
+                ylabel = '%s (%s)' % (group, subgroup)
                 self.HistogramsDict[name] =\
-                     self.getNewHistogram(name, 128, 'Tile number', subgroup)
+                     self.getNewHistogram(name, 128, xlabel, ylabel)
 
     def getHistogramName(self, group, subgroup):
         return 'AcdPed%s_%s_TH1' % (group, subgroup)
