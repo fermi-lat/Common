@@ -28,18 +28,6 @@ class pCalGainsAnalyzer(pBaseAnalyzer):
     def getBaseName(self, subgroup):
         return '%s_TH1_TowerCalLayerCalColumn' % subgroup
 
-    def inspectChannel(self, channel):
-        self.openFile(self.InputFilePath)
-        tower = channel/(8*12)
-        layer = (channel - tower*8*12)/12
-        column = channel -tower*8*12 - layer*12
-        self.Debug = True
-        for subgroup in self.HISTOGRAM_SUB_GROUPS:
-            baseName = self.getBaseName(subgroup)
-            self.setupFitParameters(subgroup)
-            self.fitChannel(baseName, tower, layer, column)
-        self.closeFile()
-
     def getHistogramName(self, group, subgroup):
         return '%s_%s_TH1' % (subgroup, group)
 
@@ -61,6 +49,18 @@ class pCalGainsAnalyzer(pBaseAnalyzer):
             print 'Debug information for %s (%d, %s, %s)' %\
                   (baseName, tower, layer, column)
         self.fit(channelName)
+
+    def inspectChannel(self, channel):
+        self.openFile(self.InputFilePath)
+        tower = channel/(8*12)
+        layer = (channel - tower*8*12)/12
+        column = channel -tower*8*12 - layer*12
+        self.Debug = True
+        for subgroup in self.HISTOGRAM_SUB_GROUPS:
+            baseName = self.getBaseName(subgroup)
+            self.setupFitParameters(subgroup)
+            self.fitChannel(baseName, tower, layer, column)
+        self.closeFile()
             
     def run(self):
         logger.info('Starting CAL gains analysis...')
