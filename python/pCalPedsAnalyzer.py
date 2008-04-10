@@ -14,7 +14,7 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
         pBaseAnalyzer.__init__(self, inputFilePath, outputFilePath, debug)
         self.FitFunction = GAUSSIAN
         self.RebinningFactor = 1
-        self.FitRangeWidth = 2.5
+        self.FitRangeWidth = 5.0
         self.NumFitIterations = 1
 
     def createHistograms(self):
@@ -50,6 +50,18 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
             print 'Debug information for %s (%d, %s, %s, %s, %s)' %\
                   (baseName, tower, layer, column, face, readoutRange)
         self.fit(channelName)
+
+    def inspectChannel(self, channel):
+        self.openFile(self.InputFilePath)
+        tower = channel/(8*12*2)
+        layer = (channel - tower*8*12*2)/(12*2)
+        column = (channel - tower*8*12*2 - layer*12*2)/2
+        face = channel - tower*8*12*2 - layer*12*2 - column*2
+        self.Debug = True
+        for readoutRange in range(4):
+            self.fitChannel(self.BASE_NAME, tower, layer, column, face,\
+                            readoutRange)
+        self.closeFile()
 
     def run(self):
         logger.info('Starting CAL peds analysis...')
@@ -87,6 +99,9 @@ if __name__ == '__main__':
     parser.add_option('-d', '--debug', dest = 'd',
                       default = False, action = 'store_true',
                       help = 'run in debug mode (show the single chan. plots)')
+    parser.add_option('-c', '--inspect-channel', dest = 'c',
+                      default = -1, type = int,
+                      help = 'inspect a single channel')
     (opts, args) = parser.parse_args()
     if len(args) != 1:
         parser.print_help()
@@ -96,6 +111,10 @@ if __name__ == '__main__':
     if outputFilePath is None:
         outputFilePath = inputFilePath.replace('.root', '_output.root')
     analyzer = pCalPedsAnalyzer(inputFilePath, outputFilePath, opts.d)
-    analyzer.run()
-    if opts.i:
-        analyzer.drawHistograms()
+    if opts.c >= 0:
+        print 'About to inspect channel %d...' % opts.c
+        analyzer.inspectChannel(opts.c)
+    else:
+        analyzer.run()
+        if opts.i:
+            analyzer.drawHistograms()
