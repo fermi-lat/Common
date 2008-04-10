@@ -51,8 +51,19 @@ class pCalGainsAnalyzer(pBaseAnalyzer):
         self.FitRangeWidth = self.FIT_RANGE_WIDTH_DICT[subgroup]
         self.fixFitExponent(self.FIT_EXPONENT_DICT[subgroup])
 
+    def getChannelNumber(self, tower, layer, column):
+        return tower*8*12 + layer*12 + column 
+
+    def getChannelName(self, baseName, tower, layer, column):
+        return '%s_%d_%d_%d' % (baseName, tower, layer, column)
+
     def fitChannel(self, baseName, tower, layer, column):
-        pBaseAnalyzer.fitChannel(self, baseName, tower, layer, column)
+        channelName = self.getChannelName(baseName, tower, layer, column)
+        if self.Debug:
+            print '*************************************************'
+            print 'Debug information for %s (%d, %s, %s)' %\
+                  (baseName, tower, layer, column)
+        self.fit(channelName)
             
     def run(self):
         logger.info('Starting CAL gains analysis...')

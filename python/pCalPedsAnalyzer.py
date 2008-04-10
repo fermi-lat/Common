@@ -26,6 +26,31 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
     def getHistogramName(self, group, subgroup):
         return 'CalXAdcPed%s_%s_TH1' % (group, subgroup)
 
+    def getChannelNumber(self, tower, layer, column, face,\
+                         readoutRange = None):
+        if readoutRange is None:
+            return tower*8*12*2 + layer*12*2 + column*2 + face
+        else:
+            return tower*8*12*2*4 + layer*12*2*4 + column*2*4 + face*4 +\
+                   readoutRange
+
+    def getChannelName(self, baseName, tower, layer, column, face,\
+                       readoutRange = None):
+        if readoutRange is None:
+            return '%s_%d_%d_%d_%d' % (baseName, tower, layer, column, face)
+        else:
+            return '%s_%d_%d_%d_%d_%d' % (baseName, tower, layer, column,\
+                                          face, readoutRange)
+
+    def fitChannel(self, baseName, tower, layer, column, face, readoutRange):
+        channelName = self.getChannelName(baseName, tower, layer, column,\
+                                          face, readoutRange)
+        if self.Debug:
+            print '*************************************************'
+            print 'Debug information for %s (%d, %s, %s, %s, %s)' %\
+                  (baseName, tower, layer, column, face, readoutRange)
+        self.fit(channelName)
+
     def run(self):
         logger.info('Starting CAL peds analysis...')
         startTime = time.time()

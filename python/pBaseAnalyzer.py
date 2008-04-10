@@ -112,30 +112,7 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
                                                  subgroup),\
                            channel, self.ReducedChiSquare)
 
-    def getChannelNumber(self, tower, layer, column, face = None,\
-                         readoutRange = None):
-        if face is None and readoutRange is None:
-            return tower*8*12 + layer*12 + column 
-        elif readoutRange is None:
-            return tower*8*12*2 + layer*12*2 + column*2 + face
-        else:
-            return tower*8*12*2*4 + layer*12*2*4 + column*2*4 + face*4 +\
-                   readoutRange
-
-    def getChannelName(self, baseName, tower, layer, column, face = None,\
-                       readoutRange = None):
-        if face is None and readoutRange is None:
-            return '%s_%d_%d_%d' % (baseName, tower, layer, column)
-        elif readoutRange is None:
-            return '%s_%d_%d_%d_%d' % (baseName, tower, layer, column, face)
-        else:
-            return '%s_%d_%d_%d_%d_%d' % (baseName, tower, layer, column,\
-                                          face, readoutRange)
-
-    def fitChannel(self, baseName, tower, layer, column, face = None,\
-                   readoutRange = None):
-        channelName = self.getChannelName(baseName, tower, layer, column,\
-                                          face, readoutRange)
+    def fit(self, channelName):
         self.RootObject = self.get(channelName)
         if self.RebinningFactor > 1:
             self.RootObject.Rebin(self.RebinningFactor)
@@ -174,10 +151,7 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
             self.RootObject.Draw()
             self.FitFunction.Draw('same')
             ROOT.gPad.Update()
-            print '*************************************************'
-            print 'Debug information for %s (%d, %s, %s, %s, %s)' %\
-                  (baseName, tower, layer, column, face, readoutRange)
-            print 'Fit parameters    : %s' % fitParameters
+            print 'Fit parameters    : %s' % ['%.4e'%p for p in fitParameters]
             print 'Mean              : %s' % self.Mean
             print 'RMS               : %s' % self.RMS
             print 'Reduced Chi Square: %s/%s = %s' %\
