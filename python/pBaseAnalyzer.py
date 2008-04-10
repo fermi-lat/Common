@@ -90,14 +90,13 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         self.RMS = self.RootObject.GetRMS()
         self.FitFunction.SetParameter(1, self.Mean)
         self.FitFunction.SetParameter(2, self.RMS)
-        #self.FitFunction.SetParLimits(1, self.Mean - 0.5*self.RMS,\
-        #                              self.Mean + 0.5*self.RMS)
+        self.FitFunction.SetParLimits(1, self.Mean - 0.5*self.RMS,\
+                                      self.Mean + 0.5*self.RMS)
         binWidth = self.RootObject.GetBinWidth(1)
         numEntries = self.RootObject.GetEntries()
         normalization = binWidth*numEntries*self.getNormCorrectionFactor()
         self.FitFunction.SetParameter(0, normalization)
-        #self.FitFunction.SetParameter(0, 1)
-        #self.FitFunction.SetParLimits(2, 0.8*self.RMS, 2.0*self.RMS)
+        self.FitFunction.SetParLimits(2, 0.8*self.RMS, 2.0*self.RMS)
         self.FitFunction.SetParLimits(2, 0, 10.0*self.RMS)
         if self.Debug:
             print 'Inititial par values: [%.4e, %.4e, %.4e]' %\
