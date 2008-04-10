@@ -13,7 +13,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 HISTOGRAM_GROUPS = ['Mean', 'RMS', 'ChiSquare', 'DOF', 'ReducedChiSquare']
 GAUSSIAN = ROOT.TF1('gaussian', 'gaus')
-HYPER_GAUSSIAN_FORMULA = '%s*[0]*exp(-abs((x - [1])**[3]/(2*[2]**[3])))' %\
+HYPER_GAUSSIAN_FORMULA = '%s*[0]*exp(-(abs( (x-[1])/[2] )**[3])/2)' %\
                          (1.0/math.sqrt(2*math.pi))
 HYPER_GAUSSIAN = ROOT.TF1('hyper_gaussian', HYPER_GAUSSIAN_FORMULA)
 HYPER_GAUSSIAN_RMS_DICT  = {2 : 1.00000000000000000,
