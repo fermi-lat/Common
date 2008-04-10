@@ -81,7 +81,7 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         if self.RebinningFactor > 1:
             self.RootObject.Rebin(self.RebinningFactor)
         if self.RootObject is None:
-            sys.exit('Could not find %s. Abort.' % name)
+            sys.exit('Could not find %s. Abort.' % channelName)
         self.Mean = self.RootObject.GetMean()
         self.RMS = self.RootObject.GetRMS()
         self.RootObject.GetXaxis().SetRangeUser(self.Mean - 10*self.RMS,
@@ -90,17 +90,25 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         self.RMS = self.RootObject.GetRMS()
         self.FitFunction.SetParameter(1, self.Mean)
         self.FitFunction.SetParameter(2, self.RMS)
-        self.FitFunction.SetParLimits(1, self.Mean - 0.5*self.RMS,\
-                                      self.Mean + 0.5*self.RMS)
+        #self.FitFunction.SetParLimits(1, self.Mean - 0.5*self.RMS,\
+        #                              self.Mean + 0.5*self.RMS)
         binWidth = self.RootObject.GetBinWidth(1)
         numEntries = self.RootObject.GetEntries()
         normalization = binWidth*numEntries*self.getNormCorrectionFactor()
         self.FitFunction.SetParameter(0, normalization)
-        self.FitFunction.SetParLimits(2, 0.8*self.RMS, 2.0*self.RMS)
+        #self.FitFunction.SetParameter(0, 1)
+        #self.FitFunction.SetParLimits(2, 0.8*self.RMS, 2.0*self.RMS)
+        self.FitFunction.SetParLimits(2, 0, 10.0*self.RMS)
+        if self.Debug:
+            print 'Inititial par values: [%.4e, %.4e, %.4e]' %\
+                  (normalization, self.Mean, self.RMS)
         for i in range(self.NumFitIterations):
             self.ParamsDict['min'] = self.Mean - self.FitRangeWidth*self.RMS
-            self.ParamsDict['max'] = self.Mean + self.FitRangeWidth*self.RMS 
-            fitParameters = self.getFitParameters(self.FitFunction, 'QNB')
+            self.ParamsDict['max'] = self.Mean + self.FitRangeWidth*self.RMS
+            if self.Debug:
+                print 'Fitting in [%.4f, %.4f]' %\
+                      (self.ParamsDict['min'], self.ParamsDict['max'])
+            fitParameters = self.getFitParameters(self.FitFunction, 'QN')
             (self.Mean, self.RMS) = fitParameters[1:3]
         self.RMS *= self.getRmsCorrectionFactor()
         self.ChiSquare = self.FitFunction.GetChisquare()
