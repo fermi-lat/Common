@@ -23,12 +23,17 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
 
     def __init__(self, inputFilePath, outputFilePath, debug):
         self.InputFilePath = inputFilePath
-        self.OutputFilePath = outputFilePath
+        self.OutputFilePath = outputFilePath or \
+                              inputFilePath.replace('.root', '_%s.root' %\
+                                                    self.getAnalysisType())
         self.Debug = debug
         self.ParamsDict = {}
         self.HistogramsDict = {}
         if self.__class__.__name__ != 'pBaseAnalyzer':
             self.createHistograms()
+
+    def getAnalysisType(self):
+        return self.__class__.__name__.replace('Analyzer', '')[1:]
 
     def getRmsCorrectionFactor(self):
         if self.FitFunction.GetName() == 'hyper_gaussian':

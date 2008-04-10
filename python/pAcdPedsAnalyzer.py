@@ -85,8 +85,6 @@ if __name__ == '__main__':
         parser.error('Exactly one argument required.')
     inputFilePath = args[0]
     outputFilePath = opts.o
-    if outputFilePath is None:
-        outputFilePath = inputFilePath.replace('.root', '_output.root')
     analyzer = pAcdPedsAnalyzer(inputFilePath, outputFilePath, opts.d)
     if opts.c >= 0:
         print 'About to inspect channel %d...' % opts.c
