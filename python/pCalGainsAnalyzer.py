@@ -43,9 +43,6 @@ class pCalGainsAnalyzer(pBaseAnalyzer):
     def getHistogramName(self, group, subgroup):
         return '%s_%s_TH1' % (subgroup, group)
 
-    def fixFitExponent(self, exponent):
-        self.FitFunction.FixParameter(3, exponent)
-
     def setupFitParameters(self, subgroup):
         self.RebinningFactor = self.REBIN_FACTORS_DICT[subgroup]
         self.FitRangeWidth = self.FIT_RANGE_WIDTH_DICT[subgroup]

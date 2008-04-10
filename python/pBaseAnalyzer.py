@@ -93,6 +93,9 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
             histogram.GetYaxis().SetTitle(ylabel)
         return histogram
 
+    def fixFitExponent(self, exponent):
+        self.FitFunction.FixParameter(3, exponent)
+
     def getHistogram(self, group, subgroup):
         return self.HistogramsDict[self.getHistogramName(group, subgroup)]
 
