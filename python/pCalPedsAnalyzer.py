@@ -1,17 +1,17 @@
 #! /bin/env python
 
-from pCalBaseAnalyzer import *
+from pBaseAnalyzer import *
 
 
 
-class pCalPedsAnalyzer(pCalBaseAnalyzer):
+class pCalPedsAnalyzer(pBaseAnalyzer):
 
     HISTOGRAM_SUB_GROUPS = ['LEX8', 'LEX1', 'HEX8', 'HEX1']
     CAL_RANGE_DICT = {0: 'LEX8', 1: 'LEX1', 2: 'HEX8', 3: 'HEX1'}
     BASE_NAME = 'CalXAdcPed_TH1_TowerCalLayerCalColumnFR'
 
     def __init__(self, inputFilePath, outputFilePath, debug):
-        pCalBaseAnalyzer.__init__(self, inputFilePath, outputFilePath, debug)
+        pBaseAnalyzer.__init__(self, inputFilePath, outputFilePath, debug)
         self.FitFunction = GAUSSIAN
         self.RebinningFactor = 1
         self.FitRangeWidth = 2.5

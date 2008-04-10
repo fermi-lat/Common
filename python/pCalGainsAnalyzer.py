@@ -1,10 +1,10 @@
 #! /bin/env python
 
-from pCalBaseAnalyzer import *
+from pBaseAnalyzer import *
 
 
 
-class pCalGainsAnalyzer(pCalBaseAnalyzer):
+class pCalGainsAnalyzer(pBaseAnalyzer):
 
     HISTOGRAM_SUB_GROUPS = ['RPM', 'RPp', 'RMm']
     REBIN_FACTORS_DICT   = {'RPM': 2  , 'RPp': 1  , 'RMm': 1  }
@@ -12,7 +12,7 @@ class pCalGainsAnalyzer(pCalBaseAnalyzer):
     FIT_EXPONENT_DICT    = {'RPM': 8.0, 'RPp': 3.0, 'RMm': 3.0}
 
     def __init__(self, inputFilePath, outputFilePath, debug):
-        pCalBaseAnalyzer.__init__(self, inputFilePath, outputFilePath, debug)
+        pBaseAnalyzer.__init__(self, inputFilePath, outputFilePath, debug)
         self.FitFunction = HYPER_GAUSSIAN
         self.NumFitIterations = 1
         
@@ -52,7 +52,7 @@ class pCalGainsAnalyzer(pCalBaseAnalyzer):
         self.fixFitExponent(self.FIT_EXPONENT_DICT[subgroup])
 
     def fitChannel(self, baseName, tower, layer, column):
-        pCalBaseAnalyzer.fitChannel(self, baseName, tower, layer, column)
+        pBaseAnalyzer.fitChannel(self, baseName, tower, layer, column)
             
     def run(self):
         logger.info('Starting CAL gains analysis...')

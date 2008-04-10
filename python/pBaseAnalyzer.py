@@ -1,6 +1,6 @@
 
 import pSafeLogger
-logger = pSafeLogger.getLogger('pCalBaseAnalyzer')
+logger = pSafeLogger.getLogger('pBaseAnalyzer')
 
 import sys
 import time
@@ -47,7 +47,7 @@ HYPER_GAUSSIAN_NORM_DICT = {2 : 1.0000005733034723,
 
 
 
-class pCalBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
+class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
 
     def __init__(self, inputFilePath, outputFilePath, debug):
         self.InputFilePath = inputFilePath
@@ -55,7 +55,7 @@ class pCalBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         self.Debug = debug
         self.ParamsDict = {}
         self.HistogramsDict = {}
-        if self.__class__.__name__ != 'pCalBaseAnalyzer':
+        if self.__class__.__name__ != 'pBaseAnalyzer':
             self.createHistograms()
 
     def getRmsCorrectionFactor(self):
