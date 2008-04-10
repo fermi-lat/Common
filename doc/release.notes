@@ -1,4 +1,11 @@
 
+*** v3r0p13 ***
+- The set of tools for fitting ACD pedestals and CAL peds/gains is now in a
+reasonable shape, with many improvements and bug fixes. Not yet in the
+pipeline, so no change in the basic functionality at the moment.
+* Relevant jira(s): GDQMQ-65
+
+
 *** v3r0p12 ***
 
 - More work done on the fitting tool for the CAL pedestals/gains. Some work
