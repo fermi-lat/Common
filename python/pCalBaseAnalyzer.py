@@ -54,10 +54,6 @@ class pCalBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         self.OutputFilePath = outputFilePath
         self.Debug = debug
         self.ParamsDict = {}
-        self.RebinningFactor = 1
-        self.FitRangeWidth = 1.5
-        self.NumFitIterations = 1
-        self.FitFunction = GAUSSIAN
         self.HistogramsDict = {}
         if self.__class__.__name__ != 'pCalBaseAnalyzer':
             self.createHistograms()

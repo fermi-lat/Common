@@ -14,6 +14,7 @@ class pCalGainsAnalyzer(pCalBaseAnalyzer):
     def __init__(self, inputFilePath, outputFilePath, debug):
         pCalBaseAnalyzer.__init__(self, inputFilePath, outputFilePath, debug)
         self.FitFunction = HYPER_GAUSSIAN
+        self.NumFitIterations = 1
         
     def createHistograms(self):
         for group in HISTOGRAM_GROUPS:
