@@ -1,4 +1,10 @@
 
+*** v3r0p15 ***
+- Added the plot of the chisquare probability into the fitting tool for CAL and
+ACD pedestals/gains.
+* Relevant jira(s): GDQMQ-65
+
+
 *** v3r0p14 ***
 - +-inf removed from the alarm limits.
 * Relevant jira(s): GDM-80
