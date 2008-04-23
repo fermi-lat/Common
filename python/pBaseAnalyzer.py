@@ -11,7 +11,8 @@ from pRootFileManager    import pRootFileManager
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
-HISTOGRAM_GROUPS = ['Mean', 'RMS', 'ChiSquare', 'DOF', 'ReducedChiSquare']
+HISTOGRAM_GROUPS = ['Mean', 'RMS', 'ChiSquare', 'DOF', 'ReducedChiSquare',
+                    'FitProb']
 GAUSSIAN = ROOT.TF1('gaussian', 'gaus')
 HYPER_GAUSSIAN_FORMULA = '%s*[0]*exp(-(abs( (x-[1])/[2] )**[3])/2)' %\
                          (1.0/math.sqrt(2*math.pi))
@@ -80,6 +81,8 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         self.fillHistogram(self.getHistogramName('ReducedChiSquare',\
                                                  subgroup),\
                            channel, self.ReducedChiSquare)
+        self.fillHistogram(self.getHistogramName('FitProb', subgroup),\
+                           channel, self.FitProb)
 
     def fit(self, channelName):
         self.RootObject = self.get(channelName)
@@ -117,6 +120,7 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         self.RMS *= self.getRmsCorrectionFactor()
         self.ChiSquare = self.FitFunction.GetChisquare()
         self.DOF = self.FitFunction.GetNDF()
+        self.FitProb = ROOT.TMath.Prob(self.ChiSquare, self.DOF)
         try:
             self.ReducedChiSquare = self.ChiSquare/self.DOF
         except ZeroDivisionError:
