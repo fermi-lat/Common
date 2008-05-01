@@ -1,4 +1,10 @@
 
+*** v3r1p0 ***
+- Added a post-processing tool to make distributions of the alarm outputs
+(requires dataMonitoring/AlarmsCfg v1r1p0 or later).
+* Relevant jira(s): GDM-27
+
+
 *** v3r0p15 ***
 - Added the plot of the chisquare probability into the fitting tool for CAL and
 ACD pedestals/gains.
