@@ -8,7 +8,6 @@ logger = pSafeLogger.getLogger('pXmlAlarmPostProcessor')
 
 from pXmlBaseParser  import pXmlBaseParser
 from pXmlBaseElement import pXmlBaseElement
-from pXmlAlarmReader import pXmlAlarmReader
 from pSafeROOT       import ROOT
 
 MIN_NUM_BINS = 10
@@ -23,9 +22,10 @@ class pAlarmPostProcessorInstance:
         self.AlgorithmName = algorithmName
         self.UndefinedValue = undefinedValue
         self.OutputValues = []
-        self.Histogram = ROOT.TH1F(self.PlotName.replace('_*', ''),
-                                   self.PlotName.replace('_*', ''),
-                                   numBins, xmin, xmax)
+        histogramName = '%s_TH1' % self.PlotName.replace('_*', '')
+        histogramTitle = histogramName
+        self.Histogram = ROOT.TH1F(histogramName, histogramTitle, numBins,
+                                   xmin, xmax)
         self.Histogram.GetXaxis().SetTitle('Algorithm output value')
         self.Histogram.GetYaxis().SetTitle('Entries per bin')
 
