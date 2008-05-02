@@ -1,4 +1,11 @@
 
+*** v3r1p1 ***
+- Minor bug fix in the alarm postprocessing tool (wrong import).
+- "_TH1" added to the postprocessing tool output histograms name, as requested
+by Max.
+* Relevant jira(s): GDM-27
+
+
 *** v3r1p0 ***
 - Added a post-processing tool to make distributions of the alarm outputs
 (requires dataMonitoring/AlarmsCfg v1r1p0 or later).
