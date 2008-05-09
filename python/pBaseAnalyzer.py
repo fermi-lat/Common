@@ -86,10 +86,10 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
 
     def fit(self, channelName):
         self.RootObject = self.get(channelName)
-        if self.RebinningFactor > 1:
-            self.RootObject.Rebin(self.RebinningFactor)
         if self.RootObject is None:
             sys.exit('Could not find %s. Abort.' % channelName)
+        if self.RebinningFactor > 1:
+            self.RootObject.Rebin(self.RebinningFactor)
         self.Mean = self.RootObject.GetMean()
         self.RMS = self.RootObject.GetRMS()
         self.RootObject.GetXaxis().SetRangeUser(self.Mean - 10*self.RMS,
