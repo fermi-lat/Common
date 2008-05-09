@@ -1,4 +1,10 @@
 
+*** v3r1p2 ***
+- Minor bug fix in the ACD/CAL peds/gains fitting tool (now if an histogram is
+missing in the input file, the program issues an error instead of crashing).
+* Relevant jira(s): GDQMQ-65
+
+
 *** v3r1p1 ***
 - Minor bug fix in the alarm postprocessing tool (wrong import).
 - "_TH1" added to the postprocessing tool output histograms name, as requested
