@@ -1,4 +1,10 @@
 
+*** v3r1p3 ***
+- Bug fix in the ACD/CAL peds/gains fitting tool (the fit is not performed
+when there are no entries in a histogram).
+* Relevant jira(s): GDQMQ-65
+
+
 *** v3r1p2 ***
 - Minor bug fix in the ACD/CAL peds/gains fitting tool (now if an histogram is
 missing in the input file, the program issues an error instead of crashing).
