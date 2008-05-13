@@ -41,16 +41,19 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
             exponent = self.FitFunction.GetParameter(3)
             return 0.573244 + 1.559419*(exponent**(-1.813875))
         else:
-            return 1
+            return 1.0
 
     def getNormCorrectionFactor(self):
         if self.FitFunction.GetName() == 'hyper_gaussian':
             sigma = self.FitFunction.GetParameter(2)
             exponent = self.FitFunction.GetParameter(3)
             factor = 0.801328 + 0.693462*(exponent**(-1.781011))
-            return factor/(sigma*self.getRmsCorrectionFactor())
+            try:
+                return factor/(sigma*self.getRmsCorrectionFactor())
+            except ZeroDivisionError:
+                return 1.0
         else:
-            return 1
+            return 1.0
 
     def getNewHistogram(self, name, numBins, xlabel = None, ylabel = None):
         histogram = ROOT.TH1F(name, name, numBins, -0.5, numBins - 0.5)
