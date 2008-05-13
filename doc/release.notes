@@ -1,4 +1,10 @@
 
+*** v3r1p4 ***
+- Bug fix in the ACD/CAL peds/gains fitting tool (check on a zero division
+error)
+* Relevant jira(s): GDQMQ-65
+
+
 *** v3r1p3 ***
 - Bug fix in the ACD/CAL peds/gains fitting tool (the fit is not performed
 when there are no entries in a histogram).
