@@ -1,4 +1,9 @@
 
+*** v3r1p5 ***
+- Debug message added in the ACD/CAL peds/gains fitting tool.
+* Relevant jira(s): GDQMQ-65
+
+
 *** v3r1p4 ***
 - Bug fix in the ACD/CAL peds/gains fitting tool (check on a zero division
 error)
