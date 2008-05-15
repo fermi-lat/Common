@@ -51,7 +51,7 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
             try:
                 return factor/(sigma*self.getRmsCorrectionFactor())
             except ZeroDivisionError:
-                return 1.0
+                return None
         else:
             return 1.0
 
@@ -114,7 +114,11 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
                                       self.Mean + 0.5*self.RMS)
         binWidth = self.RootObject.GetBinWidth(1)
         numEntries = self.RootObject.GetEntries()
-        normalization = binWidth*numEntries*self.getNormCorrectionFactor()
+        try:
+            normalization = binWidth*numEntries*self.getNormCorrectionFactor()
+        except TypeError:
+            logger.warn('Skipping zero division for channel %s.' % channelName)
+            normalization = binWidth*numEntries
         self.FitFunction.SetParameter(0, normalization)
         self.FitFunction.SetParLimits(2, 0.8*self.RMS, 2.0*self.RMS)
         self.FitFunction.SetParLimits(2, 0, 10.0*self.RMS)
