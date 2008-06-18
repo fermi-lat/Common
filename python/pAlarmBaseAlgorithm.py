@@ -118,12 +118,12 @@ class pAlarmBaseAlgorithm:
         self.ConditionsDict = conditionsDict
         self.__RootObjectOK = True
         self.__ParametersOK = True
-        self.checkObjectType()
-        self.checkParameters()
         self.Output = pAlarmOutput(limits, self)
         self.Output.Label = copy(self.OUTPUT_LABEL)
         self.Output.DetailedDict = deepcopy(self.OUTPUT_DICTIONARY)
         self.Exception = None
+        self.checkObjectType()
+        self.checkParameters()
 
     def hasDetails(self):
         return self.Output.DetailedDict != self.OUTPUT_DICTIONARY
@@ -182,8 +182,10 @@ class pAlarmBaseAlgorithm:
     def checkObjectType(self):
         if self.RootObject is None:
             self.__RootObjectOK = False
-            logger.error('Invalid ROOT object. ' +\
-                         'The corresponding alarm will be ignored.')
+            logger.error('None ROOT object for algorithm "%s".' %\
+                             self.getName())
+            self.Output.setDictValue('UNDEFINED status reason',
+                                     'Could not find ROOT object.')
         elif self.getObjectType() not in self.SUPPORTED_TYPES:
             self.__RootObjectOK = False
             logger.error('Invalid object type (%s) for %s. '        %\
@@ -238,10 +240,10 @@ class pAlarmBaseAlgorithm:
 
     def apply(self):
         if not self.__RootObjectOK:
-            logger.warn('Invalid object, %s will not be applied.' %\
+            logger.warn('Invalid object, "%s" will not be applied.' %\
                          self.getName())
         elif not self.__ParametersOK:
-            logger.warn('Invalid parameter(s), %s will not be applied.' %\
+            logger.warn('Invalid parameter(s), "%s" will not be applied.' %\
                          self.getName())
         else:
             if self.checkConditions():
