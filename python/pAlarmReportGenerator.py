@@ -91,7 +91,7 @@ class pAlarmReportGenerator(pBaseReportGenerator):
                                                  alarm.getPlotName())
             else:
                 link = '-'
-            row = [alarm.RootObject.GetName(), alarm.FunctionName,\
+            row = [alarm.getPlotName(), alarm.FunctionName,\
                    alarm.getOutputStatus(), '%s (%s)'\
                    % (alarm.getFormattedOutputValue(),
                       alarm.getOutputLabel()),\

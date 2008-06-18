@@ -32,7 +32,7 @@ class pAlarmXmlSummaryGenerator(pXmlWriter):
         self.openTag('alarmStatistics', self.AlarmHandler.AlarmStats,\
                      close = True)
         for alarm in self.AlarmHandler.XmlParser.getEnabledAlarms():
-            self.openTag('plot', {'name': alarm.RootObject.GetName()})
+            self.openTag('plot', {'name': alarm.getPlotName()})
             self.indent()
             self.openTag('alarm', {'function': alarm.FunctionName})
             self.indent()
