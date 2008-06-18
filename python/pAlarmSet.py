@@ -1,6 +1,9 @@
 ## @package pAlarmSet
 ## @brief Description of an alarm set.
 
+import pSafeLogger
+logger = pSafeLogger.getLogger('pAlarmSet')
+
 import pUtils
 
 from pXmlElement import pXmlElement
@@ -71,4 +74,8 @@ class pAlarmSet(pXmlElement):
                     if (alarm.Algorithm is not None) and \
                            (alarm.Algorithm.isValid()):
                         self.EnabledAlarmsList.append(alarm)
-                    
+                if self.PlotsList == []:
+                    logger.error('Alarm set "%s" has no associated plots.' %\
+                                     self.Name)
+                    alarm = pAlarm(element, None, self.Name)
+                    self.EnabledAlarmsList.append(alarm)
