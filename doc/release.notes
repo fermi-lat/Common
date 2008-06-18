@@ -1,4 +1,13 @@
 
+*** v3r1p6 ***
+- Now a pAlarm object is instantiated for each pAlarmSet object, even when
+the corresponding ROOT object cannot be found in the file. The corresponding
+output status is set to UNDEFINED and it appears in the summary. Usefull for
+debug to make sure we don't screw up thing when messing around with the
+variable names.
+* Relevant jira(s): GDQMQ-159
+
+
 *** v3r1p5 ***
 - Debug message added in the ACD/CAL peds/gains fitting tool.
 * Relevant jira(s): GDQMQ-65
