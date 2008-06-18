@@ -29,7 +29,7 @@ class pAlarm(pXmlBaseElement):
     ## @param rootObject
     #  The ROOT object the alarm is set on.
     
-    def __init__(self, domElement, rootObject):
+    def __init__(self, domElement, rootObject, targetObjectName = None):
 
         ## @var RootObject
         ## @brief The ROOT object the alarm is set on.
@@ -55,6 +55,7 @@ class pAlarm(pXmlBaseElement):
  
         pXmlBaseElement.__init__(self, domElement)
 	self.RootObject = rootObject
+        self.TargetObjectName = targetObjectName
         self.Limits = self.__extractLimits()
 	self.ParamsDict = self.__extractParametersDict()
 	self.ConditionsDict = self.__extractConditionsDict()
@@ -76,7 +77,10 @@ class pAlarm(pXmlBaseElement):
     #  The class instance.
 
     def getPlotName(self):
-        return self.RootObject.GetName()
+        try:
+            return self.RootObject.GetName()
+        except AttributeError:
+            return self.TargetObjectName
 
     ## @brief Comparing method.
     ## @par self
