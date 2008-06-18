@@ -96,9 +96,6 @@ class pAlarmHandler:
             PlotList = self.RootFileManager.find(alarmSet.Name,\
                                                  alarmSet.Selection)
             alarmSet.setPlotsList(PlotList)
-            if PlotList == []:
-                logger.error('Alarm set "%s" has no associated alarms.' %\
-                             alarmSet.Name)
         logger.info('Done. %d enabled alarm set(s) found.\n' %\
                     len(self.XmlParser.getEnabledAlarmSets()))
 
@@ -109,7 +106,7 @@ class pAlarmHandler:
     def activateAlarms(self):
         logger.info('Activating the alarms...')
         for alarm in self.XmlParser.getEnabledAlarms():
-            logger.debug('Activating alarm on plot : %s' % alarm.getPlotName())
+            logger.debug('Activating alarm on "%s"' % alarm.getPlotName())
             alarmTuple = (alarm.getPlotName(), alarm.FunctionName)
             if alarmTuple in self.ExceptionsDict.keys():
                 logger.info('Setting exception(s) on %s %s...' % alarmTuple)
