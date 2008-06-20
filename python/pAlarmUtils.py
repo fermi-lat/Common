@@ -145,6 +145,30 @@ ACD_TOP_MIDDLE_TILES_NORM_FACTOR = 1.5*ACD_TOP_MIDDLE_TILES_AREA/ACD_NORM_AREA
 ACD_RIBBONS_NORM_FACTOR          = 1.9*ACD_RIBBONS_AREA/ACD_NORM_AREA
 ACD_UNPHYSICAL_TILES_NORM_FACTOR = ACD_UNPHYSICAL_TILES_AREA/ACD_NORM_AREA
 
+## @brief Return the type of the tile corresponding to a given tile number.
+## @param tileNumber
+## The tile number.
+
+def getAcdTileType(tileNumber):
+    if tileNumber in ACD_CROWN_TILES:
+        return 'Crown tile'
+    elif tileNumber in ACD_SIDE_ROW_2_TILES:
+        return 'Side row 2 tile'
+    elif tileNumber in ACD_SIDE_ROW_3_TILES:
+        return 'Side row 3 tile'
+    elif tileNumber in ACD_LONG_TILES:
+        return 'Long tile'
+    elif tileNumber in ACD_TOP_BENT_TILES:
+        return 'Top bent tile'
+    elif tileNumber in ACD_TOP_MIDDLE_TILES:
+        return 'Top middle tile'
+    elif tileNumber in ACD_RIBBONS:
+        return 'Ribbon'
+    elif tileNumber in ACD_UNPHYSICAL_TILES:
+        return 'Unphysical'
+    else:
+        sys.exit('Tile number %d out of range. Abort.' % tileNumber)
+
 ## @brief Return the area of the tile corresponding to a given tile number.
 ## @param tileNumber
 ## The tile number.
