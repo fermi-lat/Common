@@ -22,8 +22,9 @@ class pAlarmPostProcessorInstance:
         self.AlgorithmName = algorithmName
         self.UndefinedValue = undefinedValue
         self.OutputValues = []
-        histogramName = '%s_TH1' % self.PlotName.replace('_*', '')
-        histogramTitle = '%s_%s' % (histogramName, algorithmName)
+        plotName = self.PlotName.replace('_*', '')
+        histogramName = '%s_%s_TH1' % (plotName, algorithmName)
+        histogramTitle = '%s_%s' % (plotName, algorithmName)
         self.Histogram = ROOT.TH1F(histogramName, histogramTitle, numBins,
                                    xmin, xmax)
         self.Histogram.GetXaxis().SetTitle('Algorithm output value')
