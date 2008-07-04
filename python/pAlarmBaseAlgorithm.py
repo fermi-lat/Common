@@ -7,10 +7,13 @@ logger = pSafeLogger.getLogger('pAlarmBaseAlgorithm')
 import pUtils
 import types
 import numpy
+import time
 
 from pAlarmOutput import pAlarmOutput
 from pAlarmOutput import STATUS_CLEAN, STATUS_WARNING, STATUS_ERROR
 from copy         import copy, deepcopy
+
+MET_OFFSET = 978307200
 
 ROOT2NUMPYDICT = {'C' : 'c',      #a character string terminated by the 0 char
                   'B' : 'int8',   #an 8 bit signed integer (Char_t)
@@ -390,15 +393,12 @@ class pAlarmBaseAlgorithm:
         value = pUtils.formatNumber(value)
         position = self.getFormattedPosition(index)
         if objectType == 'TBranch':
-            label = 'time = %f, ' % self.TimestampArray[0]
+            timestamp = time.gmtime(self.TimestampArray[0] + MET_OFFSET)
+            label = '%s, ' % time.strftime('%d-%b-%Y %H:%M:%S', timestamp)
             if self.BranchArray.size > 1:
                 index = self.index2Tuple(index, self.BranchArray.shape)
-                if len(index) == 1:
-                    index = '[%d]' % index[0]
-                else:
-                    index = str(index)
-                    index = index.replace('(', '[').replace(')', ']')
-                label += 'array index = %s, ' % index
+                for (i, dim) in enumerate(index):
+                    label += '%s = %d, ' % (self.IndexLabels[i], index[i])
             label += '%s = %s' % (valueLabel, value)
         elif 'TH1' in objectType:
             label = '%s = %s, %s = %s' % (self.getAxisLabel('x'), position,\

@@ -64,6 +64,18 @@ class alg__values(pAlarmBaseAlgorithm):
             shape = shape.replace('][', ',')
             shape = shape.replace('[', '(').replace(']', ')')
             shape = eval(shape)
+            if type(shape) == types.IntType:
+                shape = eval('(%d,)' % shape)
+            self.IndexLabels = ['index %d' % i for (i, dim) in enumerate(shape)]
+            variableType = branchName.split('_')[-1].split('[')[0]
+            if variableType == 'TowerPlane':
+                self.IndexLabels = ['tower', 'plane']
+            elif variableType == 'Tower':
+                self.IndexLabels = ['tower']
+            elif variableType == 'GARC':
+                self.IndexLabels = ['garc']
+            elif variableType == 'AcdTile':
+                self.IndexLabels = ['tile']
 	self.BranchArray = numpy.zeros(shape, ROOT2NUMPYDICT[branchType])
         self.RootTree.SetBranchAddress(self.RootObject.GetName(),\
                                        self.BranchArray)
