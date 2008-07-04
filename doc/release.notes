@@ -1,3 +1,9 @@
+*** v3r2p0 ***
+- Handling of the error bars in the alg__values algoruthm rolled back due to a
+bug; need more work to have a functional version.
+- Error representation for the trending quantities improved.
+* Relevant jira(s): GDQMQ-57
+
 
 *** v3r1p6 ***
 - Now a pAlarm object is instantiated for each pAlarmSet object, even when
