@@ -11,7 +11,7 @@ STATUS_CLEAN     = {'level': 1, 'label': 'CLEAN'}
 STATUS_WARNING   = {'level': 2, 'label': 'WARNING'}
 STATUS_ERROR     = {'level': 3, 'label': 'ERROR'}
 STATUS_UNDEFINED = {'level': 4, 'label': 'UNDEFINED'}
-MAX_DETAIL_SIZE  = 500
+MAX_DETAIL_SIZE  = 1500
 
 ## @brief Class describing the output of an alarm.
 #
@@ -218,7 +218,7 @@ class pAlarmOutput:
         for (key, value) in self.DetailedDict.items():
             if len(str(value)) > MAX_DETAIL_SIZE:
                 self.Compressed = True
-                self.DetailedDict[key] = '%s... too much garbage following' %\
+                self.DetailedDict[key] = '%s... too much garbage following]' %\
                     str(value)[:MAX_DETAIL_SIZE]
 
     ## @brief Return a string representation of the alarm output.
