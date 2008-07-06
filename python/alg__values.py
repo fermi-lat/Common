@@ -48,12 +48,13 @@ class alg__values(pAlarmBaseAlgorithm):
     #  The name of the branch identifying the timestamp (used in the output
     #  detailed dictionary).
 
-    def __createArrays(self, timestampBranchName = 'TimeStampFirstEvt'):
+    def __createArrays(self, timestampBranchName = 'Bin_Start',
+                       timestampBranchType = 'l'):
         self.RootTree = self.RootObject.GetTree()
         self.RootTree.SetBranchStatus('*', 0)
         self.RootTree.SetBranchStatus(timestampBranchName, 1)
         self.RootTree.SetBranchStatus(self.RootObject.GetName(), 1)
-        self.TimestampArray = numpy.zeros((1), 'd')
+        self.TimestampArray = numpy.zeros((1), timestampBranchType)
         self.RootTree.SetBranchAddress(timestampBranchName,\
                                        self.TimestampArray)
         (branchName, branchType) = self.RootObject.GetTitle().split('/')
