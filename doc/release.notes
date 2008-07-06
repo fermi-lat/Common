@@ -1,3 +1,8 @@
+*** v3r2p1 ***
+- Got the timestamp right for the alarms on the trending quantities.
+- Improved formatting of error details.
+
+
 *** v3r2p0 ***
 - Handling of the error bars in the alg__values algoruthm rolled back due to a
 bug; need more work to have a functional version.
