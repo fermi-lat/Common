@@ -48,15 +48,21 @@ class alg__values(pAlarmBaseAlgorithm):
     #  The name of the branch identifying the timestamp (used in the output
     #  detailed dictionary).
 
-    def __createArrays(self, timestampBranchName = 'Bin_Start',
-                       timestampBranchType = 'l'):
+    def __createArrays(self):
         self.RootTree = self.RootObject.GetTree()
+        self.NumTreeEntries = self.RootObject.GetEntries()
         self.RootTree.SetBranchStatus('*', 0)
-        self.RootTree.SetBranchStatus(timestampBranchName, 1)
         self.RootTree.SetBranchStatus(self.RootObject.GetName(), 1)
-        self.TimestampArray = numpy.zeros((1), timestampBranchType)
-        self.RootTree.SetBranchAddress(timestampBranchName,\
-                                       self.TimestampArray)
+        self.RootTree.SetBranchStatus('Bin_Start', 1)
+        self.RootTree.SetBranchStatus('Bin_End', 1)
+        self.RootTree.SetBranchStatus('TrueTimeInterval', 1)
+        self.BinStartArray = numpy.zeros((1), 'l')
+        self.BinEndArray = numpy.zeros((1), 'l')
+        self.TimeIntervalArray = numpy.zeros((1), 'd')
+        self.RootTree.SetBranchAddress('Bin_Start', self.BinStartArray)
+        self.RootTree.SetBranchAddress('Bin_End', self.BinEndArray)
+        self.RootTree.SetBranchAddress('TrueTimeInterval',
+                                       self.TimeIntervalArray)
         (branchName, branchType) = self.RootObject.GetTitle().split('/')
         if '[' not in branchName:
             shape = (1)
@@ -100,13 +106,28 @@ class alg__values(pAlarmBaseAlgorithm):
                     self.IndexList.remove(index)
             except KeyError:
                 pass
+            
+    ## @brief Get a given entry of the ROOT tree and set the timestamp.
+
+    def getEntry(self, index):
+        self.RootTree.GetEntry(index)
+        if index == 0:
+            binStart = self.BinEndArray[0] - self.TimeIntervalArray[0]
+            binEnd = self.BinEndArray[0]
+        elif index == self.NumTreeEntries - 1:
+            binStart = self.BinStartArray[0]
+            binEnd = self.BinStartArray[0] + self.TimeIntervalArray[0]
+        else:
+            binStart = self.BinStartArray[0]
+            binEnd = self.BinEndArray[0]
+        self.TimeStamp = (binStart + binEnd)/2.0
 
     def run(self):
         badnessDict = {}
         self.__createArrays()
         self.__setupIndexList()
-        for i in range(self.RootObject.GetEntries()):
-            self.RootTree.GetEntry(i)
+        for i in range(self.NumTreeEntries):
+            self.getEntry(i)
             flatArray = self.BranchArray.flatten()
             for j in self.IndexList:
                 value = flatArray[j]

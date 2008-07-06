@@ -393,7 +393,7 @@ class pAlarmBaseAlgorithm:
         value = pUtils.formatNumber(value)
         position = self.getFormattedPosition(index)
         if objectType == 'TBranch':
-            timestamp = time.gmtime(self.TimestampArray[0] + MET_OFFSET)
+            timestamp = time.gmtime(self.TimeStamp + MET_OFFSET)
             label = '%s, ' % time.strftime('%d-%b-%Y %H:%M:%S', timestamp)
             if self.BranchArray.size > 1:
                 index = self.index2Tuple(index, self.BranchArray.shape)
