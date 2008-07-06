@@ -8,6 +8,24 @@ import pUtils
 import numpy
 import types
 
+
+VAR_LABELS_DICT = {'Tower': ['tower'],
+                   'TowerPlane': ['tower', 'plane'],
+                   'TowerPlaneGTFE': ['tower', 'plane', 'gtfe'],
+                   'TowerCalLayer': ['tower', 'layer'],
+                   'TowerCalLayerCalColumn': ['tower', 'layer', 'column'],
+                   'TowerCalLayerCalColumnR': ['tower', 'layer', 'column',
+                                               'face'],
+                   'TowerCalLayerCalColumnFR': ['tower', 'layer', 'column',
+                                                'face', 'range'],
+                   'GARC': ['garc'],
+                   'AcdTile': ['tile'],
+                   'XYZ': ['xyz'],
+                   'ReconNumTracks': ['num. tracks'],
+                   'GammaFilterBit': ['filter bit'],
+                   'TriggerEngine': ['trg. engine']
+                   }
+
 ## @brief Make sure all the entries of a branch are within limits.
 #
 #  The algorithm loops over the entries of the branch and makes sure that
@@ -73,16 +91,12 @@ class alg__values(pAlarmBaseAlgorithm):
             shape = eval(shape)
             if type(shape) == types.IntType:
                 shape = eval('(%d,)' % shape)
-            self.IndexLabels = ['index %d' % i for (i, dim) in enumerate(shape)]
             variableType = branchName.split('_')[-1].split('[')[0]
-            if variableType == 'TowerPlane':
-                self.IndexLabels = ['tower', 'plane']
-            elif variableType == 'Tower':
-                self.IndexLabels = ['tower']
-            elif variableType == 'GARC':
-                self.IndexLabels = ['garc']
-            elif variableType == 'AcdTile':
-                self.IndexLabels = ['tile']
+            try:
+                self.IndexLabels = VAR_LABELS_DICT[variableType]
+            except KeyError:
+                self.IndexLabels =\
+                    ['index %d' % i for (i, dim) in enumerate(shape)]
 	self.BranchArray = numpy.zeros(shape, ROOT2NUMPYDICT[branchType])
         self.RootTree.SetBranchAddress(self.RootObject.GetName(),\
                                        self.BranchArray)
