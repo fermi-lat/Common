@@ -463,11 +463,13 @@ class pAlarmBaseAlgorithm:
     #  a comparison between numbers. We stick to this first implementation,
     #  for the moment.
     #
-    #  Also note that the function returns a boolean telling whether the
-    #  particular index is in the list of exceptions (meaning whether the logic
-    #  has been flipped or not). This value may be used in the calling function
-    #  to differenciate its behaviour.
-    #  
+    #  A boolean flag is returned that can be used by the particular
+    #  implementation of the algorithm to append the badness of a given
+    #  point to the dictionary for the output value (True) or not (False).
+    #  In particular False is returned upon detection of known issues, as
+    #  in that case the output status of the alarms should not be set to
+    #  FAILED.
+    #
     ## @param self
     #  The class instance
 
@@ -481,21 +483,27 @@ class pAlarmBaseAlgorithm:
             label = self.getDetailedLabel(index, value, valueLabel)
             if flip:
                 self.Output.appendDictValue('known_issues', label)
+                return False
             else:
                 self.Output.incrementDictValue('num_error_entries')
                 self.Output.appendDictValue('error_entries', label)
+                return True
         elif value < self.Limits.WarningMin or value > self.Limits.WarningMax:
             label = self.getDetailedLabel(index, value, valueLabel)
             if flip:
+
                 self.Output.appendDictValue('known_issues', label)
+                return False
             else:
                 self.Output.incrementDictValue('num_warning_entries')
                 self.Output.appendDictValue('warning_entries', label)
+                return True
         else:
             if flip:
                 label = self.getDetailedLabel(index, value, valueLabel)
                 self.Output.appendDictValue('exception violations', label)
-        return flip
+                return True
+            return True
 
     ## @brief Convert a flat index to a multi-dimensional array position.
     ## @param self

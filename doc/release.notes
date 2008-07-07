@@ -1,6 +1,9 @@
 *** v3r2p1 ***
 - Got the timestamp right for the alarms on the trending quantities.
 - Improved formatting of error details.
+- Exception mechanism implemented for the alarms on the trending quantities.
+Also a partial bug fix related to the exceptions themselves.
+* Relevant jira(s): GDQMQ-188
 
 
 *** v3r2p0 ***

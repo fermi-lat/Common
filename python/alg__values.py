@@ -158,8 +158,10 @@ class alg__values(pAlarmBaseAlgorithm):
             flatArray = self.BranchArray.flatten()
             for j in self.IndexList:
                 value = flatArray[j]
-                badnessDict[self.getBadness(value)] = value
-                self.checkStatus(j, value, 'value')
+                badness = self.getBadness(value)
+                if not self.checkStatus(j, value, 'value'):
+                    badness = 0
+                badnessDict[badness] = value
         badnessList = badnessDict.keys()
         badnessList.sort()
         maxBadness = badnessList[-1]
