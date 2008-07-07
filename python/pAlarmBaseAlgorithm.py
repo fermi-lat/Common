@@ -339,6 +339,8 @@ class pAlarmBaseAlgorithm:
             return self.getX(index)
         elif 'TH2' in objectType:
             return (self.getX(index[0]), self.getY(index[1]))
+        #elif objectType == 'TBranch':
+        #    return self.index2Tuple(index, self.BranchArray.shape)
         else:
             return index
 

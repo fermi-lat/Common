@@ -7,6 +7,7 @@ from pAlarmBaseAlgorithm import ROOT2NUMPYDICT
 import pUtils
 import numpy
 import types
+import sys
 
 
 VAR_LABELS_DICT = {'Tower': ['tower'],
@@ -136,10 +137,22 @@ class alg__values(pAlarmBaseAlgorithm):
             binEnd = self.BinEndArray[0]
         self.TimeStamp = (binStart + binEnd)/2.0
 
+    ## @brief Convert the indexes of the alarm exception (if any) from tuple
+    #  to flat numbers, in asuch a way that the opposite conversion does not
+    #  have to be done for each event while checking the status.
+        
+    def setupException(self):
+        if self.Exception is None:
+            return 
+        for (i, detail) in enumerate(self.Exception.FlippedDetails):
+            self.Exception.FlippedDetails[i] =\
+                self.tuple2Index(detail, self.BranchArray.shape)
+
     def run(self):
         badnessDict = {}
         self.__createArrays()
         self.__setupIndexList()
+        self.setupException()
         for i in range(self.NumTreeEntries):
             self.getEntry(i)
             flatArray = self.BranchArray.flatten()
