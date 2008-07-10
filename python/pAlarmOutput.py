@@ -7,10 +7,20 @@ logger = pSafeLogger.getLogger('pAlarmOutput')
 import pUtils
 import pAlarm
 
-STATUS_CLEAN     = {'level': 1, 'label': 'CLEAN'}
-STATUS_WARNING   = {'level': 2, 'label': 'WARNING'}
-STATUS_ERROR     = {'level': 3, 'label': 'ERROR'}
-STATUS_UNDEFINED = {'level': 4, 'label': 'UNDEFINED'}
+from pAlarmLimits import WARNING_BADNESS
+from pAlarmLimits import ERROR_BADNESS
+
+STATUS_CLEAN     = 0x0
+STATUS_UNDEFINED = 0x1
+STATUS_WARNING   = 0x2
+STATUS_ERROR     = 0x4
+
+STATUS_DICT = {STATUS_CLEAN    : 'CLEAN',
+               STATUS_UNDEFINED: 'UNDEFINED',
+               STATUS_WARNING  : 'WARNING',
+               STATUS_ERROR    : 'ERROR'
+               }
+
 MAX_DETAIL_SIZE  = 1500
 
 ## @brief Class describing the output of an alarm.
@@ -26,133 +36,56 @@ MAX_DETAIL_SIZE  = 1500
 #  setValue() method is called.
 
 class pAlarmOutput:
-
-    ## @brief Basic constructor.
-    ## @param self
-    #  The class instance.
-    ## @param limits
-    #  The alarm limits.
     
-    def __init__(self, limits, parent):
-
-        ## @var Limits
-        ## @brief The alarm limits.
-
-        ## @var Value
-        ## @brief The algorithm output value.
-
-        ## @var Label
-        ## @brief A brief string representing the meaning of the output value.
-
-        ## @var Status
-        ## @brief The status label.
-
-        ## @var DetailedDict
-        ## @brief The dictionary containing the detailed information.
-        
+    def __init__(self, limits, parent = None):
         self.Limits       = limits
         self.Parent       = parent
         self.Value        = None
+        self.Error        = None
         self.Label        = None
         self.Status       = STATUS_UNDEFINED
-        self.Compressed   = False
         self.DetailedDict = {}
-        self.ForceError   = False
 
-    ## @brief Return whether the status is undefined or not.
-    ## @param self
-    #  The class instance.        
+    def getStatusAsText(self):
+        return STATUS_DICT[self.Status]
 
     def isUndefined(self):
         return self.Status == STATUS_UNDEFINED
 
-    ## @brief Return whether the detailed output dictionary has been compressed
-    #  or not.
-    ## @param self
-    #  The class instance. 
-
-    def isCompressed(self):
-        return self.Compressed
-
-    ## @brief Return whether the status is clean or not.
-    ## @param self
-    #  The class instance.        
-
     def isClean(self):
         return self.Status == STATUS_CLEAN
-
-    ## @brief Return whether the status is warning or not.
-    ## @param self
-    #  The class instance.        
 
     def isWarning(self):
         return self.Status == STATUS_WARNING
 
-    ## @brief Return whether the status is error or not.
-    ## @param self
-    #  The class instance.        
-
     def isError(self):
         return self.Status == STATUS_ERROR
 
-    ## @brief Set the output value and check it against the alarm limits.
-    ## @param self
-    #  The class instance.
-    ## @param value
-    #  The output value.
-        
-    def setValue(self, value, compress = True):
-        self.Value = value
-        self.__processValue()
-        if compress:
-            self.compress()
-
-    def setStatusUndefined(self):
+    def setUndefined(self):
         self.Status = STATUS_UNDEFINED
 
-    def setStatusClean(self):
+    def setClean(self):
         self.Status = STATUS_CLEAN
 
-    def setStatusWarning(self):
+    def setWarning(self):
         self.Status = STATUS_WARNING
 
-    def setStatusError(self):
+    def setError(self):
         self.Status = STATUS_ERROR
 
-    ## @brief Check the output value against the limits.
-    ## @param self
-    #  The class instance.
-    
-    def __processValue(self):
-        if self.Parent.Exception is None:
-            flip = False
+    def setValue(self, value, error = None, badness = None):
+        self.Value = value
+        self.Error = error
+        if badness is None:
+            badness = self.Limits.getBadness(value, error)
+        if badness <= WARNING_BADNESS:
+            self.setClean()
+        elif badness <= ERROR_BADNESS:
+            self.setWarning()
         else:
-            flip = self.Parent.Exception.FlippedStatus
-        if self.ForceError:
-            self.setStatusError()
-            self.Value = None
-        elif self.Value is None:
-            self.setStatusUndefined()
-        elif (self.Value >= self.Limits.WarningMin)\
-                 and (self.Value <= self.Limits.WarningMax):
-            if flip:
-                self.setStatusError()
-                self.appendDictValue('exception violations', 'output_status')
-            else:
-                self.setStatusClean()
-        elif (self.Value < self.Limits.ErrorMin)\
-                 or (self.Value > self.Limits.ErrorMax):
-            if flip:
-                self.setStatusClean()
-                self.appendDictValue('known_issues', 'output_status')
-            else:
-                self.setStatusError()
-        else:
-            if flip:
-                self.setStatusClean()
-                self.appendDictValue('known_issues', 'output_status')
-            else:
-                self.setStatusWarning()
+            self.setError()
+        self.setDictValue('badness', pUtils.formatNumber(badness))
+        self.compress()
 
     ## @brief Get the value corresponding to a particular key of the
     #  detailed dictionary.
@@ -207,7 +140,16 @@ class pAlarmOutput:
     #  The class instance. 
 
     def getFormattedValue(self):
-        return pUtils.formatNumber(self.Value)
+        value = pUtils.formatNumber(self.Value)
+        if self.Error is None:
+            return value
+        try:
+            numDecimalPlaces = len(value.split('.')[1])
+        except:
+            numDecimalPlaces = 0
+        formatString = '%' + '.%df' % numDecimalPlaces
+        error = formatString % self.Error
+        return '%s +- %s' % (value, error)
 
     ## @brief Compress the output detailed dictionary in order to avoid too
     #  much verbosity in the output xml file.
@@ -217,7 +159,6 @@ class pAlarmOutput:
     def compress(self):
         for (key, value) in self.DetailedDict.items():
             if len(str(value)) > MAX_DETAIL_SIZE:
-                self.Compressed = True
                 self.DetailedDict[key] = '%s... too much garbage following]' %\
                     str(value)[:MAX_DETAIL_SIZE]
 
@@ -230,7 +171,7 @@ class pAlarmOutput:
         summary += 'Limits  : %s\n' % self.Limits
         summary += 'Output  : %s (%s)\n' %\
             (self.getFormattedValue(), self.Label)
-        summary += 'Status  : %s\n' % self.Status
+        summary += 'Status  : %s\n' % self.getStatusAsText()
         summary += 'Details : %s\n' % self.DetailedDict
         return summary
 
@@ -245,11 +186,16 @@ class pAlarmOutput:
 if __name__ == '__main__':
     from pAlarmLimits import pAlarmLimits
     limits = pAlarmLimits(-1, 3, -1, 6)
-    AlarmOutput = pAlarmOutput(limits)
-    print AlarmOutput
-    for i in range(1000):
-        AlarmOutput.appendDictValue('test key', 'test string')
-    print AlarmOutput
-    AlarmOutput.setValue(100)
-    print AlarmOutput
-
+    output = pAlarmOutput(limits)
+    output.Label = 'Some explanation...'
+    print output
+    output.setValue(100, 10)
+    print output
+    output.setValue(100.863287651487, 10.763175)
+    print output
+    output.setValue(4.5)
+    print output
+    output.setValue(4.5, 2)
+    print output
+    output.setValue(4.5, 20)
+    print output
