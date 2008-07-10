@@ -45,7 +45,7 @@ class pAlarmLimits:
         self.__validate()
 
     ## @brief Validate the limits (i.e. make sure that the min and max
-    # values are consistent and that the warning margins are smnaller than
+    #  values are consistent and that the warning margins are smnaller than
     #  the error margins.)
     ## @param self
     #  The class instance.
@@ -63,6 +63,43 @@ class pAlarmLimits:
         if self.WarningMax > self.ErrorMax:
             logger.error('Warning max (%s) is higher than error max (%s).' %\
                           (self.WarningMax, self.ErrorMax))
+
+    ## @brief Return the badness of a given number (possibly with its error).
+    #
+    #  The "badness" is the basic measure for determining the status of an
+    #  alarm; it is a function that is equal to 1 on the warning limits
+    #  and is equal to two in correspondence of the error limits.
+    #
+    #  It is essentially calculated according to the following steps:
+    #  - the average of the warning limits (center) is calculated;
+    #  - the best value (the one that best fits into the limits, once the
+    #  associated error is taken into account is calculated). If the error bar
+    #  does *not* cross the center, than the best value is the actual value
+    #  plus or minus the error (possibly multiplicated by a constant), depending
+    #  on whether the value itself lieas above or below the center. If the
+    #  error bar *does* cross the center, then the best value is assumed to
+    #  be the center itself.
+    #  - the badness (i.e. the function defined above) is calculated on
+    #  the best value.
+
+    def getBadness(self, value, error = 0.0, numSigma = 1.0):
+        error = error*numSigma
+        center = (self.WarningMin + self.WarningMax)/2.0
+        if (value - error) >= center:
+            bestValue = value - error
+        elif (value + error) <= center:
+            bestValue = value + error
+        else:
+            bestValue = center
+        if (bestValue >= self.WarningMin) and (bestValue <= self.WarningMax):
+            badness = abs(bestValue - center)/(self.WarningMax - center)
+        elif bestValue < self.WarningMin:
+            badness = 1.0 + (self.WarningMin - bestValue)/(self.WarningMin -\
+                                                               self.ErrorMin)
+        else:
+            badness = 1.0 + (bestValue - self.WarningMax)/(self.ErrorMax -\
+                                                               self.WarningMax)
+        return badness
 
     ## @brief Return a formatted representation of the limits.
     ## @param self
@@ -83,5 +120,12 @@ class pAlarmLimits:
 
 
 if __name__ == '__main__':
-    limits = pAlarmLimits(1, 2, 0, 3)
+    import ROOT
+    limits = pAlarmLimits(200, 300, 100, 400)
     print limits
+    graph = ROOT.TGraph()
+    i = 0
+    for value in range(0, 501, 10):
+        graph.SetPoint(i, value, limits.getBadness(value, 10))
+        i += 1
+    graph.Draw('ALP')
