@@ -167,7 +167,7 @@ class pAlarm(pXmlBaseElement):
     #  The class instance.
 
     def getOutputStatus(self):
-        return self.Algorithm.Output.Status['label']
+        return self.Algorithm.Output.getStatusAsText()
 
     ## @brief Return whether the alarm output is clean or not.
     ## @param self
