@@ -391,13 +391,13 @@ class pAlarmBaseAlgorithm:
     ## @param self
     #  The class instance
 
-    def checkStatus(self, index, value, valueLabel):
+    def checkStatus(self, index, value, valueLabel, error = None):
         position = self.getPosition(index)
         if self.Exception is None:
             flipLogic = False
         else:
             flipLogic = (position in self.Exception.FlippedDetails)
-        badness = self.Limits.getBadness(value)
+        badness = self.Limits.getBadness(value, error)
         status  = self.Output.getStatus(badness)
         if status == STATUS_CLEAN and flipLogic:
             label = self.getDetailedLabel(index, value, valueLabel)

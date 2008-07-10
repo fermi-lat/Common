@@ -1,14 +1,15 @@
 
 from pSafeROOT import ROOT
 
-from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
-from pAlarmBaseAlgorithm import ROOT2NUMPYDICT
-
 import pUtils
 import numpy
 import types
 import sys
 import time
+
+from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
+from pAlarmBaseAlgorithm import ROOT2NUMPYDICT
+from pGlobals            import MINUS_INFINITY
 
 
 VAR_LABELS_DICT = {'Tower': ['tower'],
@@ -71,8 +72,10 @@ class alg__values(pAlarmBaseAlgorithm):
     def __createArrays(self):
         self.RootTree = self.RootObject.GetTree()
         self.NumTreeEntries = self.RootObject.GetEntries()
+        valueBranchName = self.RootObject.GetName()
+        errorBranchName = '%s_err' % valueBranchName
         self.RootTree.SetBranchStatus('*', 0)
-        self.RootTree.SetBranchStatus(self.RootObject.GetName(), 1)
+        self.RootTree.SetBranchStatus(valueBranchName, 1)
         self.RootTree.SetBranchStatus('Bin_Start', 1)
         self.RootTree.SetBranchStatus('Bin_End', 1)
         self.RootTree.SetBranchStatus('TrueTimeInterval', 1)
@@ -87,7 +90,7 @@ class alg__values(pAlarmBaseAlgorithm):
         if '[' not in branchName:
             shape = (1)
         else:
-            shape = branchName.replace(self.RootObject.GetName(), '')
+            shape = branchName.replace(valueBranchName, '')
             shape = shape.replace('][', ',')
             shape = shape.replace('[', '(').replace(']', ')')
             shape = eval(shape)
@@ -102,6 +105,13 @@ class alg__values(pAlarmBaseAlgorithm):
 	self.BranchArray = numpy.zeros(shape, ROOT2NUMPYDICT[branchType])
         self.RootTree.SetBranchAddress(self.RootObject.GetName(),\
                                        self.BranchArray)
+        if branchName[:8] != 'Counter_':
+            self.__branchIsCounter = False
+            self.ErrorArray = numpy.zeros(shape, ROOT2NUMPYDICT[branchType])
+            self.RootTree.SetBranchStatus(errorBranchName, 1)
+            self.RootTree.SetBranchAddress(errorBranchName, self.ErrorArray)
+        else:
+            self.__branchIsCounter = True
 
     ## @brief Setup the list of indexes to loop over, taking into account
     #  the optional "exclude" and "only" parameters.
@@ -150,21 +160,26 @@ class alg__values(pAlarmBaseAlgorithm):
                 self.tuple2Index(detail, self.BranchArray.shape)
 
     def run(self):
-        badnessDict = {}
+        maxBadness = MINUS_INFINITY
         self.__createArrays()
         self.__setupIndexList()
         self.setupException()
         for i in range(self.NumTreeEntries):
             self.getEntry(i)
-            flatArray = self.BranchArray.flatten()
+            valueFlatArray = self.BranchArray.flatten()
+            if not self.__branchIsCounter:
+                errorFlatArray = self.ErrorArray.flatten()
             for j in self.IndexList:
-                value = flatArray[j]
-                badness = self.checkStatus(j, value, 'value')
-                badnessDict[badness] = value
-        badnessList = badnessDict.keys()
-        badnessList.sort()
-        maxBadness = badnessList[-1]
-        self.Output.setValue(badnessDict[maxBadness])
+                value = valueFlatArray[j]
+                if not self.__branchIsCounter:
+                    error = errorFlatArray[j]
+                else:
+                    error = math.sqrt(value)
+                badness = self.checkStatus(j, value, 'value', error)
+                if badness > maxBadness:
+                    maxBadness = badness
+                    (outputValue, outputError) = (value, error)
+        self.Output.setValue(outputValue, outputError, maxBadness)
         self.RootTree.SetBranchStatus('*', 1)
             
 
