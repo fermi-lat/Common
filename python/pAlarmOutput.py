@@ -61,29 +61,20 @@ class pAlarmOutput:
     def isError(self):
         return self.Status == STATUS_ERROR
 
-    def setUndefined(self):
-        self.Status = STATUS_UNDEFINED
-
-    def setClean(self):
-        self.Status = STATUS_CLEAN
-
-    def setWarning(self):
-        self.Status = STATUS_WARNING
-
-    def setError(self):
-        self.Status = STATUS_ERROR
+    def getStatus(self, badness):
+        if badness <= WARNING_BADNESS:
+            return STATUS_CLEAN
+        elif badness <= ERROR_BADNESS:
+            return STATUS_WARNING
+        else:
+            return STATUS_ERROR
 
     def setValue(self, value, error = None, badness = None):
         self.Value = value
         self.Error = error
         if badness is None:
             badness = self.Limits.getBadness(value, error)
-        if badness <= WARNING_BADNESS:
-            self.setClean()
-        elif badness <= ERROR_BADNESS:
-            self.setWarning()
-        else:
-            self.setError()
+        self.Status = self.getStatus(badness)
         self.setDictValue('badness', pUtils.formatNumber(badness))
         self.compress()
 
