@@ -8,7 +8,6 @@ class alg__peak_width(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = ['num_iterations', 'fit_range_width', 'min', 'max']
-    OUTPUT_DICTIONARY    = {}
     OUTPUT_LABEL         = 'Width (rms) of the main peak'
 
     def run(self):

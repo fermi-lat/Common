@@ -27,7 +27,6 @@ class alg__x_min_bin(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F', 'TH1D']
     SUPPORTED_PARAMETERS = ['num_adjacent_bins']
-    OUTPUT_DICTIONARY    = {}
     OUTPUT_LABEL         = 'Center of the leftmost populated bin'
 
     def run(self):

@@ -17,7 +17,6 @@ class alg__x_underflow(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = []
-    OUTPUT_DICTIONARY    = {}
     OUTPUT_LABEL         = 'Number of underflows'
 
     def run(self):

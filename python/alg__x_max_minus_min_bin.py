@@ -19,7 +19,6 @@ class alg__x_max_minus_min_bin(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = []
-    OUTPUT_DICTIONARY    = {}
     OUTPUT_LABEL         = 'Distance between first and last populated bin'
 
     def run(self):

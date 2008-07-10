@@ -54,11 +54,6 @@ class alg__values(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TBranch']
     SUPPORTED_PARAMETERS = ['exclude', 'only']
-    OUTPUT_DICTIONARY    = {'num_warning_entries': 0,
-                            'num_error_entries'  : 0,
-                            'warning_entries'    : [],
-                            'error_entries'      : []
-                            }
     OUTPUT_LABEL          = 'The worst entry of the branch'
 
     ## @brief Create all the necessary arrays for the loop over the

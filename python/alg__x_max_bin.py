@@ -18,7 +18,6 @@ class alg__x_max_bin(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = []
-    OUTPUT_DICTIONARY    = {}
     OUTPUT_LABEL         = 'Center of the righmost populated bin'
 
     def run(self):

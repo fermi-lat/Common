@@ -35,11 +35,6 @@ class alg__y_values(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F', 'TProfile']
     SUPPORTED_PARAMETERS = ['normalize']
-    OUTPUT_DICTIONARY    = {'num_warning_entries': 0,
-                            'num_error_entries'  : 0,
-                            'warning_entries'    : [],
-                            'error_entries'      : []
-                            }
     OUTPUT_LABEL         = 'The worst y-value'
 
     def run(self):

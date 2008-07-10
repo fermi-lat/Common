@@ -20,7 +20,6 @@ class alg__gauss_norm(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = ['min', 'max']
-    OUTPUT_DICTIONARY    = {}
     OUTPUT_LABEL         = 'Normalization of the gaussian fit'
 
     def run(self):

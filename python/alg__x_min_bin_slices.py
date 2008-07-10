@@ -29,10 +29,6 @@ class alg__x_min_bin_slices(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH2F']
     SUPPORTED_PARAMETERS = ['num_adjacent_bins', 'slice_width']
-    OUTPUT_DICTIONARY    = {'num_warning_entries': 0,
-                            'num_error_entries'  : 0,
-                            'warning_entries'    : [],
-                            'error_entries'      : []}
     OUTPUT_LABEL         = 'Bin center of the leftmost bin for the worst slice'
 
     def getDetailedLabel(self, i, value):

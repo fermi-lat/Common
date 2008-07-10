@@ -82,11 +82,6 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F', 'TH2F']
     SUPPORTED_PARAMETERS = ['num_neighbours', 'out_low_cut', 'out_high_cut']
-    OUTPUT_DICTIONARY    = {'num_warning_entries': 0,
-                            'num_error_entries'  : 0,
-                            'warning_entries'    : [],
-                            'error_entries'      : []
-                            }
     OUTPUT_LABEL          = 'Significance for the worst bin'
 
     ## @brief Basic algorithm evaluation for 1-dimensional histograms.

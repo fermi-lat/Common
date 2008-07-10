@@ -39,7 +39,7 @@ ROOT2NUMPYDICT = {'C' : 'c',      #a character string terminated by the 0 char
 #  responsibilities:
 #  
 #  @li Define the base variables @ref SUPPORTED_TYPES,
-#  @ref SUPPORTED_PARAMETERS, @ref OUTPUT_DICTIONARY and @ref OUTPUT_LABEL.
+#  @ref SUPPORTED_PARAMETERS and @ref OUTPUT_LABEL.
 #
 #  @li Implement the core of the actual algorithm in such a way it gets
 #  executed when the base function apply() is called. Depending on the
@@ -61,17 +61,12 @@ class pAlarmBaseAlgorithm:
     ## @brief The list of (optional) parameters supported by a given
     #  algorithm.
 
-    ## @var OUTPUT_DICTIONARY
-    ## @brief The initial value of the output dictionary containing the
-    #  details for the alarms.
-
     ## @var OUTPUT_LABEL
     ## @brief A brief string representing what the output value actually
     #  represents.
 
     SUPPORTED_TYPES      = []
     SUPPORTED_PARAMETERS = []
-    OUTPUT_DICTIONARY    = {}
     OUTPUT_LABEL         = 'N/A'
 
     ## @brief Basic constructor
@@ -119,13 +114,13 @@ class pAlarmBaseAlgorithm:
         self.__ParametersOK = True
         self.Output = pAlarmOutput(limits, self)
         self.Output.Label = copy(self.OUTPUT_LABEL)
-        self.Output.DetailedDict = deepcopy(self.OUTPUT_DICTIONARY)
+        self.Output.DetailedDict = {}
         self.Exception = None
         self.checkObjectType()
         self.checkParameters()
 
     def hasDetails(self):
-        return self.Output.DetailedDict != self.OUTPUT_DICTIONARY
+        return self.Output.DetailedDict != {}
 
     ## @brief Return True if the algorithm is valid (i.e. both the ROOT
     #  object type and the parameters type are supported).

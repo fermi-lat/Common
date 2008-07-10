@@ -8,7 +8,6 @@ class alg__peak_position(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = ['num_iterations', 'fit_range_width', 'min', 'max']
-    OUTPUT_DICTIONARY    = {}
     OUTPUT_LABEL         = 'Position (mean) of the main peak'
 
     def run(self):

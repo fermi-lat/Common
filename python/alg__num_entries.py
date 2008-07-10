@@ -30,7 +30,6 @@ class alg__num_entries(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = ['min', 'max']
-    OUTPUT_DICTIONARY    = {}
     OUTPUT_LABEL         = 'Number of entries in the specified range'
 
     def run(self):

@@ -26,7 +26,6 @@ class alg__x_rms(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = ['min', 'max']
-    OUTPUT_DICTIONARY    = {}
     OUTPUT_LABEL         = 'Histogram RMS'
 
     def run(self):

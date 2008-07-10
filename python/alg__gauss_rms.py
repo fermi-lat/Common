@@ -21,7 +21,6 @@ class alg__gauss_rms(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = ['min', 'max']
-    OUTPUT_DICTIONARY    = {}
     OUTPUT_LABEL         = 'RMS of the gaussian fit'
 
     def run(self):

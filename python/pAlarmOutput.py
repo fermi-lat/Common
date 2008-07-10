@@ -109,7 +109,10 @@ class pAlarmOutput:
     #  The amount.
 
     def incrementDictValue(self, key, amount = 1):
-        self.DetailedDict[key] += amount
+        try:
+            self.DetailedDict[key] += amount
+        except KeyError:
+            self.DetailedDict[key] = amount
 
     ## @brief Append an element to a specific key of the detailed dictionary.
     ## @param self

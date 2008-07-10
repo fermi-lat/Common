@@ -26,7 +26,6 @@ class alg__empty_bins_simple(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F', 'TH2F']
     SUPPORTED_PARAMETERS = []
-    OUTPUT_DICTIONARY    = {'empty_bins': []}
     OUTPUT_LABEL         = 'Number of empty bins'
 
     ## @brief Basic algorithm evaluation for 1-dimensional histograms.

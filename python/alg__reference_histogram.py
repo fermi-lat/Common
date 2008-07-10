@@ -71,13 +71,6 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = ['reference_path', 'reference_name']
-    OUTPUT_DICTIONARY    = {'num_warning_entries' : 0,
-                            'num_error_entries'   : 0,
-                            'warning_entries'     : [],
-                            'error_entries'       : [],
-                            'chisquare'           : 0,
-                            'red_chisquare'       : 0
-                            }
     OUTPUT_LABEL         = 'Significance of the maximum bin difference'
 
     def __init__(self, limits, object, paramsDict, conditionsDict = {}):

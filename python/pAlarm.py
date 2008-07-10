@@ -201,16 +201,8 @@ class pAlarm(pXmlBaseElement):
     ## @param self
     #  The class instance.
 
-    def getOutputDetails(self, compress = True):
-        if compress:
-            details = {}
-            for (key, value) in self.Algorithm.Output.DetailedDict.items():
-                if key not in self.Algorithm.OUTPUT_DICTIONARY.keys() or \
-                        value != self.Algorithm.OUTPUT_DICTIONARY[key]:
-                    details[key] = value
-            return details
-        else:
-            return self.Algorithm.Output.DetailedDict
+    def getOutputDetails(self):
+        return self.Algorithm.Output.DetailedDict
     
     ## @brief Return a formatted representation of the alarm limits.
     ## @param self

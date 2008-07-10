@@ -16,7 +16,6 @@ class alg__x_overflow(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = []
-    OUTPUT_DICTIONARY    = {}
     OUTPUT_LABEL         = 'Number of overflows'
 
     def run(self):

@@ -72,11 +72,6 @@ class alg__spikes_and_holes(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F', 'TH2F']
     SUPPORTED_PARAMETERS = ['num_neighbours', 'out_low_cut', 'out_high_cut']
-    OUTPUT_DICTIONARY    = {'num_warning_entries': 0,
-                            'num_error_entries'  : 0,
-                            'warning_entries'    : [],
-                            'error_entries'      : []
-                            }
     OUTPUT_LABEL          = 'Significance of the worst spike/hole'
 
     ## @brief Basic algorithm evaluation for 1-dimensional histograms.

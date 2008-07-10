@@ -57,8 +57,6 @@ class alg__leftmost_edge(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F']
     SUPPORTED_PARAMETERS = ['window_half_width', 'threshold']
-    OUTPUT_DICTIONARY    = {'significance': 0
-                            }
     OUTPUT_LABEL          = 'Position of the leftmost rising edge'
 
 
