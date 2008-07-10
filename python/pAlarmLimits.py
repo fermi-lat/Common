@@ -87,8 +87,11 @@ class pAlarmLimits:
     #  - the badness (i.e. the function defined above) is calculated on
     #  the best value.
 
-    def getBadness(self, value, error = 0.0, numSigma = 1.0):
-        error = error*numSigma
+    def getBadness(self, value, error = None, numSigma = 1.0):
+        if error is None:
+            error = 0.0
+        else:
+            error = error*numSigma
         center = (self.WarningMin + self.WarningMax)/2.0
         if (value - error) >= center:
             bestValue = value - error
