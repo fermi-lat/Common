@@ -8,6 +8,7 @@ import pUtils
 import numpy
 import types
 import sys
+import time
 
 
 VAR_LABELS_DICT = {'Tower': ['tower'],
@@ -158,9 +159,7 @@ class alg__values(pAlarmBaseAlgorithm):
             flatArray = self.BranchArray.flatten()
             for j in self.IndexList:
                 value = flatArray[j]
-                badness = self.getBadness(value)
-                if not self.checkStatus(j, value, 'value'):
-                    badness = 0
+                badness = self.checkStatus(j, value, 'value')
                 badnessDict[badness] = value
         badnessList = badnessDict.keys()
         badnessList.sort()

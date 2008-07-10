@@ -27,10 +27,6 @@ ROOT2NUMPYDICT = {'C' : 'c',      #a character string terminated by the 0 char
                   'L' : 'int64',  #a 64 bit signed integer (Long64_t)
                   'l' : 'uint64'  #a 64 bit unsigned integer (ULong64_t)
 		  }
-
-ERROR_BADNESS_FACTOR   = 1.0e6
-WARNING_BADNESS_FACTOR = 1.0e3
-CLEAN_BADNESS_FACTOR   = 1.0
 	    
 ## @brief Base class for alarm algorithms. Look at the inheritance diagram for
 #  the list of implemented algorithms.
@@ -263,31 +259,6 @@ class pAlarmBaseAlgorithm:
     def run(self):
         logger.error('Method run() not implemented for %s.' % self.getName())
 
-    ## @brief Return the "badness" of a given value.
-    #
-    #  The badness is a measure of the distance of a given points from the
-    #  alarm bounds, weighted with the status (CLEAN, WARNING, ERROR) of the
-    #  point itself---according to fixed weight factors.
-    ## @param self
-    #  The class instance.
-    ## @param value
-    #  The value.
-    
-    def getBadness(self, value):
-        if value < self.Limits.ErrorMin:
-            badness = (self.Limits.ErrorMin - value)*ERROR_BADNESS_FACTOR
-        elif value > self.Limits.ErrorMax:
-            badness = (value - self.Limits.ErrorMax)*ERROR_BADNESS_FACTOR
-        elif value < self.Limits.WarningMin:
-            badness = (self.Limits.WarningMin - value)*WARNING_BADNESS_FACTOR
-        elif value > self.Limits.WarningMax:
-            badness = (value - self.Limits.WarningMax)*WARNING_BADNESS_FACTOR
-        else:
-            highBadness = (self.Limits.WarningMax - value)*CLEAN_BADNESS_FACTOR
-            lowBadness  = (value - self.Limits.WarningMin)*CLEAN_BADNESS_FACTOR
-            badness = max(lowBadness, highBadness)
-        return badness
-
     ## @brief Return the bin center for a given bin index on the x axis.
     ## @param self
     #  The class instance.
@@ -339,8 +310,6 @@ class pAlarmBaseAlgorithm:
             return self.getX(index)
         elif 'TH2' in objectType:
             return (self.getX(index[0]), self.getY(index[1]))
-        #elif objectType == 'TBranch':
-        #    return self.index2Tuple(index, self.BranchArray.shape)
         else:
             return index
 
@@ -413,62 +382,11 @@ class pAlarmBaseAlgorithm:
             label = 'index = %s, value = %s' % (index, value)
         return label
 
-    ## @brief Return the "status" (i.e. CLEAN, WARNING, ERROR) of a given
-    #  value, when checked against the alarm limits.
-    ## @param self
-    #  The class instance.
-    ## @param value
-    #  The value.
-
-    def getStatus(self, value):
-        if value < self.Limits.ErrorMin or value > self.Limits.ErrorMax:
-            return STATUS_ERROR
-        elif value < self.Limits.WarningMin or value > self.Limits.WarningMax:
-            return STATUS_WARNING
-        return STATUS_CLEAN
-
     ## @brief Check the status for a given step (bin index or array index)
     #  in the execution of a given algorithm and fill the output detailed
     #  dictionaries if needed.
     #  
-    #  This is a quite complicated function that might deserve some more
-    #  explanation.
-    #  At the beginning we check whether the particulat histogram bin or
-    #  array index is in the list of exception, in which case the logic
-    #  of the whole thing must be flipped. At this point there are actually
-    #  three different possible cases (with relative sub-cases) in the
-    #  "decision tree":
-    #
-    #  @li Case 1: ERROR.
-    #  <br>
-    #  In case of exception fill the list of known issues, otherwise the
-    #  list of errors.
-    #
-    #  @li Case 2: WARNING.
-    #  <br>
-    #  In case of exception fill the list of known issues, otherwise the
-    #  list of warning.
-    #
-    #  @li Case 3: CLEAN.
-    #  <br>
-    #  In case of exception fill the list of exception violations, otherwise
-    #  just pass by.
-    #
-    #  There's a basic design issue, here, on whether it's better to use
-    #  histogram bin indexes of physical locations on the histogram (i.e. bin
-    #  centers) as function parameters. The first approach has the advantage
-    #  that you put physical quantities (i.e. GTFE number or ACD tile number)
-    #  in the exception file, but not sure how we can handle the case
-    #  in which the bin center is not integer, since the algorithm involves
-    #  a comparison between numbers. We stick to this first implementation,
-    #  for the moment.
-    #
-    #  A boolean flag is returned that can be used by the particular
-    #  implementation of the algorithm to append the badness of a given
-    #  point to the dictionary for the output value (True) or not (False).
-    #  In particular False is returned upon detection of known issues, as
-    #  in that case the output status of the alarms should not be set to
-    #  FAILED.
+    #  This is under deep restructuring and needs documentation.
     #
     ## @param self
     #  The class instance
@@ -476,34 +394,31 @@ class pAlarmBaseAlgorithm:
     def checkStatus(self, index, value, valueLabel):
         position = self.getPosition(index)
         if self.Exception is None:
-            flip = False
+            flipLogic = False
         else:
-            flip = (position in self.Exception.FlippedDetails)
-        if value < self.Limits.ErrorMin or value > self.Limits.ErrorMax:
+            flipLogic = (position in self.Exception.FlippedDetails)
+        badness = self.Limits.getBadness(value)
+        status  = self.Output.getStatus(badness)
+        if status == STATUS_CLEAN and flipLogic:
             label = self.getDetailedLabel(index, value, valueLabel)
-            if flip:
+            self.Output.appendDictValue('exception violations', label)
+        elif status == STATUS_ERROR:
+            label = self.getDetailedLabel(index, value, valueLabel)
+            if flipLogic:
                 self.Output.appendDictValue('known_issues', label)
-                return False
             else:
                 self.Output.incrementDictValue('num_error_entries')
                 self.Output.appendDictValue('error_entries', label)
-                return True
-        elif value < self.Limits.WarningMin or value > self.Limits.WarningMax:
+        elif status == STATUS_WARNING:
             label = self.getDetailedLabel(index, value, valueLabel)
-            if flip:
-
+            if flipLogic:
                 self.Output.appendDictValue('known_issues', label)
-                return False
             else:
                 self.Output.incrementDictValue('num_warning_entries')
                 self.Output.appendDictValue('warning_entries', label)
-                return True
-        else:
-            if flip:
-                label = self.getDetailedLabel(index, value, valueLabel)
-                self.Output.appendDictValue('exception violations', label)
-                return True
-            return True
+        if flipLogic:
+            badness *= -1.0
+        return badness
 
     ## @brief Convert a flat index to a multi-dimensional array position.
     ## @param self
