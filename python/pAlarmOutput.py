@@ -7,8 +7,7 @@ logger = pSafeLogger.getLogger('pAlarmOutput')
 import pUtils
 import pAlarm
 
-from pAlarmLimits import WARNING_BADNESS
-from pAlarmLimits import ERROR_BADNESS
+from pAlarmLimits import WARNING_BADNESS, ERROR_BADNESS
 
 STATUS_CLEAN     = 0x0
 STATUS_UNDEFINED = 0x1
