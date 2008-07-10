@@ -6,6 +6,10 @@ logger = pSafeLogger.getLogger('pAlarmLimits')
 
 import pUtils
 
+WARNING_BADNESS = 1.0
+ERROR_BADNESS   = 2.0
+DELTA_BADNESS   = ERROR_BADNESS - WARNING_BADNESS
+
 ## @brief Class describing alarm limits.
 #
 #  There are two different levels of limits: WARNING and ERROR.
@@ -67,8 +71,9 @@ class pAlarmLimits:
     ## @brief Return the badness of a given number (possibly with its error).
     #
     #  The "badness" is the basic measure for determining the status of an
-    #  alarm; it is a function that is equal to 1 on the warning limits
-    #  and is equal to two in correspondence of the error limits.
+    #  alarm; it is a function that is equal to the value of WARNING_BADNESS
+    #  on the warning limits and is equal to the value of ERROR_BADNESS in
+    #  correspondence of the error limits.
     #
     #  It is essentially calculated according to the following steps:
     #  - the average of the warning limits (center) is calculated;
@@ -92,13 +97,14 @@ class pAlarmLimits:
         else:
             bestValue = center
         if (bestValue >= self.WarningMin) and (bestValue <= self.WarningMax):
-            badness = abs(bestValue - center)/(self.WarningMax - center)
+            badness = WARNING_BADNESS*abs(bestValue - center)/\
+                (self.WarningMax - center)
         elif bestValue < self.WarningMin:
-            badness = 1.0 + (self.WarningMin - bestValue)/(self.WarningMin -\
-                                                               self.ErrorMin)
+            badness = WARNING_BADNESS + DELTA_BADNESS*\
+                (self.WarningMin - bestValue)/(self.WarningMin - self.ErrorMin)
         else:
-            badness = 1.0 + (bestValue - self.WarningMax)/(self.ErrorMax -\
-                                                               self.WarningMax)
+            badness = WARNING_BADNESS + DELTA_BADNESS*\
+                (bestValue - self.WarningMax)/(self.ErrorMax - self.WarningMax)
         return badness
 
     ## @brief Return a formatted representation of the limits.
