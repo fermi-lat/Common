@@ -74,7 +74,6 @@ class pAlarmOutput:
         if badness is None:
             badness = self.Limits.getBadness(value, error)
         self.Status = self.getStatus(badness)
-        self.setDictValue('badness', pUtils.formatNumber(badness))
         self.compress()
 
     ## @brief Get the value corresponding to a particular key of the

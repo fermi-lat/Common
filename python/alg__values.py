@@ -173,8 +173,12 @@ class alg__values(pAlarmBaseAlgorithm):
                 badness = self.checkStatus(j, value, 'value', error)
                 if badness > maxBadness:
                     maxBadness = badness
-                    (outputValue, outputError) = (value, error)
+                    (outputIndex, outputValue, outputError) = (j, value, error)
         self.Output.setValue(outputValue, outputError, maxBadness)
+        label = self.getDetailedLabel(outputIndex, outputValue, 'value',\
+                                          outputError)
+        label = '%s, badness = %s' % (label, pUtils.formatNumber(maxBadness)) 
+        self.Output.setDictValue('worst_point', label)
         self.RootTree.SetBranchStatus('*', 1)
             
 
