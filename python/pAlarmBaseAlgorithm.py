@@ -359,9 +359,18 @@ class pAlarmBaseAlgorithm:
     ## @param value
     #  The value.
     
-    def getDetailedLabel(self, index, value, valueLabel = 'value'):
+    def getDetailedLabel(self, index, value, valueLabel = 'value',\
+                             error = None):
         objectType = self.getObjectType()
         value = pUtils.formatNumber(value)
+        if error is not None:
+            try:
+                numDecimalPlaces = len(value.split('.')[1])
+            except:
+                numDecimalPlaces = 0
+            formatString = '%' + '.%df' % numDecimalPlaces
+            error = formatString % error
+            value = '%s +- %s' % (value, error)
         position = self.getFormattedPosition(index)
         if objectType == 'TBranch':
             timestamp = time.gmtime(self.TimeStamp + MET_OFFSET)
@@ -400,17 +409,17 @@ class pAlarmBaseAlgorithm:
         badness = self.Limits.getBadness(value, error)
         status  = self.Output.getStatus(badness)
         if status == STATUS_CLEAN and flipLogic:
-            label = self.getDetailedLabel(index, value, valueLabel)
+            label = self.getDetailedLabel(index, value, valueLabel, error)
             self.Output.appendDictValue('exception violations', label)
         elif status == STATUS_ERROR:
-            label = self.getDetailedLabel(index, value, valueLabel)
+            label = self.getDetailedLabel(index, value, valueLabel, error)
             if flipLogic:
                 self.Output.appendDictValue('known_issues', label)
             else:
                 self.Output.incrementDictValue('num_error_entries')
                 self.Output.appendDictValue('error_entries', label)
         elif status == STATUS_WARNING:
-            label = self.getDetailedLabel(index, value, valueLabel)
+            label = self.getDetailedLabel(index, value, valueLabel, error)
             if flipLogic:
                 self.Output.appendDictValue('known_issues', label)
             else:
