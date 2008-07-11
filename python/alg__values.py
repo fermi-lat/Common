@@ -9,6 +9,7 @@ import time
 
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 from pAlarmBaseAlgorithm import ROOT2NUMPYDICT
+from pAlarmBaseAlgorithm import MET_OFFSET
 from pGlobals            import MINUS_INFINITY
 
 
@@ -173,13 +174,16 @@ class alg__values(pAlarmBaseAlgorithm):
                 badness = self.checkStatus(j, value, 'value', error)
                 if badness > maxBadness:
                     maxBadness = badness
-                    (outputIndex, outputValue, outputError) = (j, value, error)
+                    (outputEntry, outputIndex, outputValue, outputError) =\
+                        (i, j, value, error)
         self.Output.setValue(outputValue, outputError, maxBadness)
+        self.getEntry(outputEntry)
         label = self.getDetailedLabel(outputIndex, outputValue, 'value',\
                                           outputError)
         label = '%s, badness = %s' % (label, pUtils.formatNumber(maxBadness)) 
-        self.Output.setDictValue('worst_point', label)
+        self.Output.setDictValue('output_point', label)
         self.RootTree.SetBranchStatus('*', 1)
+
             
 
 if __name__ == '__main__':
