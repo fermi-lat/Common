@@ -99,7 +99,7 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
             except ZeroDivisionError:
                 delta = 0
             deltas.append(delta)
-            self.checkStatus(i, delta, 'difference significance')
+            badness = self.checkStatus(i, delta, 'difference significance')
         chi = sum(deltas)
         redChi = chi/numBins
         self.Output.setDictValue('chisquare', pUtils.formatNumber(chi))
