@@ -82,14 +82,15 @@ class alg__spikes_and_holes(pAlarmBaseAlgorithm):
         numNeigh = self.getParameter('num_neighbours', 4)
         outLoCut = self.getParameter('out_low_cut', 0.3)
         outHiCut = self.getParameter('out_high_cut', 0.3)
-        significances = [0.0]
+        maxSignificance = -1
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             obs = self.RootObject.GetBinContent(i)
             exp = self.getNeighbouringAverage(i, numNeigh, outLoCut, outHiCut)
             significance = float(abs(obs - exp))/sqrt(exp)
-            significances.append(significance)
-            self.checkStatus(i, significance, 'significance')
-        self.Output.setValue(max(significances))  
+            if significance > maxSignificance:
+                maxSignificance = significance
+            badness = self.checkStatus(i, significance, 'significance')
+        self.Output.setValue(maxSignificance)  
 
     ## @brief Basic algorithm evaluation for 2-dimensional histograms.
     ## @param self
@@ -99,16 +100,17 @@ class alg__spikes_and_holes(pAlarmBaseAlgorithm):
         numNeigh = self.getParameter('num_neighbours', 2)
         outLoCut = self.getParameter('out_low_cut', 0.25)
         outHiCut = self.getParameter('out_high_cut', 0.25)
-        significances = [0.0]
+        maxSignificance = -1
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             for j in range(1, self.RootObject.GetNbinsY() + 1):
                 obs = self.RootObject.GetBinContent(i, j)
                 exp = self.getNeighbouringAverage((i, j), numNeigh, outLoCut,\
                                                       outHiCut)
                 significance = float(abs(obs - exp))/sqrt(exp)
-                significances.append(significance)
-                self.checkStatus((i, j), significance, 'significance')
-        self.Output.setValue(max(significances))
+                if significance > maxSignificance:
+                    maxSignificance = significance
+                badness = self.checkStatus((i, j), significance, 'significance')
+        self.Output.setValue(maxSignificance)
 
 
 

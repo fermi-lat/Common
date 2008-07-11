@@ -3,6 +3,7 @@ import pUtils
 
 from pSafeROOT           import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
+from pGlobals            import MINUS_INFINITY
 
 
 ## @brief Make sure all the y values are within limits.
@@ -44,16 +45,15 @@ class alg__y_values(pAlarmBaseAlgorithm):
             self.Limits.ErrorMin   *= numEntries
             self.Limits.WarningMin *= numEntries
             self.Limits.WarningMax *= numEntries
-        badnessDict = {}
+        maxBadness = MINUS_INFINITY
         for i in range(self.RootObject.GetXaxis().GetFirst(),\
                          self.RootObject.GetXaxis().GetLast() + 1):
             value = self.RootObject.GetBinContent(i)
-            badnessDict[self.getBadness(value)] = value
-            self.checkStatus(i, value, 'y-value')
-        badnessList = badnessDict.keys()
-        badnessList.sort()
-        maxBadness = badnessList[-1]
-        self.Output.setValue(badnessDict[maxBadness])
+            badness = self.checkStatus(i, value, 'y-value')
+            if badness > maxBadness:
+                maxBadness = badness
+                outputValue = value
+        self.Output.setValue(outputValue, None, maxBadness)
         
 
 
