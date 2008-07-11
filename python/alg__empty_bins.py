@@ -92,7 +92,7 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
         numNeigh = self.getParameter('num_neighbours', 3)
         outLoCut = self.getParameter('out_low_cut', 0.0)
         outHiCut = self.getParameter('out_high_cut', 0.25)
-        significances = [0.0]
+        maxSignificance = -1
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             if self.RootObject.GetBinContent(i) != 0:
                 significance = 0
@@ -100,9 +100,10 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
                 exp = self.getNeighbouringAverage(i, numNeigh,\
                                                       outLoCut, outHiCut)
                 significance = sqrt(exp)
-            if not self.checkStatus(i, significance, 'significance'):
-                significances.append(significance)
-        self.Output.setValue(max(significances))
+            if significance > maxSignificance:
+                maxSignificance = significance
+            badness = self.checkStatus(i, significance, 'significance')
+        self.Output.setValue(maxSignificance)
                 
     ## @brief Basic algorithm evaluation for 2-dimensional histograms.
     ## @param self
@@ -112,7 +113,7 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
         numNeigh = self.getParameter('num_neighbours', 2)
         outLoCut = self.getParameter('out_low_cut', 0.0)
         outHiCut = self.getParameter('out_high_cut', 0.25)
-        significances = [0.0]
+        maxSignificance = -1
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             for j in range(1, self.RootObject.GetNbinsY() + 1):
                 if self.RootObject.GetBinContent(i, j) != 0:
@@ -121,9 +122,11 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
                     exp = self.getNeighbouringAverage((i, j), numNeigh,\
                                                           outLoCut, outHiCut)
                     significance = sqrt(exp)
-                if not self.checkStatus((i, j), significance, 'significance'):
-                    significances.append(significance)
-        self.Output.setValue(max(significances))
+                if significance > maxSignificance:
+                    maxSignificance = significance
+                badness = self.checkStatus((i, j), significance,\
+                                               'significance')
+        self.Output.setValue(maxSignificance)
 
 
 
