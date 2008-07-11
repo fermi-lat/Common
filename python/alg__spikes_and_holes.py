@@ -86,7 +86,10 @@ class alg__spikes_and_holes(pAlarmBaseAlgorithm):
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             obs = self.RootObject.GetBinContent(i)
             exp = self.getNeighbouringAverage(i, numNeigh, outLoCut, outHiCut)
-            significance = float(abs(obs - exp))/sqrt(exp)
+            if exp > 0:
+                significance = abs(obs - exp)/sqrt(exp)
+            else:
+                significance = 0.0
             if significance > maxSignificance:
                 maxSignificance = significance
             badness = self.checkStatus(i, significance, 'significance')
@@ -106,7 +109,10 @@ class alg__spikes_and_holes(pAlarmBaseAlgorithm):
                 obs = self.RootObject.GetBinContent(i, j)
                 exp = self.getNeighbouringAverage((i, j), numNeigh, outLoCut,\
                                                       outHiCut)
-                significance = float(abs(obs - exp))/sqrt(exp)
+                if exp > 0:
+                    significance = abs(obs - exp)/sqrt(exp)
+                else:
+                    significance = 0.0
                 if significance > maxSignificance:
                     maxSignificance = significance
                 badness = self.checkStatus((i, j), significance, 'significance')
