@@ -33,7 +33,7 @@ VAR_LABELS_DICT = {'Tower': ['tower'],
                    'TriggerEngine': ['trg. engine']
                    }
 
-MIN_TRUE_TIME_INTERVAL = 1.0
+MIN_TRUE_TIME_INTERVAL = 5.0
 
 ## @brief Make sure all the entries of a branch are within limits.
 #
