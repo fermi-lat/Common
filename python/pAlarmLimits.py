@@ -103,11 +103,19 @@ class pAlarmLimits:
             badness = WARNING_BADNESS*abs(bestValue - center)/\
                 (self.WarningMax - center)
         elif bestValue < self.WarningMin:
-            badness = WARNING_BADNESS + DELTA_BADNESS*\
+            try:
+                badness = WARNING_BADNESS + DELTA_BADNESS*\
                 (self.WarningMin - bestValue)/(self.WarningMin - self.ErrorMin)
+            except ZeroDivisionError:
+                badness = WARNING_BADNESS + DELTA_BADNESS*\
+                (center - bestValue)/(center - self.ErrorMin)
         else:
-            badness = WARNING_BADNESS + DELTA_BADNESS*\
+            try:
+                badness = WARNING_BADNESS + DELTA_BADNESS*\
                 (bestValue - self.WarningMax)/(self.ErrorMax - self.WarningMax)
+            except ZeroDivisionError:
+                badness = WARNING_BADNESS + DELTA_BADNESS*\
+                (bestValue - center)/(self.ErrorMax - center)
         return badness
 
     ## @brief Return a formatted representation of the limits.
@@ -130,11 +138,11 @@ class pAlarmLimits:
 
 if __name__ == '__main__':
     import ROOT
-    limits = pAlarmLimits(200, 300, 100, 400)
+    limits = pAlarmLimits(200, 300, 200, 400)
     print limits
     graph = ROOT.TGraph()
     i = 0
     for value in range(0, 501, 10):
-        graph.SetPoint(i, value, limits.getBadness(value, 10))
+        graph.SetPoint(i, value, limits.getBadness(value, 0))
         i += 1
     graph.Draw('ALP')
