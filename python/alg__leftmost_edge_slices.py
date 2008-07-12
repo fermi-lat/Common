@@ -65,12 +65,12 @@ class alg__leftmost_edge_slices(pAlarmBaseAlgorithm):
                     outputValue = value
             i += sliceWidth
             sliceHisto.Delete()
-        self.Output.setValue(outputValue)
         try:
+            self.Output.setValue(outputValue)
             label = self.getDetailedLabel(outputIndex, outputValue)
+            self.Output.setDictValue('output_point', label)
         except:
-            label = 'N/A'
-        self.Output.setDictValue('output_point', label)
+            pass
 
 
 
