@@ -1,3 +1,8 @@
+*** v3r3p2 ***
+- One more zero division error bug fix.
+* Relevant jira(s): GDQMQ-204
+
+
 *** v3r3p1 ***
 - Bug fix in the spikes_and_holes alarm algorithm.
 * Relevant jira(s): GDQMQ-202
