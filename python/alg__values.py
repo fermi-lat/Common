@@ -1,4 +1,7 @@
 
+import pSafeLogger
+logger = pSafeLogger.getLogger('alg__values')
+
 from pSafeROOT import ROOT
 
 import pUtils
@@ -29,6 +32,8 @@ VAR_LABELS_DICT = {'Tower': ['tower'],
                    'GammaFilterBit': ['filter bit'],
                    'TriggerEngine': ['trg. engine']
                    }
+
+MIN_TRUE_TIME_INTERVAL = 1.0
 
 ## @brief Make sure all the entries of a branch are within limits.
 #
@@ -162,20 +167,24 @@ class alg__values(pAlarmBaseAlgorithm):
         self.setupException()
         for i in range(self.NumTreeEntries):
             self.getEntry(i)
-            valueFlatArray = self.BranchArray.flatten()
-            if not self.__branchIsCounter:
-                errorFlatArray = self.ErrorArray.flatten()
-            for j in self.IndexList:
-                value = valueFlatArray[j]
+            if self.TimeIntervalArray[0] > MIN_TRUE_TIME_INTERVAL:
+                valueFlatArray = self.BranchArray.flatten()
                 if not self.__branchIsCounter:
-                    error = errorFlatArray[j]
-                else:
-                    error = math.sqrt(value)
-                badness = self.checkStatus(j, value, 'value', error)
-                if badness > maxBadness:
-                    maxBadness = badness
-                    (outputEntry, outputIndex, outputValue, outputError) =\
-                        (i, j, value, error)
+                    errorFlatArray = self.ErrorArray.flatten()
+                for j in self.IndexList:
+                    value = valueFlatArray[j]
+                    if not self.__branchIsCounter:
+                        error = errorFlatArray[j]
+                    else:
+                        error = math.sqrt(value)
+                    badness = self.checkStatus(j, value, 'value', error)
+                    if badness > maxBadness:
+                        maxBadness = badness
+                        (outputEntry, outputIndex, outputValue, outputError) =\
+                            (i, j, value, error)
+            else:
+                logger.info('Skipping entry %d (TrueTimeInterval = %f)...' %\
+                                (i, self.TimeIntervalArray[0]))
         self.Output.setValue(outputValue, outputError, maxBadness)
         self.getEntry(outputEntry)
         label = self.getDetailedLabel(outputIndex, outputValue, 'value',\
