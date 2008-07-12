@@ -1,3 +1,7 @@
+*** v3r4p1 ***
+- Minor bug fix.
+
+
 *** v3r4p0 ***
 - New alg__leftmost_edge_slices algorithm.
 - Minor bug fix in alg__values.
