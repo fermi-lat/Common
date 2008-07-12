@@ -46,6 +46,7 @@ class pAlarmXmlSummaryGenerator(pXmlWriter):
                                            'max': alarm.Limits.ErrorMax})
             self.writeTag('severity', {}, alarm.Severity)
             self.writeTag('output', {}, alarm.getFormattedOutputValue())
+            self.writeTag('label', {}, alarm.getOutputLabel())
             self.writeTag('status', {}, alarm.getOutputStatus())
             if alarm.Algorithm.hasDetails():
                 for (key, value) in alarm.getOutputDetails().items():
