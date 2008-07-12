@@ -52,20 +52,24 @@ class alg__x_min_bin_slices(pAlarmBaseAlgorithm):
                                                          i + sliceWidth)
             sliceAlarm = alg__x_min_bin(self.Limits, sliceHisto, sliceParDict)
             sliceAlarm.apply()
-            badness = self.checkStatus(i, sliceAlarm.Output.Value,\
-                                           'edge_position')
-            if badness > maxBadness:
-                maxBadness = badness
-                outputIndex = i
-                outputValue = sliceAlarm.Output.Value
+            value = sliceAlarm.Output.Value
+            if value is None:
+                self.Output.appendDictValue('edgeless_slices',\
+                                                self.getDetailedXLabel(i))
+            else:
+                badness = self.checkStatus(i, value, 'edge_position')
+                if badness > maxBadness:
+                    maxBadness = badness
+                    outputIndex = i
+                    outputValue = value
             i += sliceWidth
             sliceHisto.Delete()
         self.Output.setValue(outputValue)
         try:
             label = self.getDetailedLabel(outputIndex, outputValue)
-            self.Output.setDictValue('output_point', label)
         except:
-            pass
+            label = 'N/A'
+        self.Output.setDictValue('output_point', label)
 	    
 
 

@@ -27,9 +27,12 @@ class alg__leftmost_edge_slices(pAlarmBaseAlgorithm):
     SUPPORTED_PARAMETERS = ['window_half_width', 'threshold', 'slice_width']
     OUTPUT_LABEL         = 'Position of the leftmost edge of the worst slice'
 
-    def getDetailedLabel(self, i, value, valueLabel = None, error = None):
-        return 'slice centered at %s = %s, edge position = %s' %\
-            (self.getAxisLabel('x'), self.getFormattedX(i), value)
+    def getDetailedXLabel(self, index):
+        return 'slice centered at %s = %s' %\
+            (self.getAxisLabel('x'), self.getFormattedX(index))
+
+    def getDetailedLabel(self, index, value, valueLabel = None, error = None):
+        return '%s, edge position = %s' % (self.getDetailedXLabel(index), value)
 
     def getPosition(self, index):
         return index
@@ -45,25 +48,29 @@ class alg__leftmost_edge_slices(pAlarmBaseAlgorithm):
         maxBadness = MINUS_INFINITY
         while(i < lastBin):
             sliceCenter = i + sliceWidth/2
-            sliceHisto = self.RootObject.ProjectionY("h_single_slice", i,\
+            sliceHisto = self.RootObject.ProjectionY('h_single_slice', i,\
                                                          i + sliceWidth)
             sliceAlarm = alg__leftmost_edge(self.Limits, sliceHisto,\
                                                 sliceParDict)
             sliceAlarm.apply()
-            badness = self.checkStatus(i, sliceAlarm.Output.Value,\
-                                           'edge_position')
-            if badness > maxBadness:
-                maxBadness = badness
-                outputIndex = i
-                outputValue = sliceAlarm.Output.Value
+            value = sliceAlarm.Output.Value
+            if value is None:
+                self.Output.appendDictValue('edgeless_slices',\
+                                                self.getDetailedXLabel(i))
+            else:
+                badness = self.checkStatus(i, value, 'edge_position')
+                if badness > maxBadness:
+                    maxBadness = badness
+                    outputIndex = i
+                    outputValue = value
             i += sliceWidth
             sliceHisto.Delete()
         self.Output.setValue(outputValue)
         try:
             label = self.getDetailedLabel(outputIndex, outputValue)
-            self.Output.setDictValue('output_point', label)
         except:
-            pass
+            label = 'N/A'
+        self.Output.setDictValue('output_point', label)
 
 
 
