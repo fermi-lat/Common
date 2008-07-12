@@ -1,3 +1,10 @@
+
+*** v3r3p4 ***
+- Check on the TrueTimeInterval implemented to prevent the alarms on the
+trending quantities from firing on tiny time bins.
+- Fix for the DoubleDiffRate, which do not have associated errors in the tree.
+
+
 *** v3r3p3 ***
 - One more zero division error bug fix. And yes, different from the previous
 tag. Hopefully the last one...
