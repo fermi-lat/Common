@@ -1,3 +1,9 @@
+*** v3r3p3 ***
+- One more zero division error bug fix. And yes, different from the previous
+tag. Hopefully the last one...
+* Relevant jira(s): GDQMQ-204
+
+
 *** v3r3p2 ***
 - One more zero division error bug fix.
 * Relevant jira(s): GDQMQ-204
