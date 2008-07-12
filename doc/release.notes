@@ -1,3 +1,8 @@
+*** v3r3p5 ***
+- Threshold for the minimum TrueTimeInterval in alg__values changed from
+1s to 5 s.
+- Explanatory label added to the alarm handler xml output.
+
 
 *** v3r3p4 ***
 - Check on the TrueTimeInterval implemented to prevent the alarms on the
