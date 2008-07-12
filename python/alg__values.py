@@ -106,13 +106,12 @@ class alg__values(pAlarmBaseAlgorithm):
 	self.BranchArray = numpy.zeros(shape, ROOT2NUMPYDICT[branchType])
         self.RootTree.SetBranchAddress(self.RootObject.GetName(),\
                                        self.BranchArray)
-        if branchName[:8] != 'Counter_':
-            self.__branchIsCounter = False
-            self.ErrorArray = numpy.zeros(shape, ROOT2NUMPYDICT[branchType])
+        self.ErrorArray = numpy.zeros(shape, ROOT2NUMPYDICT[branchType])
+        if branchName.split('_')[0] not in ['Counter', 'DoubleDiffRate']:
             self.RootTree.SetBranchStatus(errorBranchName, 1)
             self.RootTree.SetBranchAddress(errorBranchName, self.ErrorArray)
         else:
-            self.__branchIsCounter = True
+            logger.debug('%s has no associated errors.' % branchName)
 
     ## @brief Setup the list of indexes to loop over, taking into account
     #  the optional "exclude" and "only" parameters.
@@ -169,14 +168,10 @@ class alg__values(pAlarmBaseAlgorithm):
             self.getEntry(i)
             if self.TimeIntervalArray[0] > MIN_TRUE_TIME_INTERVAL:
                 valueFlatArray = self.BranchArray.flatten()
-                if not self.__branchIsCounter:
-                    errorFlatArray = self.ErrorArray.flatten()
+                errorFlatArray = self.ErrorArray.flatten()
                 for j in self.IndexList:
                     value = valueFlatArray[j]
-                    if not self.__branchIsCounter:
-                        error = errorFlatArray[j]
-                    else:
-                        error = math.sqrt(value)
+                    error = errorFlatArray[j]
                     badness = self.checkStatus(j, value, 'value', error)
                     if badness > maxBadness:
                         maxBadness = badness
