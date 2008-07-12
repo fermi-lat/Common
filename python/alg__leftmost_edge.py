@@ -88,15 +88,14 @@ class alg__leftmost_edge(pAlarmBaseAlgorithm):
 
     def refineEdge(self, startBin, startSignificance):
         maxSignificance = startSignificance
-        self.Output.setDictValue('significance', startSignificance)
-        self.Output.setValue(self.RootObject.GetBinCenter(startBin))
+        outputValue = self.RootObject.GetBinCenter(startBin)
         for k in range(startBin + 1, startBin + self.WindowHalfWidth + 1):
             significance = self.getEdgeSignificance(k)
             if significance > maxSignificance:
-                self.Output.setDictValue('significance', significance)
-                self.Output.setValue(self.RootObject.GetBinCenter(k))
                 maxSignificance = significance
-    
+                outputValue = self.RootObject.GetBinCenter(k)
+        self.Output.setDictValue('significance', maxSignificance)
+        self.Output.setValue(outputValue)
 
 
 if __name__ == '__main__':
@@ -112,7 +111,7 @@ if __name__ == '__main__':
         histogram.SetBinContent(i, random.gauss(50, sqrt(50)))
     histogram.Draw()
     canvas.Update()
-    pardict = {}
+    pardict = {'threshold': 20}
     algorithm = alg__leftmost_edge(limits, histogram, pardict)
     algorithm.apply()
     print 'Parameters: %s\n' % pardict
