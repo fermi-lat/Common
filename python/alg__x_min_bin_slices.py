@@ -2,7 +2,8 @@
 from pSafeROOT import ROOT
 
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
-from alg__x_min_bin import alg__x_min_bin
+from alg__x_min_bin      import alg__x_min_bin
+from pGlobals            import MINUS_INFINITY
 
 
 ## @brief This is an attempt to generalize the @ref alg__x_min_bin algorithm
@@ -31,9 +32,12 @@ class alg__x_min_bin_slices(pAlarmBaseAlgorithm):
     SUPPORTED_PARAMETERS = ['num_adjacent_bins', 'slice_width']
     OUTPUT_LABEL         = 'Bin center of the leftmost bin for the worst slice'
 
-    def getDetailedLabel(self, i, value):
+    def getDetailedLabel(self, i, value, valueLabel = None, error = None):
         return 'slice centered at %s = %s, minimum bin center = %s' %\
             (self.getAxisLabel('x'), self.getFormattedX(i), value)
+
+    def getPosition(self, index):
+        return index
 
     def run(self):
         numAdjBins = self.getParameter('num_adjacent_bins', 1)
@@ -41,34 +45,27 @@ class alg__x_min_bin_slices(pAlarmBaseAlgorithm):
 	sliceParDict = {'num_adjacent_bins': numAdjBins}
         i = self.RootObject.GetXaxis().GetFirst()
         lastBin = self.RootObject.GetXaxis().GetLast() - sliceWidth
-        values = []
-	errorValues = []
-	warningValues = []
+        maxBadness = MINUS_INFINITY
         while(i < lastBin):
             sliceCenter = i + sliceWidth/2
             sliceHisto = self.RootObject.ProjectionY("h_single_slice", i,\
                                                          i + sliceWidth)
             sliceAlarm = alg__x_min_bin(self.Limits, sliceHisto, sliceParDict)
             sliceAlarm.apply()
-	    values.append(sliceAlarm.Output.Value)
-	    if sliceAlarm.Output.isError():
-	        self.Output.incrementDictValue('num_error_entries')
-                self.Output.appendDictValue('error_entries',\
-                    self.getDetailedLabel(sliceCenter, sliceAlarm.Output.Value))
-		errorValues.append(sliceAlarm.Output.Value)
-	    elif sliceAlarm.Output.isWarning():
-	        self.Output.incrementDictValue('num_warning_entries')
-                self.Output.appendDictValue('warning_entries',\
-                    self.getDetailedLabel(sliceCenter, sliceAlarm.Output.Value))
-                warningValues.append(sliceAlarm.Output.Value)
+            badness = self.checkStatus(i, sliceAlarm.Output.Value,\
+                                           'edge_position')
+            if badness > maxBadness:
+                maxBadness = badness
+                outputIndex = i
+                outputValue = sliceAlarm.Output.Value
             i += sliceWidth
             sliceHisto.Delete()
-	if self.Output.getDictValue('num_error_entries'):
-	    self.Output.setValue(min(errorValues))
-	elif self.Output.getDictValue('num_warning_entries'):
-	    self.Output.setValue(min(warningValues))
-	else:
-	    self.Output.setValue(min(values))
+        self.Output.setValue(outputValue)
+        try:
+            label = self.getDetailedLabel(outputIndex, outputValue)
+            self.Output.setDictValue('output_point', label)
+        except:
+            pass
 	    
 
 
