@@ -55,7 +55,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 class alg__leftmost_edge(pAlarmBaseAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH1F']
+    SUPPORTED_TYPES      = ['TH1F', 'TH1D']
     SUPPORTED_PARAMETERS = ['window_half_width', 'threshold']
     OUTPUT_LABEL          = 'Position of the leftmost rising edge'
 
