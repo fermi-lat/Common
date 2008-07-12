@@ -1,3 +1,11 @@
+*** v3r4p0 ***
+- New alg__leftmost_edge_slices algorithm.
+- Minor bug fix in alg__values.
+- alg__x_min_bin_slices improved taking advantage of the improvements in the
+base class since v3r3p0.
+* Relevant jira(s): GDQMQ-52
+
+
 *** v3r3p5 ***
 - Threshold for the minimum TrueTimeInterval in alg__values changed from
 1s to 5 s.
