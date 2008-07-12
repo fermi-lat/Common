@@ -182,10 +182,14 @@ class alg__values(pAlarmBaseAlgorithm):
                                 (i, self.TimeIntervalArray[0]))
         self.Output.setValue(outputValue, outputError, maxBadness)
         self.getEntry(outputEntry)
-        label = self.getDetailedLabel(outputIndex, outputValue, 'value',\
-                                          outputError)
-        label = '%s, badness = %s' % (label, pUtils.formatNumber(maxBadness)) 
-        self.Output.setDictValue('output_point', label)
+        try:
+            label = self.getDetailedLabel(outputIndex, outputValue, 'value',\
+                                              outputError)
+            label = '%s, badness = %s' % (label,\
+                                              pUtils.formatNumber(maxBadness)) 
+            self.Output.setDictValue('output_point', label)
+        except:
+            pass
         self.RootTree.SetBranchStatus('*', 1)
 
             
