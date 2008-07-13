@@ -135,7 +135,7 @@ class pAlarmBaseAlgorithm:
     #  The class instance.
 
     def getName(self):
-        return self.__class__.__name__.strip('alg__')
+        return self.__class__.__name__.replace('alg__', '')
 
     ## @brief Return the ROOT object type (the name of the class the
     #  object belongs to).
