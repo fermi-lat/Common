@@ -106,12 +106,14 @@ class alg__values(pAlarmBaseAlgorithm):
 	self.BranchArray = numpy.zeros(shape, ROOT2NUMPYDICT[branchType])
         self.RootTree.SetBranchAddress(self.RootObject.GetName(),\
                                        self.BranchArray)
-        self.ErrorArray = numpy.zeros(shape, ROOT2NUMPYDICT[branchType])
         if self.RootTree.GetBranch(errorBranchName) is not None:
+            self.ErrorArray = numpy.zeros(shape, ROOT2NUMPYDICT[branchType])
             self.RootTree.SetBranchStatus(errorBranchName, 1)
             self.RootTree.SetBranchAddress(errorBranchName, self.ErrorArray)
+            self.__HasErrors = True
         else:
             logger.debug('%s has no associated errors.' % branchName)
+            self.__HasErrors = False
 
     ## @brief Setup the list of indexes to loop over, taking into account
     #  the optional "exclude" and "only" parameters.
@@ -168,10 +170,14 @@ class alg__values(pAlarmBaseAlgorithm):
             self.getEntry(i)
             if self.TimeIntervalArray[0] > MIN_TRUE_TIME_INTERVAL:
                 valueFlatArray = self.BranchArray.flatten()
-                errorFlatArray = self.ErrorArray.flatten()
+                if self.__HasErrors:
+                    errorFlatArray = self.ErrorArray.flatten()
                 for j in self.IndexList:
                     value = valueFlatArray[j]
-                    error = errorFlatArray[j]
+                    if self.__HasErrors:
+                        error = errorFlatArray[j]
+                    else:
+                        error = None
                     badness = self.checkStatus(j, value, 'value', error)
                     if badness > maxBadness:
                         maxBadness = badness
