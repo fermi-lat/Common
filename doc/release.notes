@@ -1,3 +1,8 @@
+*** v3r4p3 ***
+- Minor improvement: errors not displayed for trending plots with no
+associated errors (used to look as +- 0.000).
+
+
 *** v3r4p2 ***
 - Minor aesthetics change in pAlarmBaseAlgorithm---the algorithm names were
 mispelled.
@@ -7,6 +12,7 @@ quantities---though it was not crashing before and gave the same number. It
 essentially suppresses a ROOT warning.
 - Cast to float in pAlarmiLimits.getBadness() added to prevent numpy to
 return inf upon ZeroDivision error.
+* Relevant jira(s): GDQMQ-206
 
 
 *** v3r4p1 ***
