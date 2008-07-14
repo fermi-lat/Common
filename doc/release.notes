@@ -1,3 +1,14 @@
+*** v3r4p2 ***
+- Minor aesthetics change in pAlarmBaseAlgorithm---the algorithm names were
+mispelled.
+- Different way to associate the branch arrays to the relative errors in
+alg__values; now it's more general and gracefully handles Hiro's trackermon
+quantities---though it was not crashing before and gave the same number. It
+essentially suppresses a ROOT warning.
+- Cast to float in pAlarmiLimits.getBadness() added to prevent numpy to
+return inf upon ZeroDivision error.
+
+
 *** v3r4p1 ***
 - Minor bug fix.
 
