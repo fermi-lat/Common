@@ -88,6 +88,9 @@ class pAlarmLimits:
     #  the best value.
 
     def getBadness(self, value, error = None, numSigma = 1.0):
+        value = float(value)
+        if error is not None:
+            error = float(error)
         if error is None:
             error = 0.0
         else:
@@ -140,6 +143,9 @@ class pAlarmLimits:
 
 
 if __name__ == '__main__':
+    limits = pAlarmLimits(0.0, 0.08, 0.0, 0.08)
+    print limits.getBadness(0.0800469, 0.0)
+
     import ROOT
     limits = pAlarmLimits(200, 300, 200, 400)
     print limits
@@ -150,6 +156,16 @@ if __name__ == '__main__':
         i += 1
     graph.Draw('ALP')
     raw_input('Press enter to continue')
+
+    limits = pAlarmLimits(200, 300, 200, 300)
+    print limits
+    graph = ROOT.TGraph()
+    i = 0
+    for value in range(0, 501, 10):
+        graph.SetPoint(i, value, limits.getBadness(value, 0))
+        i += 1
+    graph.Draw('ALP')
+
     limits = pAlarmLimits(200, 200, 100, 300)
     print limits
     graph = ROOT.TGraph()
