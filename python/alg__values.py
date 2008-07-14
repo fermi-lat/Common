@@ -107,7 +107,7 @@ class alg__values(pAlarmBaseAlgorithm):
         self.RootTree.SetBranchAddress(self.RootObject.GetName(),\
                                        self.BranchArray)
         self.ErrorArray = numpy.zeros(shape, ROOT2NUMPYDICT[branchType])
-        if branchName.split('_')[0] not in ['Counter', 'DoubleDiffRate']:
+        if self.RootTree.GetBranch(errorBranchName) is not None:
             self.RootTree.SetBranchStatus(errorBranchName, 1)
             self.RootTree.SetBranchAddress(errorBranchName, self.ErrorArray)
         else:
