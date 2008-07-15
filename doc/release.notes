@@ -1,3 +1,8 @@
+*** v3r4p4 ***
+- Update to pGlobal, added the number of channels per ACD cable
+* Relevant jira(s): GDQMQ-1
+
+
 *** v3r4p3 ***
 - Minor improvement: errors not displayed for trending plots with no
 associated errors (used to look as +- 0.000).
