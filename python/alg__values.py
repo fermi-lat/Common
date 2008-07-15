@@ -186,9 +186,9 @@ class alg__values(pAlarmBaseAlgorithm):
             else:
                 logger.info('Skipping entry %d (TrueTimeInterval = %f)...' %\
                                 (i, self.TimeIntervalArray[0]))
-        self.Output.setValue(outputValue, outputError, maxBadness)
-        self.getEntry(outputEntry)
         try:
+            self.Output.setValue(outputValue, outputError, maxBadness)
+            self.getEntry(outputEntry)
             label = self.getDetailedLabel(outputIndex, outputValue, 'value',\
                                               outputError)
             label = '%s, badness = %s' % (label,\
@@ -201,32 +201,4 @@ class alg__values(pAlarmBaseAlgorithm):
             
 
 if __name__ == '__main__':
-    from pAlarmLimits import pAlarmLimits
-    limits = pAlarmLimits(-2, 2, -2.5, 2.5)   
-    import array
-    import numpy
-    import random
-    testFilePath = './test.root'
-    testTreeName = 'testTree'
-    timeBranchName = 'TimeStampFirstEvt'
-    testBranchName = 'testBranch'
-    testFile = ROOT.TFile(testFilePath, 'RECREATE')
-    testTree = ROOT.TTree(testTreeName, testTreeName)
-    timeArray = array.array('d', [0.0])
-    testArray = array.array('d', [0.0])
-    testTree.Branch(timeBranchName, timeArray, '%s/D' % timeBranchName)
-    testTree.Branch(testBranchName, testArray, '%s/D' % testBranchName)
-    for i in range(100):
-        timeArray[0] = i
-        testArray[0] = random.gauss(0, 1)
-        testTree.Fill()
-    testFile.Write()
-    testTree.Draw('testBranch:TimeStampFirstEvt', '', '*')
-    testBranch = testTree.GetBranch(testBranchName)
-    pardict = {}
-    algorithm = alg__values(limits, testBranch, pardict)
-    algorithm.apply()
-    print algorithm.Output
-    testFile.Close()
-    import os
-    os.system('rm -f %s' % testFilePath)
+    print 'Too difficult to implement a test function, run on a file instead.'
