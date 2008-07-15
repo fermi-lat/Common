@@ -1,3 +1,9 @@
+*** v3r5p0 ***
+- Minor bug fix in alg__values and test function removed as it was broken.
+- Exceptions taken into account when setting the output value in
+alg__spikes_and_holes
+
+
 *** v3r4p4 ***
 - Update to pGlobal, added the number of channels per ACD cable
 * Relevant jira(s): GDQMQ-1
