@@ -12,6 +12,7 @@ import time
 from pAlarmOutput import pAlarmOutput
 from pAlarmOutput import STATUS_CLEAN, STATUS_WARNING, STATUS_ERROR
 from copy         import copy, deepcopy
+from pAlarmLimits import ERROR_BADNESS
 
 MET_OFFSET = 978307200
 
@@ -406,10 +407,12 @@ class pAlarmBaseAlgorithm:
         if status == STATUS_CLEAN and flipLogic:
             label = self.getDetailedLabel(index, value, valueLabel, error)
             self.Output.appendDictValue('exception violations', label)
+            badness += ERROR_BADNESS
         elif status == STATUS_ERROR:
             label = self.getDetailedLabel(index, value, valueLabel, error)
             if flipLogic:
                 self.Output.appendDictValue('known_issues', label)
+                badness *= -1.0
             else:
                 self.Output.incrementDictValue('num_error_entries')
                 self.Output.appendDictValue('error_entries', label)
@@ -417,11 +420,10 @@ class pAlarmBaseAlgorithm:
             label = self.getDetailedLabel(index, value, valueLabel, error)
             if flipLogic:
                 self.Output.appendDictValue('known_issues', label)
+                badness *= -1.0
             else:
                 self.Output.incrementDictValue('num_warning_entries')
                 self.Output.appendDictValue('warning_entries', label)
-        if flipLogic:
-            badness *= -1.0
         return badness
 
     ## @brief Convert a flat index to a multi-dimensional array position.
