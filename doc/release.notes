@@ -1,3 +1,11 @@
+*** v3r6p0 ***
+- New feature implemented in the leftmost_edge algorithm. Now the sliding
+window loop does not necessarily start from the first bin. A generic
+x value can be set from the xml configuration file. This improves the speed a
+lot and potentially makes the algorithms more stable.
+* Relevant jira(s): GDQMQ-210
+
+
 *** v3r5p0 ***
 - Minor bug fix in alg__values and test function removed as it was broken.
 - Exceptions taken into account when setting the output value in
