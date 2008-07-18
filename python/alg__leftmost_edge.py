@@ -41,6 +41,8 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 #  @li <tt>threshold</tt>: the threshold (number of sigma) over which an
 #  edge is reported.
 #  <br>
+#  @li <tt>start_x</tt>: the x value of the bin the algorithm starts
+#  looping from.
 #
 #  <b>Output value</b>:
 #
@@ -56,20 +58,31 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 class alg__leftmost_edge(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F', 'TH1D']
-    SUPPORTED_PARAMETERS = ['window_half_width', 'threshold']
+    SUPPORTED_PARAMETERS = ['window_half_width', 'threshold', 'start_x']
     OUTPUT_LABEL          = 'Position of the leftmost rising edge'
 
 
     def run(self):
         self.WindowHalfWidth = int(self.getParameter('window_half_width', 5))
+        self.NumBins = self.RootObject.GetNbinsX()
         threshold = self.getParameter('threshold', 7)
-        numBins = self.RootObject.GetNbinsX()
-        for i in range(1 + self.WindowHalfWidth,\
-                           numBins + 1 - self.WindowHalfWidth):
+        startX = self.getParameter('start_x', None)
+        startBin = self.__getStartBin(startX)
+        for i in range(startBin + self.WindowHalfWidth,\
+                           self.NumBins + 1 - self.WindowHalfWidth):
 	    significance = self.getEdgeSignificance(i)
 	    if significance > threshold:
                 self.refineEdge(i, significance)
                 return
+            
+    def __getStartBin(self, startX):
+        if startX == None:
+            return 1
+        else:
+            for i in range(self.NumBins):
+                if self.RootObject.GetBinCenter(i) > startX:
+                    return i
+        return 1
 
     def getEdgeSignificance(self, bin):
         leftSum = 0
