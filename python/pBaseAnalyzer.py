@@ -69,14 +69,15 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
     def getHistogram(self, group, subgroup):
         return self.HistogramsDict[self.getHistogramName(group, subgroup)]
 
-    def fillHistogram(self, name, channel, value):
+    def fillHistogram(self, name, channel, value, error = 0.0):
         self.HistogramsDict[name].Fill(channel, value)
+        self.HistogramsDict[name].SetBinError(channel, error)
 
     def fillHistograms(self, subgroup, channel):
         self.fillHistogram(self.getHistogramName('Mean', subgroup),\
-                           channel, self.Mean)
+                           channel, self.Mean, self.MeanError)
         self.fillHistogram(self.getHistogramName('RMS', subgroup),\
-                           channel, self.RMS)
+                           channel, self.RMS, self.RMSError)
         self.fillHistogram(self.getHistogramName('ChiSquare', subgroup),\
                            channel, self.ChiSquare)
         self.fillHistogram(self.getHistogramName('DOF', subgroup),\
@@ -93,7 +94,9 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
             sys.exit('Could not find %s. Abort.' % channelName)
         if self.RootObject.GetEntries() == 0:
             self.Mean = -1
+            self.MeanError = 0
             self.RMS = -1
+            self.RMSError = 0
             self.ChiSquare = -1
             self.DOF = -1
             self.ReducedChiSquare = -1
@@ -133,6 +136,8 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
                       (self.ParamsDict['min'], self.ParamsDict['max'])
             fitParameters = self.getFitParameters(self.FitFunction, 'QN')
             (self.Mean, self.RMS) = fitParameters[1:3]
+            self.MeanError = self.FitFunction.GetParError(1)
+            self.RMSError = self.FitFunction.GetParError(2)
         self.RMS *= self.getRmsCorrectionFactor()
         self.ChiSquare = self.FitFunction.GetChisquare()
         self.DOF = self.FitFunction.GetNDF()
@@ -148,8 +153,8 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
             self.FitFunction.Draw('same')
             ROOT.gPad.Update()
             print 'Fit parameters    : %s' % ['%.4e'%p for p in fitParameters]
-            print 'Mean              : %s' % self.Mean
-            print 'RMS               : %s' % self.RMS
+            print 'Mean              : %s +- %s' % (self.Mean, self.MeanError)
+            print 'RMS               : %s +- %s' % (self.RMS, self.RMSError)
             print 'Reduced Chi Square: %s/%s = %s' %\
                   (self.ChiSquare, self.DOF, self.ReducedChiSquare)
             print '*************************************************'
