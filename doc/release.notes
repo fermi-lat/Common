@@ -1,6 +1,14 @@
 *** v3r7p0 ***
 - Possibility to select asymmetric fit ranges for the Cal Ped/Gain and the
 Acd Ped analyzers implemented.
+- Add the correct error bars to the output histograms of the Cal Ped/Gain and
+the Acd Ped analyzers.
+- Added the distribution of the mean, rms and reduced chisquare to the
+output root file from the Cal Ped/Gain and the Acd Ped analyzers.
+- Minor improvements to the plots appearance for the Cal Ped/Gain and the
+Acd Ped analyzers.
+- Added a switch to the Cal gain analyzer to get rid of the highest bin in
+the left/right plots (unphysical spikes).
 * Relevant jira(s): GDQMQ-215
 
 
