@@ -19,7 +19,6 @@ HYPER_GAUSSIAN_FORMULA = '%s*[0]*exp(-(abs( (x-[1])/[2] )**[3])/2)' %\
 HYPER_GAUSSIAN = ROOT.TF1('hyper_gaussian', HYPER_GAUSSIAN_FORMULA)
 
 
-
 class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
 
     def __init__(self, inputFilePath, outputFilePath, debug):
@@ -32,6 +31,7 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         self.HistogramsDict = {}
         if self.__class__.__name__ != 'pBaseAnalyzer':
             self.createHistograms()
+        self.ExcludeMaximum = False
 
     def getAnalysisType(self):
         return self.__class__.__name__.replace('Analyzer', '')[1:]
@@ -116,6 +116,10 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
             return
         if self.RebinningFactor > 1:
             self.RootObject.Rebin(self.RebinningFactor)
+        if self.ExcludeMaximum:
+            maxBin = self.RootObject.GetMaximumBin()
+            maxValue = self.RootObject.GetBinContent(maxBin)
+            self.RootObject.SetBinError(maxBin, maxValue)
         self.Mean = self.RootObject.GetMean()
         self.RMS = self.RootObject.GetRMS()
         self.RootObject.GetXaxis().SetRangeUser(self.Mean - 10*self.RMS,

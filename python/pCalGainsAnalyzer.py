@@ -48,6 +48,10 @@ class pCalGainsAnalyzer(pBaseAnalyzer):
         self.FitRangeRight = self.FIT_RANGE_RIGHT_DICT[subgroup]
         self.FitRangeLeft = self.FIT_RANGE_LEFT_DICT[subgroup]
         self.fixFitExponent(self.FIT_EXPONENT_DICT[subgroup])
+        if subgroup == 'RPM':
+            self.ExcludeMaximum = True
+        else:
+            self.ExcludeMaximum = False
 
     def getChannelNumber(self, tower, layer, column):
         return tower*8*12 + layer*12 + column 
