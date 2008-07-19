@@ -11,6 +11,12 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
     FIT_RANGE_LEFT_DICT  = {'LEX8': 1.5, 'LEX1': 3.0, 'HEX8': 1.5, 'HEX1': 3.0}
     FIT_RANGE_RIGHT_DICT = {'LEX8': 3.5, 'LEX1': 3.0, 'HEX8': 3.5, 'HEX1': 3.0}
     BASE_NAME = 'CalXAdcPed_TH1_TowerCalLayerCalColumnFR'
+    HISTOGRAM_SETTINGS = {
+        'MeanDist'            : (100, 0, 1000, 'Pedestal mean'),
+        'RMSDist'             : (100, 0, 10  , 'Pedestal RMS'),
+        'ReducedChiSquareDist': (100, 0, 80  , 'Reduced chi square'),
+        'Default'             : (3072, 0, 3072 , 'Channel number')
+        }
 
     def __init__(self, inputFilePath, outputFilePath, debug):
         pBaseAnalyzer.__init__(self, inputFilePath, outputFilePath, debug)
@@ -21,11 +27,16 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
     def createHistograms(self):
         for group in HISTOGRAM_GROUPS:
             for subgroup in self.HISTOGRAM_SUB_GROUPS:
-                name = self.getHistogramName(group, subgroup)
-                xlabel = 'channel number'
+                if group in self.HISTOGRAM_SETTINGS.keys():
+                    key = group
+                else:
+                    key = 'Default'
+                (nBins, xmin, xmax, xlabel) = self.HISTOGRAM_SETTINGS[key]
                 ylabel = '%s (%s)' % (group, subgroup)
-                self.HistogramsDict[name] =\
-                     self.getNewHistogram(name, 3072, xlabel, ylabel)
+                name = self.getHistogramName(group, subgroup)
+                self.HistogramsDict[name] = self.getNewHistogram(name, nBins,
+                                                                 xmin, xmax,
+                                                                 xlabel, ylabel)
 
     def getHistogramName(self, group, subgroup):
         return 'CalXAdcPed%s_%s_TH1' % (group, subgroup)

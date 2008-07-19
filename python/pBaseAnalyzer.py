@@ -12,7 +12,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
 HISTOGRAM_GROUPS = ['Mean', 'RMS', 'ChiSquare', 'DOF', 'ReducedChiSquare',
-                    'FitProb']
+                    'FitProb', 'MeanDist', 'RMSDist', 'ReducedChiSquareDist']
 GAUSSIAN = ROOT.TF1('gaussian', 'gaus')
 HYPER_GAUSSIAN_FORMULA = '%s*[0]*exp(-(abs( (x-[1])/[2] )**[3])/2)' %\
                          (1.0/math.sqrt(2*math.pi))
@@ -55,8 +55,9 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         else:
             return 1.0
 
-    def getNewHistogram(self, name, numBins, xlabel = None, ylabel = None):
-        histogram = ROOT.TH1F(name, name, numBins, -0.5, numBins - 0.5)
+    def getNewHistogram(self, name, numBins, xmin, xmax,\
+                            xlabel = None, ylabel = None):
+        histogram = ROOT.TH1F(name, name, numBins, xmin - 0.5, xmax - 0.5)
         if xlabel is not None:
             histogram.GetXaxis().SetTitle(xlabel)
         if ylabel is not None:
@@ -69,15 +70,22 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
     def getHistogram(self, group, subgroup):
         return self.HistogramsDict[self.getHistogramName(group, subgroup)]
 
-    def fillHistogram(self, name, channel, value, error = 0.0):
-        self.HistogramsDict[name].Fill(channel, value)
-        self.HistogramsDict[name].SetBinError(channel, error)
+    def fillHistogram(self, name, channel, value = None, error = 0.0):
+        if value is not None:
+            self.HistogramsDict[name].Fill(channel, value)
+            self.HistogramsDict[name].SetBinError(channel, error)
+        else:
+            self.HistogramsDict[name].Fill(channel)
 
     def fillHistograms(self, subgroup, channel):
         self.fillHistogram(self.getHistogramName('Mean', subgroup),\
                            channel, self.Mean, self.MeanError)
+        self.fillHistogram(self.getHistogramName('MeanDist', subgroup),\
+                           self.Mean)
         self.fillHistogram(self.getHistogramName('RMS', subgroup),\
                            channel, self.RMS, self.RMSError)
+        self.fillHistogram(self.getHistogramName('RMSDist', subgroup),\
+                           self.RMS)
         self.fillHistogram(self.getHistogramName('ChiSquare', subgroup),\
                            channel, self.ChiSquare)
         self.fillHistogram(self.getHistogramName('DOF', subgroup),\
@@ -85,6 +93,9 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         self.fillHistogram(self.getHistogramName('ReducedChiSquare',\
                                                  subgroup),\
                            channel, self.ReducedChiSquare)
+        self.fillHistogram(self.getHistogramName('ReducedChiSquareDist',\
+                                                     subgroup),\
+                               self.ReducedChiSquare)
         self.fillHistogram(self.getHistogramName('FitProb', subgroup),\
                            channel, self.FitProb)
 
@@ -173,10 +184,15 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         logger.info('Done.')
 
     def drawHistograms(self):
+        ROOT.gStyle.SetOptStat(111111)
         self.CanvasesDict = {}
         for group in HISTOGRAM_GROUPS:
-            canvas = ROOT.TCanvas(group, group)
-            canvas.Divide(2, 2)
+            if len(self.HISTOGRAM_SUB_GROUPS) == 2:
+                canvas = ROOT.TCanvas(group, group, 1000, 350)
+                canvas.Divide(2, 1)
+            else:
+                canvas = ROOT.TCanvas(group, group, 1000, 700)
+                canvas.Divide(2, 2)
             self.CanvasesDict[group] = canvas
             i = 1
             for subgroup in self.HISTOGRAM_SUB_GROUPS:

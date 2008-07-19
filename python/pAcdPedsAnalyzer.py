@@ -6,6 +6,12 @@ from pBaseAnalyzer import *
 class pAcdPedsAnalyzer(pBaseAnalyzer):
 
     HISTOGRAM_SUB_GROUPS = ['PMTA', 'PMTB']
+    HISTOGRAM_SETTINGS = {
+        'MeanDist'            : (100, 0, 1000, 'Pedestal mean'),
+        'RMSDist'             : (100, 0, 10  , 'Pedestal RMS'),
+        'ReducedChiSquareDist': (100, 0, 80  , 'Reduced chi square'),
+        'Default'             : (128, 0, 128 , 'Tile number')
+        }
 
     def __init__(self, inputFilePath, outputFilePath, debug):
         pBaseAnalyzer.__init__(self, inputFilePath, outputFilePath, debug)
@@ -18,11 +24,16 @@ class pAcdPedsAnalyzer(pBaseAnalyzer):
     def createHistograms(self):
         for group in HISTOGRAM_GROUPS:
             for subgroup in self.HISTOGRAM_SUB_GROUPS:
-                name = self.getHistogramName(group, subgroup)
-                xlabel = 'tile number'
+                if group in self.HISTOGRAM_SETTINGS.keys():
+                    key = group
+                else:
+                    key = 'Default'
+                (nBins, xmin, xmax, xlabel) = self.HISTOGRAM_SETTINGS[key]
                 ylabel = '%s (%s)' % (group, subgroup)
-                self.HistogramsDict[name] =\
-                     self.getNewHistogram(name, 128, xlabel, ylabel)
+                name = self.getHistogramName(group, subgroup)
+                self.HistogramsDict[name] = self.getNewHistogram(name, nBins,
+                                                                 xmin, xmax,
+                                                                 xlabel, ylabel)
 
     def getHistogramName(self, group, subgroup):
         return 'AcdPed%s_%s_TH1' % (group, subgroup)

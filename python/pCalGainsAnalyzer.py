@@ -11,6 +11,12 @@ class pCalGainsAnalyzer(pBaseAnalyzer):
     FIT_RANGE_LEFT_DICT  = {'RPM': 3.0, 'RPp': 2.0, 'RMm': 2.0}
     FIT_RANGE_RIGHT_DICT = {'RPM': 3.0, 'RPp': 1.0, 'RMm': 1.0}
     FIT_EXPONENT_DICT    = {'RPM': 8.0, 'RPp': 2.0, 'RMm': 2.0}
+    HISTOGRAM_SETTINGS = {
+        'MeanDist'            : (100, 0, 10, 'Ratio mean'),
+        'RMSDist'             : (100, 0, 10  , 'Ratio RMS'),
+        'ReducedChiSquareDist': (100, 0, 15  , 'Reduced chi square'),
+        'Default'             : (1536, 0, 1536, 'Channel number')
+        }
 
     def __init__(self, inputFilePath, outputFilePath, debug):
         pBaseAnalyzer.__init__(self, inputFilePath, outputFilePath, debug)
@@ -20,11 +26,16 @@ class pCalGainsAnalyzer(pBaseAnalyzer):
     def createHistograms(self):
         for group in HISTOGRAM_GROUPS:
             for subgroup in self.HISTOGRAM_SUB_GROUPS:
-                name = self.getHistogramName(group, subgroup)
-                xlabel = 'channel number'
+                if group in self.HISTOGRAM_SETTINGS.keys():
+                    key = group
+                else:
+                    key = 'Default'
+                (nBins, xmin, xmax, xlabel) = self.HISTOGRAM_SETTINGS[key]
                 ylabel = '%s (%s)' % (group, subgroup)
-                self.HistogramsDict[name] =\
-                     self.getNewHistogram(name, 1536, xlabel, ylabel)
+                name = self.getHistogramName(group, subgroup)
+                self.HistogramsDict[name] = self.getNewHistogram(name, nBins,
+                                                                 xmin, xmax,
+                                                                 xlabel, ylabel)
 
     def getBaseName(self, subgroup):
         return '%s_TH1_TowerCalLayerCalColumn' % subgroup
