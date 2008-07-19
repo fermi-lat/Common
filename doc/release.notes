@@ -1,3 +1,9 @@
+*** v3r7p0 ***
+- Possibility to select asymmetric fit ranges for the Cal Ped/Gain and the
+Acd Ped analyzers implemented.
+* Relevant jira(s): GDQMQ-215
+
+
 *** v3r6p0 ***
 - New feature implemented in the leftmost_edge algorithm. Now the sliding
 window loop does not necessarily start from the first bin. A generic
