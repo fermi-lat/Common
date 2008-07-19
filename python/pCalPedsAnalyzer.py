@@ -8,13 +8,14 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
 
     HISTOGRAM_SUB_GROUPS = ['LEX8', 'LEX1', 'HEX8', 'HEX1']
     CAL_RANGE_DICT = {0: 'LEX8', 1: 'LEX1', 2: 'HEX8', 3: 'HEX1'}
+    FIT_RANGE_LEFT_DICT  = {'LEX8': 1.5, 'LEX1': 3.0, 'HEX8': 1.5, 'HEX1': 3.0}
+    FIT_RANGE_RIGHT_DICT = {'LEX8': 3.5, 'LEX1': 3.0, 'HEX8': 3.5, 'HEX1': 3.0}
     BASE_NAME = 'CalXAdcPed_TH1_TowerCalLayerCalColumnFR'
 
     def __init__(self, inputFilePath, outputFilePath, debug):
         pBaseAnalyzer.__init__(self, inputFilePath, outputFilePath, debug)
         self.FitFunction = GAUSSIAN
         self.RebinningFactor = 1
-        self.FitRangeWidth = 5.0
         self.NumFitIterations = 1
 
     def createHistograms(self):
@@ -46,6 +47,9 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
                                           face, readoutRange)
 
     def fitChannel(self, baseName, tower, layer, column, face, readoutRange):
+        key = self.CAL_RANGE_DICT[readoutRange]
+        self.FitRangeLeft = self.FIT_RANGE_LEFT_DICT[key]
+        self.FitRangeRight = self.FIT_RANGE_RIGHT_DICT[key]
         channelName = self.getChannelName(baseName, tower, layer, column,\
                                           face, readoutRange)
         if self.Debug:

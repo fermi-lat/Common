@@ -11,7 +11,8 @@ class pAcdPedsAnalyzer(pBaseAnalyzer):
         pBaseAnalyzer.__init__(self, inputFilePath, outputFilePath, debug)
         self.FitFunction = GAUSSIAN
         self.RebinningFactor = 1
-        self.FitRangeWidth = 3.0
+        self.FitRangeLeft = 1.5
+        self.FitRangeRight = 2.0
         self.NumFitIterations = 2
 
     def createHistograms(self):

@@ -126,8 +126,8 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
             print 'Inititial par values: [%.4e, %.4e, %.4e]' %\
                   (normalization, self.Mean, self.RMS)
         for i in range(self.NumFitIterations):
-            self.ParamsDict['min'] = self.Mean - self.FitRangeWidth*self.RMS
-            self.ParamsDict['max'] = self.Mean + self.FitRangeWidth*self.RMS
+            self.ParamsDict['min'] = self.Mean - self.FitRangeLeft*self.RMS
+            self.ParamsDict['max'] = self.Mean + self.FitRangeRight*self.RMS
             if self.Debug:
                 print 'Fitting in [%.4f, %.4f]' %\
                       (self.ParamsDict['min'], self.ParamsDict['max'])
