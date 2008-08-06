@@ -117,4 +117,4 @@ if __name__ == '__main__':
             inspector.inspect(application, productType)
     print 'Alarms found:'
     print inspector.AlgorithmDict
-    inspector.writeOutputFile('test.txt')
+    inspector.writeOutputFile('alarm_table.txt')
