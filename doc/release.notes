@@ -1,3 +1,7 @@
+*** v3r8p0 ***
+- Added a utility script to map the alarms on the plots.
+
+
 *** v3r7p0 ***
 - Possibility to select asymmetric fit ranges for the Cal Ped/Gain and the
 Acd Ped analyzers implemented.
