@@ -3,11 +3,14 @@
 import os
 import sys
 
+sys.path.append('../../FastMon/python/')
+
 import pSafeLogger
 logger = pSafeLogger.getLogger('pXmlAlarmInspector')
 
 from pXmlBaseElement import pXmlBaseElement
 from xml.dom         import minidom
+from pXmlOutputList  import SUPPORTED_PLOT_TYPES
 
 
 BASE_ALARMS_XML_DIR  = '../../AlarmsCfg/xml/'
@@ -31,22 +34,31 @@ class pAlarmInspector:
         plotsXmlDoc = self.getXmlDoc(plotsFilePath)
         alarmsXmlDoc = self.getXmlDoc(alarmsFilePath)
         plotsDict = {}
-        for list in plotsXmlDoc.getElementsByTagName('outputList'):
-            for object in list.getElementsByTagName('object'):
-                element  = pXmlBaseElement(object)
-                objectName = element.getTagValue('name')
-                plotsDict[objectName] = []
+        if (application, productType) == ('fastmon', 'eor'):
+            for list in plotsXmlDoc.getElementsByTagName('outputList'):
+                for plotType in SUPPORTED_PLOT_TYPES:
+                    for object in list.getElementsByTagName(plotType):
+                        element  = pXmlBaseElement(object)
+                        objectName = element.getAttribute('name')
+                        plotsDict[objectName] = []
+        else:
+            for list in plotsXmlDoc.getElementsByTagName('outputList'):
+                for object in list.getElementsByTagName('object'):
+                    element  = pXmlBaseElement(object)
+                    objectName = element.getTagValue('name')
+                    plotsDict[objectName] = []
         for list in alarmsXmlDoc.getElementsByTagName('alarmList'):
             for set in list.getElementsByTagName('alarmSet'):
                 element  = pXmlBaseElement(set)
                 alarmName = element.getAttribute('name')
                 for objectName in plotsDict.keys():
                     if self.match(objectName, alarmName):
+                        for alarm in set.getElementsByTagName('alarm'):
+                            algorithm =\
+                              pXmlBaseElement(alarm).getAttribute('function')
+                            self.AlgorithmDict[algorithm] += 1
+                            plotsDict[objectName].append(algorithm)
                         break
-                for alarm in set.getElementsByTagName('alarm'):
-                    algorithm = pXmlBaseElement(alarm).getAttribute('function')
-                    self.AlgorithmDict[algorithm] += 1
-                    plotsDict[objectName].append(algorithm)
         self.PlotsDict['%s %s' % (application, productType)] = plotsDict
 
     def match(self, objectName, alarmName):
@@ -85,7 +97,7 @@ class pAlarmInspector:
             if numInstances > 0:
                 algList.append(algorithm)
         for (key, plotsDict) in self.PlotsDict.items():
-            outputFile.writelines('* %s\n\n' % key)
+            outputFile.writelines('\nh3. %s\n\n' % key)
             outputFile.writelines('||Plot name|')
             for algorithm in algList:
                 outputFile.writelines('|%s|' % algorithm)
@@ -94,6 +106,8 @@ class pAlarmInspector:
             keys.sort()
             for plotName in keys:
                 algorithms = plotsDict[plotName]
+                plotName = plotName.replace('[', '\[')
+                plotName = plotName.replace(']', '\]')
                 outputFile.writelines('|%s|' % plotName)
                 tempDict = {}
                 for algorithm in algList:
@@ -112,7 +126,7 @@ class pAlarmInspector:
 
 if __name__ == '__main__':
     inspector = pAlarmInspector()
-    for application in ['digi', 'recon', 'merit']:
+    for application in ['fastmon', 'digi', 'recon', 'merit']:
         for productType in ['eor', 'trend']:
             inspector.inspect(application, productType)
     print 'Alarms found:'
