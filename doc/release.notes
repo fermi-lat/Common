@@ -1,3 +1,10 @@
+*** v3r9p1 ***
+- Added an option to skip a defined set of histogram bins in alg__y_values.py.
+Necessary to put alarms on the ACD histograms with the GEM tile id on the
+x axis, since we do have bins which do not correspond to physical tiles, there.
+* Relevant jira(s): GDQMQ-238
+
+
 *** v3r9p0 ***
 - One more handle implemented for the "values" and the "y_values" algorithms:
 multiplicative factor on the error bar of each trending point/bin value that
