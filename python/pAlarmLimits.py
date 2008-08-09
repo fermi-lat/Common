@@ -80,21 +80,19 @@ class pAlarmLimits:
     #  - the best value (the one that best fits into the limits, once the
     #  associated error is taken into account is calculated). If the error bar
     #  does *not* cross the center, than the best value is the actual value
-    #  plus or minus the error (possibly multiplicated by a constant), depending
-    #  on whether the value itself lieas above or below the center. If the
-    #  error bar *does* cross the center, then the best value is assumed to
-    #  be the center itself.
+    #  plus or minus the error (possibly multiplicated by a constant),
+    #  depending on whether the value itself lieas above or below the center.
+    #  If the error bar *does* cross the center, then the best value is assumed
+    #  to be the center itself.
     #  - the badness (i.e. the function defined above) is calculated on
     #  the best value.
 
-    def getBadness(self, value, error = None, numSigma = 1.0):
+    def getBadness(self, value, error = None):
         value = float(value)
-        if error is not None:
-            error = float(error)
         if error is None:
             error = 0.0
         else:
-            error = error*numSigma
+            error = float(error)
         center = (self.WarningMin + self.WarningMax)/2.0
         if (value - error) >= center:
             bestValue = value - error
