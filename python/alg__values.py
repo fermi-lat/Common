@@ -47,7 +47,6 @@ MIN_TRUE_TIME_INTERVAL = 10.0
 #  @li <tt>only</tt>: the list of indexes the alarm has to run on.
 #  <br>
 #  @li <tt>num_sigma</tt>: multiplicative factor for the error bars.
-#  <br>
 #
 #  <b>Output value</b>:
 #
