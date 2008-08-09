@@ -55,8 +55,8 @@ class alg__y_values(pAlarmBaseAlgorithm):
             badness = self.checkStatus(i, value, 'y-value', error)
             if badness > maxBadness:
                 maxBadness = badness
-                outputValue = value
-        self.Output.setValue(outputValue, None, maxBadness)
+                (outputBin, outputValue, outputError) = (i, value, error)
+        self.Output.setValue(outputValue, outputError, maxBadness)
         
 
 
