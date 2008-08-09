@@ -40,6 +40,15 @@ MIN_TRUE_TIME_INTERVAL = 10.0
 #  The algorithm loops over the entries of the branch and makes sure that
 #  all the values are within the limits.
 #
+#  <b>Valid parameters</b>:
+#
+#  @li <tt>exclude</tt>: a list of indexes of the branch array to be excluded.
+#  <br>
+#  @li <tt>only</tt>: the list of indexes the alarm has to run on.
+#  <br>
+#  @li <tt>num_sigma</tt>: multiplicative factor for the error bars.
+#  <br>
+#
 #  <b>Output value</b>:
 #
 #  The value of the entry which is "more" out of the limits.
@@ -59,7 +68,7 @@ MIN_TRUE_TIME_INTERVAL = 10.0
 class alg__values(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TBranch']
-    SUPPORTED_PARAMETERS = ['exclude', 'only']
+    SUPPORTED_PARAMETERS = ['exclude', 'only', 'num_sigma']
     OUTPUT_LABEL          = 'The worst entry of the branch'
 
     ## @brief Create all the necessary arrays for the loop over the
@@ -162,6 +171,7 @@ class alg__values(pAlarmBaseAlgorithm):
                 self.tuple2Index(detail, self.BranchArray.shape)
 
     def run(self):
+        self.NumSigma = self.getParameter('num_sigma', 1.0)
         maxBadness = MINUS_INFINITY
         self.__createArrays()
         self.__setupIndexList()
