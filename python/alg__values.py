@@ -185,7 +185,7 @@ class alg__values(pAlarmBaseAlgorithm):
                 for j in self.IndexList:
                     value = valueFlatArray[j]
                     if self.__HasErrors:
-                        error = errorFlatArray[j]
+                        error = errorFlatArray[j]*self.NumSigma
                     else:
                         error = None
                     badness = self.checkStatus(j, value, 'value', error)

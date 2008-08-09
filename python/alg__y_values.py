@@ -15,6 +15,7 @@ from pGlobals            import MINUS_INFINITY
 #
 #  @li <tt>normalize</tt>: if this parameter is set, then all the limits are
 #  scaled to (read: multiplied by) the number of entries in the histogram.
+#  @li <tt>num_sigma</tt>: multiplicative factor for the error bars.
 #
 #  <b>Output value</b>:
 #
@@ -35,10 +36,11 @@ from pGlobals            import MINUS_INFINITY
 class alg__y_values(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F', 'TProfile']
-    SUPPORTED_PARAMETERS = ['normalize']
+    SUPPORTED_PARAMETERS = ['normalize', 'num_sigma']
     OUTPUT_LABEL         = 'The worst y-value'
 
     def run(self):
+        self.NumSigma = self.getParameter('num_sigma', 1.0)
         if self.getParameter('normalize', False):
             numEntries = self.RootObject.GetEntries()
             self.Limits.ErrorMax   *= numEntries
@@ -49,7 +51,8 @@ class alg__y_values(pAlarmBaseAlgorithm):
         for i in range(self.RootObject.GetXaxis().GetFirst(),\
                          self.RootObject.GetXaxis().GetLast() + 1):
             value = self.RootObject.GetBinContent(i)
-            badness = self.checkStatus(i, value, 'y-value')
+            error = self.RootObject.GetBinError(i)*self.NumSigma
+            badness = self.checkStatus(i, value, 'y-value', error)
             if badness > maxBadness:
                 maxBadness = badness
                 outputValue = value
