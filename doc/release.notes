@@ -1,3 +1,12 @@
+*** v3r9p0 ***
+- One more handle implemented for the "values" and the "y_values" algorithms:
+multiplicative factor on the error bar of each trending point/bin value that
+can be set from the xml file (corresponds to put an alarm at the level of
+n sigma). Defaults to one, which was the previous behaviour. This also
+allows to put a zero factor which is handy for the digiLong histograms, in
+which the errors are wrong, at the moment.
+
+
 *** v3r8p1 ***
 - Minimum TrueTimeInterval for the alg_values increased from 5 to 10 s.
 * Relevant jira(s): GDQMQ-226
