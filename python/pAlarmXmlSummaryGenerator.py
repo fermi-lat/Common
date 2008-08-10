@@ -32,7 +32,14 @@ class pAlarmXmlSummaryGenerator(pXmlWriter):
         self.openTag('alarmStatistics', self.AlarmHandler.AlarmStats,\
                      close = True)
         for alarm in self.AlarmHandler.XmlParser.getEnabledAlarms():
-            self.openTag('plot', {'name': alarm.getPlotName()})
+            tagDict = {'name': alarm.getPlotName()}
+            if alarm.FunctionName == 'values':
+                try:
+                    linkArguments = alarm.Algorithm.LinkArguments
+                except:
+                    linkArguments = ''
+                tagDict['link_arguments'] = linkArguments
+            self.openTag('plot', tagDict)
             self.indent()
             self.openTag('alarm', {'function': alarm.FunctionName})
             self.indent()
@@ -48,12 +55,6 @@ class pAlarmXmlSummaryGenerator(pXmlWriter):
             self.writeTag('output', {}, alarm.getFormattedOutputValue())
             self.writeTag('label', {}, alarm.getOutputLabel())
             self.writeTag('status', {}, alarm.getOutputStatus())
-            if alarm.FunctionName == 'values':
-                try:
-                    linkArguments = alarm.Algorithm.LinkArguments
-                except:
-                    linkArguments = ''
-                self.writeTag('link_arguments', {}, linkArguments)
             if alarm.Algorithm.hasDetails():
                 for (key, value) in alarm.getOutputDetails().items():
                     self.writeTag('detail', {'name': key, 'value': value })
