@@ -48,6 +48,12 @@ class pAlarmXmlSummaryGenerator(pXmlWriter):
             self.writeTag('output', {}, alarm.getFormattedOutputValue())
             self.writeTag('label', {}, alarm.getOutputLabel())
             self.writeTag('status', {}, alarm.getOutputStatus())
+            if alarm.FunctionName == 'values':
+                try:
+                    linkArguments = alarm.Algorithm.LinkArguments
+                except:
+                    linkArguments = ''
+                self.writeTag('link_arguments', {}, linkArguments)
             if alarm.Algorithm.hasDetails():
                 for (key, value) in alarm.getOutputDetails().items():
                     self.writeTag('detail', {'name': key, 'value': value })
