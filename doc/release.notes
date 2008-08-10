@@ -1,3 +1,9 @@
+*** v3r10p0 ***
+- Implemented a mechanism to link to each alarm on a multidimentional trending
+quantity the actual plot that triggered the alarm
+* Relevant jira(s): GDQMQ-240
+
+
 *** v3r9p1 ***
 - Added an option to skip a defined set of histogram bins in alg__y_values.py.
 Necessary to put alarms on the ACD histograms with the GEM tile id on the
