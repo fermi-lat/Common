@@ -16,22 +16,38 @@ from pAlarmBaseAlgorithm import MET_OFFSET
 from pGlobals            import MINUS_INFINITY
 
 
-VAR_LABELS_DICT = {'Tower': ['tower'],
-                   'TowerPlane': ['tower', 'plane'],
-                   'TowerPlaneGTFE': ['tower', 'plane', 'gtfe'],
-                   'TowerCalLayer': ['tower', 'layer'],
-                   'TowerCalLayerCalColumn': ['tower', 'layer', 'column'],
-                   'TowerCalLayerCalColumnR': ['tower', 'layer', 'column',
-                                               'face'],
-                   'TowerCalLayerCalColumnFR': ['tower', 'layer', 'column',
-                                                'face', 'range'],
-                   'GARC': ['garc'],
-                   'AcdTile': ['tile'],
-                   'XYZ': ['xyz'],
-                   'ReconNumTracks': ['num. tracks'],
-                   'GammaFilterBit': ['filter bit'],
-                   'TriggerEngine': ['trg. engine']
-                   }
+VAR_LABELS_DICT = {
+    'Tower': ['tower'],
+    'TowerPlane': ['tower', 'plane'],
+    'TowerPlaneGTFE': ['tower', 'plane', 'gtfe'],
+    'TowerCalLayer': ['tower', 'layer'],
+    'TowerCalLayerCalColumn': ['tower', 'layer', 'column'],
+    'TowerCalLayerCalColumnR': ['tower', 'layer', 'column', 'face'],
+    'TowerCalLayerCalColumnFR': ['tower', 'layer', 'column', 'face', 'range'],
+    'GARC': ['garc'],
+    'AcdTile': ['tile'],
+    'XYZ': ['xyz'],
+    'ReconNumTracks': ['num. tracks'],
+    'GammaFilterBit': ['filter bit'],
+    'TriggerEngine': ['trg. engine']
+    }
+
+LINK_LABELS_DICT = {
+    'Tower': ['tower'],
+    'TowerPlane': ['tower', 'plane'],
+    'TowerPlaneGTFE': ['tower', 'plane', 'gtfe'],
+    'TowerCalLayer': ['tower', 'callayer'],
+    'TowerCalLayerCalColumn': ['tower', 'callayer', 'calcolumn'],
+    'TowerCalLayerCalColumnR': ['tower', 'callayer', 'calcolumn', 'calxface'],
+    'TowerCalLayerCalColumnFR': ['tower', 'callayer', 'calcolumn', 'calxface',\
+                                 'range'],
+    'GARC': ['garc'],
+    'AcdTile': ['acdtile'],
+    'XYZ': ['xyz'],
+    'ReconNumTracks': ['reconnumtracks'],
+    'GammaFilterBit': ['gammafilterbit'],
+    'TriggerEngine': ['triggerengine']
+    }
 
 MIN_TRUE_TIME_INTERVAL = 10.0
 
@@ -105,9 +121,9 @@ class alg__values(pAlarmBaseAlgorithm):
             shape = eval(shape)
             if type(shape) == types.IntType:
                 shape = eval('(%d,)' % shape)
-            variableType = branchName.split('_')[-1].split('[')[0]
+            self.VariableType = branchName.split('_')[-1].split('[')[0]
             try:
-                self.IndexLabels = VAR_LABELS_DICT[variableType]
+                self.IndexLabels = VAR_LABELS_DICT[self.VariableType]
             except KeyError:
                 self.IndexLabels =\
                     ['index %d' % i for (i, dim) in enumerate(shape)]
@@ -170,6 +186,7 @@ class alg__values(pAlarmBaseAlgorithm):
                 self.tuple2Index(detail, self.BranchArray.shape)
 
     def run(self):
+        self.LinkArguments = ''
         self.NumSigma = self.getParameter('num_sigma', 1.0)
         maxBadness = MINUS_INFINITY
         self.__createArrays()
@@ -203,6 +220,12 @@ class alg__values(pAlarmBaseAlgorithm):
             label = '%s, badness = %s' % (label,\
                                               pUtils.formatNumber(maxBadness)) 
             self.Output.setDictValue('output_point', label)
+            if self.BranchArray.shape != (1, ):
+                values = self.index2Tuple(outputIndex, self.BranchArray.shape)
+                labels = LINK_LABELS_DICT[self.VariableType]
+                for (i, val) in enumerate(values):
+                    self.LinkArguments += '%s=%s&' % (labels[i], val)
+                self.LinkArguments = self.LinkArguments.strip('&')
         except:
             pass
         self.RootTree.SetBranchStatus('*', 1)
