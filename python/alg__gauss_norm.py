@@ -23,8 +23,10 @@ class alg__gauss_norm(pAlarmBaseAlgorithm):
     OUTPUT_LABEL         = 'Normalization of the gaussian fit'
 
     def run(self):
-        ([normValue], [normError]) = self.getFitOutput('gaus', [0])
+        fitFunction = ROOT.TF1('temp_fit_function', 'gaus')
+        ([normValue], [normError]) = self.getFitOutput(fitFunction, [0])
         self.Output.setValue(normValue, normError)
+        fitFunction.Delete()
 
 
 

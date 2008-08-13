@@ -24,8 +24,10 @@ class alg__gauss_mean(pAlarmBaseAlgorithm):
     OUTPUT_LABEL         = 'Mean of the gaussian fit'
 
     def run(self):
-        ([meanValue], [meanError]) = self.getFitOutput('gaus', [1])
+        fitFunction = ROOT.TF1('temp_fit_function', 'gaus')
+        ([meanValue], [meanError]) = self.getFitOutput(fitFunction, [1])
         self.Output.setValue(meanValue, meanError)
+        fitFunction.Delete()
 
 
 if __name__ == '__main__':

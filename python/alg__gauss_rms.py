@@ -24,9 +24,11 @@ class alg__gauss_rms(pAlarmBaseAlgorithm):
     OUTPUT_LABEL         = 'RMS of the gaussian fit'
 
     def run(self):
-        ([rmsValue], [rmsError]) = self.getFitOutput('gaus', [2])
+        fitFunction = ROOT.TF1('temp_fit_function', 'gaus')
+        ([rmsValue], [rmsError]) = self.getFitOutput(fitFunction, [2])
         self.Output.setValue(rmsValue, rmsError)
-
+        fitFunction.Delete()
+        
 
 
 if __name__ == '__main__':
