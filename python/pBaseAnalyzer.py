@@ -149,10 +149,8 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
             if self.Debug:
                 print 'Fitting in [%.4f, %.4f]' %\
                       (self.ParamsDict['min'], self.ParamsDict['max'])
-            fitParameters = self.getFitParameters(self.FitFunction, 'QN')
-            (self.Mean, self.RMS) = fitParameters[1:3]
-            self.MeanError = self.FitFunction.GetParError(1)
-            self.RMSError = self.FitFunction.GetParError(2)
+            ([self.Mean, self.RMS], [self.MeanError, self.RMSError]) =\
+                         self.getFitOutput(self.FitFunction, [1, 2])
         self.RMS *= self.getRmsCorrectionFactor()
         self.ChiSquare = self.FitFunction.GetChisquare()
         self.DOF = self.FitFunction.GetNDF()
