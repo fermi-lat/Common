@@ -1,3 +1,12 @@
+*** v4r0p0 ***
+- Some refactoring in the base class for the alarm algorithm. A new general
+method called getFitOutput() has been implemented to replace the old
+getFitParameter() and getFitParametes(). It makes easier to implement new
+alarms involving fitting.
+- alg__gauss_mean, alg__gauss_rms and alg__gauss_norm modified as to use
+the new function.
+
+
 *** v3r10p0 ***
 - Implemented a mechanism to link to each alarm on a multidimentional trending
 quantity the actual plot that triggered the alarm
