@@ -22,7 +22,6 @@ class alg__peak_position(pAlarmBaseAlgorithm):
         for i in range(numIterations):
             self.ParamsDict['min'] = mean - fitRangeWidth*rms
             self.ParamsDict['max'] = mean + fitRangeWidth*rms
-            gaussian = ROOT.TF1('alg__gaussian', 'gaus')
             (norm, mean, rms) = self.getFitParameters(gaussian)
         self.Output.setValue(mean)
 
