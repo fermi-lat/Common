@@ -32,17 +32,22 @@ class pAlarmXmlSummaryGenerator(pXmlWriter):
         self.openTag('alarmStatistics', self.AlarmHandler.AlarmStats,\
                      close = True)
         for alarm in self.AlarmHandler.XmlParser.getEnabledAlarms():
-            tagDict = {'name': alarm.getPlotName()}
-            if alarm.FunctionName == 'values':
-                try:
-                    linkArguments = alarm.Algorithm.LinkArguments
-                except:
-                    linkArguments = ''
-                tagDict['link_arguments'] = linkArguments
-            self.openTag('plot', tagDict)
+            self.openTag('plot', {'name': alarm.getPlotName()})
             self.indent()
             self.openTag('alarm', {'function': alarm.FunctionName})
             self.indent()
+            if alarm.FunctionName == 'values':
+                linksDict = alarm.Algorithm.LinksDict
+                if len(linksDict) > 0:
+                    self.openTag('link_arguments')
+                    self.indent()
+                    for (key, value) in linksDict.items():
+                        value = str(value)
+                        value = value.strip('[').strip(']').replace(' ', '')
+                        value = '%s=%s' % (key, value)
+                        self.writeTag('link_argument', {}, value)
+                    self.backup()
+                    self.closeTag('link_arguments')
             for (key, value) in alarm.ParamsDict.items():
                 self.writeTag('parameter', {'name': key, 'value': value})
             for (key, value) in alarm.ConditionsDict.items():

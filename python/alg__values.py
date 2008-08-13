@@ -14,6 +14,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 from pAlarmBaseAlgorithm import ROOT2NUMPYDICT
 from pAlarmBaseAlgorithm import MET_OFFSET
 from pGlobals            import MINUS_INFINITY
+from pAlarmLimits        import WARNING_BADNESS
 
 
 VAR_LABELS_DICT = {
@@ -186,7 +187,8 @@ class alg__values(pAlarmBaseAlgorithm):
                 self.tuple2Index(detail, self.BranchArray.shape)
 
     def run(self):
-        self.LinkArguments = ''
+        self.LinksDict = {}
+        linkIndexes = []
         self.NumSigma = self.getParameter('num_sigma', 1.0)
         maxBadness = MINUS_INFINITY
         self.__createArrays()
@@ -205,6 +207,9 @@ class alg__values(pAlarmBaseAlgorithm):
                     else:
                         error = None
                     badness = self.checkStatus(j, value, 'value', error)
+                    if badness > WARNING_BADNESS:
+                        if j not in linkIndexes:
+                            linkIndexes.append(j)
                     if badness > maxBadness:
                         maxBadness = badness
                         (outputEntry, outputIndex, outputValue, outputError) =\
@@ -220,12 +225,18 @@ class alg__values(pAlarmBaseAlgorithm):
             label = '%s, badness = %s' % (label,\
                                               pUtils.formatNumber(maxBadness)) 
             self.Output.setDictValue('output_point', label)
-            if self.BranchArray.shape != (1, ):
-                values = self.index2Tuple(outputIndex, self.BranchArray.shape)
+            if self.BranchArray.shape != (1, ) and len(linkIndexes):
                 labels = LINK_LABELS_DICT[self.VariableType]
-                for (i, val) in enumerate(values):
-                    self.LinkArguments += '%s=%s&' % (labels[i], val)
-                self.LinkArguments = self.LinkArguments.strip('&')
+                for label in labels:
+                    self.LinksDict[label] = []
+                for index in linkIndexes:
+                    indexTuple = self.index2Tuple(index,self.BranchArray.shape)
+                    for (i, value) in enumerate(indexTuple):
+                        label = labels[i]
+                        if value not in self.LinksDict[label]:
+                            self.LinksDict[label].append(value)
+                for label in labels:
+                    self.LinksDict[label].sort()
         except:
             pass
         self.RootTree.SetBranchStatus('*', 1)
