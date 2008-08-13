@@ -1,37 +1,27 @@
-
-from pSafeROOT import ROOT
-
-from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
-
+from pGenericFitAlgorithm import pGenericFitAlgorithm
 
 ## @brief RMS of a gaussian fit.
 #
 #  <b>Valid parameters</b>:
 #
-#  @li <tt>min</tt>: the minimum x value for the fit range.
-#  <br>
-#  @li <tt>max</tt>: the maximum x value for the fit range.
+#  All those inherited by the base class pGenericFitAlgorithm.
 #
 #  <b>Output value</b>:
 #
-#  The mean value of the gaussian fit in the user-defined sub-range.
+#  The rms value of the gaussian fit in the user-defined sub-range.
 
 
-class alg__gauss_rms(pAlarmBaseAlgorithm):
+class alg__gauss_rms(pGenericFitAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH1F']
-    SUPPORTED_PARAMETERS = ['min', 'max']
-    OUTPUT_LABEL         = 'RMS of the gaussian fit'
+    OUTPUT_LABEL = 'RMS of the gaussian fit'
 
     def run(self):
-        fitFunction = ROOT.TF1('temp_fit_function', 'gaus')
-        ([rmsValue], [rmsError]) = self.getFitOutput(fitFunction, [2])
-        self.Output.setValue(rmsValue, rmsError)
-        fitFunction.Delete()
+        pGenericFitAlgorithm.run(self, 'gaus', 2)
         
 
 
 if __name__ == '__main__':
+    from pSafeROOT    import ROOT
     from pAlarmLimits import pAlarmLimits
     limits = pAlarmLimits(0.5, 1.5, 0.1, 3)
     canvas = ROOT.TCanvas('Test canvas', 'Test canvas', 400, 400)

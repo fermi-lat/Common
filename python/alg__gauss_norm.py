@@ -1,40 +1,30 @@
-from pSafeROOT import ROOT
-
-from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
-
+from pGenericFitAlgorithm import pGenericFitAlgorithm
 
 ## @brief Normalization of a gaussian fit.
 #
 #  <b>Valid parameters</b>:
 #
-#  @li <tt>min</tt>: the minimum x value for the fit range.
-#  <br>
-#  @li <tt>max</tt>: the maximum x value for the fit range.
+#  All those inherited by the base class pGenericFitAlgorithm.
 #
 #  <b>Output value</b>:
 #
 #  The mean value of the gaussian fit in the user-defined sub-range.
 
 
-class alg__gauss_norm(pAlarmBaseAlgorithm):
+class alg__gauss_norm(pGenericFitAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH1F']
-    SUPPORTED_PARAMETERS = ['min', 'max']
-    OUTPUT_LABEL         = 'Normalization of the gaussian fit'
+    OUTPUT_LABEL = 'Normalization of the gaussian fit'
 
     def run(self):
-        fitFunction = ROOT.TF1('temp_fit_function', 'gaus')
-        ([normValue], [normError]) = self.getFitOutput(fitFunction, [0])
-        self.Output.setValue(normValue, normError)
-        fitFunction.Delete()
+        pGenericFitAlgorithm.run(self, 'gaus', 0)
 
 
 
 if __name__ == '__main__':
+    from pSafeROOT    import ROOT
     from pAlarmLimits import pAlarmLimits
     limits = pAlarmLimits(30, 50, 10, 70)
     canvas = ROOT.TCanvas('Test canvas', 'Test canvas', 400, 400)
-
     print
     print 'Testing on a 1-dimensional histogram...'
     histogram = ROOT.TH1F('h', 'h', 100, -5, 5)
