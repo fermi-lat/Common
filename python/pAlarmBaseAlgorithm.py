@@ -511,26 +511,28 @@ class pAlarmBaseAlgorithm:
     #
     ## @param self
     #  The class instance.
-    ## @param functionFormula
-    #  The formula for the fitting function.
+    ## @param fitFunction
+    #  The fitting function (ROOT.TF1 instance).
     ## @param parametersList
     #  The list of parameter (and associated errors) indexes the user is
     #  interested into.
+    #
+    #  For example use [1, 3] if you are interested in fit parameters 1 and 3.
+    #  Defaults to None, which means "all parameters".
     ## @param fitOptions
     #  The fit options.
 
-    def getFitOutput(self, functionFormula, parametersList, fitOptions = 'QN'):
-        functionName = 'temp_fit_function'
-        fitFunction = ROOT.TF1(functionName, functionFormula)
+    def getFitOutput(self, fitFunction, paramsList = None, fitOptions = 'QN'):
+        if paramsList is None:
+            paramsList = range(fitFunction.GetNpar())
         self.adjustXRange()
         self.RootObject.Fit(fitFunction, fitOptions)
         self.resetXRange()
         fitValues = []
         fitErrors = []
-        for i in parametersList:
+        for i in paramsList:
             fitValues.append(fitFunction.GetParameter(i))
             fitErrors.append(fitFunction.GetParError(i))
-        fitFunction.Delete()
         return (fitValues, fitErrors)
 
     ## @brief Perform a fit with a user defined function and return
