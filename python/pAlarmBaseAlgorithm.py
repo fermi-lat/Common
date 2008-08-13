@@ -13,6 +13,7 @@ from pAlarmOutput import pAlarmOutput
 from pAlarmOutput import STATUS_CLEAN, STATUS_WARNING, STATUS_ERROR
 from copy         import copy, deepcopy
 from pAlarmLimits import ERROR_BADNESS
+from pSafeROOT import ROOT
 
 MET_OFFSET = 978307200
 
@@ -505,25 +506,32 @@ class pAlarmBaseAlgorithm:
             return None
         self.RootObject.GetXaxis().SetRange(1, 0)
 
-    ## @brief Perform a fit with a user defined function and return
-    #  a given fit parameter.
-    #
-    #  Note that the fit execution is embedded in the body the method so that
-    #  in case more than one fit parameters are required this may not be the
-    #  optimal approach.
+    ## @brief Perform a fit with a user defined function and return a user
+    ## specified subset of fit parameters and errors.
     #
     ## @param self
     #  The class instance.
-    ## @param fitFunction
-    #  The fitting function (a ROOT TF1 object).
-    ## @param paramNumber
-    #  The index identifying the required parameter.
+    ## @param functionFormula
+    #  The formula for the fitting function.
+    ## @param parametersList
+    #  The list of parameter (and associated errors) indexes the user is
+    #  interested into.
+    ## @param fitOptions
+    #  The fit options.
 
-    def getFitParameter(self, fitFunction, paramNumber, fitOptions = 'QN'):
+    def getFitOutput(self, functionFormula, parametersList, fitOptions = 'QN'):
+        functionName = 'temp_fit_function'
+        fitFunction = ROOT.TF1(functionName, functionFormula)
         self.adjustXRange()
         self.RootObject.Fit(fitFunction, fitOptions)
         self.resetXRange()
-        return fitFunction.GetParameter(paramNumber)
+        fitValues = []
+        fitErrors = []
+        for i in parametersList:
+            fitValues.append(fitFunction.GetParameter(i))
+            fitErrors.append(fitFunction.GetParError(i))
+        fitFunction.Delete()
+        return (fitValues, fitErrors)
 
     ## @brief Perform a fit with a user defined function and return
     #  the list of fit parameters.
