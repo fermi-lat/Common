@@ -5,8 +5,9 @@ getFitParameter() and getFitParametes(). It makes easier to implement new
 alarms involving fitting.
 - Added new base class pGenericFitAlgorithm to deal in a uniform fashion with
 all the algorithms involving simple fitting.
-- alg__gauss_mean, alg__gauss_rms and alg__gauss_norm modified as to use
-the new function.
+- alg__gauss_mean, alg__gauss_rms, alg__gauss_norm, alg__peak_position and
+alg__peak_width modified as to use the new method and the new base class.
+- pBaseAnalyzer class modifies as to use the new method.
 
 
 *** v3r10p0 ***
