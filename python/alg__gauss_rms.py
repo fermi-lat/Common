@@ -24,16 +24,15 @@ class alg__gauss_rms(pAlarmBaseAlgorithm):
     OUTPUT_LABEL         = 'RMS of the gaussian fit'
 
     def run(self):
-        # Adjust and reset x range is done just before fitting
-        gaussian = ROOT.TF1('alg__gaussian', 'gaus')
-        self.Output.setValue(self.getFitParameter(gaussian, 2))        
+        ([rmsValue], [rmsError]) = self.getFitOutput('gaus', [2])
+        self.Output.setValue(rmsValue, rmsError)
+
 
 
 if __name__ == '__main__':
     from pAlarmLimits import pAlarmLimits
     limits = pAlarmLimits(0.5, 1.5, 0.1, 3)
     canvas = ROOT.TCanvas('Test canvas', 'Test canvas', 400, 400)
-
     print
     print 'Testing on a 1-dimensional histogram...'
     histogram = ROOT.TH1F('h', 'h', 100, -5, 5)
