@@ -25,6 +25,8 @@ class pAlarmException(pXmlElement):
             element = pXmlElement(element)
             identifier = element.evalAttribute('identifier', 'status')
             status = element.getAttribute('status_on_violation', 'error')
+            if status not in BADNESS_DICT.keys():
+                status = 'error'
             self.ExceptionsDict[identifier] = status
 
     def refersTo(self, detail = 'status'):
