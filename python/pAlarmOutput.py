@@ -74,6 +74,15 @@ class pAlarmOutput:
         if badness is None:
             badness = self.Limits.getBadness(value, error)
         self.Status = self.getStatus(badness)
+
+        exception = self.Parent.Exception
+        if exception is not None and exception.refersTo('status'):
+            if self.isClean():
+                badness = exception.getBadness()
+                self.appendDictValue('exception_violations', 'status')
+                self.Status = self.getStatus(badness)
+            else:
+                self.appendDictValue('known_issues', 'status')
         self.compress()
 
     ## @brief Get the value corresponding to a particular key of the

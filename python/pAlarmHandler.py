@@ -61,10 +61,10 @@ class pAlarmHandler:
         ## @var AlarmStats
         ## @brief Basic alarm handler statistics.
         
-        self.ExceptionsDict = {}
+        self.AlarmExceptionsDict = {}
         if xmlExceptionsFilePath is not None:
             xmlExceptionParser = pXmlExceptionParser(xmlExceptionsFilePath)
-            self.ExceptionsDict = xmlExceptionParser.ExceptionsDict
+            self.AlarmExceptionsDict = xmlExceptionParser.AlarmExceptionsDict
         self.XmlParser = pXmlAlarmParser(xmlConfigFilePath)
         if xmlSummaryFilePath == None:
             xmlSummaryFilePath = rootFilePath.replace('.root', '.alarms.xml')
@@ -108,10 +108,12 @@ class pAlarmHandler:
         for alarm in self.XmlParser.getEnabledAlarms():
             logger.debug('Activating alarm on "%s"' % alarm.getPlotName())
             alarmTuple = (alarm.getPlotName(), alarm.FunctionName)
-            if alarmTuple in self.ExceptionsDict.keys():
+            if alarmTuple in self.AlarmExceptionsDict.keys():
                 logger.info('Setting exception(s) on %s %s...' % alarmTuple)
-                logger.info('Details:\n%s' % self.ExceptionsDict[alarmTuple])
-                alarm.Algorithm.Exception = self.ExceptionsDict[alarmTuple]
+                logger.info('Details:\n%s' %\
+                            self.AlarmExceptionsDict[alarmTuple])
+                alarm.Algorithm.Exception =\
+                                          self.AlarmExceptionsDict[alarmTuple]
 	    alarm.activate()
         logger.info('Done. %d enabled alarm(s) found.\n' %\
                      len(self.XmlParser.getEnabledAlarms()))

@@ -21,20 +21,21 @@ class pXmlExceptionParser:
         else:
             sys.exit('Input exception file %s not found. Exiting...' %\
         	     xmlExceptionFilePath)
-        self.ExceptionsDict = {}
-        self.__populateExceptionsDict()
-        logger.info('Done. %d exceptions found.' % len(self.ExceptionsDict))
+        self.AlarmExceptionsDict = {}
+        self.__populateAlarmExceptionsDict()
+        logger.info('Done. %d exceptions found.' %\
+                    len(self.AlarmExceptionsDict))
 
-    def __populateExceptionsDict(self):
-        for element in self.XmlDoc.getElementsByTagName('exception'):
+    def __populateAlarmExceptionsDict(self):
+        for element in self.XmlDoc.getElementsByTagName('alarm'):
             exception = pAlarmException(element)
-            self.ExceptionsDict[(exception.Name, exception.AlgorithmName)] =\
-                exception
-
+            self.AlarmExceptionsDict[(exception.Name,\
+                                      exception.AlgorithmName)] = exception
 
 
 if __name__ == '__main__':
-    parser = pXmlExceptionParser('../xml/fastmon_eor_alarms_exceptions.xml')
-    for (key, value) in parser.ExceptionsDict.items():
+    filePath = '../../AlarmsCfg/xml/fastmon_eor_alarms_exceptions.xml'
+    parser = pXmlExceptionParser(filePath)
+    for (key, value) in parser.AlarmExceptionsDict.items():
         print key
         print value

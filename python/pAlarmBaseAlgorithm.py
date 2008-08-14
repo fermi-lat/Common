@@ -402,13 +402,13 @@ class pAlarmBaseAlgorithm:
         if self.Exception is None:
             flipLogic = False
         else:
-            flipLogic = (position in self.Exception.FlippedDetails)
+            flipLogic = self.Exception.refersTo(position)
         badness = self.Limits.getBadness(value, error)
         status  = self.Output.getStatus(badness)
         if status == STATUS_CLEAN and flipLogic:
             label = self.getDetailedLabel(index, value, valueLabel, error)
             self.Output.appendDictValue('exception violations', label)
-            badness += ERROR_BADNESS
+            badness = self.Exception.getBadness(position)
         elif status == STATUS_ERROR:
             label = self.getDetailedLabel(index, value, valueLabel, error)
             if flipLogic:
