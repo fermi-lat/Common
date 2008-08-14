@@ -176,15 +176,17 @@ class alg__values(pAlarmBaseAlgorithm):
         self.TimeStamp = (binStart + binEnd)/2.0
 
     ## @brief Convert the indexes of the alarm exception (if any) from tuple
-    #  to flat numbers, in asuch a way that the opposite conversion does not
+    #  to flat numbers, in such a way that the opposite conversion does not
     #  have to be done for each event while checking the status.
         
     def setupException(self):
-        if self.Exception is None:
-            return 
-        for (i, detail) in enumerate(self.Exception.FlippedDetails):
-            self.Exception.FlippedDetails[i] =\
-                self.tuple2Index(detail, self.BranchArray.shape)
+        if self.Exception is not None:
+            exceptionsDict = self.Exception.ExceptionsDict
+            self.Exception.ExceptionsDict = {}
+            for (key, value) in exceptionsDict.items():
+                if key != 'status':
+                    key = self.tuple2Index(key, self.BranchArray.shape)
+                    self.Exception.ExceptionsDict[key] = value
 
     def run(self):
         self.LinksDict = {}
