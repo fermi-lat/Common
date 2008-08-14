@@ -1,3 +1,11 @@
+*** v4r1p0 ***
+- Changed the format for the xml files for the alarm exceptions.
+The new format is more flexible and allows to explicitely decide the output
+status (either WARNING or ERROR) upon exception violation.
+NOTE: the change is not backward compatible with the old configuration file
+format.
+
+
 *** v4r0p0 ***
 - Some refactoring in the base class for the alarm algorithm. A new general
 method called getFitOutput() has been implemented to replace the old
