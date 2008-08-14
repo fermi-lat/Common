@@ -3,7 +3,7 @@
 The new format is more flexible and allows to explicitely decide the output
 status (either WARNING or ERROR) upon exception violation.
 NOTE: the change is not backward compatible with the old configuration file
-format.
+format. Need datamonitoring/AlarmsCfg v4r4p0.
 
 
 *** v4r0p0 ***
