@@ -1,3 +1,12 @@
+*** v4r3p0 ***
+- Output status promoted to warning (used to be undefined) in the edge finders
+if the edege(s) is (are) not found. The idea is that a minimu suitable number
+of entries is required before running an alarm on a plot; if the condition is
+not met the status is UNDEFINED---no need to bother. This change is intended
+to distinguish the cases in which the algorithm is supposed to have enough
+ststistics (and hence to find the edge) but it doesn't.
+
+
 *** v4r2p0 ***
 - Bug fix in pBaseAnalyzer: undefined variable when printing the fit parameters
 on the screen, was affecting the debug mode only.
