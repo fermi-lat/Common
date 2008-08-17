@@ -74,6 +74,8 @@ class alg__leftmost_edge(pAlarmBaseAlgorithm):
 	    if significance > threshold:
                 self.refineEdge(i, significance)
                 return
+        self.Output.setWarning()
+        self.Output.setDictValue('WARNING status reason', 'Could not find edge')
             
     def __getStartBin(self, startX):
         if startX == None:

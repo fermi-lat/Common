@@ -70,7 +70,9 @@ class alg__leftmost_edge_slices(pAlarmBaseAlgorithm):
             label = self.getDetailedLabel(outputIndex, outputValue)
             self.Output.setDictValue('output_point', label)
         except:
-            pass
+            self.Output.setWarning()
+            self.Output.setDictValue('WARNING status reason',\
+                                         'Could not find any edge')
 
 
 
