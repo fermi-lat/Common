@@ -60,6 +60,15 @@ class pAlarmOutput:
     def isError(self):
         return self.Status == STATUS_ERROR
 
+    def setClean(self):
+        self.Status = STATUS_CLEAN
+
+    def setWarning(self):
+        self.Status = STATUS_WARNING
+
+    def setError(self):
+        self.Status = STATUS_ERROR
+
     def getStatus(self, badness):
         if badness <= WARNING_BADNESS:
             return STATUS_CLEAN
