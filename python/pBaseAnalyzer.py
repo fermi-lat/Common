@@ -73,7 +73,7 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
     def fillHistogram(self, name, channel, value = None, error = 0.0):
         if value is not None:
             self.HistogramsDict[name].Fill(channel, value)
-            self.HistogramsDict[name].SetBinError(channel, error)
+            self.HistogramsDict[name].SetBinError(channel + 1, error)
         else:
             self.HistogramsDict[name].Fill(channel)
 
@@ -104,14 +104,14 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         if self.RootObject is None:
             sys.exit('Could not find %s. Abort.' % channelName)
         if self.RootObject.GetEntries() == 0:
-            self.Mean = -1
-            self.MeanError = 0
-            self.RMS = -1
-            self.RMSError = 0
-            self.ChiSquare = -1
-            self.DOF = -1
-            self.ReducedChiSquare = -1
-            self.FitProb = -1
+            self.Mean = -1.0
+            self.MeanError = 0.0
+            self.RMS = -1.0
+            self.RMSError = 0.0
+            self.ChiSquare = -1.0
+            self.DOF = -1.0
+            self.ReducedChiSquare = -1.0
+            self.FitProb = -1.0
             self.RootObject.Delete()
             return
         if self.RebinningFactor > 1:
@@ -165,7 +165,6 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
             self.RootObject.Draw()
             self.FitFunction.Draw('same')
             ROOT.gPad.Update()
-            print 'Fit parameters    : %s' % ['%.4e'%p for p in fitParameters]
             print 'Mean              : %s +- %s' % (self.Mean, self.MeanError)
             print 'RMS               : %s +- %s' % (self.RMS, self.RMSError)
             print 'Reduced Chi Square: %s/%s = %s' %\
