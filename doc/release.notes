@@ -1,3 +1,10 @@
+*** v4r2p0 ***
+- Bug fix in pBaseAnalyzer: undefined variable when printing the fit parameters
+on the screen, was affecting the debug mode only.
+- Bug fix in pBaseAnalyzer: the errors bars were not set correctly, there was
+an offset of -1.
+
+
 *** v4r1p0 ***
 - Changed the format for the xml files for the alarm exceptions.
 The new format is more flexible and allows to explicitely decide the output
