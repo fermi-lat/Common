@@ -104,14 +104,14 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         if self.RootObject is None:
             sys.exit('Could not find %s. Abort.' % channelName)
         if self.RootObject.GetEntries() == 0:
-            self.Mean = -1.0
+            self.Mean = 0.0
             self.MeanError = 0.0
-            self.RMS = -1.0
+            self.RMS = 0.0
             self.RMSError = 0.0
-            self.ChiSquare = -1.0
-            self.DOF = -1.0
-            self.ReducedChiSquare = -1.0
-            self.FitProb = -1.0
+            self.ChiSquare = 0.0
+            self.DOF = 0.0
+            self.ReducedChiSquare = 0.0
+            self.FitProb = 0.0
             self.RootObject.Delete()
             return
         if self.RebinningFactor > 1:
