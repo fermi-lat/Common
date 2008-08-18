@@ -1,11 +1,12 @@
 #! /bin/env python
 
 from pBaseAnalyzer import *
-
+from copy          import copy
 
 
 class pCalGainsAnalyzer(pBaseAnalyzer):
 
+    HISTOGRAM_GROUPS = copy(BASE_HISTOGRAM_GROUPS)
     HISTOGRAM_SUB_GROUPS = ['RPM', 'RPp', 'RMm']
     REBIN_FACTORS_DICT   = {'RPM': 2  , 'RPp': 10 , 'RMm': 10 }
     FIT_RANGE_LEFT_DICT  = {'RPM': 3.0, 'RPp': 2.0, 'RMm': 2.0}
@@ -24,7 +25,7 @@ class pCalGainsAnalyzer(pBaseAnalyzer):
         self.NumFitIterations = 2
         
     def createHistograms(self):
-        for group in HISTOGRAM_GROUPS:
+        for group in self.HISTOGRAM_GROUPS:
             for subgroup in self.HISTOGRAM_SUB_GROUPS:
                 if group in self.HISTOGRAM_SETTINGS.keys():
                     key = group
@@ -35,7 +36,8 @@ class pCalGainsAnalyzer(pBaseAnalyzer):
                 name = self.getHistogramName(group, subgroup)
                 self.HistogramsDict[name] = self.getNewHistogram(name, nBins,
                                                                  xmin, xmax,
-                                                                 xlabel, ylabel)
+                                                                 xlabel,
+                                                                 ylabel)
 
     def getBaseName(self, subgroup):
         return '%s_TH1_TowerCalLayerCalColumn' % subgroup
