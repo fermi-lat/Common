@@ -5,6 +5,10 @@ that they make it to the output xml file.
 - Methods to adjust the x range in pAlarmBaseAlgorithm modified to use the
 getParameter() method for consistency (this way the min and max parameters
 make it to the output xml file).
+- All algorithms modified to accept both TH1F and TH1D (and/or TH2F and TH2D
+where necessary).
+- Test functions for all the algorithms modified as to print out the actual
+parameters dict, as it is shipped out to the xml file.
 * Relevant jira(s): GDM-133
 
 
