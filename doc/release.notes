@@ -1,3 +1,8 @@
+*** v4r6p0 ***
+- Left fitting range changed from 1.5 to 2.5 sigma for LEX8 and HEX8 CAL
+pedestals in pCalPedsAnalyzer.py.
+
+
 *** v4r5p0 ***
 - New alarm algorithm added: alg__low_high_ratio, measuring the ratio---in
 terms of number of entries---below and above a given pivot point.
