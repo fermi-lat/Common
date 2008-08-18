@@ -1,6 +1,10 @@
 *** v4r6p0 ***
 - Left fitting range changed from 1.5 to 2.5 sigma for LEX8 and HEX8 CAL
 pedestals in pCalPedsAnalyzer.py.
+- Some minor refactoring in the p*Analyzer classes to allow the derived
+classes to add thei own histograms to the ones specified in the base class.
+- Added histograms of the mean and rms values wrt the truncated average method
+in pCalPedsAnalyzer.py
 
 
 *** v4r5p0 ***
