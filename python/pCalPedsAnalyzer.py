@@ -8,7 +8,8 @@ from copy          import copy
 class pCalPedsAnalyzer(pBaseAnalyzer):
 
     HISTOGRAM_GROUPS = copy(BASE_HISTOGRAM_GROUPS)
-    HISTOGRAM_GROUPS += ['PedMeanDifference', 'PedRMSDifference']
+    HISTOGRAM_GROUPS += ['PedMeanDeviation', 'PedMeanDifference',
+                         'PedRMSDifference']
     HISTOGRAM_SUB_GROUPS = ['LEX8', 'LEX1', 'HEX8', 'HEX1']
     CAL_RANGE_DICT = {0: 'LEX8', 1: 'LEX1', 2: 'HEX8', 3: 'HEX1'}
     FIT_RANGE_LEFT_DICT  = {'LEX8': 2.5, 'LEX1': 3.0, 'HEX8': 2.5, 'HEX1': 3.0}
@@ -28,6 +29,7 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
         self.NumFitIterations = 1
         self.TruncPedMeanHistDict = {}
         self.TruncPedRMSHistDict = {}
+        self.PedMeanRefHistDict = {}
 
     def createHistograms(self):
         for group in self.HISTOGRAM_GROUPS:
@@ -93,8 +95,16 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
     def getTruncAvePedRMS(self, subgroup, channel):
         return self.TruncPedRMSHistDict[subgroup].GetBinContent(channel + 1)
 
+    def getPedMeanReference(self, subgroup, channel):
+        ## To be implemented.
+        return 0
+
     def fillHistograms(self, subgroup, channel):
         pBaseAnalyzer.fillHistograms(self, subgroup, channel)
+        histName = self.getHistogramName('PedMeanDeviation', subgroup)
+        valueDiff = self.Mean - self.getPedMeanReference(subgroup, channel)
+        errorDiff = self.MeanError
+        self.fillHistogram(histName, channel, valueDiff, errorDiff)
         histName = self.getHistogramName('PedMeanDifference', subgroup)
         valueDiff = self.Mean - self.getTruncAvePedMean(subgroup, channel)
         errorDiff = self.MeanError
@@ -113,6 +123,8 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
                  self.get('CalXAdcPedMean_%s_TH1' % subgroup)
             self.TruncPedRMSHistDict[subgroup] =\
                  self.get('CalXAdcPedRMS_%s_TH1' % subgroup)
+            ## To be implemented.
+            self.PedMeanRefHistDict[subgroup] = None
         for tower in range(16):
             logger.debug('Fitting pedestals for tower %d...' % tower)
             for layer in range(8):
