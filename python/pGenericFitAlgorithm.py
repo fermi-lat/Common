@@ -17,7 +17,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 class pGenericFitAlgorithm(pAlarmBaseAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH1F']
+    SUPPORTED_TYPES      = ['TH1F', 'TH1D']
     SUPPORTED_PARAMETERS = ['min', 'max', 'num_sigma']
     
     def run(self, functionFormula, fitParameter):
