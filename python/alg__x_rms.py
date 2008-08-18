@@ -24,7 +24,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 class alg__x_rms(pAlarmBaseAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH1F']
+    SUPPORTED_TYPES      = ['TH1F', 'TH1D']
     SUPPORTED_PARAMETERS = ['min', 'max']
     OUTPUT_LABEL         = 'Histogram RMS'
 
@@ -46,5 +46,5 @@ if __name__ == '__main__':
     pardict = {'min': -2, 'max': 2}
     algorithm = alg__x_rms(limits, histogram, pardict)
     algorithm.apply()
-    print 'Parameters: %s\n' % pardict
+    print 'Parameters: %s\n' % algorithm.ParamsDict
     print algorithm.Output

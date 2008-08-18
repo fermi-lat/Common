@@ -75,7 +75,8 @@ class alg__leftmost_edge(pAlarmBaseAlgorithm):
                 self.refineEdge(i, significance)
                 return
         self.Output.setWarning()
-        self.Output.setDictValue('WARNING status reason', 'Could not find edge')
+        self.Output.setDictValue('WARNING status reason',\
+                                 'Could not find edge')
             
     def __getStartBin(self, startX):
         if startX == None:
@@ -129,5 +130,5 @@ if __name__ == '__main__':
     pardict = {'threshold': 20}
     algorithm = alg__leftmost_edge(limits, histogram, pardict)
     algorithm.apply()
-    print 'Parameters: %s\n' % pardict
+    print 'Parameters: %s\n' % algorithm.ParamsDict
     print algorithm.Output

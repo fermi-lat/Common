@@ -72,7 +72,7 @@ from pGlobals            import MINUS_INFINITY
 
 class alg__spikes_and_holes(pAlarmBaseAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH1F', 'TH2F']
+    SUPPORTED_TYPES      = ['TH1F', 'TH2F', 'TH1D', 'TH2D']
     SUPPORTED_PARAMETERS = ['num_neighbours', 'out_low_cut', 'out_high_cut']
     OUTPUT_LABEL          = 'Significance of the worst spike/hole'
 
@@ -113,15 +113,16 @@ class alg__spikes_and_holes(pAlarmBaseAlgorithm):
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             for j in range(1, self.RootObject.GetNbinsY() + 1):
                 obs = self.RootObject.GetBinContent(i, j)
-                exp = self.getNeighbouringAverage((i, j), numNeigh, outLoCut,\
-                                                      outHiCut)
+                exp = self.getNeighbouringAverage((i, j), numNeigh, outLoCut,
+                                                  outHiCut)
                 if exp > 0:
                     significance = abs(obs - exp)/sqrt(exp)
                 else:
                     significance = 0.0
                 if significance > maxSignificance:
                     maxSignificance = significance
-                badness = self.checkStatus((i, j), significance, 'significance')
+                badness = self.checkStatus((i, j), significance,
+                                           'significance')
                 if badness > maxBadness:
                     maxBadness = badness
         self.Output.setValue(maxSignificance, None, maxBadness)
@@ -147,7 +148,7 @@ if __name__ == '__main__':
     pardict1d = {}
     algorithm1d = alg__spikes_and_holes(limits, histogram1d, pardict1d)
     algorithm1d.apply()
-    print 'Parameters: %s\n' % pardict1d
+    print 'Parameters: %s\n' % algorithm1d.ParamsDict
     print algorithm1d.Output
 
     print
@@ -166,5 +167,5 @@ if __name__ == '__main__':
     pardict2d = {}
     algorithm2d = alg__spikes_and_holes(limits, histogram2d, pardict2d)
     algorithm2d.apply()
-    print 'Parameters: %s\n' % pardict2d
+    print 'Parameters: %s\n' % algorithm2d.ParamsDict
     print algorithm2d.Output

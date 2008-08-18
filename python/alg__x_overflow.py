@@ -14,7 +14,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 class alg__x_overflow(pAlarmBaseAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH1F']
+    SUPPORTED_TYPES      = ['TH1F', 'TH1D']
     SUPPORTED_PARAMETERS = []
     OUTPUT_LABEL         = 'Number of overflows'
 
@@ -36,4 +36,5 @@ if __name__ == '__main__':
     canvas.Update()
     algorithm = alg__x_overflow(limits, histogram, {})
     algorithm.apply()
+    print 'Parameters: %s\n' % algorithm.ParamsDict
     print algorithm.Output

@@ -12,7 +12,8 @@ from math                import sqrt
 #  bin per bin, after the histogram under study has been scaled (in terms
 #  of the number of entries) to the reference histogram---we are assuming here
 #  that the reference histogram does not have less entries that the object
-#  the alarm is set on (so that the scaling factor is typically greater than 1).
+#  the alarm is set on (so that the scaling factor is typically greater
+#  than 1).
 #
 #  More precisely the scaling factor f is given, in terms of the total number
 #  of entries in the histograms, by:
@@ -23,8 +24,8 @@ from math                import sqrt
 #  @f[
 #  n_{\rm ref} \pm \Delta n_{\rm ref}
 #  @f]
-#  is compared with the scaled number of entries in the corresponding bin of the
-#  histogram under test:
+#  is compared with the scaled number of entries in the corresponding bin of
+#  the histogram under test:
 #  @f[
 #  f \cdot n_{\rm test} \pm f \cdot \Delta n_{\rm test}
 #  @f]
@@ -69,7 +70,7 @@ from math                import sqrt
 
 class alg__reference_histogram(pAlarmBaseAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH1F']
+    SUPPORTED_TYPES      = ['TH1F', 'TH1D']
     SUPPORTED_PARAMETERS = ['reference_path', 'reference_name']
     OUTPUT_LABEL         = 'Significance of the maximum bin difference'
 
@@ -142,6 +143,7 @@ if __name__ == '__main__':
                'reference_name': referenceName}
     algorithm = alg__reference_histogram(limits, histogram, pardict)
     algorithm.apply()
+    print 'Parameters: %s\n' % algorithm.ParamsDict
     print algorithm.Output
     import os
     os.system('rm -f %s' % referenceFilePath)

@@ -28,7 +28,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 class alg__num_entries(pAlarmBaseAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH1F']
+    SUPPORTED_TYPES      = ['TH1F', 'TH1D']
     SUPPORTED_PARAMETERS = ['min', 'max']
     OUTPUT_LABEL         = 'Number of entries in the specified range'
 
@@ -53,5 +53,5 @@ if __name__ == '__main__':
     pardict1d = {'min': -2, 'max': 2}
     algorithm1d = alg__num_entries(limits, histogram1d, pardict1d)
     algorithm1d.apply()
-    print 'Parameters: %s\n' % pardict1d
+    print 'Parameters: %s\n' % algorithm1d.ParamsDict
     print algorithm1d.Output

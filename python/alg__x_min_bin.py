@@ -60,4 +60,5 @@ if __name__ == '__main__':
     canvas.Update()
     algorithm = alg__x_min_bin(limits, histogram, {})
     algorithm.apply()
+    print 'Parameters: %s\n' % algorithm.ParamsDict
     print algorithm.Output

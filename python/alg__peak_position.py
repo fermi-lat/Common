@@ -5,7 +5,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 class alg__peak_position(pAlarmBaseAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH1F']
+    SUPPORTED_TYPES      = ['TH1F', 'TH1D']
     SUPPORTED_PARAMETERS = ['num_iterations', 'fit_range_width', 'min', 'max',\
                             'num_sigma']
     OUTPUT_LABEL         = 'Position (mean) of the main peak'
@@ -45,5 +45,5 @@ if __name__ == '__main__':
     pardict = {'min': 0, 'max': 4, 'fit_range_width': 1.5, 'num_iterations': 3}
     algorithm = alg__peak_position(limits, histogram, pardict)
     algorithm.apply()
-    print 'Parameters: %s\n' % pardict
+    print 'Parameters: %s\n' % algorithm.ParamsDict
     print algorithm.Output

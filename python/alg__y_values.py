@@ -40,7 +40,7 @@ from pGlobals            import MINUS_INFINITY
 
 class alg__y_values(pAlarmBaseAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH1F', 'TProfile']
+    SUPPORTED_TYPES      = ['TH1F', 'TH1D', 'TProfile']
     SUPPORTED_PARAMETERS = ['normalize', 'exclude', 'only', 'num_sigma']
     OUTPUT_LABEL         = 'The worst y-value'
 
@@ -92,5 +92,6 @@ if __name__ == '__main__':
     canvas.Update()
     algorithm = alg__y_values(limits, histogram, {})
     algorithm.apply()
+    print 'Parameters: %s\n' % algorithm.ParamsDict
     print algorithm.Output
     histogram.Draw()

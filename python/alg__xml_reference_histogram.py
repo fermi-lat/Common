@@ -47,5 +47,6 @@ if __name__ == '__main__':
                                                  histogram.GetSumOfWeights())
     canvas.Update()
     algorithm.apply()
+    print 'Parameters: %s\n' % algorithm.ParamsDict
     print algorithm.Output
 

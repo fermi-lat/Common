@@ -28,7 +28,7 @@ from pGlobals            import MINUS_INFINITY
 
 class alg__x_min_bin_slices(pAlarmBaseAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH2F']
+    SUPPORTED_TYPES      = ['TH2F', 'TH2D']
     SUPPORTED_PARAMETERS = ['num_adjacent_bins', 'slice_width']
     OUTPUT_LABEL         = 'Bin center of the leftmost bin for the worst slice'
 
@@ -100,4 +100,5 @@ if __name__ == '__main__':
     canvas.Update()
     algorithm = alg__x_min_bin_slices(limits, histogram, {'slice_width': 12})
     algorithm.apply()
+    print 'Parameters: %s\n' % algorithm.ParamsDict
     print algorithm.Output

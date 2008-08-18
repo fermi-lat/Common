@@ -23,7 +23,7 @@ from pGlobals            import MINUS_INFINITY
 
 class alg__leftmost_edge_slices(pAlarmBaseAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH2F']
+    SUPPORTED_TYPES      = ['TH2F', 'TH2D']
     SUPPORTED_PARAMETERS = ['window_half_width', 'threshold', 'slice_width']
     OUTPUT_LABEL         = 'Position of the leftmost edge of the worst slice'
 
@@ -32,7 +32,8 @@ class alg__leftmost_edge_slices(pAlarmBaseAlgorithm):
             (self.getAxisLabel('x'), self.getFormattedX(index))
 
     def getDetailedLabel(self, index, value, valueLabel = None, error = None):
-        return '%s, edge position = %s' % (self.getDetailedXLabel(index), value)
+        return '%s, edge position = %s' %\
+               (self.getDetailedXLabel(index), value)
 
     def getPosition(self, index):
         return index
@@ -103,4 +104,5 @@ if __name__ == '__main__':
     algorithm = alg__leftmost_edge_slices(limits, histogram,\
                                               {'slice_width': 12})
     algorithm.apply()
+    print 'Parameters: %s\n' % algorithm.ParamsDict
     print algorithm.Output

@@ -23,7 +23,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 class alg__num_empty_bins(pAlarmBaseAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH1F', 'TH2F']
+    SUPPORTED_TYPES      = ['TH1F', 'TH2F', 'TH1D', 'TH2D']
     SUPPORTED_PARAMETERS = []
     OUTPUT_LABEL         = 'Number of empty bins'
 
@@ -68,6 +68,7 @@ if __name__ == '__main__':
     canvas.Update()
     algorithm1d = alg__num_empty_bins(limits, histogram1d, {})
     algorithm1d.apply()
+    print 'Parameters: %s\n' % algorithm1d.ParamsDict
     print algorithm1d.Output
 
     print
@@ -83,4 +84,5 @@ if __name__ == '__main__':
     canvas.Update()
     algorithm2d = alg__num_empty_bins(limits, histogram2d, {})
     algorithm2d.apply()
+    print 'Parameters: %s\n' % algorithm2d.ParamsDict
     print algorithm2d.Output
