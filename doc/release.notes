@@ -4,8 +4,9 @@ pedestals in pCalPedsAnalyzer.py.
 - Some minor refactoring in the p*Analyzer classes to allow the derived
 classes to add thei own histograms to the ones specified in the base class.
 - Added histograms of the mean and rms values wrt the truncated average method
-in pCalPedsAnalyzer.
-- Added placeholders for the pedestal deviations in pCalPedsAnalyzer.
+in pCalPedsAnalyzer and pAcdPedsAnalyzer.
+- Added placeholders for the pedestal deviations in pCalPedsAnalyzer and
+pAcdPedsAnalyzer.
 
 
 *** v4r5p0 ***
