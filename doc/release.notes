@@ -2,6 +2,9 @@
 - All the alarms parameters with a default value (i.e. those which may not be
 specified in the xml file) added to the parameters dict of the algorithm so
 that they make it to the output xml file.
+- Methods to adjust the x range in pAlarmBaseAlgorithm modified to use the
+getParameter() method for consistency (this way the min and max parameters
+make it to the output xml file).
 
 
 *** v4r3p0 ***
