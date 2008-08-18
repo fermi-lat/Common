@@ -1,3 +1,9 @@
+*** v4r5p0 ***
+- New alarm algorithm added: alg__low_high_ratio, measuring the ratio---in
+terms of number of entries---below and above a given pivot point.
+* Relevant jira(s): GDQMQ-26
+
+
 *** v4r4p0 ***
 - All the alarms parameters with a default value (i.e. those which may not be
 specified in the xml file) added to the parameters dict of the algorithm so
