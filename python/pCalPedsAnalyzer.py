@@ -1,11 +1,14 @@
 #! /bin/env python
 
 from pBaseAnalyzer import *
+from copy          import copy
 
 
 
 class pCalPedsAnalyzer(pBaseAnalyzer):
 
+    HISTOGRAM_GROUPS = copy(BASE_HISTOGRAM_GROUPS)
+    HISTOGRAM_GROUPS += ['PedMeanDifference', 'PedRMSDifference']
     HISTOGRAM_SUB_GROUPS = ['LEX8', 'LEX1', 'HEX8', 'HEX1']
     CAL_RANGE_DICT = {0: 'LEX8', 1: 'LEX1', 2: 'HEX8', 3: 'HEX1'}
     FIT_RANGE_LEFT_DICT  = {'LEX8': 2.5, 'LEX1': 3.0, 'HEX8': 2.5, 'HEX1': 3.0}
@@ -23,9 +26,11 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
         self.FitFunction = GAUSSIAN
         self.RebinningFactor = 1
         self.NumFitIterations = 1
+        self.TruncPedMeanHistDict = {}
+        self.TruncPedRMSHistDict = {}
 
     def createHistograms(self):
-        for group in HISTOGRAM_GROUPS:
+        for group in self.HISTOGRAM_GROUPS:
             for subgroup in self.HISTOGRAM_SUB_GROUPS:
                 if group in self.HISTOGRAM_SETTINGS.keys():
                     key = group
@@ -82,10 +87,32 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
                             readoutRange)
         self.closeFile()
 
+    def getTruncAvePedMean(self, subgroup, channel):
+        return self.TruncPedMeanHistDict[subgroup].GetBinContent(channel + 1)
+
+    def getTruncAvePedRMS(self, subgroup, channel):
+        return self.TruncPedRMSHistDict[subgroup].GetBinContent(channel + 1)
+
+    def fillHistograms(self, subgroup, channel):
+        pBaseAnalyzer.fillHistograms(self, subgroup, channel)
+        histName = self.getHistogramName('PedMeanDifference', subgroup)
+        valueDiff = self.Mean - self.getTruncAvePedMean(subgroup, channel)
+        errorDiff = self.MeanError
+        self.fillHistogram(histName, channel, valueDiff, errorDiff)
+        histName = self.getHistogramName('PedRMSDifference', subgroup)
+        valueDiff = self.RMS - self.getTruncAvePedRMS(subgroup, channel)
+        errorDiff = self.RMSError
+        self.fillHistogram(histName, channel, valueDiff, errorDiff)
+
     def run(self):
         logger.info('Starting CAL peds analysis...')
         startTime = time.time()
         self.openFile(self.InputFilePath)
+        for subgroup in self.HISTOGRAM_SUB_GROUPS:
+            self.TruncPedMeanHistDict[subgroup] =\
+                 self.get('CalXAdcPedMean_%s_TH1' % subgroup)
+            self.TruncPedRMSHistDict[subgroup] =\
+                 self.get('CalXAdcPedRMS_%s_TH1' % subgroup)
         for tower in range(16):
             logger.debug('Fitting pedestals for tower %d...' % tower)
             for layer in range(8):
