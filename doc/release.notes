@@ -5,6 +5,7 @@ that they make it to the output xml file.
 - Methods to adjust the x range in pAlarmBaseAlgorithm modified to use the
 getParameter() method for consistency (this way the min and max parameters
 make it to the output xml file).
+* Relevant jira(s): GDM-133
 
 
 *** v4r3p0 ***
