@@ -80,7 +80,7 @@ from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 class alg__empty_bins(pAlarmBaseAlgorithm):
 
-    SUPPORTED_TYPES      = ['TH1F', 'TH2F']
+    SUPPORTED_TYPES      = ['TH1F', 'TH2F', 'TH1D', 'TH2D']
     SUPPORTED_PARAMETERS = ['num_neighbours', 'out_low_cut', 'out_high_cut']
     OUTPUT_LABEL          = 'Significance for the worst bin'
 
@@ -147,7 +147,7 @@ if __name__ == '__main__':
     pardict1d = {}
     algorithm1d = alg__empty_bins(limits, histogram1d, pardict1d)
     algorithm1d.apply()
-    print 'Parameters: %s\n' % pardict1d
+    print 'Parameters: %s\n' % algorithm1d.ParamsDict
     print algorithm1d.Output
 
     print
@@ -164,5 +164,5 @@ if __name__ == '__main__':
     pardict2d = {}
     algorithm2d = alg__empty_bins(limits, histogram2d, pardict2d)
     algorithm2d.apply()
-    print 'Parameters: %s\n' % pardict2d
+    print 'Parameters: %s\n' % algorithm2d.ParamsDict
     print algorithm2d.Output
