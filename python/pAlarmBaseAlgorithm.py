@@ -168,6 +168,7 @@ class pAlarmBaseAlgorithm:
         try:
             return self.ParamsDict[paramName]
         except KeyError:
+            self.ParamsDict[paramName] = defaultValue
             return defaultValue
 
     ## @brief Make sure the algorithm supports the ROOT object it has
