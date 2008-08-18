@@ -476,21 +476,12 @@ class pAlarmBaseAlgorithm:
     #  The class instance.
 
     def adjustXRange(self):
-        if self.getObjectType() not in ['TH1F']:
+        if self.getObjectType() not in ['TH1F', 'TH1D']:
             logger.warn('Cannot use setRangeX() on a %s object.' %\
                          self.getObjectType())
-            return None
-        if ('min' not in self.ParamsDict.keys())\
-                and ('max' not in self.ParamsDict.keys()):
-            return None
-        try:
-            min = self.ParamsDict['min']
-        except KeyError:
-            min = self.RootObject.GetXaxis().GetXmin()
-        try:
-            max = self.ParamsDict['max']
-        except KeyError:
-            max = self.RootObject.GetXaxis().GetXmax()
+            return
+        min = self.getParameter('min', self.RootObject.GetXaxis().GetXmin())
+        max = self.getParameter('max', self.RootObject.GetXaxis().GetXmax())
         self.RootObject.GetXaxis().SetRangeUser(min, max)
 
     ## @brief Restore the original x axis range for a ROOT object.
@@ -501,10 +492,10 @@ class pAlarmBaseAlgorithm:
     #  The class instance.
 
     def resetXRange(self):
-        if self.getObjectType() not in ['TH1F']:
+        if self.getObjectType() not in ['TH1F', 'TH1D']:
             logger.warn('Cannot use setRangeX() on a %s object.' %\
                          self.getObjectType())
-            return None
+            return
         self.RootObject.GetXaxis().SetRange(1, 0)
 
     ## @brief Perform a fit with a user defined function and return a user
