@@ -8,7 +8,7 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
 
     HISTOGRAM_SUB_GROUPS = ['LEX8', 'LEX1', 'HEX8', 'HEX1']
     CAL_RANGE_DICT = {0: 'LEX8', 1: 'LEX1', 2: 'HEX8', 3: 'HEX1'}
-    FIT_RANGE_LEFT_DICT  = {'LEX8': 1.5, 'LEX1': 3.0, 'HEX8': 1.5, 'HEX1': 3.0}
+    FIT_RANGE_LEFT_DICT  = {'LEX8': 2.5, 'LEX1': 3.0, 'HEX8': 2.5, 'HEX1': 3.0}
     FIT_RANGE_RIGHT_DICT = {'LEX8': 3.5, 'LEX1': 3.0, 'HEX8': 3.5, 'HEX1': 3.0}
     BASE_NAME = 'CalXAdcPed_TH1_TowerCalLayerCalColumnFR'
     HISTOGRAM_SETTINGS = {
@@ -36,7 +36,8 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
                 name = self.getHistogramName(group, subgroup)
                 self.HistogramsDict[name] = self.getNewHistogram(name, nBins,
                                                                  xmin, xmax,
-                                                                 xlabel, ylabel)
+                                                                 xlabel,
+                                                                 ylabel)
 
     def getHistogramName(self, group, subgroup):
         return 'CalXAdcPed%s_%s_TH1' % (group, subgroup)
