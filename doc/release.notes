@@ -1,3 +1,9 @@
+*** v4r4p0 ***
+- All the alarms parameters with a default value (i.e. those which may not be
+specified in the xml file) added to the parameters dict of the algorithm so
+that they make it to the output xml file.
+
+
 *** v4r3p0 ***
 - Output status promoted to warning (used to be undefined) in the edge finders
 if the edege(s) is (are) not found. The idea is that a minimu suitable number
