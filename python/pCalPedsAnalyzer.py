@@ -98,9 +98,13 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
             bin = channel*4 + self.CAL_RANGE_INVERSE_DICT[subgroup] + 1
             firstRef = self.PedMeanFirstRefHist.GetBinContent(bin)
             lastRef = self.PedMeanLastRefHist.GetBinContent(bin)
-            return (firstRef + lastRef)/2.0
+            if firstRef != lastRef:
+                logger.warn('Pedestals changed during the run, averaging...')
+                return (firstRef + lastRef)/2.0
+            else:
+                return firstRef
         except:
-            logger.error('Could not retrieve the ped. mean reference value.')
+            logger.error('Could not get the ped. reference, returning 0.')
             return 0
 
     def fillHistograms(self, subgroup, channel):
