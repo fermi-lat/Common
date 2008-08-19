@@ -1,3 +1,8 @@
+*** v4r6p1 ***
+- Number of degrees of freedom and reduced chisuare added to the details dict
+for all the algorithms involving fitting.
+
+
 *** v4r6p0 ***
 - Left fitting range changed from 1.5 to 2.5 sigma for LEX8 and HEX8 CAL
 pedestals in pCalPedsAnalyzer.py.
