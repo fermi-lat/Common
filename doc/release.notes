@@ -1,3 +1,8 @@
+*** v4r7p0 ***
+- Implemented the pedestal deviation in the CAL fitting tool, based on the new
+file from David (with the histogram of the pedestal references).
+
+
 *** v4r6p1 ***
 - Number of degrees of freedom and reduced chisuare added to the details dict
 for all the algorithms involving fitting.
