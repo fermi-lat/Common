@@ -4,6 +4,7 @@ from the fastMon error handler and the verify module. The interface is
 identical to the one of the alarm handler, with the only difference that 
 the new class operates on xml files, rather than root files (ans the
 algorithms are obviously different).
+Not running into the pipeline, yet.
 
 
 *** v4r7p0 ***
