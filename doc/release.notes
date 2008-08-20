@@ -1,3 +1,11 @@
+*** v4r8p0 ***
+- Added a new class (pErrorLogger) to apply alarms on the xml output files
+from the fastMon error handler and the verify module. The interface is
+identical to the one of the alarm handler, with the only difference that 
+the new class operates on xml files, rather than root files (ans the
+algorithms are obviously different).
+
+
 *** v4r7p0 ***
 - Implemented the pedestal deviation in the CAL fitting tool, based on the new
 file from David (with the histogram of the pedestal references).
