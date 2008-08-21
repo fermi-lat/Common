@@ -1,3 +1,9 @@
+*** v4r8p1 ***
+- Minor bug fix: the algorithm alg__values was crashing if for some reason it
+was not run (for instance if the plot was missing). Which should never happen,
+but... good to be prepared.
+
+
 *** v4r8p0 ***
 - Added a new class (pErrorLogger) to apply alarms on the xml output files
 from the fastMon error handler and the verify module. The interface is
