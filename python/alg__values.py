@@ -87,6 +87,11 @@ class alg__values(pAlarmBaseAlgorithm):
     SUPPORTED_PARAMETERS = ['exclude', 'only', 'num_sigma']
     OUTPUT_LABEL          = 'The worst entry of the branch'
 
+    def __init__(self, limits, object, paramsDict, conditionsDict = {}):
+        pAlarmBaseAlgorithm.__init__(self, limits, object, paramsDict,
+                                     conditionsDict)
+        self.LinksDict = {}
+
     ## @brief Create all the necessary arrays for the loop over the
     #  TBranch entries.
     ## @param self
@@ -189,7 +194,6 @@ class alg__values(pAlarmBaseAlgorithm):
                     self.Exception.ExceptionsDict[key] = value
 
     def run(self):
-        self.LinksDict = {}
         linkIndexes = []
         self.NumSigma = self.getParameter('num_sigma', 1.0)
         maxBadness = MINUS_INFINITY
