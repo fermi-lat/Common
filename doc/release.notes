@@ -2,6 +2,7 @@
 - Minor bug fix: the algorithm alg__values was crashing if for some reason it
 was not run (for instance if the plot was missing). Which should never happen,
 but... good to be prepared.
+- Another bug fix: exception handling correctly implemented in alg__empty_bins.
 
 
 *** v4r8p0 ***
