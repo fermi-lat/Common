@@ -5,6 +5,8 @@ from pSafeROOT           import ROOT
 from math                import sqrt
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
+from pGlobals            import MINUS_INFINITY
+
 ## @brief Search for (statistically) empty bin(s) into a (1 or 2-d) histogram
 ## reporting detailed information.
 #
@@ -93,6 +95,7 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
         outLoCut = self.getParameter('out_low_cut', 0.0)
         outHiCut = self.getParameter('out_high_cut', 0.25)
         maxSignificance = -1
+        maxBadness = MINUS_INFINITY
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             if self.RootObject.GetBinContent(i) != 0:
                 significance = 0
@@ -103,7 +106,9 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
             if significance > maxSignificance:
                 maxSignificance = significance
             badness = self.checkStatus(i, significance, 'significance')
-        self.Output.setValue(maxSignificance)
+            if badness > maxBadness:
+                maxBadness = badness
+        self.Output.setValue(maxSignificance, None, maxBadness)
                 
     ## @brief Basic algorithm evaluation for 2-dimensional histograms.
     ## @param self
@@ -114,6 +119,7 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
         outLoCut = self.getParameter('out_low_cut', 0.0)
         outHiCut = self.getParameter('out_high_cut', 0.25)
         maxSignificance = -1
+        maxBadness = MINUS_INFINITY
         for i in range(1, self.RootObject.GetNbinsX() + 1):
             for j in range(1, self.RootObject.GetNbinsY() + 1):
                 if self.RootObject.GetBinContent(i, j) != 0:
@@ -126,7 +132,9 @@ class alg__empty_bins(pAlarmBaseAlgorithm):
                     maxSignificance = significance
                 badness = self.checkStatus((i, j), significance,\
                                                'significance')
-        self.Output.setValue(maxSignificance)
+                if badness > maxBadness:
+                    maxBadness = badness
+        self.Output.setValue(maxSignificance, None, maxBadness)
 
 
 
