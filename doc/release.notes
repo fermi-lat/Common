@@ -1,3 +1,8 @@
+*** v4r8p2 ***
+- New attribute "seconds_elapsed" in the FastMon parsed by the pErrorLogger
+module.
+
+
 *** v4r8p1 ***
 - Minor bug fix: the algorithm alg__values was crashing if for some reason it
 was not run (for instance if the plot was missing). Which should never happen,
