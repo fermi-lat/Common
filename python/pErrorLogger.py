@@ -51,6 +51,7 @@ class pErrorLogger(pAlarmHandler):
         self.ErrorCountsDict  = {}
         self.EventSummaryDict = {'num_error_events'      : 0,
                                  'num_processed_events'  : 0,
+                                 'seconds_elapsed'       : 0,
                                  'truncated'             : 0
                                  }
         self.XmlParser = pXmlAlarmParser(xmlConfigFilePath)
@@ -83,8 +84,15 @@ class pErrorLogger(pAlarmHandler):
             except KeyError:
                 self.ErrorCountsDict[code] = quantity
         element = pXmlBaseElement(xmlDoc.getElementByTagName('eventSummary'))
+        logger.info('Parsing statistics...')
         for key in self.EventSummaryDict.keys():
-            self.EventSummaryDict[key] += element.evalAttribute(key)
+            value = element.evalAttribute(key)
+            if value is None:
+                logger.warn('Could not eval attribute "%s", leaving default.' %\
+                                key)
+                value = self.EventSummaryDict[key]
+            self.EventSummaryDict[key] = value
+            logger.info('Key = "%s", value = "%s"'% (key, value))
 
     def getNumProcessedEvents(self):
         return self.EventSummaryDict['num_processed_events']
