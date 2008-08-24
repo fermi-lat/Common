@@ -1,6 +1,8 @@
 *** v4r8p2 ***
 - New attribute "seconds_elapsed" in the FastMon parsed by the pErrorLogger
 module.
+- New algorithm to normalize the number of errors to the run duration added to
+pErrorLogger.
 
 
 *** v4r8p1 ***
