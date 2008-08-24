@@ -20,7 +20,8 @@ from pAlarmBaseAlgorithm       import pAlarmBaseAlgorithm
 
 LABEL_DICT = {
     'number'  : 'Total number of errors',
-    'fraction': 'Number of errors normalized to the number of events'
+    'fraction': 'Number of errors normalized to the number of events',
+    'rate'    : 'Number of errors normalized to the elapsed seconds'
     }
 
 
@@ -96,6 +97,9 @@ class pErrorLogger(pAlarmHandler):
 
     def getNumProcessedEvents(self):
         return self.EventSummaryDict['num_processed_events']
+
+    def getElapsedSeconds(self):
+        return self.EventSummaryDict['seconds_elapsed']
         
     def getNumErrors(self, code):
         try:
@@ -106,6 +110,12 @@ class pErrorLogger(pAlarmHandler):
     def getErrorFraction(self, code):        
         try:
             return float(self.getNumErrors(code))/self.getNumProcessedEvents()
+        except ZeroDivisionError:
+            return 0
+
+    def getErrorRate(self, code):
+        try:
+            return float(self.getNumErrors(code))/self.getElapsedSeconds()
         except ZeroDivisionError:
             return 0
 
@@ -123,6 +133,9 @@ class pErrorLogger(pAlarmHandler):
 
     def __fraction(self, code):
         return self.getErrorFraction(code)
+
+    def __rate(self, code):
+        return self.getErrorRate(code)
 
     def activateAlarms(self):
         logger.info('Activating the alarms...')
