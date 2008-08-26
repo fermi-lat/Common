@@ -1,3 +1,7 @@
+*** v4r9p0 ***
+- Add function LookupErrorCode to Lookup the symbolic name of an error code in FastMon
+* Relevant jira(s): GDQMQ-257
+
 *** v4r8p3 ***
 - New variable in pGloblals to tell FastMon to dump event with an error to file :
   FASTMON_DUMP_ERRORS_TO_FILE is set to false, and is used only for debugging.
