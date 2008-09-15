@@ -7,6 +7,7 @@ from copy          import copy
 class pCalGainsAnalyzer(pBaseAnalyzer):
 
     HISTOGRAM_GROUPS = copy(BASE_HISTOGRAM_GROUPS)
+    HISTOGRAM_GROUPS += ['GainMeanDifference', 'GainRMSDifference']
     HISTOGRAM_SUB_GROUPS = ['RPM', 'RPp', 'RMm']
     REBIN_FACTORS_DICT   = {'RPM': 2  , 'RPp': 10 , 'RMm': 10 }
     FIT_RANGE_LEFT_DICT  = {'RPM': 3.0, 'RPp': 2.0, 'RMm': 2.0}
@@ -80,11 +81,35 @@ class pCalGainsAnalyzer(pBaseAnalyzer):
             self.setupFitParameters(subgroup)
             self.fitChannel(baseName, tower, layer, column)
         self.closeFile()
+
+    def getTruncAveGainMean(self, subgroup, channel):
+        return self.TruncGainMeanHistDict[subgroup].GetBinContent(channel + 1)
+
+    def getTruncAveGainRMS(self, subgroup, channel):
+        return self.TruncGainRMSHistDict[subgroup].GetBinContent(channel + 1)
+
+    def fillHistograms(self, subgroup, channel):
+        pBaseAnalyzer.fillHistograms(self, subgroup, channel)
+        histName = self.getHistogramName('GainMeanDifference', subgroup)
+        valueDiff = self.Mean - self.getTruncAveGainMean(subgroup, channel)
+        errorDiff = self.MeanError
+        self.fillHistogram(histName, channel, valueDiff, errorDiff)
+        histName = self.getHistogramName('GainRMSDifference', subgroup)
+        valueDiff = self.RMS - self.getTruncAveGainRMS(subgroup, channel)
+        errorDiff = self.RMSError
+        self.fillHistogram(histName, channel, valueDiff, errorDiff)
             
     def run(self):
         logger.info('Starting CAL gains analysis...')
         startTime = time.time()
+        self.TruncGainMeanHistDict ={}
+        self.TruncGainRMSHistDict = {}
         self.openFile(self.InputFilePath)
+        for subgroup in self.HISTOGRAM_SUB_GROUPS:
+            self.TruncGainMeanHistDict[subgroup] =\
+                 self.get('%s_Mean_TH1' % subgroup)
+            self.TruncGainRMSHistDict[subgroup] =\
+                 self.get('%s_RMS_TH1' % subgroup)        
         for tower in range(16):
             logger.debug('Fitting gains for tower %d...' % tower)
             for layer in range(8):
