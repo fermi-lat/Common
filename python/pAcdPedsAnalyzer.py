@@ -25,9 +25,6 @@ class pAcdPedsAnalyzer(pBaseAnalyzer):
         self.FitRangeLeft = 1.5
         self.FitRangeRight = 2.0
         self.NumFitIterations = 2
-        self.TruncPedMeanHistDict = {}
-        self.TruncPedRMSHistDict = {}
-        self.PedMeanRefHistDict = {}
 
     def createHistograms(self):
         for group in self.HISTOGRAM_GROUPS:
@@ -76,8 +73,19 @@ class pAcdPedsAnalyzer(pBaseAnalyzer):
         return self.TruncPedRMSHistDict[subgroup].GetBinContent(channel + 1)
 
     def getPedMeanReference(self, subgroup, channel):
-        ## To be implemented.
-        return 0
+        try:
+            bin = channel + 1
+            firstRef =\
+                     self.PedMeanFirstRefHistDict[subgroup].GetBinContent(bin)
+            lastRef = self.PedMeanLastRefHistDict[subgroup].GetBinContent(bin)
+            if firstRef != lastRef:
+                logger.warn('Pedestals changed during the run, averaging...')
+                return (firstRef + lastRef)/2.0
+            else:
+                return firstRef
+        except:
+            logger.error('Could not get the ped. reference, returning 0.')
+            return 0
 
     def fillHistograms(self, subgroup, channel):
         pBaseAnalyzer.fillHistograms(self, subgroup, channel)
@@ -97,14 +105,20 @@ class pAcdPedsAnalyzer(pBaseAnalyzer):
     def run(self):
         logger.info('Starting ACD peds analysis...')
         startTime = time.time()
+        self.TruncPedMeanHistDict = {}
+        self.TruncPedRMSHistDict = {}
+        self.PedMeanFirstRefHistDict = {}
+        self.PedMeanLastRefHistDict = {}
         self.openFile(self.InputFilePath)
         for subgroup in self.HISTOGRAM_SUB_GROUPS:
             self.TruncPedMeanHistDict[subgroup] =\
                  self.get('ACD_PedMean_%s_LowRange_TH1' % subgroup)
             self.TruncPedRMSHistDict[subgroup] =\
                  self.get('ACD_PedRMS_%s_LowRange_TH1' % subgroup)
-            ## To be implemented.
-            self.PedMeanRefHistDict[subgroup] = None
+            self.PedMeanFirstRefHistDict[subgroup] =\
+                 self.get('AcdPedDB_%s_FirstVal_TH1' % subgroup)
+            self.PedMeanLastRefHistDict[subgroup] =\
+                 self.get('AcdPedDB_%s_LastVal_TH1' % subgroup)
         for tile in range(128):
             for subgroup in self.HISTOGRAM_SUB_GROUPS:
                 self.fitChannel(tile, subgroup)
@@ -113,8 +127,7 @@ class pAcdPedsAnalyzer(pBaseAnalyzer):
         elapsedTime = time.time() - startTime
         logger.info('Done in %.2f s.' % elapsedTime)
         self.writeOutputFile()
-        
-    
+
 
 
 if __name__ == '__main__':
