@@ -1,7 +1,7 @@
 *** v4r10p0 ***
 - Implemented the reference subtraction in the AcdPedsAnalyzer.
 - Implemented the difference wrt the truncated average in pCalGainAnalyzer.
-
+* Relevant jira(s): GDQMQ-265
 
 *** v4r9p0 ***
 - Add function LookupErrorCode to Lookup the symbolic name of an error code
