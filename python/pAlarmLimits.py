@@ -118,8 +118,11 @@ class pAlarmLimits:
                 badness = WARNING_BADNESS + DELTA_BADNESS*\
                 (bestValue - self.WarningMax)/(self.ErrorMax - self.WarningMax)
             except ZeroDivisionError:
-                badness = WARNING_BADNESS + DELTA_BADNESS*\
-                (bestValue - center)/(self.ErrorMax - center)
+                try:
+                    badness = WARNING_BADNESS + DELTA_BADNESS*\
+                              (bestValue - center)/(self.ErrorMax - center)
+                except ZeroDivisionError:
+                    badness = ERROR_BADNESS + DELTA_BADNESS
         return badness
 
     ## @brief Return a formatted representation of the limits.
@@ -127,7 +130,7 @@ class pAlarmLimits:
     #  The class instance.
 
     def getSummary(self):
-        return '[%s / %s --- %s / %s]'% (pUtils.formatNumber(self.ErrorMin),\
+        return '[%s / %s --- %s / %s]'% (pUtils.formatNumber(self.ErrorMin)  ,\
                                          pUtils.formatNumber(self.WarningMin),\
                                          pUtils.formatNumber(self.WarningMax),\
                                          pUtils.formatNumber(self.ErrorMax))
@@ -143,6 +146,12 @@ class pAlarmLimits:
 if __name__ == '__main__':
     limits = pAlarmLimits(0.0, 0.08, 0.0, 0.08)
     print limits.getBadness(0.0800469, 0.0)
+
+    limits = pAlarmLimits(1.0, 1.0, 1.0, 1.0)
+    print limits.getBadness(2.0, 0.5)
+
+    limits = pAlarmLimits(0.0, 0.0, 0.0, 0.0)
+    print limits.getBadness(1.0, 0.5)
 
     import ROOT
     limits = pAlarmLimits(200, 300, 200, 400)
