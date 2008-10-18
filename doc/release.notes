@@ -1,7 +1,17 @@
+*** v4r10p1 ***
+- Bug fix in pAlarmLimits.py (couldn't handle the case in which all the
+4 limits were set to the same value and the actual value of the measured
+point was lying outside). In that case the algorithms now returns a
+bedness of ERROR_BADNESS + DELTA_BADNESS (3 in the standard implementation) and
+therefore an error is raised.
+* Relevant jira(s): GDQMQ-272
+
+
 *** v4r10p0 ***
 - Implemented the reference subtraction in the AcdPedsAnalyzer.
 - Implemented the difference wrt the truncated average in pCalGainAnalyzer.
 * Relevant jira(s): GDQMQ-265
+
 
 *** v4r9p0 ***
 - Add function LookupErrorCode to Lookup the symbolic name of an error code
