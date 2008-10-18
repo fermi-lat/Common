@@ -2,6 +2,7 @@
 
 from pBaseAnalyzer import *
 from copy          import copy
+from pAlarmUtils   import ACD_UNPHYSICAL_TILES
 
 
 
@@ -88,7 +89,8 @@ class pAcdPedsAnalyzer(pBaseAnalyzer):
             return 0
 
     def fillHistograms(self, subgroup, channel):
-        pBaseAnalyzer.fillHistograms(self, subgroup, channel)
+        pBaseAnalyzer.fillHistograms(self, subgroup, channel,
+                                     channel not in ACD_UNPHYSICAL_TILES)
         histName = self.getHistogramName('PedMeanDeviation', subgroup)
         valueDiff = self.Mean - self.getPedMeanReference(subgroup, channel)
         errorDiff = self.MeanError

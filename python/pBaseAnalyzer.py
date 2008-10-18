@@ -78,15 +78,11 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         else:
             self.HistogramsDict[name].Fill(channel)
 
-    def fillHistograms(self, subgroup, channel):
+    def fillHistograms(self, subgroup, channel, fillDist = True):
         self.fillHistogram(self.getHistogramName('Mean', subgroup),\
                            channel, self.Mean, self.MeanError)
-        self.fillHistogram(self.getHistogramName('MeanDist', subgroup),\
-                           self.Mean)
         self.fillHistogram(self.getHistogramName('RMS', subgroup),\
                            channel, self.RMS, self.RMSError)
-        self.fillHistogram(self.getHistogramName('RMSDist', subgroup),\
-                           self.RMS)
         self.fillHistogram(self.getHistogramName('ChiSquare', subgroup),\
                            channel, self.ChiSquare)
         self.fillHistogram(self.getHistogramName('DOF', subgroup),\
@@ -94,11 +90,16 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         self.fillHistogram(self.getHistogramName('ReducedChiSquare',\
                                                  subgroup),\
                            channel, self.ReducedChiSquare)
-        self.fillHistogram(self.getHistogramName('ReducedChiSquareDist',\
-                                                     subgroup),\
-                               self.ReducedChiSquare)
         self.fillHistogram(self.getHistogramName('FitProb', subgroup),\
                            channel, self.FitProb)
+        if fillDist:
+            self.fillHistogram(self.getHistogramName('MeanDist', subgroup),\
+                               self.Mean)
+            self.fillHistogram(self.getHistogramName('RMSDist', subgroup),\
+                               self.RMS)
+            self.fillHistogram(self.getHistogramName('ReducedChiSquareDist',\
+                                                     subgroup),\
+                               self.ReducedChiSquare)
 
     def fit(self, channelName):
         self.RootObject = self.get(channelName)
