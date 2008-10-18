@@ -1,3 +1,11 @@
+*** v4r10p3 ***
+- Changed the ranges for some distribution histograms in pCalGainAnalyzer.
+Note that the Mean distributions have been left untouched as they would
+require too many modifications to be changed for the three ratios
+independently and it's not worth it.
+* Relevant jira(s): GDQMQ-270
+
+
 *** v4r10p2 ***
 - Improvement in the output dietributions from pAcdPedsAnalyzer.py, where the
 zeros from the unphysical tiles have been stripped off.
