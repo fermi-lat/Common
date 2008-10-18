@@ -1,3 +1,9 @@
+*** v4r10p2 ***
+- Improvement in the output dietributions from pAcdPedsAnalyzer.py, where the
+zeros from the unphysical tiles have been stripped off.
+* Relevant jira(s): GDQMQ-269
+
+
 *** v4r10p1 ***
 - Bug fix in pAlarmLimits.py (couldn't handle the case in which all the
 4 limits were set to the same value and the actual value of the measured
