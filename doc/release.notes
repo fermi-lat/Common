@@ -1,3 +1,17 @@
+*** v4r10p4 ***
+- Definitions of plus and minus infinity changed.
+< PLUS_INFINITY = 1.e24
+< MINUS_INFINITY = -1.e24
+---
+> PLUS_INFINITY = 1.e10
+> MINUS_INFINITY = -1.e10
+I realized that, due to rounding problems, the old values were giving the
+wrong answer (warning output status instead of error) under certain
+circumstances (i.e. one of the limits not explicitely defined in the xml file).
+This particular feature is never used so it shouldn't matter, but it seemed
+safer to fix it.
+
+
 *** v4r10p3 ***
 - Changed the ranges for some distribution histograms in pCalGainAnalyzer.
 Note that the Mean distributions have been left untouched as they would
