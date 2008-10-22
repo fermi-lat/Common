@@ -1,9 +1,11 @@
 
 import pUtils
+import math
 
 from pSafeROOT           import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
-from math                import sqrt
+
+from pGlobals            import MINUS_INFINITY
 
 
 ## @brief Comparison against a reference histogram.
@@ -90,22 +92,47 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
         numEntriesRef = self.ReferenceObject.GetEntries()
         numEntriesObj = self.RootObject.GetEntries()
         scaleFactor = numEntriesObj/float(numEntriesRef)
-        deltas = [0.0]
+        chiSquare = 0
+        numDof = 0
+        maxBadness = MINUS_INFINITY
+        outputDelta = 0
+        outputBin = 0
+        worstDelta = 0
+        worstBin = 0
         for i in range(numBins + 2):
             exp = self.ReferenceObject.GetBinContent(i)*scaleFactor
             obs = self.RootObject.GetBinContent(i)
-            dobs = self.RootObject.GetBinError(i)
+            deltaExp = self.ReferenceObject.GetBinError(i)*scaleFactor
+            deltaObs = self.RootObject.GetBinError(i)
             try:
-                delta = abs(exp - obs)/dobs
+                delta = ((exp - obs)**2.0)/(deltaObs**2 + deltaExp**2)
+                numDof += 1
+                chiSquare += delta
             except ZeroDivisionError:
                 delta = 0
-            deltas.append(delta)
+            delta = math.sqrt(delta)
             badness = self.checkStatus(i, delta, 'difference significance')
-        chi = sum(deltas)
-        redChi = chi/numBins
-        self.Output.setDictValue('chisquare', pUtils.formatNumber(chi))
-        self.Output.setDictValue('red_chisquare', pUtils.formatNumber(redChi))
-        self.Output.setValue(max(deltas))
+            if badness > maxBadness:
+                maxBadness = badness
+                outputDelta = delta
+                outputBin = i
+            if delta > worstDelta:
+                worstDelta = delta
+                worstBin = i
+        try:
+            reducedChiSquare = chiSquare/float(numDof)
+        except ZeroDivisionError:
+            reducedChiSquare = 0
+        self.Output.setDictValue('chisquare',\
+                                 pUtils.formatNumber(chiSquare))
+        self.Output.setDictValue('red_chisquare',\
+                                 pUtils.formatNumber(reducedChiSquare))
+        self.Output.setDictValue('dof', pUtils.formatNumber(numDof))
+        label = self.getDetailedLabel(outputBin, outputDelta, 'delta')
+        self.Output.setDictValue('output_bin', label)
+        label = self.getDetailedLabel(worstBin, worstDelta, 'delta')
+        self.Output.setDictValue('worst_bin', label)
+        self.Output.setValue(outputDelta, None, maxBadness)
         try:
             self.ReferenceFile.Close()
         except:
@@ -117,13 +144,13 @@ if __name__ == '__main__':
     from pAlarmLimits import pAlarmLimits
     canvas = ROOT.TCanvas('Test canvas', 'Test canvas', 600, 300)
     canvas.Divide(2, 1)
-    limits = pAlarmLimits(-1, 3, -1, 6)
+    limits = pAlarmLimits(-100000, 3, -100000, 6)
 
     referenceFilePath = './reference.root'
     referenceName = 'reference'
     referenceFile = ROOT.TFile(referenceFilePath, 'RECREATE')
     referenceHistogram = ROOT.TH1F(referenceName, referenceName, 10, -5, 5)
-    referenceHistogram.FillRandom('pol0', 100000)
+    referenceHistogram.FillRandom('pol0', 1000000)
     referenceHistogram.SetMinimum(0)
     referenceHistogram.Write()
     canvas.cd(1)
@@ -134,7 +161,7 @@ if __name__ == '__main__':
 
     canvas.cd(2)
     histogram = ROOT.TH1F('h', 'h', 10, -5, 5)
-    histogram.FillRandom('pol1', 10000)
+    histogram.FillRandom('pol0', 10000)
     histogram.SetMinimum(0)
     histogram.Draw()
     canvas.Update()
