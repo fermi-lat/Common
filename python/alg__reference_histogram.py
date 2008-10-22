@@ -1,10 +1,10 @@
 
-import pUtils
+
 import math
 
 from pSafeROOT           import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
-
+from pUtils              import formatNumber
 from pGlobals            import MINUS_INFINITY
 
 
@@ -83,15 +83,26 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
         referenceName = self.ParamsDict['reference_name']
         self.ReferenceFile = ROOT.TFile(referenceFilePath)
         self.ReferenceObject = self.ReferenceFile.Get(referenceName)
+        self.ScaleFactor = self.RootObject.GetEntries()/\
+            float(self.ReferenceObject.GetEntries())
+        
+    def getExpectedValue(self, bin):
+        return self.ReferenceObject.GetBinContent(bin)*self.ScaleFactor
+
+    def getExpectedError(self, bin):
+        return self.ReferenceObject.GetBinError(bin)*self.ScaleFactor
+
+    def getObservedValue(self, bin):
+        return self.RootObject.GetBinContent(bin)
+
+    def getObservedError(self, bin):
+        return self.RootObject.GetBinError(bin)
 
     def run(self):
         numBins = self.ReferenceObject.GetNbinsX()
         if self.RootObject.GetNbinsX() != numBins:
             logging.error('Mismatch in bins while comparing histograms.')
             return
-        numEntriesRef = self.ReferenceObject.GetEntries()
-        numEntriesObj = self.RootObject.GetEntries()
-        scaleFactor = numEntriesObj/float(numEntriesRef)
         chiSquare = 0
         numDof = 0
         maxBadness = MINUS_INFINITY
@@ -100,12 +111,12 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
         worstDelta = 0
         worstBin = 0
         for i in range(numBins + 2):
-            exp = self.ReferenceObject.GetBinContent(i)*scaleFactor
-            obs = self.RootObject.GetBinContent(i)
-            deltaExp = self.ReferenceObject.GetBinError(i)*scaleFactor
-            deltaObs = self.RootObject.GetBinError(i)
+            expValue = self.getExpectedValue(i)
+            expErr = self.getExpectedError(i)
+            obsValue = self.getObservedValue(i)
+            obsErr = self.getObservedError(i)
             try:
-                delta = ((exp - obs)**2.0)/(deltaObs**2 + deltaExp**2)
+                delta = ((expValue - obsValue)**2.0)/(expErr**2 + obsErr**2)
                 numDof += 1
                 chiSquare += delta
             except ZeroDivisionError:
@@ -120,17 +131,25 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
                 worstDelta = delta
                 worstBin = i
         try:
-            reducedChiSquare = chiSquare/float(numDof)
+            redChiSquare = chiSquare/float(numDof)
         except ZeroDivisionError:
-            reducedChiSquare = 0
-        self.Output.setDictValue('chisquare',\
-                                 pUtils.formatNumber(chiSquare))
-        self.Output.setDictValue('red_chisquare',\
-                                 pUtils.formatNumber(reducedChiSquare))
-        self.Output.setDictValue('dof', pUtils.formatNumber(numDof))
+            redChiSquare = 0
+        self.Output.setDictValue('chisquare', formatNumber(chiSquare))
+        self.Output.setDictValue('red_chisquare', formatNumber(redChiSquare))
+        self.Output.setDictValue('dof', formatNumber(numDof))
         label = self.getDetailedLabel(outputBin, outputDelta, 'delta')
+        label += ' (exp. %s +- %s, obs. %s +- %s)' %\
+            (formatNumber(self.getExpectedValue(outputBin)),
+             formatNumber(self.getExpectedError(outputBin)),
+             formatNumber(self.getObservedValue(outputBin)),
+             formatNumber(self.getObservedError(outputBin)))
         self.Output.setDictValue('output_bin', label)
         label = self.getDetailedLabel(worstBin, worstDelta, 'delta')
+        label += ' (exp. %s +- %s, obs. %s +- %s)' %\
+            (formatNumber(self.getExpectedValue(worstBin)),
+             formatNumber(self.getExpectedError(worstBin)),
+             formatNumber(self.getObservedValue(worstBin)),
+             formatNumber(self.getObservedError(worstBin)))
         self.Output.setDictValue('worst_bin', label)
         self.Output.setValue(outputDelta, None, maxBadness)
         try:
