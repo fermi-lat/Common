@@ -123,7 +123,10 @@ class pRootFileManager:
         if TREE_BRANCH_SEPARATOR in pattern:
             return self.findTreeBranches(pattern)
         else:
-            return self.findObjects(pattern, selection)
+            if '*' not in pattern:
+                return [self.RootFile.FindObjectAny(pattern)]
+            else:
+                return self.findObjects(pattern, selection)
 
     ## @brief Find ROOT objects whose name matches a certain pattern in a
     #  ROOT file.
