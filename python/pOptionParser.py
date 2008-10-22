@@ -62,12 +62,12 @@ class pOptionParser:
     def add_r(self):
         self.Parser.add_option('-r', '--create-report', dest = 'r',
                                default = False, action = 'store_true',
-                               help='generate a report')
+                               help = 'generate a report')
 
     def add_v(self):
         self.Parser.add_option('-v', '--verbose', dest = 'v',
                                default = False, action = 'store_true',
-                               help='print (a lot of!) debug messages')
+                               help = 'print (a lot of!) debug messages')
         
     def add_L(self):
         logger.warn('The LaTeX report is not supported anymore.')
@@ -76,17 +76,17 @@ class pOptionParser:
     def add_V(self):
         self.Parser.add_option('-V', '--view-report', dest = 'V',
                                default = False, action='store_true',
-                               help='launch the html report at the end')
+                               help = 'launch the html report at the end')
 
     def add_f(self):
         self.Parser.add_option('-f', '--force-overwrite', dest = 'f',
                                default = False, action = 'store_true',
-                               help='not used anymore.')
+                               help = 'not used anymore.')
 
     def add_i(self):
         self.Parser.add_option('-i', '--interactive', dest = 'i',
                                default = False, action = 'store_true',
-                               help='run interactively.')
+                               help = 'run interactively.')
 
     def add_e(self):
         self.Parser.add_option('-e', '--error-file', dest = 'e',
@@ -97,3 +97,8 @@ class pOptionParser:
         self.Parser.add_option('-m', '--magic7-file', dest = 'm',
                                default = None, type = str,
                                help = 'path to the input magic7 file')
+
+    def add_w(self):
+        self.Parser.add_option('-w', '--write-clean', dest = 'w',
+                               default = False, action = 'store_true',
+                               help = 'write the clean table to the report.')

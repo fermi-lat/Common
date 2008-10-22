@@ -136,7 +136,7 @@ class pAlarmHandler:
 
 if __name__ == '__main__':
     from pOptionParser import pOptionParser
-    optparser = pOptionParser('corVx',1,1,False)
+    optparser = pOptionParser('corVxw',1,1,False)
     if optparser.Options.c is None:
         optparser.error('Please supply an xml configuration file.')
     if optparser.Options.V and not optparser.Options.r:
@@ -145,7 +145,7 @@ if __name__ == '__main__':
                                  optparser.Options.x, optparser.Options.o)
     if optparser.Options.r:
         ReportGenerator = pAlarmReportGenerator(alarmHandler)
-        ReportGenerator.run(False)
+        ReportGenerator.run(False, optparser.Options.w)
         if optparser.Options.V:
             ReportGenerator.viewReport()
     alarmHandler.RootFileManager.closeFile()

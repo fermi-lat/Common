@@ -5,6 +5,7 @@ import os
 import sys
 import commands
 import time
+import copy
 
 import pUtils
 
@@ -55,14 +56,17 @@ class pAlarmReportGenerator(pBaseReportGenerator):
         for label in self.ALARM_STATUS_LABELS:
             self.SummaryTablesDict[label] = []
 
-    def run(self, verbose = False):
+    def run(self, verbose = False, writeClean = False):
         self.openReport()
         self.addSection('alarms_summary', 'Alarm summary')
         self.addDictionary('Alarm summary',self.AlarmHandler.AlarmStats )
         self.addSection('alarms_output', 'Alarms output')
         self.addPage('alarms_details', 'Alarms details')
         self.fillSummaryTables()
-        for label in self.ALARM_STATUS_LABELS:
+        labels = copy.copy(self.ALARM_STATUS_LABELS)
+        if not writeClean:
+            labels.remove('CLEAN')
+        for label in labels:
             subsectionLabel = 'alarms_%s' % label.lower()
             subsectionTitle = 'Alarms with %s status' % label
             tableName       = 'Alarms table'
