@@ -1,3 +1,10 @@
+*** v4r12p0 ***
+- One more command line switch added to pAlarmHandler not to write the table
+of the alarms with the CLEAN status in the output report. It does not affect
+the standard use in the pipeline in which the html report is not generated, but
+it is useful for debug when run locally.
+
+
 *** v4r11p1 ***
 - Bug fix in the alarm handler. Now it allows multiple alarm sets with the
 same name.
