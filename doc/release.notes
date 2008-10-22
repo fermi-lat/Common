@@ -1,3 +1,9 @@
+*** v4r13p0 ***
+- Improved the reference_histogram algorithm. Statistics bug fixed and output
+details improved.
+* Relevant jira(s): GDQMQ-284
+
+
 *** v4r12p0 ***
 - One more command line switch added to pAlarmHandler not to write the table
 of the alarms with the CLEAN status in the output report. It does not affect
