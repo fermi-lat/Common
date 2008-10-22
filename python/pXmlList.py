@@ -28,23 +28,23 @@ class pXmlList(pXmlElement):
         pXmlElement.__init__(self, element)
         self.Group = self.getAttribute('group')
 
-    ## @brief Return a disctionary containing all the enabled elements
+    ## @brief Return a list containing all the enabled elements
     #  contained into the list.
     #
-    #  Note that the dictionary elements are dom elements, not pXmlElement
-    #  objects. The dictionary is indexed by element name.
+    #  Note that the list elements are dom elements, not pXmlElement
+    #  objects.
     ## @param self
     #  The class instance.
     ## @param elementName
     #  The element name.
 	
-    def getEnabledElementsDict(self, elementName):
-        outputDict = {}
+    def getEnabledElementsList(self, elementName):
+        outputList = []
         for domElement in self.getElementsByTagName(elementName):
 	    xmlElement = pXmlElement(domElement)
 	    if xmlElement.Enabled:
-	      outputDict[xmlElement.Name] = domElement
-        return outputDict
+	      outputList.append(domElement)
+        return outputList
 
     ## @brief Return all the enabled dom elements corresponding to a given
     #  element name.
@@ -54,7 +54,7 @@ class pXmlList(pXmlElement):
     #  The element name.
 
     def getEnabledItems(self, elementName):
-        return self.getEnabledElementsDict(elementName).items()
+        return self.getEnabledElementsList(elementName)
 
     ## @brief Return a formatted text representation of the class instances.
     ## @param self

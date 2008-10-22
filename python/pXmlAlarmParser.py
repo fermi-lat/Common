@@ -27,7 +27,7 @@ class pXmlAlarmParser:
         ## @var AlarmListsDict
         ## @brief A dictionary containing the alarm lists, indexed by name.
 
-        ## @var EnabledAlarmSetsDict
+        ## @var EnabledAlarmSetsList
         ## @brief A dictionary containing the enabled alem sets, indexed by
         #  name.
 
@@ -38,7 +38,7 @@ class pXmlAlarmParser:
         ## @brief The xml document representation from the minidom module.
    
         self.AlarmListsDict       = {}
-        self.EnabledAlarmSetsDict = {}
+        self.EnabledAlarmSetsList = []
         self.XmlConfigFilePath    = xmlConfigFilePath
         if os.path.exists(self.XmlConfigFilePath):
             logger.info('Parsing %s...' % xmlConfigFilePath)     
@@ -59,15 +59,15 @@ class pXmlAlarmParser:
     	    xmlList = pXmlList(element)
 	    self.AlarmListsDict[xmlList.Name] = xmlList
 	    if xmlList.Enabled:
-	        for (key, value) in  xmlList.getEnabledItems('alarmSet'):
-                    self.EnabledAlarmSetsDict[key] = pAlarmSet(value)
+	        for item in xmlList.getEnabledItems('alarmSet'):
+                    self.EnabledAlarmSetsList.append(pAlarmSet(item))
 
     ## @brief Return the enabled alarm sets.
     ## @param self
     #  The class instance.
 	
     def getEnabledAlarmSets(self):
-        return self.EnabledAlarmSetsDict.values()
+        return self.EnabledAlarmSetsList
 
     ## @brief Return the enabled alarms.
     ## @param self
@@ -88,7 +88,7 @@ class pXmlAlarmParser:
     def getTextSummary(self):
         return 'Configuration file %s contains:\n' % self.XmlConfigFilePath +\
                '%d alarm list(s)\n' % len(self.AlarmListsDict) +\
-               '%d enabled alarm set(s)' % len(self.EnabledAlarmSetsDict)
+               '%d enabled alarm set(s)' % len(self.EnabledAlarmSetsList)
 
     ## @brief Class representation.
     ## @param self
