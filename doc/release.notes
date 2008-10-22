@@ -1,3 +1,9 @@
+*** v4r11p1 ***
+- Bug fix in the alarm handler. Now it allows multiple alarm sets with the
+same name.
+* Relevant jira(s): GDQMQ-283
+
+
 *** v4r11p0 ***
 - Bug fix in the alarm handler (plot names were always expanded and matched
 against the ones in the root tree, no matter whether the xml config file
