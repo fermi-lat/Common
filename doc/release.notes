@@ -1,3 +1,9 @@
+*** v4r13p1 ***
+- More improvements to the output detailed dictionary of the
+reference_histogram algorithm.
+* Relevant jira(s): GDQMQ-284
+
+
 *** v4r13p0 ***
 - Improved the reference_histogram algorithm. Statistics bug fixed and output
 details improved.
