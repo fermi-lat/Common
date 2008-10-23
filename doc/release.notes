@@ -1,6 +1,8 @@
 *** v5r0p0 ***
 - Command line switch -R added to the alarm handler in order to load into
 memory the files containing the reference histograms from a specific directory.
+- Alarm handler and reference histogram algorithm modified to load the
+reference files at the beginning and use them in the following.
 * Relevant jira(s): GDQMQ-281
 
 
