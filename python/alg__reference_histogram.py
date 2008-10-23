@@ -40,6 +40,21 @@ from pGlobals            import MINUS_INFINITY
 #  TH1::GetBinError(binNumber) function so that each time the bin error is
 #  properly set at creation time, the algorithm should in principle work.
 #
+#  <b>Valid parameters</b>:
+#
+#  @li <tt>ref_folder_path</tt>: the path to the directory containing the ROOT
+#  files in which the reference histograms are stored. If not set the path
+#  set via the -R command line switch of aPalarmHandler is used instead
+#  (typical case).
+#  <br>
+#  @li <tt>ref_file_name</tt>: the name of the ROOT file containing the
+#  reference histogram (mandatory).
+#  <br>
+#  @li <tt>ref_plot_name</tt>: the name of the plot in the ROOT file to
+#  compare with. If not set, the same name of the root object the alarm is
+#  set on is used (typical case).
+#  <br>
+#
 #  <b>Output value</b>:
 #
 #  The significance of the <em>worst</em> bin (the one with the most
