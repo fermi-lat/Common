@@ -54,9 +54,9 @@ class pAlarmSet(pXmlElement):
     ## @param plotsList
     #  The list of plots.
 	
-    def setPlotsList(self, plotsList):
+    def setPlotsList(self, plotsList, referenceDict):
         self.PlotsList = plotsList
-	self.__populateEnabledAlarmsList()
+	self.__populateEnabledAlarmsList(referenceDict)
 
     ## @brief Populate the list of enabled alarms.
     #
@@ -65,12 +65,17 @@ class pAlarmSet(pXmlElement):
     ## @param self
     #  The class instance.
 	
-    def __populateEnabledAlarmsList(self):
+    def __populateEnabledAlarmsList(self, referenceDict):
         for element in self.getElementsByTagName('alarm'):
 	    xmlElement = pXmlElement(element)
 	    if xmlElement.Enabled:
 	        for plot in self.PlotsList:
                     alarm = pAlarm(element, plot)
+                    if alarm.FunctionName == 'reference_histogram':
+                        if alarm.Algorithm is not None:
+                            alarm.Algorithm.setReferenceDict(referenceDict)
+                        else:
+                            logger.error('Could not set reference.')
                     if (alarm.Algorithm is not None) and \
                            (alarm.Algorithm.isValid()):
                         self.EnabledAlarmsList.append(alarm)

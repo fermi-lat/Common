@@ -3,7 +3,7 @@
 import math
 
 from pSafeROOT           import ROOT
-from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
+from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm, logger
 from pUtils              import formatNumber
 from pGlobals            import MINUS_INFINITY
 
@@ -73,18 +73,21 @@ from pGlobals            import MINUS_INFINITY
 class alg__reference_histogram(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F', 'TH1D']
-    SUPPORTED_PARAMETERS = ['reference_path', 'reference_name']
+    SUPPORTED_PARAMETERS = ['ref_folder_path', 'ref_file_name',
+                            'ref_plot_name']
     OUTPUT_LABEL         = 'Significance of the maximum bin difference'
 
     def __init__(self, limits, object, paramsDict, conditionsDict = {}):
         pAlarmBaseAlgorithm.__init__(self, limits, object, paramsDict,\
                                          conditionsDict)
-        referenceFilePath = self.ParamsDict['reference_path']
-        referenceName = self.ParamsDict['reference_name']
-        self.ReferenceFile = ROOT.TFile(referenceFilePath)
-        self.ReferenceObject = self.ReferenceFile.Get(referenceName)
-        self.ScaleFactor = self.RootObject.GetEntries()/\
-            float(self.ReferenceObject.GetEntries())
+        self.ReferenceFolderPath = self.getParameter('ref_folder_path', None)
+        self.ReferenceFileName = self.getParameter('ref_file_name', None)
+        self.ReferencePlotName = self.getParameter('ref_plot_name', None)
+        self.ReferenceHistogramsDict = None
+        self.ReferenceFile = None
+
+    def setReferenceDict(self, referenceDict):
+        self.ReferenceHistogramsDict = referenceDict
         
     def getExpectedValue(self, bin):
         return self.ReferenceObject.GetBinContent(bin)*self.ScaleFactor
@@ -99,6 +102,33 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
         return self.RootObject.GetBinError(bin)
 
     def run(self):
+        if self.ReferenceFileName is None:
+            logger.error('Reference file name undefined, returning.')
+            logger.error('Algorithm will not be applied.')
+            return
+        if self.ReferencePlotName is None:
+            self.ReferencePlotName = self.RootObject.GetName()
+        if self.ReferenceFolderPath is not None:
+            referenceFilePath = os.path.join(self.ReferenceFolderPath,\
+                                             self.ReferenceFileName)
+            self.ReferenceFile = ROOT.TFile(referenceFilePath)
+        else:
+            try:
+                self.ReferenceFile =\
+                     self.ReferenceHistogramsDict[self.ReferenceFileName]
+            except KeyError:
+                logger.error('Reference histogram dict has no key "%s".' %
+                             self.ReferenceFileName)
+                logger.info('Reference histogram dict:\n %s' %\
+                            self.ReferenceHistogramsDict)
+            except:
+                pass
+        if self.ReferenceFile is None:
+            logger.error('Could not get reference file, skipping.')
+            return
+        self.ReferenceObject = self.ReferenceFile.Get(self.ReferencePlotName)
+        self.ScaleFactor = self.RootObject.GetEntries()/\
+            float(self.ReferenceObject.GetEntries())
         numBins = self.ReferenceObject.GetNbinsX()
         if self.RootObject.GetNbinsX() != numBins:
             logging.error('Mismatch in bins while comparing histograms.')
@@ -160,12 +190,15 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
 
 
 if __name__ == '__main__':
+    import os
     from pAlarmLimits import pAlarmLimits
     canvas = ROOT.TCanvas('Test canvas', 'Test canvas', 600, 300)
     canvas.Divide(2, 1)
     limits = pAlarmLimits(-100000, 3, -100000, 6)
 
-    referenceFilePath = './reference.root'
+    referenceFolderPath = './'
+    referenceFileName = 'reference.root'
+    referenceFilePath = os.path.join(referenceFolderPath, referenceFileName)
     referenceName = 'reference'
     referenceFile = ROOT.TFile(referenceFilePath, 'RECREATE')
     referenceHistogram = ROOT.TH1F(referenceName, referenceName, 10, -5, 5)
@@ -185,8 +218,9 @@ if __name__ == '__main__':
     histogram.Draw()
     canvas.Update()
 
-    pardict = {'reference_path': referenceFilePath,\
-               'reference_name': referenceName}
+    pardict = {'ref_folder_path': referenceFolderPath,
+               'ref_file_name': referenceFileName,
+               'ref_plot_name': referenceName}
     algorithm = alg__reference_histogram(limits, histogram, pardict)
     algorithm.apply()
     print 'Parameters: %s\n' % algorithm.ParamsDict

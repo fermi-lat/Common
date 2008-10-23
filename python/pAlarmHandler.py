@@ -131,7 +131,7 @@ class pAlarmHandler:
         for alarmSet in self.XmlParser.getEnabledAlarmSets():
             PlotList = self.RootFileManager.find(alarmSet.Name,\
                                                  alarmSet.Selection)
-            alarmSet.setPlotsList(PlotList)
+            alarmSet.setPlotsList(PlotList, self.ReferenceHistogramsDict)
         logger.info('Done. %d enabled alarm set(s) found.\n' %\
                     len(self.XmlParser.getEnabledAlarmSets()))
 
