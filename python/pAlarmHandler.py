@@ -85,6 +85,7 @@ class pAlarmHandler:
         self.activateAlarms()
         self.AlarmStats = self.evalStatistics()
         pAlarmXmlSummaryGenerator(self).run()
+        self.closeReferenceFiles()
 
     ## @brief Load the reference histograms into memory.
     #
@@ -118,6 +119,15 @@ class pAlarmHandler:
                     else:
                         self.ReferenceHistogramsDict[fileName] = rootFile
                         logger.info('Done.')
+
+    ## @brief Close the reference files.
+
+    def closeReferenceFiles(self):
+        logger.info('Closing reference files...')
+        for rootFile in self.ReferenceHistogramsDict.values():
+            logger.info('Closing %s...' % rootFile.GetPath())
+            rootFile.Close()
+        logger.info('Done.')
 
     ## @brief Assing the ROOT objects to the alarm sets.
     #
