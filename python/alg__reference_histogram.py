@@ -116,11 +116,12 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
     def getObservedError(self, bin):
         return self.RootObject.GetBinError(bin)
 
-    def run(self):
+    def setupReference(self):
         if self.ReferenceFileName is None:
-            logger.error('Reference file name undefined, returning.')
-            logger.error('Algorithm will not be applied.')
-            return
+            logger.error('Reference file name undefined, skipping.')
+            self.Output.setDictValue('UNDEFINED status reason',
+                                     'Reference file name undefined.')
+            return 1
         if self.ReferencePlotName is None:
             self.ReferencePlotName = self.RootObject.GetName()
         if self.ReferenceFolderPath is not None:
@@ -134,14 +135,26 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
             except KeyError:
                 logger.error('Reference histogram dict has no key "%s".' %
                              self.ReferenceFileName)
-                logger.info('Reference histogram dict:\n %s' %\
-                            self.ReferenceHistogramsDict)
             except:
                 pass
-        if self.ReferenceFile is None:
+        if self.ReferenceFile is None or self.ReferenceFile.IsZombie():
             logger.error('Could not get reference file, skipping.')
-            return
+            self.Output.setDictValue('UNDEFINED status reason',
+                                     'Could not get reference file.')
+            return 1
         self.ReferenceObject = self.ReferenceFile.Get(self.ReferencePlotName)
+        if self.ReferenceObject is None:
+            logger.error('Could not get reference plot "%s", skipping.' %\
+                         self.ReferencePlotName)
+            self.Output.setDictValue('UNDEFINED status reason',
+                                     'Could not get reference plot "%s".' %\
+                                     self.ReferencePlotName)
+            return 1
+        return 0
+
+    def run(self):
+        if self.setupReference():
+            return
         self.ScaleFactor = self.RootObject.GetEntries()/\
             float(self.ReferenceObject.GetEntries())
         numBins = self.ReferenceObject.GetNbinsX()
@@ -197,10 +210,11 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
              formatNumber(self.getObservedError(worstBin)))
         self.Output.setDictValue('worst_bin', label)
         self.Output.setValue(outputDelta, None, maxBadness)
-        try:
-            self.ReferenceFile.Close()
-        except:
-            pass
+        if self.ReferenceFolderPath is not None:
+            try:
+                self.ReferenceFile.Close()
+            except:
+                pass
 
 
 
