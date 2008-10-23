@@ -42,7 +42,7 @@ class pAlarmHandler:
     #  The path to the output xml summary path.
     
     def __init__(self, rootFilePath, xmlConfigFilePath, xmlExceptionsFilePath,\
-                     xmlSummaryFilePath):
+                     xmlSummaryFilePath, referenceFolderPath):
 
         ## @var XmlParser
         ## @brief The pXmlAlarmParser object responsible for parsing the
@@ -77,11 +77,47 @@ class pAlarmHandler:
             logger.debug('Creating new directory to store output files: %s' %\
                              outputDirPath )
         self.ReportDir = xmlSummaryFilePath.replace('.xml','')
+        self.ReferenceFolderPath = referenceFolderPath
+        self.ReferenceHistogramsDict = {}
+        self.loadReferenceHistograms()
         self.RootFileManager = pRootFileManager(rootFilePath)
         self.setAlarmSetsPlotLists()
         self.activateAlarms()
         self.AlarmStats = self.evalStatistics()
         pAlarmXmlSummaryGenerator(self).run()
+
+    ## @brief Load the reference histograms into memory.
+    #
+    #  If \ref ReferenceFolderPath is not set, then the funtion does not
+    #  actually do nothing. Otherwise it loops over the root file in the
+    #  specified folders, opens them and put a reference into the
+    #  dictionary \ref ReferenceHistogramsDict.
+
+    def loadReferenceHistograms(self):
+        if self.ReferenceFolderPath is None:
+            logger.info('Path to the reference histograms folder not set.')
+            logger.info('Reference histograms will not be loaded.')
+        else:
+            logger.info('Loading reference histograms into memory...')
+            if not os.path.exists(self.ReferenceFolderPath):
+                logger.error('%s does not exist. References not loaded.' %\
+                             self.ReferenceFolderPath)
+                return
+            if not os.path.isdir(self.ReferenceFolderPath):
+                logger.error('%s is not a directory. References not loaded.' %\
+                             self.ReferenceFolderPath)
+                return
+            fileNameList = os.listdir(self.ReferenceFolderPath)
+            for fileName in fileNameList:
+                if fileName.endswith('.root'):
+                    filePath = os.path.join(self.ReferenceFolderPath, fileName)
+                    logger.info('Loading %s...' % filePath)
+                    rootFile = ROOT.TFile(filePath)
+                    if rootFile.IsZombie():
+                        logger.error('Problems loading %s.' % filePath)
+                    else:
+                        self.ReferenceHistogramsDict[fileName] = rootFile
+                        logger.info('Done.')
 
     ## @brief Assing the ROOT objects to the alarm sets.
     #
@@ -136,13 +172,14 @@ class pAlarmHandler:
 
 if __name__ == '__main__':
     from pOptionParser import pOptionParser
-    optparser = pOptionParser('corVxw',1,1,False)
+    optparser = pOptionParser('corVxwR',1,1,False)
     if optparser.Options.c is None:
         optparser.error('Please supply an xml configuration file.')
     if optparser.Options.V and not optparser.Options.r:
         logger.warning('Without the -r option the -V option will be ignored!')
     alarmHandler = pAlarmHandler(optparser.Argument, optparser.Options.c,\
-                                 optparser.Options.x, optparser.Options.o)
+                                 optparser.Options.x, optparser.Options.o,
+                                 optparser.Options.R)
     if optparser.Options.r:
         ReportGenerator = pAlarmReportGenerator(alarmHandler)
         ReportGenerator.run(False, optparser.Options.w)

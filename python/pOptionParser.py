@@ -79,9 +79,7 @@ class pOptionParser:
                                help = 'launch the html report at the end')
 
     def add_f(self):
-        self.Parser.add_option('-f', '--force-overwrite', dest = 'f',
-                               default = False, action = 'store_true',
-                               help = 'not used anymore.')
+        logger.warn('The -f command line option will be ignored.')
 
     def add_i(self):
         self.Parser.add_option('-i', '--interactive', dest = 'i',
@@ -102,3 +100,8 @@ class pOptionParser:
         self.Parser.add_option('-w', '--write-clean', dest = 'w',
                                default = False, action = 'store_true',
                                help = 'write the clean table to the report.')
+
+    def add_R(self):
+        self.Parser.add_option('-R', '--reference-folder-path', dest = 'R',
+                               default = None, type = str,
+                               help = 'path to the reference files folder')
