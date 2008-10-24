@@ -1,3 +1,6 @@
+*** v5r0p1 ***
+- Bug fix in reference histogram algorithm : logging changed to logger
+
 *** v5r0p0 ***
 - Command line switch -R added to the alarm handler in order to load into
 memory the files containing the reference histograms from a specific directory.
