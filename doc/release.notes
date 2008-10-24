@@ -1,5 +1,11 @@
+*** v5r1p0 ***
+- Added distribution of the pedestal mean deviation for pCalPedsAnalyzer.
+* Relevant jira(s): GDQMQ-287
+
+
 *** v5r0p1 ***
 - Bug fix in reference histogram algorithm : logging changed to logger
+
 
 *** v5r0p0 ***
 - Command line switch -R added to the alarm handler in order to load into
