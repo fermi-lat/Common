@@ -9,7 +9,7 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
 
     HISTOGRAM_GROUPS = copy(BASE_HISTOGRAM_GROUPS)
     HISTOGRAM_GROUPS += ['PedMeanDeviation', 'PedMeanDifference',
-                         'PedRMSDifference']
+                         'PedRMSDifference', 'MeanDevDist']
     HISTOGRAM_SUB_GROUPS = ['LEX8', 'LEX1', 'HEX8', 'HEX1']
     CAL_RANGE_DICT = {0: 'LEX8', 1: 'LEX1', 2: 'HEX8', 3: 'HEX1'}
     CAL_RANGE_INVERSE_DICT = {'LEX8': 0, 'LEX1': 1, 'HEX8': 2, 'HEX1': 3}
@@ -17,10 +17,11 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
     FIT_RANGE_RIGHT_DICT = {'LEX8': 3.5, 'LEX1': 3.0, 'HEX8': 3.5, 'HEX1': 3.0}
     BASE_NAME = 'CalXAdcPed_TH1_TowerCalLayerCalColumnFR'
     HISTOGRAM_SETTINGS = {
-        'MeanDist'            : (100, 0, 1000, 'Pedestal mean'),
-        'RMSDist'             : (100, 0, 10  , 'Pedestal RMS'),
-        'ReducedChiSquareDist': (100, 0, 80  , 'Reduced chi square'),
-        'Default'             : (3072, 0, 3072 , 'Channel number')
+        'MeanDist'            : (100,  0  , 1000 , 'Pedestal mean'),
+        'MeanDevDist'         : (100,  -20, 20   , 'Pedestal deviation'),
+        'RMSDist'             : (100,  0  , 10   , 'Pedestal RMS'),
+        'ReducedChiSquareDist': (100,  0  , 80   , 'Reduced chi square'),
+        'Default'             : (3072, 0  , 3072 , 'Channel number')
         }
 
     def __init__(self, inputFilePath, outputFilePath, debug):
@@ -113,6 +114,8 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
         valueDiff = self.Mean - self.getPedMeanReference(subgroup, channel)
         errorDiff = self.MeanError
         self.fillHistogram(histName, channel, valueDiff, errorDiff)
+        histName = self.getHistogramName('MeanDevDist', subgroup)
+        self.fillHistogram(histName, valueDiff)
         histName = self.getHistogramName('PedMeanDifference', subgroup)
         valueDiff = self.Mean - self.getTruncAvePedMean(subgroup, channel)
         errorDiff = self.MeanError
