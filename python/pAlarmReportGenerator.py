@@ -57,6 +57,7 @@ class pAlarmReportGenerator(pBaseReportGenerator):
             self.SummaryTablesDict[label] = []
 
     def run(self, verbose = False, writeClean = False):
+        self.WriteClean = writeClean
         self.openReport()
         self.addSection('alarms_summary', 'Alarm summary')
         self.addDictionary('Alarm summary',self.AlarmHandler.AlarmStats )
@@ -64,7 +65,7 @@ class pAlarmReportGenerator(pBaseReportGenerator):
         self.addPage('alarms_details', 'Alarms details')
         self.fillSummaryTables()
         labels = copy.copy(self.ALARM_STATUS_LABELS)
-        if not writeClean:
+        if not self.WriteClean:
             labels.remove('CLEAN')
         for label in labels:
             subsectionLabel = 'alarms_%s' % label.lower()
@@ -84,7 +85,8 @@ class pAlarmReportGenerator(pBaseReportGenerator):
 
     def fillSummaryTables(self):
         for alarm in self.AlarmHandler.XmlParser.getEnabledAlarms():
-            if alarm.Algorithm.hasDetails():
+            if alarm.Algorithm.hasDetails() and \
+                    (not alarm.isClean() or self.WriteClean):
                 details = alarm.getOutputDetails()
                 self.addDictionary('%s---%s details' %\
                                    (alarm.getPlotName(), alarm.FunctionName),\
