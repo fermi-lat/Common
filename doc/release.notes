@@ -1,3 +1,11 @@
+*** v5r1p1 ***
+- Bug fix in the generation of the local report without the tables of the
+CLEAN alarms (was still writing out the detailed dictionaries and doxygen
+was taking a long time). It does not affect the standard use in the pipeline
+in which the html report is not generated, but it is useful for debug when run
+locally.
+
+
 *** v5r1p0 ***
 - Added distribution of the pedestal mean deviation for pCalPedsAnalyzer.
 - Added distribution of the pedestal mean deviation for pAcdPedsAnalyzer.
