@@ -66,6 +66,10 @@ class pAlarmSet(pXmlElement):
     #  The class instance.
 	
     def __populateEnabledAlarmsList(self, referenceDict):
+        if self.PlotsList == []:
+            logger.error('Alarm set "%s" has no associated plots.' %\
+                         self.Name)
+            logger.info('All the alarms in the set will be UNDEFINED.')
         for element in self.getElementsByTagName('alarm'):
 	    xmlElement = pXmlElement(element)
 	    if xmlElement.Enabled:
@@ -80,7 +84,5 @@ class pAlarmSet(pXmlElement):
                            (alarm.Algorithm.isValid()):
                         self.EnabledAlarmsList.append(alarm)
                 if self.PlotsList == []:
-                    logger.error('Alarm set "%s" has no associated plots.' %\
-                                     self.Name)
                     alarm = pAlarm(element, None, self.Name)
                     self.EnabledAlarmsList.append(alarm)

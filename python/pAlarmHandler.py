@@ -83,7 +83,7 @@ class pAlarmHandler:
         self.RootFileManager = pRootFileManager(rootFilePath)
         self.setAlarmSetsPlotLists()
         self.activateAlarms()
-        self.AlarmStats = self.evalStatistics()
+        self.evalStatistics()
         pAlarmXmlSummaryGenerator(self).run()
         self.closeReferenceFiles()
 
@@ -170,13 +170,15 @@ class pAlarmHandler:
     #  The class instance.
     
     def evalStatistics(self):
-        StatDict = {"error"     : 0,
-                    "warning"   : 0,
-                    "clean"     : 0,
-                    "undefined" : 0}
+        logger.info('Evaluating alarm handler statistics...')
+        self.AlarmStats = {"error"     : 0,
+                           "warning"   : 0,
+                           "clean"     : 0,
+                           "undefined" : 0}
         for alarm in self.XmlParser.getEnabledAlarms():
-            StatDict[alarm.getOutputStatus().lower()] +=1
-        return StatDict
+            self.AlarmStats[alarm.getOutputStatus().lower()] +=1
+        logger.info('Done. %s' % self.AlarmStats)
+        return self.AlarmStats
 
 
 

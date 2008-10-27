@@ -192,8 +192,9 @@ class pAlarmBaseAlgorithm:
     def checkObjectType(self):
         if self.RootObject is None:
             self.__RootObjectOK = False
-            logger.error('None ROOT object for algorithm "%s".' %\
-                             self.getName())
+            logger.error('None ROOT object for algorithm "%s". ' %\
+                         self.getName() +\
+                         'The alarm will be ignored.')
             self.Output.setDictValue('UNDEFINED status reason',
                                      'Could not find ROOT object.')
         elif self.getObjectType() not in self.SUPPORTED_TYPES:
