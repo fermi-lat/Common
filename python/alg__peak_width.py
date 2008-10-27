@@ -13,7 +13,7 @@ class alg__peak_width(pAlarmBaseAlgorithm):
     def run(self):
         numIterations = self.getParameter('num_iterations', 2)
         fitRangeWidth = self.getParameter('fit_range_width', 2.0)
-        numSigma = self.getParameter('num_sigma', 2)
+        self.setNumSigma()
         meanValue = self.RootObject.GetMean()
         rmsValue = self.RootObject.GetRMS()
         gaussian = ROOT.TF1('alg__gaussian', 'gaus')
@@ -22,6 +22,7 @@ class alg__peak_width(pAlarmBaseAlgorithm):
             self.ParamsDict['max'] = meanValue + fitRangeWidth*rmsValue
             ([meanValue, rmsValue], [meanError, rmsError]) =\
                          self.getFitOutput(gaussian, [1, 2])
+        rmsError *= self.NumSigma
         self.Output.setValue(rmsValue, rmsError)
 
 
