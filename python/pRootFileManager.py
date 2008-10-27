@@ -124,7 +124,11 @@ class pRootFileManager:
             return self.findTreeBranches(pattern)
         else:
             if '*' not in pattern:
-                return [self.RootFile.FindObjectAny(pattern)]
+                object = self.RootFile.FindObjectAny(pattern)
+                if object is not None:
+                    return [object]
+                else:
+                    return []
             else:
                 return self.findObjects(pattern, selection)
 

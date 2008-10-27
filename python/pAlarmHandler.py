@@ -139,9 +139,9 @@ class pAlarmHandler:
     def setAlarmSetsPlotLists(self):
         logger.info('Assigning the plots to the alarm sets...')
         for alarmSet in self.XmlParser.getEnabledAlarmSets():
-            PlotList = self.RootFileManager.find(alarmSet.Name,\
+            plotList = self.RootFileManager.find(alarmSet.Name,\
                                                  alarmSet.Selection)
-            alarmSet.setPlotsList(PlotList, self.ReferenceHistogramsDict)
+            alarmSet.setPlotsList(plotList, self.ReferenceHistogramsDict)
         logger.info('Done. %d enabled alarm set(s) found.\n' %\
                     len(self.XmlParser.getEnabledAlarmSets()))
 
