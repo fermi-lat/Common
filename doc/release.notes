@@ -1,5 +1,5 @@
 *** v5r2p0 ***
-- Added a common mechanismto set the significance level (i.e. number of sigma
+- Added a common mechanism to set the significance level (i.e. number of sigma
 in the alarm output) to issue a warning/error. Added a method to retrieve
 th "num_sigma" parameter in the algorithm base class and actual algorithm
 implementations modified to use it.
