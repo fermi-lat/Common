@@ -15,8 +15,8 @@ from copy         import copy, deepcopy
 from pAlarmLimits import ERROR_BADNESS
 from pSafeROOT import ROOT
 
+DEFAULT_NUM_SIGMA = 2
 MET_OFFSET = 978307200
-
 ROOT2NUMPYDICT = {'C' : 'c',      #a character string terminated by the 0 char
                   'B' : 'int8',   #an 8 bit signed integer (Char_t)
                   'b' : 'uint8',  #an 8 bit unsigned integer (UChar_t)
@@ -170,6 +170,19 @@ class pAlarmBaseAlgorithm:
         except KeyError:
             self.ParamsDict[paramName] = defaultValue
             return defaultValue
+
+    ## @brief Set the number of sigma the output value must be out of the
+    #  limits in order to have a warning/error.
+    #
+    #  This is actually used in many alarm algorithm and has been added in the
+    #  base class to save code. By default (i.e. if not differently specified
+    #  in the xml configuration file) the number of sigma is given by the
+    #  constant @ref DEFAULT_NUM_SIGMA
+    #  The class instance.    
+    ## @param paramName
+        
+    def setNumSigma(self):
+        self.NumSigma = self.getParameter('num_sigma', DEFAULT_NUM_SIGMA)
 
     ## @brief Make sure the algorithm supports the ROOT object it has
     #  to operate on.
