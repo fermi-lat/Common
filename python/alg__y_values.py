@@ -58,7 +58,7 @@ class alg__y_values(pAlarmBaseAlgorithm):
 
     def run(self):
         self.__setupBinsList()
-        self.NumSigma = self.getParameter('num_sigma', 1.0)
+        self.setNumSigma()
         if self.getParameter('normalize', False):
             numEntries = self.RootObject.GetEntries()
             self.Limits.ErrorMax   *= numEntries

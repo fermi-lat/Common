@@ -195,7 +195,7 @@ class alg__values(pAlarmBaseAlgorithm):
 
     def run(self):
         linkIndexes = []
-        self.NumSigma = self.getParameter('num_sigma', 1.0)
+        self.setNumSigma()
         maxBadness = MINUS_INFINITY
         self.__createArrays()
         self.__setupIndexList()

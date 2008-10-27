@@ -22,10 +22,10 @@ class pGenericFitAlgorithm(pAlarmBaseAlgorithm):
     SUPPORTED_PARAMETERS = ['min', 'max', 'num_sigma']
     
     def run(self, functionFormula, fitParameter):
-        numSigma = self.getParameter('num_sigma', 2.0)
+        self.setNumSigma()
         fitFunction = ROOT.TF1('temp_fit_function', functionFormula)
         ([value], [error]) = self.getFitOutput(fitFunction, [fitParameter])
-        error *= numSigma
+        error *= self.NumSigma
         self.Output.setValue(value, error)
         chiSquare = fitFunction.GetChisquare()
         dof = fitFunction.GetNDF()
