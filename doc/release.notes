@@ -1,3 +1,8 @@
+*** v5r2p1 ***
+- A very minor change and a fix for a small bug that was preventing a debug
+message from being printed out.
+
+
 *** v5r2p0 ***
 - Added a common mechanism to set the significance level (i.e. number of sigma
 in the alarm output) to issue a warning/error. Added a method to retrieve
