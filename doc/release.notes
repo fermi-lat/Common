@@ -1,3 +1,8 @@
+*** ***
+- Num enrties in all acd/cal analyzers set to the number of events in the run.
+* Relevant jira(s): GDQMQ-288
+
+
 *** v5r2p1 ***
 - A very minor change and a fix for a small bug that was preventing a debug
 message from being printed out.
