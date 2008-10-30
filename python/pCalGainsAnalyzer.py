@@ -120,10 +120,10 @@ class pCalGainsAnalyzer(pBaseAnalyzer):
                         self.fitChannel(baseName, tower, layer, column)
                         chan = self.getChannelNumber(tower, layer, column)
                         self.fillHistograms(subgroup, chan)
-        self.closeFile()
         elapsedTime = time.time() - startTime
         logger.info('Done in %.2f s.' % elapsedTime)
         self.writeOutputFile()
+        self.closeFile()
 
 
 

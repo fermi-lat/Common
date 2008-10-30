@@ -124,14 +124,15 @@ class pAcdPedsAnalyzer(pBaseAnalyzer):
                  self.get('AcdPedDB_%s_FirstVal_TH1' % subgroup)
             self.PedMeanLastRefHistDict[subgroup] =\
                  self.get('AcdPedDB_%s_LastVal_TH1' % subgroup)
+        logger.debug('Fitting pedestals for ACD tiles...')
         for tile in range(128):
             for subgroup in self.HISTOGRAM_SUB_GROUPS:
                 self.fitChannel(tile, subgroup)
                 self.fillHistograms(subgroup, tile)
-        self.closeFile()
         elapsedTime = time.time() - startTime
         logger.info('Done in %.2f s.' % elapsedTime)
         self.writeOutputFile()
+        self.closeFile()
 
 
 

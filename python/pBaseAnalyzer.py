@@ -37,6 +37,18 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
     def getAnalysisType(self):
         return self.__class__.__name__.replace('Analyzer', '')[1:]
 
+    def getNumEvents(self):
+        logger.info('Retrieving the number of events...')
+        if self.RootFile is None:
+            logger.error('The ROOT file is None')
+            numEvents = None
+        else:
+            rootTree = self.RootFile.Get('Time')
+            rootTree.GetEntry(0)
+            numEvents = rootTree.nEvents
+        logger.info('%s events found.' % numEvents)
+        return numEvents 
+
     def getRmsCorrectionFactor(self):
         if self.FitFunction.GetName() == 'hyper_gaussian':
             exponent = self.FitFunction.GetParameter(3)
@@ -180,9 +192,15 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
     def writeOutputFile(self):
         logger.info('Writing output file %s...' % self.OutputFilePath)
         outputFile = ROOT.TFile(self.OutputFilePath, 'RECREATE')
+        numEvents = self.getNumEvents()
         for group in self.HISTOGRAM_GROUPS:
             for subgroup in self.HISTOGRAM_SUB_GROUPS:
-                self.getHistogram(group, subgroup).Write()
+                histogram = self.getHistogram(group, subgroup)
+                try:
+                    histogram.SetEntries(numEvents)
+                except:
+                    pass
+                histogram.Write()
         outputFile.Close()
         logger.info('Done.')
 

@@ -150,10 +150,10 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
                                                          face)
                             subgroup = self.CAL_RANGE_DICT[readoutRange]
                             self.fillHistograms(subgroup, chan)
-        self.closeFile()
         elapsedTime = time.time() - startTime
         logger.info('Done in %.2f s.' % elapsedTime)
         self.writeOutputFile()
+        self.closeFile()
         
     
 
