@@ -14,6 +14,9 @@ from pGlobals            import MINUS_INFINITY, PLUS_INFINITY
 #  @li <tt>min</tt>: the minimum x value for the subrange.
 #  <br>
 #  @li <tt>max</tt>: the maximum x value for the subrange.
+#  <br>
+#  @li <tt>exclude</tt>: the (optional) list of bin indexes to be excluded from
+#  the average.
 #
 #  <b>Output value</b>:
 #
@@ -24,18 +27,19 @@ from pGlobals            import MINUS_INFINITY, PLUS_INFINITY
 class alg__y_average(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F', 'TH1D']
-    SUPPORTED_PARAMETERS = ['min', 'max']
+    SUPPORTED_PARAMETERS = ['min', 'max', 'exclude']
     OUTPUT_LABEL         = 'Histogram y mean value'
 
     def run(self):
         numBins = self.RootObject.GetNbinsX()
         xmin = self.getParameter('min', MINUS_INFINITY)
         xmax = self.getParameter('max', PLUS_INFINITY)
+        excludeList = self.getParameter('exclude', [])
         average = 0
         n = 0
         for i in range(1, numBins + 1):
             binCenter = self.RootObject.GetBinCenter(i)
-            if binCenter > xmin and binCenter < xmax:
+            if binCenter > xmin and binCenter < xmax and i not in excludeList:
                 average += self.RootObject.GetBinContent(i)
                 n += 1
         try:
