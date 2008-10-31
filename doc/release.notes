@@ -1,3 +1,7 @@
+*** v5r4p2 ***
+- Bug fix (unprotected float division) in alg__low_high_ratio.py.
+
+
 *** v5r4p1 ***
 - Added new algorithms alg__exponential_lambda and alg__powerlaw_index.
 
