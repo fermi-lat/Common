@@ -3,7 +3,7 @@ import pUtils
 from pSafeROOT           import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 from math                import sqrt
-
+from pGlobals            import PLUS_INFINITY
 
 
 class alg__low_high_ratio(pAlarmBaseAlgorithm):
@@ -67,9 +67,13 @@ class alg__low_high_ratio(pAlarmBaseAlgorithm):
                 lowError += binContent*lowFraction*lowFraction
                 highSum += binContent*highFraction
                 highError += binContent*highFraction*highFraction
-        ratioValue = lowSum/highSum
-        ratioError = ratioValue*sqrt(lowError/(lowSum*lowSum) +\
-                                     highError/(highSum*highSum))
+        try:
+            ratioValue = lowSum/highSum
+            ratioError = ratioValue*sqrt(lowError/(lowSum*lowSum) +\
+                                             highError/(highSum*highSum))
+        except ZeroDivisionError:
+            ratioValue = PLUS_INFINITY
+            ratioError = PLUS_INFINITY
         self.Output.setDictValue('Integral between %s and %s' %\
                                  (pUtils.formatNumber(self.Min),
                                   pUtils.formatNumber(self.Pivot)),
