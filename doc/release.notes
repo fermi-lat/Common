@@ -1,3 +1,7 @@
+*** v5r4p1 ***
+- Added new algorithms alg__exponential_lambda and alg__powerlaw_index.
+
+
 *** v5r4p0 ***
 - Added new algorithms alg__y_average and alg__y_rms.
 * Relevant jira(s): GDQMQ-289
