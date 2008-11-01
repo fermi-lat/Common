@@ -147,8 +147,7 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
             logger.error('Could not get reference plot "%s", skipping.' %\
                          self.ReferencePlotName)
             self.Output.setDictValue('UNDEFINED status reason',
-                                     'Could not get reference plot "%s".' %\
-                                     self.ReferencePlotName)
+                                     'Could not get reference plot.')
             return 1
         return 0
 
