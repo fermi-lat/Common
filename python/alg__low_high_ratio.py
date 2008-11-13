@@ -6,6 +6,39 @@ from math                import sqrt
 from pGlobals            import PLUS_INFINITY
 
 
+## @brief Calculate the ratio between the number of entries below and above
+#  a certain pivot point in a 1-dimensional histogram.
+#
+#  The algorithms loops over the bins of the histograms and evaluate the
+#  number of entries below the and above the pivot point (possibly limiting
+#  the overall range between a minimum and a maximum value) and returns the
+#  ratio between those two numbers. It is handy for those histograms that look
+#  like power laws, in which the average and the rms do not convey enough
+#  information.
+#
+#  The pivot point (as well as xmin and xmax, if defined), does not generally
+#  coincide with one of the bin edges. In those cases the content of the bin
+#  is splot assuming that the enetries are uniformily distributed within the
+#  bin itself (which, depending on the case, might be a crude appoximation).
+#
+#  In case the denominator of the ratio is zero, both the output value and the
+#  output error are set to \ref PLUS_INFINITE. Alarms should be configured
+#  in such a way that this is not often the case in order to be effective.
+#
+#  <b>Valid parameters</b>:
+#
+#  @li <tt>pivot</tt>: the pivot point.
+#  <br>
+#  @li <tt>min</tt>: the minimum x value used for the calculation.
+#  <br>
+#  @li <tt>max</tt>: the maximum x value used for the calculation.
+#
+#  <b>Output value</b>:
+#
+#  The ratio between the number of entries in [xmin, pivot] and [pivot, xmax]
+#  intervals.
+
+
 class alg__low_high_ratio(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1D', 'TH1F']
