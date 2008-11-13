@@ -1,3 +1,8 @@
+*** v5r5p0 ***
+- Doxygen documentation added to alg__low_high_ratio.py.
+* Relevant jira(s): GDQMQ-294
+
+
 *** v5r4p3 ***
 - Bug fix (malformed token in the output xml file) in alg__reference_histogram.
 
