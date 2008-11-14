@@ -60,14 +60,25 @@ class pAlarmOutput:
     def isError(self):
         return self.Status == STATUS_ERROR
 
-    def setClean(self):
+    def setClean(self, reason = None):
         self.Status = STATUS_CLEAN
+        if reason is not None:
+            self.setDictValue('CLEAN status reason', reason)
 
-    def setWarning(self):
+    def setWarning(self, reason = None):
         self.Status = STATUS_WARNING
+        if reason is not None:
+            self.setDictValue('WARNING status reason', reason)
 
-    def setError(self):
+    def setError(self, reason = None):
         self.Status = STATUS_ERROR
+        if reason is not None:
+            self.setDictValue('ERROR status reason', reason)
+
+    def setUndefined(self, reason = None):
+        self.Status = STATUS_UNDEFINED
+        if reason is not None:
+            self.setDictValue('UNDEFINED status reason', reason)
 
     def getStatus(self, badness):
         if badness <= WARNING_BADNESS:
