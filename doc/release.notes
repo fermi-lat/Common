@@ -1,3 +1,8 @@
+*** v5r6p0 ***
+- Output status for alg__low_high_ratio set to ERROR when the pivot point is
+not defined.
+
+
 *** v5r5p0 ***
 - Doxygen documentation added to alg__low_high_ratio.py.
 * Relevant jira(s): GDQMQ-294
