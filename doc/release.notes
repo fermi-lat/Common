@@ -5,6 +5,7 @@ not defined.
 problem is encountered while running the algorithm.
 - pAlarmBaseAlgorithm modified in such a way the output status for all the
 alarms is set to ERROR in case the root object is invalid.
+* Relevant jira(s): GDQMQ-293 
 
 
 *** v5r5p0 ***
