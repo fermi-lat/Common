@@ -195,8 +195,7 @@ class pAlarmBaseAlgorithm:
             logger.error('None ROOT object for algorithm "%s". ' %\
                          self.getName() +\
                          'The alarm will be ignored.')
-            self.Output.setDictValue('UNDEFINED status reason',
-                                     'Could not find ROOT object.')
+            self.Output.setError('Could not find ROOT object.')
         elif self.getObjectType() not in self.SUPPORTED_TYPES:
             self.__RootObjectOK = False
             logger.error('Invalid object type (%s) for %s. '        %\
@@ -225,9 +224,8 @@ class pAlarmBaseAlgorithm:
     def min_entries(self, requiredEntries):
         numEntries = self.RootObject.GetEntries()
         if numEntries < requiredEntries:
-            self.Output.setDictValue('UNDEFINED status reason',\
-                 'Not enough entries (%d, %d required)' %\
-                                         (numEntries, requiredEntries))
+            self.Output.setUndefined('Not enough entries (%d, %d required)' %\
+                                     (numEntries, requiredEntries))
             return False
         return True
 
