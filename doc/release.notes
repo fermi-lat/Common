@@ -1,6 +1,8 @@
 *** v5r6p0 ***
 - Output status for alg__low_high_ratio set to ERROR when the pivot point is
 not defined.
+- Output status for alg__reference_histogram set to ERROR in case any
+problem is encountered while running the algorithm.
 
 
 *** v5r5p0 ***
