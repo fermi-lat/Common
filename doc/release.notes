@@ -3,6 +3,8 @@
 not defined.
 - Output status for alg__reference_histogram set to ERROR in case any
 problem is encountered while running the algorithm.
+- pAlarmBaseAlgorithm modified in such a way the output status for all the
+alarms is set to ERROR in case the root object is invalid.
 
 
 *** v5r5p0 ***
