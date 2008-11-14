@@ -45,7 +45,6 @@ class alg__low_high_ratio(pAlarmBaseAlgorithm):
     SUPPORTED_PARAMETERS = ['pivot', 'min', 'max']
     OUTPUT_LABEL         = 'The ratio of entries below and above the pivot'
 
-
     def getLowFraction(self, lowEdge, highEdge):
         if lowEdge >= self.Min and highEdge <= self.Pivot:
             return 1.0
@@ -69,8 +68,7 @@ class alg__low_high_ratio(pAlarmBaseAlgorithm):
     def run(self):
         self.Pivot = self.getParameter('pivot', None)
         if self.Pivot is None:
-            self.Output.setDictValue('UNDEFINED status reason',
-                                     'Pivot point not defined')
+            self.Output.setError('Pivot point not defined')
             return
         self.Min = self.getParameter('min',
                                      self.RootObject.GetXaxis().GetXmin())
@@ -134,6 +132,7 @@ if __name__ == '__main__':
     canvas.Update()
 
     pardict = {'pivot': 50, 'min': 10.5, 'max': 85.5}
+    #pardict = {'min': 10.5, 'max': 85.5}
     algorithm = alg__low_high_ratio(limits, histogram, pardict)
     algorithm.apply()
     print 'Parameters: %s\n' % algorithm.ParamsDict
