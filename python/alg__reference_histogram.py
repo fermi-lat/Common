@@ -119,8 +119,7 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
     def setupReference(self):
         if self.ReferenceFileName is None:
             logger.error('Reference file name undefined, skipping.')
-            self.Output.setDictValue('UNDEFINED status reason',
-                                     'Reference file name undefined.')
+            self.Output.setError('Reference file name undefined.')
             return 1
         if self.ReferencePlotName is None:
             self.ReferencePlotName = self.RootObject.GetName()
@@ -139,15 +138,13 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
                 pass
         if self.ReferenceFile is None or self.ReferenceFile.IsZombie():
             logger.error('Could not get reference file, skipping.')
-            self.Output.setDictValue('UNDEFINED status reason',
-                                     'Could not get reference file.')
+            self.Output.setError('Could not get reference file.')
             return 1
         self.ReferenceObject = self.ReferenceFile.Get(self.ReferencePlotName)
         if self.ReferenceObject is None:
             logger.error('Could not get reference plot "%s", skipping.' %\
                          self.ReferencePlotName)
-            self.Output.setDictValue('UNDEFINED status reason',
-                                     'Could not get reference plot.')
+            self.Output.setError('Could not get reference plot.')
             return 1
         return 0
 
@@ -159,6 +156,7 @@ class alg__reference_histogram(pAlarmBaseAlgorithm):
         numBins = self.ReferenceObject.GetNbinsX()
         if self.RootObject.GetNbinsX() != numBins:
             logger.error('Mismatch in bins while comparing histograms.')
+            self.Output.setError('Histogram bins mismatch.')
             return
         chiSquare = 0
         numDof = 0
