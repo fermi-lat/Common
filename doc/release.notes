@@ -1,3 +1,12 @@
+*** v5r8p0 ***
+- One check added in pAlarmBaseAlgorithm.min_entries to prevent the
+condition on the minimum number of entries to be applied on TBranches (i.e.
+trending plots). This condition only makes sense for histogram, as in the case
+of trending plots the number of data points has in principle nothing to do
+with the statistics (tkrtrend plots, for instance, have exactly one entry
+by definition).
+
+
 *** v5r7p0 ***
 - Bug fix in the alarm handler (the output status was not correctly overridded
 under some circumstances).
