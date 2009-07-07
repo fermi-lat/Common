@@ -222,6 +222,9 @@ class pAlarmBaseAlgorithm:
     #  The minimum number of entries required.
 
     def min_entries(self, requiredEntries):
+        if self.getObjectType() == 'TBranch':
+            logger.warn('Cannot require min_entries on a TBranch. Skipping.')
+            return True
         numEntries = self.RootObject.GetEntries()
         if numEntries < requiredEntries:
             self.Output.setUndefined('Not enough entries (%d, %d required)' %\
