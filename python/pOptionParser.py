@@ -105,3 +105,8 @@ class pOptionParser:
         self.Parser.add_option('-R', '--reference-folder-path', dest = 'R',
                                default = None, type = str,
                                help = 'path to the reference files folder')
+
+    def add_s(self):
+        self.Parser.add_option('-s', '--saa-def-file-path', dest = 's',
+                               default = None, type = str,
+                               help = 'path to the SAA definition file')
