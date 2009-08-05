@@ -1,3 +1,12 @@
+** @file release.notes
+ * Package Common
+ * Coordinator: Luca Baldini <luca.baldini@pi.infn.it>
+ *
+ *                  EOH
+
+*** v6r0p1 ***
+- just add necessary stuff for stag/SCons
+
 *** v6r0p0 ***
 - Added -s option to pOptionParser to pass to the xml file with the
 SAA definition to dataMonitoring/FastMon/pDataProcessor.py (necessary for the
