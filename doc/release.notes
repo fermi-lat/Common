@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-00-01 05-Aug-2009 bregeon upgrade to v6r0p1 - first stag tag as 06-00-01
 *** v6r0p1 ***
 - just add necessary stuff for stag/SCons
 
