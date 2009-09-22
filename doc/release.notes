@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-01-00 22-Sep-2009 lbaldini Bug fix in the alarm handler.
 - Bug fix in how the alarm limits are handled. The issue was the case in which
 all the four limits were identical and the actual value was outside the
 limits themselves. A similar issue was documented and fixed in jira GDQMQ-272
