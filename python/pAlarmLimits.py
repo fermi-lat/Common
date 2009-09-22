@@ -88,44 +88,78 @@ class pAlarmLimits:
     #  the best value.
 
     def getBadness(self, value, error = None):
+        # Make the value float.
         value = float(value)
+        # If the error is not, set it to zero. Make it float.
         if error is None:
             error = 0.0
         else:
             error = float(error)
+        # The center in the average value between the warning limits.
         center = (self.WarningMin + self.WarningMax)/2.0
+        # Evaluation of the best value:
         if (value - error) >= center:
             bestValue = value - error
         elif (value + error) <= center:
             bestValue = value + error
         else:
             bestValue = center
+        # Now enter the real logic involved in the algorithm.
+        # Case 1: the best value is between warning min and warning max
+        # (the status will be CLEAN).
         if (bestValue >= self.WarningMin) and (bestValue <= self.WarningMax):
             try:
                 badness = WARNING_BADNESS*abs(bestValue - center)/\
                     (self.WarningMax - center)
+            # If the center is on the warning max, set the badness to zero.
             except ZeroDivisionError:
                 badness = 0.0
+        # Case 2: the best value is below the warning min
+        # (the status will be either WARNING or ERROR).
         elif bestValue < self.WarningMin:
             try:
                 badness = WARNING_BADNESS + DELTA_BADNESS*\
                 (self.WarningMin - bestValue)/(self.WarningMin - self.ErrorMin)
             except ZeroDivisionError:
+                # If warning min and error min are the same, refer the
+                # calculation of the badness to the center.
                 try:
                     badness = WARNING_BADNESS + DELTA_BADNESS*\
                         (center - bestValue)/(center - self.ErrorMin)
                 except ZeroDivisionError:
-                    badness = ERROR_BADNESS + DELTA_BADNESS
+                    # And if event the center and the error min are the same
+                    # (degenerate case in which all the four limits coincide)
+                    # then set the badness to a constant, adding the absolute
+                    # value of the distance between the center and the best
+                    # value (possibly divided by the error) to preserve the
+                    # sorting (as far as badness is concerned) between
+                    # different data points.
+                    db = abs(center - bestValue)
+                    if error > 0.0:
+                        db /= error
+                    badness = ERROR_BADNESS + DELTA_BADNESS + db
         else:
             try:
                 badness = WARNING_BADNESS + DELTA_BADNESS*\
                 (bestValue - self.WarningMax)/(self.ErrorMax - self.WarningMax)
             except ZeroDivisionError:
+                # If warning max and error max are the same, refer the
+                # calculation of the badness to the center.
                 try:
                     badness = WARNING_BADNESS + DELTA_BADNESS*\
                               (bestValue - center)/(self.ErrorMax - center)
                 except ZeroDivisionError:
-                    badness = ERROR_BADNESS + DELTA_BADNESS
+                    # And if event the center and the error min are the same
+                    # (degenerate case in which all the four limits coincide)
+                    # then set the badness to a constant, adding the absolute
+                    # value of the distance between the center and the best
+                    # value (possibly divided by the error) to preserve the
+                    # sorting (as far as badness is concerned) between
+                    # different data points.
+                    db = abs(center - bestValue)
+                    if error > 0.0:
+                        db /= error
+                    badness = ERROR_BADNESS + DELTA_BADNESS + db
         return badness
 
     ## @brief Return a formatted representation of the limits.
