@@ -4,9 +4,18 @@
  *
  *                  EOH
 
+- Bug fix in how the alarm limits are handled. The issue was the case in which
+all the four limits were identical and the actual value was outside the
+limits themselves. A similar issue was documented and fixed in jira GDQMQ-272
+and fixed, but I missed one of the cases in the logic (now the code looks
+perfectly simmetric).
+* Relevant jira(s): GDQMQ-272
+
+
  Common-06-00-01 05-Aug-2009 bregeon upgrade to v6r0p1 - first stag tag as 06-00-01
 *** v6r0p1 ***
 - just add necessary stuff for stag/SCons
+
 
 *** v6r0p0 ***
 - Added -s option to pOptionParser to pass to the xml file with the
