@@ -111,8 +111,11 @@ class pAlarmLimits:
                 badness = WARNING_BADNESS + DELTA_BADNESS*\
                 (self.WarningMin - bestValue)/(self.WarningMin - self.ErrorMin)
             except ZeroDivisionError:
-                badness = WARNING_BADNESS + DELTA_BADNESS*\
-                (center - bestValue)/(center - self.ErrorMin)
+                try:
+                    badness = WARNING_BADNESS + DELTA_BADNESS*\
+                        (center - bestValue)/(center - self.ErrorMin)
+                except ZeroDivisionError:
+                    badness = ERROR_BADNESS + DELTA_BADNESS
         else:
             try:
                 badness = WARNING_BADNESS + DELTA_BADNESS*\
