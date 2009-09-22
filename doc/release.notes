@@ -12,6 +12,7 @@ be. Rather, an additional constant, proportional to the distance between the
 error) is added in such a way the sorting (badness-wise) between the data
 points is preserved (i.e. the they don't have all the same badness, but
 rather worts is labeled as worst).
+- Some more comments added.
 
 
  Common-06-01-00 22-Sep-2009 lbaldini Bug fix in the alarm handler.
