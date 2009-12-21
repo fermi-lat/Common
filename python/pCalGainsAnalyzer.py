@@ -66,15 +66,13 @@ class pCalGainsAnalyzer(pBaseAnalyzer):
         channelName = self.getChannelName(baseName, tower, layer, column)
         if self.Debug:
             print '*************************************************'
-            print 'Debug information for %s (%d, %s, %s)' %\
-                  (baseName, tower, layer, column)
+            print 'Debug information for %s' % baseName
+            print 'Tower %d, layer %d, column %d' % (tower, layer, column)
         self.fit(channelName)
 
     def inspectChannel(self, channel):
+        (tower, layer, column, face) = getCalChannelLocation(channel)
         self.openFile(self.InputFilePath)
-        tower = channel/(8*12)
-        layer = (channel - tower*8*12)/12
-        column = channel -tower*8*12 - layer*12
         self.Debug = True
         for subgroup in self.HISTOGRAM_SUB_GROUPS:
             baseName = self.getBaseName(subgroup)

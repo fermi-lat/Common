@@ -11,8 +11,6 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
     HISTOGRAM_GROUPS += ['PedMeanDeviation', 'PedMeanDifference',
                          'PedRMSDifference', 'MeanDevDist']
     HISTOGRAM_SUB_GROUPS = ['LEX8', 'LEX1', 'HEX8', 'HEX1']
-    CAL_RANGE_DICT = {0: 'LEX8', 1: 'LEX1', 2: 'HEX8', 3: 'HEX1'}
-    CAL_RANGE_INVERSE_DICT = {'LEX8': 0, 'LEX1': 1, 'HEX8': 2, 'HEX1': 3}
     FIT_RANGE_LEFT_DICT  = {'LEX8': 2.5, 'LEX1': 3.0, 'HEX8': 2.5, 'HEX1': 3.0}
     FIT_RANGE_RIGHT_DICT = {'LEX8': 3.5, 'LEX1': 3.0, 'HEX8': 3.5, 'HEX1': 3.0}
     BASE_NAME = 'CalXAdcPed_TH1_TowerCalLayerCalColumnFR'
@@ -65,23 +63,21 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
                                           face, readoutRange)
 
     def fitChannel(self, baseName, tower, layer, column, face, readoutRange):
-        key = self.CAL_RANGE_DICT[readoutRange]
+        key = CAL_RANGE_DICT[readoutRange]
         self.FitRangeLeft = self.FIT_RANGE_LEFT_DICT[key]
         self.FitRangeRight = self.FIT_RANGE_RIGHT_DICT[key]
         channelName = self.getChannelName(baseName, tower, layer, column,\
                                           face, readoutRange)
         if self.Debug:
             print '*************************************************'
-            print 'Debug information for %s (%d, %s, %s, %s, %s)' %\
-                  (baseName, tower, layer, column, face, readoutRange)
+            print 'Debug information for %s' % baseName
+            print 'Tower %d, layer %d, column %d, face %d, range %s' %\
+                  (tower, layer, column, face, CAL_RANGE_DICT[readoutRange])
         self.fit(channelName)
 
     def inspectChannel(self, channel):
+        (tower, layer, column, face) = getCalChannelLocation(channel)
         self.openFile(self.InputFilePath)
-        tower = channel/(8*12*2)
-        layer = (channel - tower*8*12*2)/(12*2)
-        column = (channel - tower*8*12*2 - layer*12*2)/2
-        face = channel - tower*8*12*2 - layer*12*2 - column*2
         self.Debug = True
         for readoutRange in range(4):
             self.fitChannel(self.BASE_NAME, tower, layer, column, face,\
@@ -96,7 +92,7 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
 
     def getPedMeanReference(self, subgroup, channel):
         try:
-            bin = channel*4 + self.CAL_RANGE_INVERSE_DICT[subgroup] + 1
+            bin = channel*4 + CAL_RANGE_INVERSE_DICT[subgroup] + 1
             firstRef = self.PedMeanFirstRefHist.GetBinContent(bin)
             lastRef = self.PedMeanLastRefHist.GetBinContent(bin)
             if firstRef != lastRef:
@@ -148,7 +144,7 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
                                             column, face, readoutRange)
                             chan = self.getChannelNumber(tower, layer, column,\
                                                          face)
-                            subgroup = self.CAL_RANGE_DICT[readoutRange]
+                            subgroup = CAL_RANGE_DICT[readoutRange]
                             self.fillHistograms(subgroup, chan)
         elapsedTime = time.time() - startTime
         logger.info('Done in %.2f s.' % elapsedTime)
