@@ -4,6 +4,14 @@
  *
  *                  EOH
 
+
+- Some minor code refactoring which turned to be handy for a little tool
+to convert a CAL channel number (in the data monitoring conventions) into
+its physical location (i.e. tower, layer, etc). No change in any of the
+functionalities.
+- Some improvements in the debug printouts.
+
+
  Common-06-01-01 22-Sep-2009 lbaldini Improvement in the calculation of the badness in the alarm handler.
 - Some more improment in the calculation of the badness in pAlarmLimits.py.
 In the completely degenerate case in which all the four limits coincide
