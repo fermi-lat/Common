@@ -10,6 +10,7 @@ to convert a CAL channel number (in the data monitoring conventions) into
 its physical location (i.e. tower, layer, etc). No change in any of the
 functionalities.
 - Some improvements in the debug printouts.
+- Minor change (debug message added) to the pBaseReportGenerator class.
 
 
  Common-06-01-01 22-Sep-2009 lbaldini Improvement in the calculation of the badness in the alarm handler.
