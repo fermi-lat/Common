@@ -4,6 +4,13 @@
  *
  *                  EOH
 
+
+- Added a few lines of code to make sure the mean of any gaussian fit
+lies within the interval in which the fit is performed. This implies a
+change in pGenericFitAlgorithm.py and a minor refactoring of code in
+pAlarmBaseAlgorithm.
+* Relevan Jira(s): GDQMQ-329
+
  Common-06-02-00 22-Dec-2009 lbaldini Some minor refactoring and improvements in the debug messages.
 
 - Some minor code refactoring which turned to be handy for a little tool
