@@ -708,8 +708,12 @@ class pBaseReportGenerator:
                                          self.CONFIG_FILE_NAME)
         if verbose:
             os.system(command)
+            output = ''
         else:
-            commands.getoutput(command)
+            output = commands.getoutput(command)
+        if output != '':
+            logger.error('Problems compiling the doxtgen!')
+            logger.error('Message from the shell: "%s"' % output)
         logger.info('Done in %.2f s.\n' % (time.time() - startTime))
 
     ## @brief Compile the doxygen report.
@@ -722,10 +726,10 @@ class pBaseReportGenerator:
     def viewReport(self):
         cmd = 'htmlview %s/index.html' % self.HtmlDirPath
         logger.info('Starting html viewer (%s)...' % cmd)
-        out = commands.getoutput(cmd) 
-        if out != '':
+        output = commands.getoutput(cmd) 
+        if output != '':
             logger.error('Wow... problems viewing the report!')
-            print out
+            logger.error('Message from the shell: "%s"' % output)
 
 
 if __name__ == '__main__':
