@@ -473,6 +473,22 @@ class pAlarmBaseAlgorithm:
             index += factor*tuple[i]
         return index
 
+    ## @brief Return a (min, max) tuple with the requested x range,
+    #  based on the self.ParamsDict variable.
+    #
+    #  If the self.ParamsDict variable does not contain neither 'min' nor
+    #  'max' key, then the axis range of the ROOT object is returned.
+    #  Otherwise the minimum and maximum values are combined accordingly.
+    #  It is responsibility of the user to make sure that the self.RootObject
+    #  variables has the method GetXaxis().
+    #
+    #  @param self
+    #  The class instance
+
+    def getRequestedXRange(self):
+        return (self.getParameter('min', self.RootObject.GetXaxis().GetXmin()),
+                self.getParameter('max', self.RootObject.GetXaxis().GetXmax()))
+
     ## @brief Adjust the range of the x axis of a ROOT object according
     #  to the dictionary of optional parameters.
     #
@@ -495,8 +511,7 @@ class pAlarmBaseAlgorithm:
             logger.warn('Cannot use setRangeX() on a %s object.' %\
                          self.getObjectType())
             return
-        min = self.getParameter('min', self.RootObject.GetXaxis().GetXmin())
-        max = self.getParameter('max', self.RootObject.GetXaxis().GetXmax())
+        (min, max) = self.getRequestedXRange()
         self.RootObject.GetXaxis().SetRangeUser(min, max)
 
     ## @brief Restore the original x axis range for a ROOT object.

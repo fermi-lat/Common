@@ -24,6 +24,11 @@ class pGenericFitAlgorithm(pAlarmBaseAlgorithm):
     def run(self, functionFormula, fitParameter):
         self.setNumSigma()
         fitFunction = ROOT.TF1('temp_fit_function', functionFormula)
+        # In the case of a gaussian fit, make sure that the returned
+        # mean value lies within the range in which the fit is performed.
+        if functionFormula == 'gaus':
+            (min, max) = self.getRequestedXRange()
+            fitFunction.SetParLimits(1, min, max)
         ([value], [error]) = self.getFitOutput(fitFunction, [fitParameter])
         error *= self.NumSigma
         self.Output.setValue(value, error)
