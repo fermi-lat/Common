@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-03-00 22-Dec-2009 lbaldini Improvement in the gaussian fitting algorithm.
 
 - Added a few lines of code to make sure the mean of any gaussian fit
 lies within the interval in which the fit is performed. This implies a
