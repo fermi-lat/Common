@@ -711,8 +711,8 @@ class pBaseReportGenerator:
             output = ''
         else:
             output = commands.getoutput(command)
-        if output != '':
-            logger.error('Problems compiling the doxtgen!')
+        if 'not found' in output:
+            logger.error('Possible problems compiling the doxtgen!')
             logger.error('Message from the shell: "%s"' % output)
         logger.info('Done in %.2f s.\n' % (time.time() - startTime))
 
