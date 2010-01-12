@@ -4,13 +4,21 @@
  *
  *                  EOH
 
+
+- pHistogramPair.py and pRootDiffer.py modifies in such a way the differences
+in the histogram binning are handled correctly when comparing the FastMon and
+digi end-of-run histograms.
+* Relevant Jira(s): GDQMQ-333
+
+
  Common-06-03-00 22-Dec-2009 lbaldini Improvement in the gaussian fitting algorithm.
 
 - Added a few lines of code to make sure the mean of any gaussian fit
 lies within the interval in which the fit is performed. This implies a
 change in pGenericFitAlgorithm.py and a minor refactoring of code in
 pAlarmBaseAlgorithm.
-* Relevan Jira(s): GDQMQ-329
+* Relevant Jira(s): GDQMQ-329
+
 
  Common-06-02-00 22-Dec-2009 lbaldini Some minor refactoring and improvements in the debug messages.
 
