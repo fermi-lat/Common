@@ -4,8 +4,13 @@
  *
  *                  EOH
 
- Common-06-04-00 12-Jan-2010 lbaldini Some improvement in the script for the FastMon-digi eor comparison.
+- alg__values.py modified to support the new min_n parameter, disengaging
+the alarm for all the trending points obtained with too few events
+(typically 0).
+* Relevant Jira(s): GDQMQ-334
 
+
+ Common-06-04-00 12-Jan-2010 lbaldini Some improvement in the script for the FastMon-digi eor comparison.
 - pHistogramPair.py and pRootDiffer.py modifies in such a way the differences
 in the histogram binning are handled correctly when comparing the FastMon and
 digi end-of-run histograms.
@@ -13,7 +18,6 @@ digi end-of-run histograms.
 
 
  Common-06-03-00 22-Dec-2009 lbaldini Improvement in the gaussian fitting algorithm.
-
 - Added a few lines of code to make sure the mean of any gaussian fit
 lies within the interval in which the fit is performed. This implies a
 change in pGenericFitAlgorithm.py and a minor refactoring of code in
@@ -22,7 +26,6 @@ pAlarmBaseAlgorithm.
 
 
  Common-06-02-00 22-Dec-2009 lbaldini Some minor refactoring and improvements in the debug messages.
-
 - Some minor code refactoring which turned to be handy for a little tool
 to convert a CAL channel number (in the data monitoring conventions) into
 its physical location (i.e. tower, layer, etc). No change in any of the
