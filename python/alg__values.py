@@ -84,7 +84,7 @@ MIN_TRUE_TIME_INTERVAL = 10.0
 class alg__values(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TBranch']
-    SUPPORTED_PARAMETERS = ['exclude', 'only', 'num_sigma']
+    SUPPORTED_PARAMETERS = ['exclude', 'only', 'num_sigma', 'min_n']
     OUTPUT_LABEL          = 'The worst entry of the branch'
 
     def __init__(self, limits, object, paramsDict, conditionsDict = {}):
@@ -144,6 +144,17 @@ class alg__values(pAlarmBaseAlgorithm):
         else:
             logger.debug('%s has no associated errors.' % branchName)
             self.__HasErrors = False
+        self.__MinEntries = self.getParameter('min_n', None)
+        if self.__MinEntries is not None:
+            numEntriesBranchName = '%s_n' % valueBranchName
+            if self.RootTree.GetBranch(numEntriesBranchName) is not None:
+                self.NumEntriesArray = numpy.zeros(shape, ROOT2NUMPYDICT['I'])
+                self.RootTree.SetBranchStatus(numEntriesBranchName, 1)
+                self.RootTree.SetBranchAddress(numEntriesBranchName, self.NumEntriesArray)
+                logger.debug('Condition on min_n found, array correctly identified.')
+            else:
+                logger.error('Could not locate branch %s.' % numEntriesBranchName)
+                self.__MinEntries = None
 
     ## @brief Setup the list of indexes to loop over, taking into account
     #  the optional "exclude" and "only" parameters.
@@ -206,20 +217,26 @@ class alg__values(pAlarmBaseAlgorithm):
                 valueFlatArray = self.BranchArray.flatten()
                 if self.__HasErrors:
                     errorFlatArray = self.ErrorArray.flatten()
+                if self.__MinEntries is not None:
+                    numEntriesFlatArray = self.NumEntriesArray.flatten()
                 for j in self.IndexList:
                     value = valueFlatArray[j]
                     if self.__HasErrors:
                         error = errorFlatArray[j]*self.NumSigma
                     else:
                         error = None
-                    badness = self.checkStatus(j, value, 'value', error)
-                    if badness > WARNING_BADNESS:
-                        if j not in linkIndexes:
-                            linkIndexes.append(j)
-                    if badness > maxBadness:
-                        maxBadness = badness
-                        (outputEntry, outputIndex, outputValue, outputError) =\
-                            (i, j, value, error)
+                    if self.__MinEntries is None or numEntriesFlatArray[j] > self.__MinEntries:
+                        badness = self.checkStatus(j, value, 'value', error)
+                        if badness > WARNING_BADNESS:
+                            if j not in linkIndexes:
+                                linkIndexes.append(j)
+                        if badness > maxBadness:
+                            maxBadness = badness
+                            (outputEntry, outputIndex, outputValue, outputError) =\
+                                          (i, j, value, error)
+                    else:
+                        logger.info('Skipping entry %d for array index %s (n = %d < %d).' %\
+                                    (i, j, numEntriesFlatArray[j], self.__MinEntries))
             else:
                 logger.info('Skipping entry %d (TrueTimeInterval = %f)...' %\
                                 (i, self.TimeIntervalArray[0]))
