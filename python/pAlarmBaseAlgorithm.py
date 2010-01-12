@@ -210,7 +210,7 @@ class pAlarmBaseAlgorithm:
         for paramName in self.ParamsDict.keys():
             if paramName not in self.SUPPORTED_PARAMETERS:
                 self.__ParametersOK = False
-                logger.error('Invalid parameter (%s) for %s.' %\
+                logger.error('Invalid parameter (%s) for %s. ' %\
                                  (paramName, self.getName())  +\
                                  'The alarm will be ignored.')
 
