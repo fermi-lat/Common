@@ -26,6 +26,16 @@ class pRootDiffer:
             numDifferences += len(diffList)
         return numDifferences
 
+    def getNumPlots(self):
+        return len(self.DiffDict)
+
+    def getNumDiffPlots(self):
+        numDiffPlots = 0
+        for diffList in self.DiffDict.values():
+            if len(diffList) > 0:
+                numDiffPlots += 1
+        return numDiffPlots
+
     def run(self, interactive = False):
         if interactive:
             self.Canvas = ROOT.TCanvas('Diff', 'Diff', 1000, 600)
@@ -44,6 +54,11 @@ class pRootDiffer:
                     a = raw_input('Press enter to continue, q to quit...')
                     if a == 'q':
                         sys.exit('Done')
+        logger.info('%d histogram pair(s) compared.' % self.getNumPlots())
+        logger.info('Number of histograms with differences: %d' %\
+                    self.getNumDiffPlots())
+        logger.info('Total number of differences: %d' %\
+                    self.getNumDifferences())
 
     def writeXmlSummary(self, filePath):
         logger.info('Writing summary xml file...')
@@ -53,6 +68,8 @@ class pRootDiffer:
         xmlWriter.newLine()
         xmlWriter.openTag('summary')
         xmlWriter.indent()
+        xmlWriter.writeTag('numPlots', {}, self.getNumPlots())
+        xmlWriter.writeTag('numDiffPlots', {}, self.getNumDiffPlots())
         xmlWriter.writeTag('numDifferences', {}, self.getNumDifferences())
         xmlWriter.backup()
         xmlWriter.closeTag('summary')

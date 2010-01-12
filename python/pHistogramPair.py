@@ -35,23 +35,46 @@ class pHistogramPair:
     def getNumDifferences(self):
         return len(self.DiffList)
 
-    def compare(self):
-        numFirstBins = self.FirstHistogram.GetNbinsX()
-        numSecondBins = self.SecondHistogram.GetNbinsX()
-        if numFirstBins == numSecondBins:
-            numBins = numFirstBins
-        else:
-            diff = 'Number of bins (%d vs. %d)' % (numFirstBins, numSecondBins)
-            logger.error(diff)
-            self.DiffList.append(diff)
-            return
-        for i in range(1, numBins + 1):
-            firstVal = self.FirstHistogram.GetBinContent(i)
-            secondVal = self.SecondHistogram.GetBinContent(i)
-            if firstVal != secondVal:
-                diff = 'Content for bin %d (%.3f vs. %.3f)' % (i, firstVal,
-                                                               secondVal)
-                self.DiffList.append(diff)
+    def logDifference(self, difference):
+        self.DiffList.append(difference)
+        logger.error(difference)
+
+    def compare(self, fullLog = False):
+        numEntriesFirst  = self.FirstHistogram.GetEntries()
+        numEntriesSecond = self.SecondHistogram.GetEntries()
+        if numEntriesFirst != numEntriesSecond:
+            self.logDifference('Number of entries (%d vs. %d)' %\
+                               (numEntriesFirst, numEntriesSecond))
+            if not fullLog:
+                return
+        numBinsFirst   = self.FirstHistogram.GetNbinsX()
+        numBinsSecond  = self.SecondHistogram.GetNbinsX()
+        numBins        = min(numBinsFirst, numBinsSecond)
+        binWidthFirst  = self.FirstHistogram.GetBinWidth(1)
+        binWidthSecond = self.SecondHistogram.GetBinWidth(1)
+        xOffsetFirst   = 0
+        xOffsetSecond  = 0
+        xMinFirst      = self.FirstHistogram.GetBinLowEdge(0)
+        xMinSecond     = self.SecondHistogram.GetBinLowEdge(0)
+        if xMinFirst < xMinSecond:
+            xOffsetSecond = int((xMinSecond - xMinFirst)/binWidthFirst)
+        elif xMinFirst > xMinSecond:
+            xOffsetFirst = int((xMinFirst - xMinSecond)/binWidthSecond)
+        xOffset = max(xOffsetFirst, xOffsetSecond)
+        for i in range(1 + xOffset, numBins + 1):
+            binFirst  = i - xOffsetFirst
+            binSecond = i - xOffsetSecond
+            binCenterFirst  = self.FirstHistogram.GetBinCenter(binFirst)
+            binCenterSecond = self.SecondHistogram.GetBinCenter(binSecond)
+            if binCenterFirst != binCenterSecond:
+                self.logDifference('Binning mismatch.')
+                if not fullLog:
+                    return
+            valFirst   = self.FirstHistogram.GetBinContent(binFirst)
+            valSecond = self.SecondHistogram.GetBinContent(binSecond)
+            if valFirst != valSecond:
+                self.logDifference('Content for bin %d (%.3f vs. %.3f)' %\
+                                   (i, valFirst, valSecond))
 
     def createResidualsHistogram(self):
         try:
