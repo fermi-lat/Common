@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-04-00 12-Jan-2010 lbaldini Some improvement in the script for the FastMon-digi eor comparison.
 
 - pHistogramPair.py and pRootDiffer.py modifies in such a way the differences
 in the histogram binning are handled correctly when comparing the FastMon and
