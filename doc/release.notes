@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-05-03 13-Jan-2010 bregeon more minor change in histogram FastMon/digi comparison.
 - Check GetEntries if TH1, GetSumfOfWeights otherwise
   that helps for TH1s that do not have the same binning,
   as SumOfWeights does not count over/under flows in pHistogramPair.py
