@@ -150,10 +150,12 @@ class alg__values(pAlarmBaseAlgorithm):
             if self.RootTree.GetBranch(numEntriesBranchName) is not None:
                 self.NumEntriesArray = numpy.zeros(shape, ROOT2NUMPYDICT['I'])
                 self.RootTree.SetBranchStatus(numEntriesBranchName, 1)
-                self.RootTree.SetBranchAddress(numEntriesBranchName, self.NumEntriesArray)
-                logger.debug('Condition on min_n found, array correctly identified.')
+                self.RootTree.SetBranchAddress(numEntriesBranchName,
+                                               self.NumEntriesArray)
+                logger.debug('Condition on min_n found, array(s) identified.')
             else:
-                logger.error('Could not locate branch %s.' % numEntriesBranchName)
+                logger.error('Could not locate branch %s.' %\
+                             numEntriesBranchName)
                 self.__MinEntries = None
 
     ## @brief Setup the list of indexes to loop over, taking into account
@@ -225,18 +227,23 @@ class alg__values(pAlarmBaseAlgorithm):
                         error = errorFlatArray[j]*self.NumSigma
                     else:
                         error = None
-                    if self.__MinEntries is None or numEntriesFlatArray[j] > self.__MinEntries:
+                    if self.__MinEntries is None or \
+                           numEntriesFlatArray[j] >= self.__MinEntries:
                         badness = self.checkStatus(j, value, 'value', error)
                         if badness > WARNING_BADNESS:
                             if j not in linkIndexes:
                                 linkIndexes.append(j)
                         if badness > maxBadness:
                             maxBadness = badness
-                            (outputEntry, outputIndex, outputValue, outputError) =\
-                                          (i, j, value, error)
+                            (outputEntry, outputIndex,
+                             outputValue, outputError) =\
+                             (i, j, value, error)
                     else:
-                        logger.info('Skipping entry %d for array index %s (n = %d < %d).' %\
-                                    (i, j, numEntriesFlatArray[j], self.__MinEntries))
+                        logger.info(('Skipping entry %d for array index %s' %\
+                                    (i, j)) +\
+                                    (' (n = %d < %d).' %\
+                                     (numEntriesFlatArray[j],
+                                      self.__MinEntries)))
             else:
                 logger.info('Skipping entry %d (TrueTimeInterval = %f)...' %\
                                 (i, self.TimeIntervalArray[0]))
