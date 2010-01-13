@@ -4,6 +4,10 @@
  *
  *                  EOH
 
+- Minor bug fix in alg__values.py: ">" changed to ">=" when checking the branch
+with the number of entries.
+
+
  Common-06-05-00 12-Jan-2010 lbaldini New min_n parameter implemented for alg__values.
 - alg__values.py modified to support the new min_n parameter, disengaging
 the alarm for all the trending points obtained with too few events
