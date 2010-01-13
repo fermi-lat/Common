@@ -40,10 +40,10 @@ class pHistogramPair:
         logger.error(difference)
 
     def compare(self, fullLog = False):
-        numEntriesFirst  = self.FirstHistogram.GetEntries()
-        numEntriesSecond = self.SecondHistogram.GetEntries()
+        numEntriesFirst  = self.FirstHistogram.GetSumOfWeights()
+        numEntriesSecond = self.SecondHistogram.GetSumOfWeights()
         if numEntriesFirst != numEntriesSecond:
-            self.logDifference('Number of entries (%d vs. %d)' %\
+            self.logDifference('Sum of weights (%d vs. %d)' %\
                                (numEntriesFirst, numEntriesSecond))
             if not fullLog:
                 return
