@@ -4,6 +4,11 @@
  *
  *                  EOH
 
+- Check GetEntries if TH1, GetSumfOfWeights otherwise
+  that helps for TH1s that do not have the same binning,
+  as SumOfWeights does not count over/under flows in pHistogramPair.py
+(used by pRootDiffer in order to compare the FastMon and digi eor plots).
+
  Common-06-05-02 13-Jan-2010 lbaldini Minor change in histogram FastMon/digi comparison.
 
 - GetNumEntries() replaced with GetSumOfWeights() in pHistogramPair.py
