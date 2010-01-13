@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-05-02 13-Jan-2010 lbaldini Minor change in histogram FastMon/digi comparison.
 
 - GetNumEntries() replaced with GetSumOfWeights() in pHistogramPair.py
 (used by pRootDiffer in order to compare the FastMon and digi eor plots).
