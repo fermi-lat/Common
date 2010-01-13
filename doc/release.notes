@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-05-01 13-Jan-2010 lbaldini Minor bug fix (> changed in >=).
 - Minor bug fix in alg__values.py: ">" changed to ">=" when checking the branch
 with the number of entries.
 
