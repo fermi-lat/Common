@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-06-00 15-Jan-2010 lbaldini Minor change in number formatting.
 - Minor change in the routine formatting the output numbers from the
 alarm handler.
 
