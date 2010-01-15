@@ -165,11 +165,14 @@ class pAlarmOutput:
         value = pUtils.formatNumber(self.Value)
         if self.Error is None:
             return value
-        try:
-            numDecimalPlaces = len(value.split('.')[1])
-        except:
-            numDecimalPlaces = 0
-        formatString = '%' + '.%df' % numDecimalPlaces
+        if 'e' in value:
+            formatString = '%.2e'
+        else:
+            try:
+                numDecimalPlaces = len(value.split('.')[1])
+            except:
+                numDecimalPlaces = 0
+            formatString = '%' + '.%df' % numDecimalPlaces
         error = formatString % self.Error
         return '%s +- %s' % (value, error)
 
