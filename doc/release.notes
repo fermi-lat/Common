@@ -4,6 +4,12 @@
  *
  *                  EOH
 
+- "exception violations" changed in "exception_violations" on line 426 of
+file pAlarmBaseAlgorithm.py. It's a bug that's been probably there since the
+dawn of times, as there's already a field "exception_violations" filled in
+pAlarmOutput.py and they should really point to the same thing.
+
+
  Common-06-06-00 15-Jan-2010 lbaldini Minor change in number formatting.
 - Minor change in the routine formatting the output numbers from the
 alarm handler.
