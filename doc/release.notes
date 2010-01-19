@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-06-01 19-Jan-2010 lbaldini Minor bug fix.
 - "exception violations" changed in "exception_violations" on line 426 of
 file pAlarmBaseAlgorithm.py. It's a bug that's been probably there since the
 dawn of times, as there's already a field "exception_violations" filled in
