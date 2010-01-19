@@ -423,7 +423,7 @@ class pAlarmBaseAlgorithm:
         status  = self.Output.getStatus(badness)
         if status == STATUS_CLEAN and flipLogic:
             label = self.getDetailedLabel(index, value, valueLabel, error)
-            self.Output.appendDictValue('exception violations', label)
+            self.Output.appendDictValue('exception_violations', label)
             badness = self.Exception.getBadness(position)
         elif status == STATUS_ERROR:
             label = self.getDetailedLabel(index, value, valueLabel, error)
