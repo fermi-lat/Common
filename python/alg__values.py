@@ -158,6 +158,7 @@ class alg__values(pAlarmBaseAlgorithm):
             self.__HasErrors = False
         self.__MinEntries = self.getParameter('min_n', None)
         if self.__MinEntries is not None:
+            self.__MinEntries = int(self.__MinEntries)
             numEntriesBranchName = '%s_n' % valueBranchName
             if self.RootTree.GetBranch(numEntriesBranchName) is not None:
                 self.NumEntriesArray = numpy.zeros(shape, ROOT2NUMPYDICT['I'])
@@ -249,6 +250,7 @@ class alg__values(pAlarmBaseAlgorithm):
                         entries = numEntriesFlatArray[j]
                     else:
                         entries = None
+                    # Check the condition on the number of entries.
                     if self.__MinEntries is not None and\
                             entries is not None and\
                             entries < self.__MinEntries:
@@ -256,6 +258,7 @@ class alg__values(pAlarmBaseAlgorithm):
                             (i, j, entries, self.__MinEntries)
                         logger.info(message)
                         self.Output.appendDictValue('messages', message)
+                    # Check the condition on the relative error.
                     elif self.__MaxRelError is not None and\
                             relError is not None and\
                             relError > self.__MaxRelError:
@@ -263,6 +266,7 @@ class alg__values(pAlarmBaseAlgorithm):
                             (i, j, relError, self.__MaxRelError)
                         logger.info(message)
                         self.Output.appendDictValue('messages', message)
+                    # Go ahead and check the limits.
                     else:
                         badness = self.checkStatus(j, value, 'value', error)
                         if badness > WARNING_BADNESS:
