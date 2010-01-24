@@ -4,6 +4,13 @@
  *
  *                  EOH
 
+- New parameter for the alg__values.py alarm algorithm implemented in order
+to disengage the alarm on any single data point whose relative error is
+larger than an adjustable threshold (used in the tracker trending alarms
+in to prevent warnings/errors from firing with low statistics).
+* Relevant Jira(s): GDQMQ-338
+
+
  Common-06-06-01 19-Jan-2010 lbaldini Minor bug fix.
 - "exception violations" changed in "exception_violations" on line 426 of
 file pAlarmBaseAlgorithm.py. It's a bug that's been probably there since the
