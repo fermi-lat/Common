@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-07-00 24-Jan-2010 lbaldini New max_rel_err parameter for alg__values.py implemented.
 - New parameter for the alg__values.py alarm algorithm implemented in order
 to disengage the alarm on any single data point whose relative error is
 larger than an adjustable threshold (used in the tracker trending alarms

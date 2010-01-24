@@ -1,3 +1,3 @@
 # -*- python -*-
 # Authors: L. Baldini <luca.baldini@pi.infn.it>
-# Version: Common-06-06-01
+# Version: Common-06-07-00
