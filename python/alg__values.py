@@ -64,6 +64,13 @@ MIN_TRUE_TIME_INTERVAL = 10.0
 #  @li <tt>only</tt>: the list of indexes the alarm has to run on.
 #  <br>
 #  @li <tt>num_sigma</tt>: multiplicative factor for the error bars.
+#  <br>
+#  @li <tt>min_n<tt>: the minimum value of branch_name_n, below which the alarm
+#  is disengaged.
+#  <br>
+#  @li <tt>max_rel_err<tt>: the maximum relative error Delta v/v on the single
+#  data point, above which the alarm is disengaged.
+#  <br>
 #
 #  <b>Output value</b>:
 #
@@ -81,10 +88,15 @@ MIN_TRUE_TIME_INTERVAL = 10.0
 #  <br>
 
 
+MIN_N_MESSAGE = 'Entry %d, index %d ignored (n = %d < %d)'
+MAX_REL_ERR_MESSAGE = 'Entry %d, index %d ignored (rel. err. = %.4f > %.4f)'
+
+
 class alg__values(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TBranch']
-    SUPPORTED_PARAMETERS = ['exclude', 'only', 'num_sigma', 'min_n']
+    SUPPORTED_PARAMETERS = ['exclude', 'only', 'num_sigma',
+                            'min_n', 'max_rel_err']
     OUTPUT_LABEL          = 'The worst entry of the branch'
 
     def __init__(self, limits, object, paramsDict, conditionsDict = {}):
@@ -157,6 +169,7 @@ class alg__values(pAlarmBaseAlgorithm):
                 logger.error('Could not locate branch %s.' %\
                              numEntriesBranchName)
                 self.__MinEntries = None
+        self.__MaxRelError = self.getParameter('max_rel_err', None)
 
     ## @brief Setup the list of indexes to loop over, taking into account
     #  the optional "exclude" and "only" parameters.
@@ -225,10 +238,32 @@ class alg__values(pAlarmBaseAlgorithm):
                     value = valueFlatArray[j]
                     if self.__HasErrors:
                         error = errorFlatArray[j]*self.NumSigma
+                        if value != 0:
+                            relError = error/abs(value)
+                        else:
+                            relError = None
                     else:
                         error = None
-                    if self.__MinEntries is None or \
-                           numEntriesFlatArray[j] >= self.__MinEntries:
+                        relError = None
+                    if self.__MinEntries is not None:
+                        entries = numEntriesFlatArray[j]
+                    else:
+                        entries = None
+                    if self.__MinEntries is not None and\
+                            entries is not None and\
+                            entries < self.__MinEntries:
+                        message = MIN_N_MESSAGE %\
+                            (i, j, entries, self.__MinEntries)
+                        logger.info(message)
+                        self.Output.appendDictValue('messages', message)
+                    elif self.__MaxRelError is not None and\
+                            relError is not None and\
+                            relError > self.__MaxRelError:
+                        message = MAX_REL_ERR_MESSAGE %\
+                            (i, j, relError, self.__MaxRelError)
+                        logger.info(message)
+                        self.Output.appendDictValue('messages', message)
+                    else:
                         badness = self.checkStatus(j, value, 'value', error)
                         if badness > WARNING_BADNESS:
                             if j not in linkIndexes:
@@ -238,12 +273,6 @@ class alg__values(pAlarmBaseAlgorithm):
                             (outputEntry, outputIndex,
                              outputValue, outputError) =\
                              (i, j, value, error)
-                    else:
-                        logger.info(('Skipping entry %d for array index %s' %\
-                                    (i, j)) +\
-                                    (' (n = %d < %d).' %\
-                                     (numEntriesFlatArray[j],
-                                      self.__MinEntries)))
             else:
                 logger.info('Skipping entry %d (TrueTimeInterval = %f)...' %\
                                 (i, self.TimeIntervalArray[0]))
