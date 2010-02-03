@@ -88,8 +88,9 @@ MIN_TRUE_TIME_INTERVAL = 10.0
 #  <br>
 
 
-MIN_N_MESSAGE = 'Entry %d, index %d ignored (n = %d < %d)'
-MAX_REL_ERR_MESSAGE = 'Entry %d, index %d ignored (rel. err. = %.4f > %.4f)'
+MIN_N_MESSAGE = 'Entry %d, index %d ignored (n = %d less than %d)'
+MAX_REL_ERR_MESSAGE =\
+    'Entry %d, index %d ignored (rel. err. = %.4f larger than %.4f)'
 
 
 class alg__values(pAlarmBaseAlgorithm):
