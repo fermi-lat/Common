@@ -4,6 +4,11 @@
  *
  *                  EOH
 
+- Bug fix to avoid a malformed xml tag produced by alg__values in the output
+file. See https://www-glast.stanford.edu/protected/mail/datamon/3959.html
+for some details.
+
+
  Common-06-07-00 24-Jan-2010 lbaldini New max_rel_err parameter for alg__values.py implemented.
 - New parameter for the alg__values.py alarm algorithm implemented in order
 to disengage the alarm on any single data point whose relative error is
