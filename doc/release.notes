@@ -4,6 +4,10 @@
  *
  *                  EOH
 
+- Brute force fix to handle some misnamed variables correctly.
+* Relevant Jira(s): GDQMQ-342
+
+
  Common-06-07-01 03-Feb-2010 lbaldini Bug fix (malformed xml tag).
 - Bug fix to avoid a malformed xml tag produced by alg__values in the output
 file. See https://www-glast.stanford.edu/protected/mail/datamon/3959.html
