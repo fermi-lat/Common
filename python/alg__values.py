@@ -28,9 +28,9 @@ VAR_LABELS_DICT = {
     'GARC': ['garc'],
     'AcdTile': ['tile'],
     'XYZ': ['xyz'],
-    'ReconNumTracks': ['num. tracks'],
+    'ReconNumTracks': ['number of tracks'],
     'GammaFilterBit': ['filter bit'],
-    'TriggerEngine': ['trg. engine']
+    'TriggerEngine': ['trigger engine']
     }
 
 LINK_LABELS_DICT = {
@@ -141,6 +141,12 @@ class alg__values(pAlarmBaseAlgorithm):
             if type(shape) == types.IntType:
                 shape = eval('(%d,)' % shape)
             self.VariableType = branchName.split('_')[-1].split('[')[0]
+            # This is a brute force fix (see Jira GDQMQ-342)
+            if self.VariableType in ['NormRateMeritTriggerEngine',
+                                     'NormRateGAMMAFilterAndTriggerEngine',
+                                     'NormRateFswGAMMAFilterAndTriggerEngine']:
+                self.VariableType = 'TriggerEngine'
+            # End of fix (Luca Baldini, March 10, 2010).
             try:
                 self.IndexLabels = VAR_LABELS_DICT[self.VariableType]
             except KeyError:
