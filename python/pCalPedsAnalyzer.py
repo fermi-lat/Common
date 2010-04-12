@@ -69,15 +69,21 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
         channelName = self.getChannelName(baseName, tower, layer, column,\
                                           face, readoutRange)
         if self.Debug:
+            subgroup = CAL_RANGE_DICT[readoutRange]
+            channel = self.getChannelNumber(tower, layer, column, face)
             print '*************************************************'
             print 'Debug information for %s' % baseName
             print 'Tower %d, layer %d, column %d, face %d, range %s' %\
                   (tower, layer, column, face, CAL_RANGE_DICT[readoutRange])
+            print 'Values from the truncated average algorithm:'
+            print '\tMean = %f' % self.getTruncAvePedMean(subgroup, channel)
+            print '\tRMS  = %f' % self.getTruncAvePedRMS(subgroup, channel)
         self.fit(channelName)
 
     def inspectChannel(self, channel):
         (tower, layer, column, face) = getCalChannelLocation(channel)
         self.openFile(self.InputFilePath)
+        self.setupRefHistograms()
         self.Debug = True
         for readoutRange in range(4):
             self.fitChannel(self.BASE_NAME, tower, layer, column, face,\
@@ -121,9 +127,7 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
         errorDiff = self.RMSError
         self.fillHistogram(histName, channel, valueDiff, errorDiff)
 
-    def run(self):
-        logger.info('Starting CAL peds analysis...')
-        startTime = time.time()
+    def setupRefHistograms(self):
         self.TruncPedMeanHistDict = {}
         self.TruncPedRMSHistDict = {}
         self.openFile(self.InputFilePath)
@@ -134,6 +138,11 @@ class pCalPedsAnalyzer(pBaseAnalyzer):
                  self.get('CalXAdcPedRMS_%s_TH1' % subgroup)
         self.PedMeanFirstRefHist = self.get('CalXPedDB_FirstVal_TH1')
         self.PedMeanLastRefHist = self.get('CalXPedDB_FirstVal_TH1')
+
+    def run(self):
+        logger.info('Starting CAL peds analysis...')
+        startTime = time.time()
+        self.setupRefHistograms()
         for tower in range(16):
             logger.debug('Fitting pedestals for tower %d...' % tower)
             for layer in range(8):
