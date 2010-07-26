@@ -19,12 +19,18 @@ HYPER_GAUSSIAN_FORMULA = '%s*[0]*exp(-(abs( (x-[1])/[2] )**[3])/2)' %\
                          (1.0/math.sqrt(2*math.pi))
 HYPER_GAUSSIAN = ROOT.TF1('hyper_gaussian', HYPER_GAUSSIAN_FORMULA)
 
-def getCalChannelLocation(channel):
+def getCalChannelLocation(channel, countFaces = True):
+    if countFaces:
         tower = channel/(8*12*2)
         layer = (channel - tower*8*12*2)/(12*2)
         column = (channel - tower*8*12*2 - layer*12*2)/2
         face = channel - tower*8*12*2 - layer*12*2 - column*2
         return (tower, layer, column, face)
+    else:
+        tower = channel/(8*12)
+        layer = (channel - tower*8*12)/12
+        column = (channel - tower*8*12 - layer*12)
+        return (tower, layer, column)
 
 CAL_RANGE_DICT = {0: 'LEX8', 1: 'LEX1', 2: 'HEX8', 3: 'HEX1'}
 CAL_RANGE_INVERSE_DICT = {'LEX8': 0, 'LEX1': 1, 'HEX8': 2, 'HEX1': 3}
@@ -129,7 +135,12 @@ class pBaseAnalyzer(pRootFileManager, pAlarmBaseAlgorithm):
         if self.RootObject is None:
             sys.exit('Could not find %s. Abort.' % channelName)
         if self.RootObject.GetEntries() == 0:
-            self.Mean = 0.0
+            logger.warn('Object %s is empty (no entries).' %\
+                        self.RootObject.GetName())
+            if self.Debug:
+                print 'Everything zero!'
+                print '*************************************************'
+	    self.Mean = 0.0
             self.MeanError = 0.0
             self.RMS = 0.0
             self.RMSError = 0.0

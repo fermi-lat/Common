@@ -71,7 +71,7 @@ class pCalGainsAnalyzer(pBaseAnalyzer):
         self.fit(channelName)
 
     def inspectChannel(self, channel):
-        (tower, layer, column, face) = getCalChannelLocation(channel)
+        (tower, layer, column) = getCalChannelLocation(channel, False)
         self.openFile(self.InputFilePath)
         self.Debug = True
         for subgroup in self.HISTOGRAM_SUB_GROUPS:
