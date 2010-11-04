@@ -6,6 +6,8 @@ from alg__reference_histogram import alg__reference_histogram
 from pAlarmBaseAlgorithm      import pAlarmBaseAlgorithm
 from math                     import sqrt
 
+## @brief Comparison against a reference histogram.
+#
 
 
 class alg__xml_reference_histogram(alg__reference_histogram):

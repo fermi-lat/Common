@@ -3,6 +3,10 @@ from pSafeROOT           import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
+## @brief Find the peak position in a 1-dimensional histogram.
+#
+#  The algorithm is based on an iterative gaussian fit.
+
 class alg__peak_position(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F', 'TH1D']

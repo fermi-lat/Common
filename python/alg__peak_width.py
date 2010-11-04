@@ -3,6 +3,11 @@ from pSafeROOT           import ROOT
 from pAlarmBaseAlgorithm import pAlarmBaseAlgorithm
 
 
+## @brief Find the peak width in a 1-dimensional histogram.
+#
+#  The algorithm is based on an iterative gaussian fit.
+
+
 class alg__peak_width(pAlarmBaseAlgorithm):
 
     SUPPORTED_TYPES      = ['TH1F', 'TH1D']
