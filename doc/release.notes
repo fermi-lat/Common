@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-08-01 04-Nov-2010 lbaldini Doxygen updated.
 - Some cosmetics to the doxygen lines. Three dummy files (alg__number.py,
 alg__fraction.py and alg__rate.py) containing doc only added in order to
 document the alarm algorithms on the verify module.
