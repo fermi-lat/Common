@@ -3,6 +3,8 @@
  * Coordinator: Luca Baldini <luca.baldini@pi.infn.it>
  *
  *                  EOH
+
+ Common-06-08-02 06-Jan-2011 bregeon fix typo -- GDQMQ-336
 - Added 4 spaces at the beginning of the return message of pGlobals.py/LookupErrorCode - GDQMQ-336
 * Relevant Jira(s): GDQMQ-336
 
