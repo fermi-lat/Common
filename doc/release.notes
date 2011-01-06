@@ -3,6 +3,8 @@
  * Coordinator: Luca Baldini <luca.baldini@pi.infn.it>
  *
  *                  EOH
+- Added 4 spaces at the beginning of the return message of pGlobals.py/LookupErrorCode - GDQMQ-336
+* Relevant Jira(s): GDQMQ-336
 
  Common-06-08-01 04-Nov-2010 lbaldini Doxygen updated.
 - Some cosmetics to the doxygen lines. Three dummy files (alg__number.py,
