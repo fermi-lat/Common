@@ -52,5 +52,7 @@ def LookupErrorCode(obj, code):
       value = eval("obj." + name)
       if value == code:
         return name
-  return "No name found for error code: " + str(code)
+  # Added 4 spaces at the beginning because these are truncated when the function
+  # is called to remove the expected "ERR_"
+  return "    No name found for error code: " + str(code)
 
