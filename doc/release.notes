@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-08-03 07-Jan-2011 bregeon new tag with no modifications because the other tag did not work
  Common-06-08-02 06-Jan-2011 bregeon fix typo -- GDQMQ-336
 - Added 4 spaces at the beginning of the return message of pGlobals.py/LookupErrorCode - GDQMQ-336
 * Relevant Jira(s): GDQMQ-336
