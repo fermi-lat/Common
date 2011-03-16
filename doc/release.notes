@@ -4,10 +4,18 @@
  *
  *                  EOH
 
+
+- Added support for options on pErrorLogger.
+* Relevant e-mail thread: https://www-glast.stanford.edu/protected/mail/datamon/5667.html
+
+
  Common-06-08-03 07-Jan-2011 bregeon new tag with no modifications because the other tag did not work
+
+
  Common-06-08-02 06-Jan-2011 bregeon fix typo -- GDQMQ-336
 - Added 4 spaces at the beginning of the return message of pGlobals.py/LookupErrorCode - GDQMQ-336
 * Relevant Jira(s): GDQMQ-336
+
 
  Common-06-08-01 04-Nov-2010 lbaldini Doxygen updated.
 - Some cosmetics to the doxygen lines. Three dummy files (alg__number.py,
