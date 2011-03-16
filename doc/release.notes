@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-09-00 16-Mar-2011 lbaldini Added support for conditions on pErrorLogger.
 
 - Added support for options on pErrorLogger.
 * Relevant e-mail thread: https://www-glast.stanford.edu/protected/mail/datamon/5667.html
