@@ -33,6 +33,7 @@ class pErrorAlarmBaseAlgorithm(pAlarmBaseAlgorithm):
         self.Exception = None
 
 
+
 class pErrorAlarm(pAlarm):
 
     def __init__(self, domElement, targetObjectName = None):
@@ -44,6 +45,23 @@ class pErrorAlarm(pAlarm):
         self.FunctionName = self.getAttribute('function')
         self.Severity = self._pAlarm__extractSeverity()
         self.Algorithm = pErrorAlarmBaseAlgorithm(self.Limits)
+
+    def checkConditions(self, eventSummary):
+        for (key, value) in self.ConditionsDict.items():
+            try:
+                status = eval('self._pErrorAlarm__%s(%s, eventSummary)' %\
+                                  (key, value))
+                if status is False:
+                    return 'Condition %s not fulfilled (target = %s)' %\
+                        (key, value)
+            except:
+                logger.warn('Could not eval condition "%s" for "%s".' %\
+                                (key, self.TargetObjectName))
+        return False
+
+    def __min_seconds_elapsed(self, value, eventSummary):
+        return (eventSummary['seconds_elapsed'] > value)
+
 
 
 class pErrorLogger(pAlarmHandler):
@@ -140,7 +158,7 @@ class pErrorLogger(pAlarmHandler):
         logger.info('Activating the alarms...')
         for alarm in self.XmlParser.getEnabledAlarms():
             expression = 'self._pErrorLogger__%s("%s")' %\
-                         (alarm.FunctionName, alarm.TargetObjectName)
+                (alarm.FunctionName, alarm.TargetObjectName)
             try:
                 alarm.Algorithm.Output.Label = LABEL_DICT[alarm.FunctionName]
             except:
@@ -149,9 +167,12 @@ class pErrorLogger(pAlarmHandler):
                 outputValue = eval(expression)
                 alarm.Algorithm.Output.setValue(outputValue)
             except:
-                logger.error('Could not eval function (%s) for alarm on %s.' %\
-                             (alarm.FunctionName, alarm.TargetObjectName))
-                outputValue = None
+                logger.error('Could not eval func %s for alarm on %s.' %\
+                                 (alarm.FunctionName,
+                                  alarm.TargetObjectName))
+            errorCode = alarm.checkConditions(self.EventSummaryDict)
+            if errorCode:
+                alarm.Algorithm.Output.setUndefined(errorCode)
 
             
 
