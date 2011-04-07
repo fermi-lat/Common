@@ -4,6 +4,9 @@
  *
  *                  EOH
 
+- Initial import of the tool to flag the bad time intervals associated to solar flares.
+
+
  Common-06-09-00 16-Mar-2011 lbaldini Added support for conditions on pErrorLogger.
 
 - Added support for options on pErrorLogger.
