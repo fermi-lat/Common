@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-10-00 07-Apr-2011 lbaldini Initial import of the tool to flag bad time intervals.
 - Initial import of the tool to flag the bad time intervals associated to solar flares.
 
 
