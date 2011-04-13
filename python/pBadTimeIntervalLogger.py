@@ -537,8 +537,12 @@ class pTrendingPlotter:
                         self.BadNormTransIntervals.append(badInterval)
         # Set the scale on the y-axis for the first graph (the one the axis)
         # belongs to, based on the interval with the lasrgest integral loss.
-        g = self.RootPool['gIntLoss_0']
-        g.GetYaxis().SetRangeUser(0, 1.2*maxIntLoss)
+        try:
+            g = self.RootPool['gIntLoss_0']
+            g.GetYaxis().SetRangeUser(0, 1.2*maxIntLoss)
+        except KeyError:
+            # No bad time intervals, no integral loss plots, just go ahead.
+            pass
         for (i, interval) in enumerate(self.BadNormTransIntervals):
             logger.info('Bad normal transient interval #%s: %s' % (i, interval))
             self.Canvas.cd(4)
