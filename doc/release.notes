@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-10-01 13-Apr-2011 lbaldini A bug fix and some fine tuning in the code for flagging the bad time intervals.
 - Small buf fix in pBadTimeIntervalLogger.py
 - parameter fine tuning in pBadTimeIntervalLogger.py
 
