@@ -619,10 +619,10 @@ if __name__ == '__main__':
                       default = 1000.0, type = float,
                       help = 'minimum time padding (in s) for fitting the normalized transient rate outside any flare interval')
     parser.add_option('-M', '--min-int-loss', dest = 'M',
-                      default = 60.0, type = float,
+                      default = 35.0, type = float,
                       help = 'minimum integral loss (in s) for defining a bad time interval')
     parser.add_option('-m', '--min-diff-loss', dest = 'm',
-                      default = 0.15, type = float,
+                      default = 0.18, type = float,
                       help = 'minimum differential loss for defining a bad time interval')
     parser.add_option('-s', '--int-loss-start', dest = 's',
                       default = 5.0, type = float,
