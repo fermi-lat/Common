@@ -169,7 +169,8 @@ class pTrendingPlotter:
         'NormAcdTileCount': 'Merit.Mean_AcdTileCount/(8.73 - 0.283466*Digi.Rate_TriggerEngine[10] + 0.00615361*Digi.Rate_TriggerEngine[10]**2)',
         'NormAcdTileCount_err': 'Merit.Mean_AcdTileCount_err/(8.73 - 0.283466*Digi.Rate_TriggerEngine[10] + 0.00615361*Digi.Rate_TriggerEngine[10]**2)'
         }
-    TIME_FORMAT = '%b/%d/%y %H:%M%F2000-12-31 23:00:00'
+    TIME_FORMAT = '%b/%d/%y %H:%M'
+    TIME_OFFSET = 978307200
     TIME_BIN_WIDTH = 15.0
     NORM_RATE_ERR  = 0.25
 
@@ -261,6 +262,7 @@ class pTrendingPlotter:
         g.GetXaxis().SetNdivisions(506)
         g.GetXaxis().SetTimeDisplay(True)
         g.GetXaxis().SetTimeFormat(self.TIME_FORMAT)
+        g.GetXaxis().SetTimeOffset(self.TIME_OFFSET, 'gmt')
         g.GetYaxis().SetTitle(ytitle)
         if ymin is not None and ymax is not None:
             g.GetYaxis().SetRangeUser(ymin, ymax)
