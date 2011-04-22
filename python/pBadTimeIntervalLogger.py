@@ -170,11 +170,12 @@ class pTrendingPlotter:
         'NormAcdTileCount_err': 'Merit.Mean_AcdTileCount_err/(8.73 - 0.283466*Digi.Rate_TriggerEngine[10] + 0.00615361*Digi.Rate_TriggerEngine[10]**2)'
         }
     TIME_FORMAT = '%b/%d/%y %H:%M'
-    TIME_OFFSET = 978307200
     TIME_BIN_WIDTH = 15.0
     NORM_RATE_ERR  = 0.25
 
     def __init__(self, digiTrendFilePath, meritTrendFilePath):
+        self.DateOffset = ROOT.TDatime(2001,01,01,00,00,00)
+        self.TimeOffset = self.DateOffset.Convert(True)
         logger.info('Opening input files...')
         self.DigiFile    = self.openFile(digiTrendFilePath)
         self.MeritFile   = self.openFile(meritTrendFilePath)
@@ -262,7 +263,7 @@ class pTrendingPlotter:
         g.GetXaxis().SetNdivisions(506)
         g.GetXaxis().SetTimeDisplay(True)
         g.GetXaxis().SetTimeFormat(self.TIME_FORMAT)
-        g.GetXaxis().SetTimeOffset(self.TIME_OFFSET, 'gmt')
+        g.GetXaxis().SetTimeOffset(self.TimeOffset)
         g.GetYaxis().SetTitle(ytitle)
         if ymin is not None and ymax is not None:
             g.GetYaxis().SetRangeUser(ymin, ymax)
