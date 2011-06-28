@@ -4,6 +4,10 @@
  *
  *                  EOH
 
+- Small fix to prevent the AlarmHandler from crashing when dealing with a
+non-existing branch in a trending tree.
+
+
  Common-06-10-02 22-Apr-2011 lbaldini Bug fix for the time display of the bad time interval strip charts.
 - Fix for the wrong time offset in the strip charts.
 * Relevant thread: https://www-glast.stanford.edu/protected/mail/datamon/6112.html
