@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-10-03 28-Jun-2011 lbaldini Bug fix.
 - Small fix to prevent the AlarmHandler from crashing when dealing with a
 non-existing branch in a trending tree.
 
