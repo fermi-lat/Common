@@ -124,9 +124,9 @@ class pRootFileManager:
             return self.findTreeBranches(pattern)
         else:
             if '*' not in pattern:
-                object = self.RootFile.FindObjectAny(pattern)
-                if object is not None:
-                    return [object]
+                obj = self.RootFile.FindObjectAny(pattern)
+                if obj is not None:
+                    return [obj]
                 else:
                     return []
             else:
@@ -167,7 +167,13 @@ class pRootFileManager:
                              treeName)
             return []
         branch = tree.GetBranch(branchName)
-        if branch is None:
+        try:
+            zombie = branch.IsZombie()
+        except ReferenceError:
+            logger.error('"%s" TTree does not have a TBranch named "%s".' %
+                         (treeName, branchName))
+            return []
+        if branch is None or zombie:
             logger.error('"%s" TTree does not have a TBranch named "%s".' %
                          (treeName, branchName))
             return []

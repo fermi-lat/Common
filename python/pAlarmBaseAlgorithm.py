@@ -83,7 +83,7 @@ class pAlarmBaseAlgorithm:
     ## @param conditionsDict
     #  The dictionary of algorithm conditions.
 
-    def __init__(self, limits, object, paramsDict, conditionsDict = {}):
+    def __init__(self, limits, obj, paramsDict, conditionsDict = {}):
 
         ## @var Limits
         ## @brief The alarm limits.
@@ -109,7 +109,7 @@ class pAlarmBaseAlgorithm:
         #  object in the constructor).
      
         self.Limits = limits
-        self.RootObject = object
+        self.RootObject = obj
         self.ParamsDict = paramsDict
         self.ConditionsDict = conditionsDict
         self.__RootObjectOK = True
@@ -195,7 +195,7 @@ class pAlarmBaseAlgorithm:
             logger.error('None ROOT object for algorithm "%s". ' %\
                          self.getName() +\
                          'The alarm will be ignored.')
-            self.Output.setError('Could not find ROOT object.')
+            self.Output.setUndefined('Could not find ROOT object.')
         elif self.getObjectType() not in self.SUPPORTED_TYPES:
             self.__RootObjectOK = False
             logger.error('Invalid object type (%s) for %s. '        %\
