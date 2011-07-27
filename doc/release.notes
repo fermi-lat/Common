@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-10-04 26-Jul-2011 lbaldini Minor bug fix.
 - Minor fix (wrong format specifier) in the code comparing the digi and fastmon eor prodoucts.
 * Relevant thread: https://www-glast.stanford.edu/protected/mail/datamon/6636.html
 
