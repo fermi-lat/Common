@@ -44,13 +44,13 @@ class pHistogramPair:
             numEntriesFirst  = self.FirstHistogram.GetEntries()
             numEntriesSecond = self.SecondHistogram.GetEntries()
             if numEntriesFirst != numEntriesSecond:
-                self.logDifference('Entries (%d vs. %d)' %\
+                self.logDifference('Entries (%s vs. %s)' %\
                                    (numEntriesFirst, numEntriesSecond))
 	else:
             numEntriesFirst  = self.FirstHistogram.GetSumOfWeights()
             numEntriesSecond = self.SecondHistogram.GetSumOfWeights()
             if numEntriesFirst != numEntriesSecond:
-                self.logDifference('Sum of weights (%d vs. %d)' %\
+                self.logDifference('Sum of weights (%s vs. %s)' %\
                                    (numEntriesFirst, numEntriesSecond))
             if not fullLog:
                 return
