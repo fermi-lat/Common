@@ -88,9 +88,9 @@ class pBaseTimeInterval:
             self.EndTime = maxTime
 
     def getXmlDict(self):
-        return {'start_met': self.StartTime,
-                'end_met'  : self.EndTime,
-                'duration' : self.getLength(),
+        return {'start_met': '%f' % self.StartTime,
+                'end_met'  : '%f' % self.EndTime,
+                'duration' : '%f' % self.getLength(),
                 'source'   : self.Source
                 }
 
