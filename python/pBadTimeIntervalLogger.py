@@ -42,7 +42,6 @@ class pBaseTimeInterval:
         self.StartTime = startTime
         self.EndTime   = endTime
         self.Source    = source
-        self.Length    = self.EndTime - self.StartTime
 
     ## @brief Draw the time interval.
     #
@@ -64,11 +63,34 @@ class pBaseTimeInterval:
             label.SetTextAngle(30)
             label.SetTextAlign(22)
             label.Draw()
+            
+    ## @brief Return the length of the interval
+    #
+    def getLength(self):
+        return (self.EndTime - self.StartTime)
+
+    ## @brief Trim the interval according to the specified boundaries.
+    #
+    def trim(self, minTime, maxTime):
+        if self.EndTime < minTime or self.StartTime > maxTime:
+            logger.error('Problems trimming the time interval %s' % self)
+            logger.error('Requested trim interval: %f--%f' % (minTime, maxTime))
+            logger.info('Trimming skipped.')
+            return
+        logger.info('Trimming interval %s...' % self)
+        if self.StartTime < minTime:
+            logger.info('Moving start time from %f to %f...' %\
+                            (self.StartTime, minTime))
+            self.StartTime = minTime
+        if self.EndTime > maxTime:
+            logger.info('Moving end time from %f to %f...' %\
+                            (self.EndTime, maxTime))
+            self.EndTime = maxTime
 
     def getXmlDict(self):
         return {'start_met': self.StartTime,
                 'end_met'  : self.EndTime,
-                'duration' : self.Length,
+                'duration' : self.getLength(),
                 'source'   : self.Source
                 }
 
@@ -103,7 +125,8 @@ class pBaseTimeInterval:
     #
 
     def __str__(self):
-        return 'MET %s--%s (%s s)' % (self.StartTime, self.EndTime, self.Length)
+        return 'MET %f--%f (%f s)' %\
+            (self.StartTime, self.EndTime, self.getLength())
 
 
 
@@ -157,6 +180,8 @@ class pTrendingPlotter:
     #
 
     ALIAS_DICT  = {
+        'TimeFirstEvent': 'Digi.TimeStampFirstEvt',
+        'TimeLastEvent': 'Digi.TimeStampLastEvt',
         'Time': '0.5*(Digi.Bin_Start + Digi.Bin_End)',
         'TileNormRate63': 'Digi.OutF_Normalized_AcdHit_AcdTile[63]',
         'TileNormRate63_err': 'Digi.OutF_Normalized_AcdHit_AcdTile_err[63]',
@@ -202,14 +227,16 @@ class pTrendingPlotter:
         logger.info('Setting aliases and creating TTreeFormulas...')
         self.TreeFormulaDict = {}
         for (key, value) in self.ALIAS_DICT.items():
+            logger.debug('%s -> %s' % (key, value))
             self.Tree.SetAlias(key, value)
             self.TreeFormulaDict[key] = ROOT.TTreeFormula(key, value, self.Tree)
         self.RootPool = {}
         self.getEntry(0)
-        startTime = self.value('Time')
+        self.StartTime = self.value('TimeFirstEvent')
         self.getLastEntry()
-        stopTime = self.value('Time')
-        self.RunTimeSpan = pBaseTimeInterval(startTime, stopTime, None)
+        self.StopTime = self.value('TimeLastEvent')
+        self.RunTimeSpan = pBaseTimeInterval(self.StartTime, self.StopTime,
+                                             None)
         logger.info('Time span for the run: %s' % self.RunTimeSpan)
 
     ## @brief Call the GetEntry() method for all the trees.
@@ -364,7 +391,7 @@ class pTrendingPlotter:
         self.Canvas.cd(1)
         l = self.getHorLine(threshold)
         l.Draw()
-        logger.info('Searching flar intervals...')
+        logger.info('Searching for flare intervals...')
         g = self.getStripChart('TileNormRate63')
         self.FlareIntervals = self.__applyThreshold(g, threshold,
                                                     'NormAcdTileRate63')
@@ -388,6 +415,7 @@ class pTrendingPlotter:
                                                            'NormAcdTileCount')
         logger.info('Done.')
         for (i, interval) in enumerate(self.BadTileCountIntervals):
+            interval.trim(self.StartTime, self.StopTime)
             logger.info('Bad tile count interval #%s: %s' % (i, interval))
             interval.draw(3*threshold, ROOT.kRed)
         self.Canvas.cd()
@@ -546,8 +574,8 @@ class pTrendingPlotter:
                                                    'NormTransientRate')
                     # If it's non zero and the fractional loss is large
                     # enough, than it's good to be reported.
-                    if badInterval.Length > 0 and \
-                            totalIntLoss/badInterval.Length > minDiffLoss:
+                    if badInterval.getLength() > 0 and \
+                            totalIntLoss/badInterval.getLength() > minDiffLoss:
                         self.BadNormTransIntervals.append(badInterval)
         # Set the scale on the y-axis for the first graph (the one the axis)
         # belongs to, based on the interval with the lasrgest integral loss.
@@ -558,6 +586,7 @@ class pTrendingPlotter:
             # No bad time intervals, no integral loss plots, just go ahead.
             pass
         for (i, interval) in enumerate(self.BadNormTransIntervals):
+            interval.trim(self.StartTime, self.StopTime)
             logger.info('Bad normal transient interval #%s: %s' % (i, interval))
             self.Canvas.cd(4)
             interval.draw(1.25, ROOT.kRed)
