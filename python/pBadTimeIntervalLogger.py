@@ -35,6 +35,8 @@ def brokenQuadratic(x, par):
 
 class pBaseTimeInterval:
 
+    MIN_DURATION = 5.0
+
     ## @brief Basic constructor.
     #
 
@@ -86,6 +88,11 @@ class pBaseTimeInterval:
             logger.info('Moving end time from %f to %f...' %\
                             (self.EndTime, maxTime))
             self.EndTime = maxTime
+        
+    ## @brief Checck whether the BTI is longer than the minimum duration.
+    #
+    def isValid(self):
+        return (self.getLength() > self.MIN_DURATION)
 
     def getXmlDict(self):
         return {'start_met': '%f' % self.StartTime,
@@ -166,7 +173,7 @@ class pBadTimeInterval(pBaseTimeInterval):
 
     def getXmlDict(self):
         xmlDict = pBaseTimeInterval.getXmlDict(self)
-        xmlDict['integral_loss'] = '%.1f' % self.IntegralLoss
+        xmlDict['integral_loss'] = '%f' % self.IntegralLoss
         return xmlDict
 
 
@@ -382,6 +389,8 @@ class pTrendingPlotter:
                 mergedIntervals.append(interval)
             else:
                 mergedIntervals[-1] += interval
+        for interval in mergedIntervals:
+            interval.trim(self.StartTime, self.StopTime)
         return mergedIntervals
 
     ## @brief Loop over the strip chart for the normalized hit rate in the
@@ -411,11 +420,13 @@ class pTrendingPlotter:
         l.Draw()
         logger.info('Analyzing normalized ACD tile count...')
         g = self.getStripChart('NormAcdTileCount')
-        self.BadTileCountIntervals = self.__applyThreshold(g, threshold,
-                                                           'NormAcdTileCount')
+        tmpBTIList = self.__applyThreshold(g, threshold, 'NormAcdTileCount')
+        self.BadTileCountIntervals = []
+        for interval in tmpBTIList:
+            if interval.isValid():
+                self.BadTileCountIntervals.append(interval)
         logger.info('Done.')
         for (i, interval) in enumerate(self.BadTileCountIntervals):
-            interval.trim(self.StartTime, self.StopTime)
             logger.info('Bad tile count interval #%s: %s' % (i, interval))
             interval.draw(3*threshold, ROOT.kRed)
         self.Canvas.cd()
@@ -572,9 +583,11 @@ class pTrendingPlotter:
                     badInterval = pBadTimeInterval(startBad, endBad,
                                                    totalIntLoss,
                                                    'NormTransientRate')
+                    # Trim the interval.
+                    badInterval.trim(self.StartTime, self.StopTime)
                     # If it's non zero and the fractional loss is large
                     # enough, than it's good to be reported.
-                    if badInterval.getLength() > 0 and \
+                    if badInterval.isValid() and \
                             totalIntLoss/badInterval.getLength() > minDiffLoss:
                         self.BadNormTransIntervals.append(badInterval)
         # Set the scale on the y-axis for the first graph (the one the axis)
@@ -586,7 +599,6 @@ class pTrendingPlotter:
             # No bad time intervals, no integral loss plots, just go ahead.
             pass
         for (i, interval) in enumerate(self.BadNormTransIntervals):
-            interval.trim(self.StartTime, self.StopTime)
             logger.info('Bad normal transient interval #%s: %s' % (i, interval))
             self.Canvas.cd(4)
             interval.draw(1.25, ROOT.kRed)
