@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-11-00 05-Aug-2011 lbaldini Some improvements to the code generating bad time intervals.
 - Trimming BTIs in order not to cross the run boundaries.
 - Preventing the generation of BTIs shorter than 5 s.
 * Relevant thread: https://www-glast.stanford.edu/protected/mail/l1proc/2352.html
