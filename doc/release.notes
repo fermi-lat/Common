@@ -4,6 +4,9 @@
  *
  *                  EOH
 
+- Another minor fix in pBadTimeIntervalLogger (wrong time label for the integrated loss graph).
+
+
  Common-06-11-00 05-Aug-2011 lbaldini Some improvements to the code generating bad time intervals.
 - Trimming BTIs in order not to cross the run boundaries.
 - Preventing the generation of BTIs shorter than 5 s.
