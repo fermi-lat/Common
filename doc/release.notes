@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-11-01 05-Aug-2011 lbaldini Small fix in the code generating the BTIs
 - Another minor fix in pBadTimeIntervalLogger (wrong time label for the integrated loss graph).
 
 
