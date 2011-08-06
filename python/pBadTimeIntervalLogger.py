@@ -25,7 +25,6 @@ def brokenQuadratic(x, par):
     return par[0] + par[1]*x + par[2]*(x**2)
 
 
-
 ## @package pBadTimeIntervalLogger
 ## @brief Module flagging bad time intervals during solar flares.
 
@@ -290,6 +289,15 @@ class pTrendingPlotter:
                         (rootFile.GetListOfKeys().LastIndex() + 1))
         return rootFile
 
+    ## @brief Setup the time display on a strip chart.
+    #
+    def setupTimeAxis(self, graph):
+        graph.GetXaxis().SetTitle('Time UTC')
+        graph.GetXaxis().SetNdivisions(506)
+        graph.GetXaxis().SetTimeDisplay(True)
+        graph.GetXaxis().SetTimeFormat(self.TIME_FORMAT)
+        graph.GetXaxis().SetTimeOffset(self.TimeOffset)
+
     ## @brief Create the strip chart for a given quantity.
     #
 
@@ -304,11 +312,7 @@ class pTrendingPlotter:
             g.SetPointError(i, 0, self.value('%s_err' % expr))
         g.SetMarkerStyle(26)
         g.SetMarkerSize(0.5)
-        g.GetXaxis().SetTitle('Time UTC')
-        g.GetXaxis().SetNdivisions(506)
-        g.GetXaxis().SetTimeDisplay(True)
-        g.GetXaxis().SetTimeFormat(self.TIME_FORMAT)
-        g.GetXaxis().SetTimeOffset(self.TimeOffset)
+        self.setupTimeAxis(g)
         g.GetYaxis().SetTitle(ytitle)
         if ymin is not None and ymax is not None:
             g.GetYaxis().SetRangeUser(ymin, ymax)
@@ -543,10 +547,7 @@ class pTrendingPlotter:
             if intLoss > maxIntLoss:
                 maxIntLoss = intLoss
             gIntLoss.SetPoint(n, self.RunTimeSpan.EndTime, -1)
-            gIntLoss.GetXaxis().SetTitle('Time UTC')
-            gIntLoss.GetXaxis().SetNdivisions(506)
-            gIntLoss.GetXaxis().SetTimeDisplay(True)
-            gIntLoss.GetXaxis().SetTimeFormat(self.TIME_FORMAT)
+            self.setupTimeAxis(gIntLoss)
             gIntLoss.GetYaxis().SetTitle('Integrated loss (s)')
             self.store(gIntLoss)
             self.Canvas.cd(6)
