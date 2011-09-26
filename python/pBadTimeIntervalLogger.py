@@ -356,7 +356,7 @@ class pTrendingPlotter:
         self.Canvas.cd(3)
         g3 = self.createStripChart('TransientRate', 'Transient Rate')
         self.Canvas.cd(5)
-        g5 = self.createStripChart('RockingAngle', 'Rocking Angle', 0.0, 90.0)
+        g5 = self.createStripChart('RockingAngle', 'Rocking Angle', -90.0, 90.0)
         self.Canvas.cd(2)
         g2 = self.createStripChart('NormAcdTileCount',
                                    'Normalized ACD tile count', 0.0, 8.0)
