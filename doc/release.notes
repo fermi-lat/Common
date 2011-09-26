@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-11-02 26-Sep-2011 lbaldini yrange of a graph changed.
 - y-range changed for the strip chart of the rocking angle in the script for
   the bad time intervals (to reflect the fact that the rocking angle is now
   a signed quantity).
