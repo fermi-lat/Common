@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-11-03 26-Mar-2012 lbaldini pErrorLogger.py patched to handle big xml input files.
 - pErrorLogger.py modified in order not to crash with huge input xml files
   (this first came out with the first trunc64 test).
 * Relevent thread: https://www-glast.stanford.edu/protected/mail/datamon/7957.html
