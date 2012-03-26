@@ -4,6 +4,11 @@
  *
  *                  EOH
 
+- pErrorLogger.py modified in order not to crash with huge input xml files
+  (this first came out with the first trunc64 test).
+* Relevent thread: https://www-glast.stanford.edu/protected/mail/datamon/7957.html
+
+
  Common-06-11-02 26-Sep-2011 lbaldini yrange of a graph changed.
 - y-range changed for the strip chart of the rocking angle in the script for
   the bad time intervals (to reflect the fact that the rocking angle is now
