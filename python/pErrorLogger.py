@@ -91,9 +91,21 @@ class pErrorLogger(pAlarmHandler):
         self.AlarmStats = self.evalStatistics()
         pAlarmXmlSummaryGenerator(self).run()
 
-    def parseInputFile(self, filePath):
-        logger.info('Parsing input file %s...' % filePath)
-        xmlDoc = pXmlBaseElement(minidom.parse(file(filePath)))
+    def parseInputFile(self, filePath, parseAll = False):
+        if parseAll:
+            logger.info('Parsing the entire input file %s...' % filePath)
+            xmlDoc = pXmlBaseElement(minidom.parse(file(filePath)))
+        else:
+            logger.info('Parsing line by line the input file %s...' % filePath)
+            inputData = ''
+            for (i, line) in enumerate(file(filePath)):
+                inputData += line
+                if line.strip().startswith('<eventSummary'):
+                    break
+            logger.info('Done, %d line(s) read.' % i)
+            logger.info('Closing open tags...')
+            inputData += '    </eventSummary>\n\n</errorContribution>'
+            xmlDoc = pXmlBaseElement(minidom.parseString(inputData))
         for element in xmlDoc.getElementsByTagName('errorType'):
             element = pXmlBaseElement(element)
             code = element.getAttribute('code')
