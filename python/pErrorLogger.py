@@ -96,15 +96,25 @@ class pErrorLogger(pAlarmHandler):
             logger.info('Parsing the entire input file %s...' % filePath)
             xmlDoc = pXmlBaseElement(minidom.parse(file(filePath)))
         else:
+            # This was motivated by the fact that in the first tests
+            # with the trunc64 configuration the input xml file was ~70 MB
+            # long and the parsing was crashing with a memory error.
+            # The idea is that we read line by line what's necessary and then
+            # we parse the xml block as a string.
             logger.info('Parsing line by line the input file %s...' % filePath)
             inputData = ''
             for (i, line) in enumerate(file(filePath)):
                 inputData += line
+                # Once we have the eventSummary tag we're ok.
                 if line.strip().startswith('<eventSummary'):
                     break
             logger.info('Done, %d line(s) read.' % i)
             logger.info('Closing open tags...')
-            inputData += '    </eventSummary>\n\n</errorContribution>'
+            # Were there evennts with errors in between?
+            if not line.strip().endswith('/>'):
+                inputData += '    </eventSummary>\n'
+            # Close the final tag.
+            inputData += '\n</errorContribution>'
             xmlDoc = pXmlBaseElement(minidom.parseString(inputData))
         for element in xmlDoc.getElementsByTagName('errorType'):
             element = pXmlBaseElement(element)
