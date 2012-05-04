@@ -724,7 +724,7 @@ class pBaseReportGenerator:
         self.doxygenate(verbose)
 
     def viewReport(self):
-        cmd = 'htmlview %s/index.html' % self.HtmlDirPath
+        cmd = 'firefox %s/index.html' % self.HtmlDirPath
         logger.info('Starting html viewer (%s)...' % cmd)
         output = commands.getoutput(cmd) 
         if output != '':
