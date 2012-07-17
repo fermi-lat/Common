@@ -144,15 +144,16 @@ class pBadTimeInterval(pBaseTimeInterval):
     ## @brief Constructor.
     #
 
-    def __init__(self, startTime, endTime, intLoss, source):
+    def __init__(self, startTime, endTime, source, gIntLoss, intLoss):
         pBaseTimeInterval.__init__(self, startTime, endTime, source)
+        self.IntegratedLossGraph = gIntLoss
         self.IntegralLoss = intLoss
 
     ## @brief Superimpose the interval to the integral curve.
     #
 
     def drawIntegral(self, g, color = None):
-        color = color or ROOT.kRed
+        color = color or ROOT.kRed      
         ystart = g.Eval(self.StartTime)
         ystop = g.Eval(self.EndTime)
         self.StartMarker = ROOT.TMarker(self.StartTime, ystart, 20)
@@ -466,8 +467,10 @@ class pTrendingPlotter:
         # Change to the right pad and grab the strip chart.
         self.Canvas.cd(4)
         g = self.getStripChart('NormTransientRate')
-        ftemp = ROOT.TF1('ftemp', brokenQuadratic, self.RunTimeSpan.StartTime,
-                         self.RunTimeSpan.EndTime, 5)
+        ftemp = ROOT.TF1('ftemp', brokenQuadratic,
+                         self.RunTimeSpan.StartTime - 2*minTimePadding,
+                         self.RunTimeSpan.EndTime + 2*minTimePadding, 5)
+        ftemp.SetLineColor(ROOT.kRed)
         self.NormTransRateFitFunctions = []
         # Begin the loop over the flare intervals defined based on the
         # normalized rate in tile 63.
@@ -491,7 +494,7 @@ class pTrendingPlotter:
                 logger.info('Padding on the left with %d points...' % numPad)
                 for j in xrange(numPad):
                     x = self.RunTimeSpan.StartTime - minTimePadding -\
-                        i*self.TIME_BIN_WIDTH
+                        j*self.TIME_BIN_WIDTH
                     n = gtemp.GetN()
                     gtemp.SetPoint(n, x, 1.0)
                     gtemp.SetPointError(n, 0.0, self.NORM_RATE_ERR)
@@ -502,7 +505,7 @@ class pTrendingPlotter:
                 logger.info('Padding on the right with %d points...' % numPad)
                 for j in xrange(numPad):
                     x = self.RunTimeSpan.EndTime + minTimePadding +\
-                        i*self.TIME_BIN_WIDTH
+                        j*self.TIME_BIN_WIDTH
                     n = gtemp.GetN()
                     gtemp.SetPoint(n, x, 1.0)
                     gtemp.SetPointError(n, 0.0, self.NORM_RATE_ERR)
@@ -519,6 +522,7 @@ class pTrendingPlotter:
             f.SetLineColor(ROOT.kBlue)
             f.SetLineStyle(7)
             self.store(f)
+            self.Canvas.cd(4)
             f.Draw('same')
             # Delete the temp strip chart.
             gtemp.Delete()
@@ -582,8 +586,8 @@ class pTrendingPlotter:
                 if startBad is not None and endBad is not None:
                     # At this point we can construct the interval.
                     badInterval = pBadTimeInterval(startBad, endBad,
-                                                   totalIntLoss,
-                                                   'NormTransientRate')
+                                                   'NormTransientRate',
+                                                   gIntLoss, totalIntLoss)
                     # Trim the interval.
                     badInterval.trim(self.StartTime, self.StopTime)
                     # If it's non zero and the fractional loss is large
@@ -604,7 +608,8 @@ class pTrendingPlotter:
             self.Canvas.cd(4)
             interval.draw(1.25, ROOT.kRed)
             self.Canvas.cd(6)
-            g = self.RootPool['gIntLoss_%d' % i]
+            g = interval.IntegratedLossGraph#self.RootPool['gIntLoss_%d' % i]
+            print i, interval
             interval.drawIntegral(g, ROOT.kRed)
         self.Canvas.cd()
         self.Canvas.Update()
