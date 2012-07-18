@@ -4,6 +4,10 @@
  *
  *                  EOH
 
+- A few bug fixes in the script tagging the bad time intervals.
+* Relevant thread: https://www-glast.stanford.edu/protected/mail/datamon/8838.html
+
+
  Common-06-11-04 26-Mar-2012 lbaldini Bug fix in pErrorLogger.py
 - Bug fix in pErrorLogger.py (was crashing due to a mismatched tag for files
   with no events with errors, e.g. the verify log).
