@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-11-05 18-Jul-2012 lbaldini A few bug fixes in the BTI code.
 - A few bug fixes in the script tagging the bad time intervals.
 * Relevant thread: https://www-glast.stanford.edu/protected/mail/datamon/8838.html
 
