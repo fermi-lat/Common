@@ -405,11 +405,12 @@ class pTrendingPlotter:
         self.Canvas.cd(1)
         l = self.getHorLine(threshold)
         l.Draw()
-        logger.info('Searching for flare intervals...')
+        logger.info('Searching for flare intervals in TileNormRate63...')
         g = self.getStripChart('TileNormRate63')
         self.FlareIntervals = self.__applyThreshold(g, threshold,
                                                     'NormAcdTileRate63')
-        logger.info('Done.')
+        numIntervals = len(self.FlareIntervals)
+        logger.info('Done, %d interval(s) found.' % numIntervals)
         for (i, interval) in enumerate(self.FlareIntervals):
             logger.info('Flare interval #%s: %s' % (i, interval))
             interval.draw(3*threshold)
@@ -419,17 +420,23 @@ class pTrendingPlotter:
     ## @brief Define the bad time intervals based on the normalized ACD
     #  tile count.
 
-    def analyzeNormTileCount(self, threshold):
+    def analyzeNormTileCount(self, threshold, append = False):
+        logger.info('Analyzing normalized ACD tile count...')
+        if len(self.FlareIntervals) == 0:
+            logger.info('No flare intervals found at the previous step.')
+            logger.info('Running in forced-append mode :-)')
+            append = True
         self.Canvas.cd(2)
         l = self.getHorLine(threshold, ROOT.kRed)
         l.Draw()
-        logger.info('Analyzing normalized ACD tile count...')
         g = self.getStripChart('NormAcdTileCount')
         tmpBTIList = self.__applyThreshold(g, threshold, 'NormAcdTileCount')
         self.BadTileCountIntervals = []
         for interval in tmpBTIList:
             if interval.isValid():
                 self.BadTileCountIntervals.append(interval)
+                if append:
+                    self.FlareIntervals.append(interval)
         logger.info('Done.')
         for (i, interval) in enumerate(self.BadTileCountIntervals):
             logger.info('Bad tile count interval #%s: %s' % (i, interval))
