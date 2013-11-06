@@ -4,6 +4,10 @@
  *
  *                  EOH
 
+- Minor modification to create the integrated loss plot even when there are not flare interval from the tile 63 plot.
+* Relevant thread: https://www-glast.stanford.edu/protected/mail/datamon/11220.html
+
+
  Common-06-11-05 18-Jul-2012 lbaldini A few bug fixes in the BTI code.
 - A few bug fixes in the script tagging the bad time intervals.
 * Relevant thread: https://www-glast.stanford.edu/protected/mail/datamon/8838.html
