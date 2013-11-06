@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-06-12-00 06-Nov-2013 lbaldini Small improvement in the BTI application.
 - Minor modification to create the integrated loss plot even when there are not flare interval from the tile 63 plot.
 * Relevant thread: https://www-glast.stanford.edu/protected/mail/datamon/11220.html
 
