@@ -4,6 +4,25 @@
  *
  *                  EOH
 
+
+- pAlarmBaseAlgorithm changed to set the range on the xaxis only when
+  specified in the alarm parameters (this is to get the same behavior
+  overe different ROOT versions). The detailed diff is
+RCS file: /nfs/slac/g/glast/ground/cvs/dataMonitoring/Common/python/pAlarmBaseAlgorithm.py,v
+retrieving revision 1.71
+retrieving revision 1.72
+diff -r1.71 -r1.72
+514,515c514,518
+<         (min, max) = self.getRequestedXRange()
+<         self.RootObject.GetXaxis().SetRangeUser(min, max)
+---
+>         if not self.ParamsDict.has_key('min') and not \
+>            self.ParamsDict.has_key('max'):
+>             return
+>         (_min, _max) = self.getRequestedXRange()
+>         self.RootObject.GetXaxis().SetRangeUser(_min, _max)  
+
+
  Common-06-12-00 06-Nov-2013 lbaldini Small improvement in the BTI application.
 - Minor modification to create the integrated loss plot even when there are not flare interval from the tile 63 plot.
 * Relevant thread: https://www-glast.stanford.edu/protected/mail/datamon/11220.html
