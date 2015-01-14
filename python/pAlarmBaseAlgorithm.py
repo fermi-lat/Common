@@ -511,8 +511,11 @@ class pAlarmBaseAlgorithm:
             logger.warn('Cannot use setRangeX() on a %s object.' %\
                          self.getObjectType())
             return
-        (min, max) = self.getRequestedXRange()
-        self.RootObject.GetXaxis().SetRangeUser(min, max)
+        if not self.ParamsDict.has_key('min') and not \
+           self.ParamsDict.has_key('max'):
+            return
+        (_min, _max) = self.getRequestedXRange()
+        self.RootObject.GetXaxis().SetRangeUser(_min, _max)
 
     ## @brief Restore the original x axis range for a ROOT object.
     #
