@@ -198,8 +198,8 @@ class pTrendingPlotter:
         'TransientRate_err': 'Merit.Rate_TransientEvts_err',
         'RockingAngle': 'Merit.Mean_PtSCzenith',
         'RockingAngle_err': 'Merit.Mean_PtSCzenith_err',
-        'NormAcdTileCount': 'Merit.Mean_AcdTileCount/(8.73 - 0.283466*Digi.Rate_TriggerEngine[10] + 0.00615361*Digi.Rate_TriggerEngine[10]**2)',
-        'NormAcdTileCount_err': 'Merit.Mean_AcdTileCount_err/(8.73 - 0.283466*Digi.Rate_TriggerEngine[10] + 0.00615361*Digi.Rate_TriggerEngine[10]**2)'
+        'NormAcdTileCount': 'Merit.Mean_Acd2TileCount/(8.73 - 0.283466*Digi.Rate_TriggerEngine[10] + 0.00615361*Digi.Rate_TriggerEngine[10]**2)',
+        'NormAcdTileCount_err': 'Merit.Mean_Acd2TileCount_err/(8.73 - 0.283466*Digi.Rate_TriggerEngine[10] + 0.00615361*Digi.Rate_TriggerEngine[10]**2)'
         }
     TIME_FORMAT = '%b/%d/%y %H:%M'
     TIME_BIN_WIDTH = 15.0
