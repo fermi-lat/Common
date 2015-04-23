@@ -5,6 +5,10 @@
  *                  EOH
 
 
+- pBadTimeIntrervalLogger updated to Pass8 (for the time being this is
+  essentially a 2-line change where I have changed a couple of Acd in Acd2).
+  We might possibly need some more fine tuning in the future.
+
 - pAlarmBaseAlgorithm changed to set the range on the xaxis only when
   specified in the alarm parameters (this is to get the same behavior
   overe different ROOT versions). The detailed diff is
