@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-07-00-00 23-Apr-2015 lbaldini BTI code updated to Pass 8.
 
 - pBadTimeIntrervalLogger updated to Pass8 (for the time being this is
   essentially a 2-line change where I have changed a couple of Acd in Acd2).
