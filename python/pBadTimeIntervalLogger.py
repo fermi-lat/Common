@@ -2,6 +2,8 @@
 
 import os
 import sys
+import time
+import datetime
 
 import pSafeLogger
 logger = pSafeLogger.getLogger('pBadTimeIntervalLogger')
@@ -208,8 +210,7 @@ class pTrendingPlotter:
     def __init__(self, digiTrendFilePath, meritTrendFilePath):
         # Setting the time offset for the x-axis of the strip charts.
         # We first create the a ROOT.TDatetime object (January 1, 2001)
-        # and then convert it to a float---setting the 'gmt' conversion
-        # option to True. 
+        # and then convert it to a float.
         # It's not entirely clear to me why we have to do this and we can't
         # just set the time offset directly with the 'gmt' option set to
         # True in the TAxis::SetTimeOffset() method, but it doesn't work
@@ -217,7 +218,14 @@ class pTrendingPlotter:
         # It looks like this is not clear to the ROOT folks either:
         # http://root.cern.ch/phpBB3/viewtopic.php?f=3&t=10002
         self.DateOffset = ROOT.TDatime(2001,01,01,00,00,00)
-        self.TimeOffset = self.DateOffset.Convert(True)
+        self.TimeOffset = self.DateOffset.Convert()
+        # Detect daylight saving on the machine running the analysis.
+        # Isn't this ugly?
+        t = time.mktime(datetime.datetime.timetuple(datetime.datetime.today()))
+        dst = time.localtime(t).tm_isdst
+        if dst:
+            logger.info('Daylight saving time is on!')
+            self.TimeOffset -= 3600
         # Now go on with the real stuff.
         logger.info('Opening input files...')
         self.DigiFile    = self.openFile(digiTrendFilePath)
