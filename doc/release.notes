@@ -4,6 +4,7 @@
  *
  *                  EOH
 
+ Common-07-00-01 25-Jun-2015 lbaldini Hack for the daylight saving time.
 
 - Added hack to correct for the daylight saving time.
 
