@@ -4,6 +4,9 @@
  *
  *                  EOH
 
+
+- Added hack to correct for the daylight saving time.
+
  Common-07-00-00 23-Apr-2015 lbaldini BTI code updated to Pass 8.
 
 - pBadTimeIntrervalLogger updated to Pass8 (for the time being this is
